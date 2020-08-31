@@ -1,0 +1,90 @@
+@import "mixins";
+@import "variables";
+
+.component {
+  user-select: none;
+}
+
+.cursor {
+  cursor: crosshair;
+}
+
+/* axis */
+$axis-height: 25px;
+.axis {
+  position: relative;
+  height: $axis-height;
+}
+
+.x {
+  position: absolute;
+  top: 0;
+  color: $slate;
+  font-size: 12px;
+  font-weight: 500;
+  height: $axis-height;
+  transform: translate(-50%, 0);
+
+  &:after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 5px;
+    background: $slate;
+
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+  }
+}
+
+/* track */
+.track {
+  @include flex(flex-start, stretch);
+  background: $slate;
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.item {
+  @include transition;
+}
+
+/* feedback */
+.feedback {
+  margin-top: 5px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* feedback:ratio */
+.ratio {
+  @include transition;
+  transform: translate(-50%, 0);
+}
+
+/* feedback:vote */
+.vote {
+  @include flex(space-between);
+}
+
+.text {
+  text-align: center;
+
+  &:first-child {
+    text-align: left;
+  }
+
+  &:last-child {
+    text-align: right;
+  }
+}
+
+.percent {
+  font-size: 16px;
+}

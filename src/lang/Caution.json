@@ -1,0 +1,26 @@
+{
+  "title": "Caution Notice",
+  "content": {
+    "introduction": "Dear user,\n\nBefore you use the Mirror software, please be aware of the following risks:\n\n",
+    "body": [
+      {
+        "title": "Identity",
+        "content": "mAssets simply leverage blockchain technology to mirror the price of underlying assets, and are not actual assets. No custodian holds underlying assets for you on your behalf. You hold no legal rights to the underlying assets, only to mirrored tokens to the blockchain. Go to mirror.finance to learn more about mirrored assets.\n\n"
+      },
+      {
+        "title": "Significant risks",
+        "content": "While the Mirror Protocol has been carefully engineered to have its tokens track the price of targeted assets closely, it is a new technology that may contain significant risks, bugs, or issues that may lead the software to not work as intended. The Mirror Wallet does not make any guarantees of the correctness of the software, and disclaim that the underlying software is intended to be used AS-IS, and is to be used at your own risk.\n\n"
+      },
+      {
+        "title": "Limitations in ownership",
+        "content": "Given that mirrored assets are simple synthetic tokens, they do not confer to the bearer many rights that are to be expected in holding the actual underlying asset, such as governance rights and rights to dividends.\n\n"
+      },
+      {
+        "title": "Agency disclaimer",
+        "content": "No entity, including the Mirror Wallet team, has control over the list of assets that are listed on the Mirror Protocol. Users can vote in various assets controlled by random people. The Mirror Wallet team is not responsible for the listing and failure of any mirrored assets on the Mirror Protocol.\n\n"
+      }
+    ],
+    "conclusion": "TRADE AT YOUR OWN RISK"
+  },
+  "footer": "I have read and understand these risks, and wish to proceed."
+}

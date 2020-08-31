@@ -1,0 +1,27 @@
+@import "mixins";
+@import "variables";
+
+.tooltip {
+  font-size: 12px;
+  white-space: pre-line;
+
+  article:not(:first-child) {
+    margin-top: 1em;
+  }
+}
+
+.button {
+  @include flex;
+}
+
+/* with tooltip */
+.flex {
+  @include flex(flex-start);
+  display: inline-flex;
+}
+
+.icon {
+  color: fade-out($slate, 0.25);
+  margin-left: 3px;
+  margin-top: -0.04em;
+}

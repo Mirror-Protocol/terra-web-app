@@ -1,0 +1,50 @@
+@import "variables";
+
+@mixin desktop {
+  @media (min-width: ($breakpoint)) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: $breakpoint - 0.02) {
+    @content;
+  }
+}
+
+@mixin flex($justify-content: center, $align-items: center) {
+  display: flex;
+  justify-content: $justify-content;
+  align-items: $align-items;
+}
+
+@mixin link($initial: fade-out(white, 0.5), $hover: white) {
+  @include transition(color);
+  color: $initial;
+
+  &:hover,
+  &.active {
+    color: $hover;
+  }
+}
+
+@mixin button {
+  text-transform: uppercase;
+}
+
+@mixin transition($property: all) {
+  transition: $property $transition-duration;
+}
+
+/* app */
+@mixin app {
+  font-size: $font-size;
+
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: $footer-height;
+
+  @include mobile {
+    padding-bottom: $footer-height-mobile;
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "Component": {
+    "Tab": { "All": "All" }
+  },
+
+  "Form": {
+    "Validate": {
+      "InsufficientBalance": "Insufficient balance",
+      "CollateralRatio": {
+        "Current": "Collateral ratio must be higher than current collateral ratio",
+        "Minimum": "Collateral ratio must be higher than minimum collateral ratio",
+        "Safe": "Collateral ratio is lower than safe ratio"
+      }
+    },
+    "Button": {
+      "ConnectWallet": "Connect Wallet",
+      "SelectAsset": "Select an asset"
+    }
+  },
+  "Confirm": {
+    "Title": {
+      "Confirm": "Confirm Transaction"
+    },
+    "Warning": {
+      "Vote": "Vote cannot be changed after submission."
+    }
+  },
+  "Result": {
+    "TIMEOUT": "The execution of this transaction is taking a little longer than usual. It has been successfully broadcasted, but have not been executed yet. The transaction may fail in the future, so please check again later",
+    "DENIED": "Denied by the user",
+    "Button": { "FAILURE": "Try Again" }
+  },
+
+  "Wallet": {
+    "Connect": "Connect",
+    "Disconnect": "Disconnect",
+    "DownloadExtension": "Download Terra Station Extension",
+    "ConnectWallet": "Connect Wallet",
+    "TerraFinder": "Terra Finder"
+  },
+  "Network": {
+    "NoContract": "Mirror contracts could not be found on the selected network. Select a different network from the Terra Station extension."
+  },
+
+  "MyPage": {
+    "Empty": {
+      "Holdings": "No current asset balances",
+      "Minted": "No current asset mint positions",
+      "Pool": "No current liquidity positions",
+      "Staked": "No current staking positions"
+    }
+  }
+}

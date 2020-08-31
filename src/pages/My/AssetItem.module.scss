@@ -1,0 +1,15 @@
+@import "mixins";
+
+.component {
+  @include flex(space-between);
+  color: white;
+  font-size: 18px;
+}
+
+.footer {
+  @include flex(space-between);
+}
+
+.button {
+  margin-left: 30px;
+}

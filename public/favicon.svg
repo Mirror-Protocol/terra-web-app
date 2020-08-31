@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .favicon { fill: #172240; }
+
+    @media (prefers-color-scheme: dark) {
+      .favicon { fill: #FFFFFF; }
+    }
+  </style>
+  <path class="favicon" d="M20.2 6.2V1.1L15.7 0v5.1L11.2 4v5.1l-4.4-1v16.6l4.5 1.1v5.1l4.5 1.1v-5.1l4.5 1.1v-5.1l4.5 1.1V7.3l-4.6-1.1zm-3.6 17.5l-6.3-1.5v-9.7l6.3 1.5v9.7z"/>
+</svg>

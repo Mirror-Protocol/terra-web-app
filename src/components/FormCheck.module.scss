@@ -1,0 +1,9 @@
+@import "mixins";
+
+.horizontal {
+  @include flex(flex-start);
+
+  .item {
+    margin-right: 10px;
+  }
+}

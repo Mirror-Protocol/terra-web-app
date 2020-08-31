@@ -1,0 +1,20 @@
+@import "mixins";
+@import "variables";
+
+.article {
+  font-size: 12px;
+  white-space: pre-line;
+}
+
+.conclusion {
+  color: $battleship;
+  font-size: 14px;
+}
+
+.footer {
+  margin-top: 30px;
+}
+
+.label {
+  @include flex(flex-start);
+}

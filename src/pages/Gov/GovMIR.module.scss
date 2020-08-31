@@ -1,0 +1,37 @@
+@import "mixins";
+@import "variables";
+
+.component {
+  text-align: center;
+}
+
+.logo {
+  @include flex;
+  display: inline-flex;
+  background: $bg;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.title {
+  color: white;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.apr {
+  color: $blue;
+  font-size: 30px;
+}
+
+.desc {
+  color: $battleship;
+  font-size: 12px;
+}
+
+.button {
+  margin-top: 30px;
+  min-width: 160px;
+}

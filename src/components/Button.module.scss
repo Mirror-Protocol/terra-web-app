@@ -1,0 +1,115 @@
+@import "mixins";
+@import "variables";
+
+.button {
+  @include flex;
+  @include button;
+  @include transition;
+
+  display: inline-flex;
+  font-weight: 500;
+  user-select: none;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  & + & {
+    margin-left: 10px;
+  }
+
+  // sequence important
+  &.disabled {
+    opacity: 0.3;
+  }
+
+  &.loading {
+    opacity: 0.5;
+  }
+}
+
+@mixin hover {
+  &:hover:not(.loading):not(.disabled) {
+    @content;
+  }
+}
+
+.button:not(.outline) {
+  background-color: $blue;
+  color: $button;
+
+  @include hover {
+    background-color: fade-out($blue, 0.25);
+  }
+
+  &.disabled {
+    background-color: $slate;
+  }
+}
+
+/* outline */
+.outline {
+  border-width: 1px;
+  border-style: solid;
+
+  @include hover {
+    opacity: 0.75;
+  }
+
+  @mixin button-outline-variant($color) {
+    border-color: $color;
+    color: $color;
+  }
+
+  @each $name, $color in $colors {
+    &.#{$name} {
+      @include button-outline-variant($color);
+    }
+  }
+
+  &.secondary {
+    @include button-outline-variant(fade-out(white, 0.4));
+  }
+}
+
+/* block */
+.block {
+  width: 100%;
+}
+
+/* sizes */
+@mixin button-size($font-size, $height, $padding) {
+  border-radius: ($height / 2);
+  font-size: $font-size;
+  height: $height;
+  padding: 0 $padding;
+}
+
+.xs {
+  @include button-size(10px, 22px, 10px);
+}
+
+.sm {
+  @include button-size(12px, 26px, 10px);
+  min-width: 74px;
+}
+
+.md {
+  @include button-size(14px, 36px, 20px);
+  min-width: 160px;
+}
+
+.lg {
+  @include button-size(16px, 50px, 30px);
+  width: 100%;
+}
+
+/* theme */
+.submit {
+  margin-top: 30px;
+}
+
+/* label */
+.progress {
+  margin-right: 10px;
+}

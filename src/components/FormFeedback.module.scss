@@ -1,0 +1,13 @@
+@import "mixins";
+@import "variables";
+
+.component {
+  @include flex(flex-start, flex-start);
+  font-size: 12px;
+  margin-top: 30px;
+}
+
+.icon {
+  color: $red;
+  margin-right: 10px;
+}

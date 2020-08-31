@@ -1,0 +1,28 @@
+@import "variables";
+
+.component {
+  background: fade-out($bg, 0.1);
+  border-top: $border;
+  color: $red;
+  padding: $gutter;
+  text-align: left;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.table {
+  font-family: monospace;
+
+  th {
+    min-width: 12rem;
+    vertical-align: top;
+  }
+
+  td {
+    word-break: break-all;
+  }
+}

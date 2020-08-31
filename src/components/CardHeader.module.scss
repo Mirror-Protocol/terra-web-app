@@ -1,0 +1,56 @@
+@import "mixins";
+@import "variables";
+
+.header {
+  border-bottom: 1px solid $hr;
+  box-shadow: inset 0 -1px $hr-shadow;
+  padding: $card-padding-header;
+}
+
+.title {
+  color: white;
+  font-size: 16px;
+  text-transform: capitalize;
+}
+
+.description:not(:empty) {
+  margin-top: 5px;
+}
+
+/* theme */
+.default {
+  @include flex(space-between);
+
+  .wrapper {
+    flex: 1;
+    margin-right: 20px;
+  }
+}
+
+.goback {
+  @include flex(flex-start);
+  padding: unset;
+
+  .action {
+    @include flex;
+    @include link(inherit);
+    flex: none;
+    padding: $card-padding-header;
+  }
+
+  .title {
+    flex: 1;
+    text-align: center;
+    padding-right: (24px + (2 * $card-padding-horizontal));
+  }
+}
+
+.icon {
+  text-align: center;
+
+  .wrapper {
+    @include flex;
+    min-height: 50px;
+    margin-bottom: 5px;
+  }
+}

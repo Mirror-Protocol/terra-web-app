@@ -1,0 +1,59 @@
+/* Colors */
+$bg: #121a2f !default;
+$darkblue: #172240 !default;
+$airdrop: #1a314c !default;
+
+$gray: #cccccc !default;
+$brown: #a0a0a0 !default;
+$light: #f0f0f0 !default;
+$battleship: #6d738c !default;
+$slate: #505466 !default;
+
+$blue: #1eb2ff !default;
+$aqua: #47d7e2 !default;
+$red: #e64c57 !default;
+$orange: #dd794a !default;
+
+$text: $gray;
+$button: white !default;
+$header: $darkblue !default;
+
+$colors: (
+  bg: $bg,
+  darkblue: $darkblue,
+  battleship: $battleship,
+  slate: $slate,
+  blue: $blue,
+  aqua: $aqua,
+  red: $red,
+  orange: $orange,
+);
+
+$hr-shadow: fade-out(black, 0.8);
+$hr: fade-out(white, 0.92);
+$border: 1px solid fade-out($slate, 0.8);
+
+/* Fonts */
+$font-size: 14px;
+$font-family: "Poppins";
+
+/* Sizes */
+$max-width: 1200px !default;
+$breakpoint: 992px;
+$gutter: 30px;
+$line-height: 1.5;
+$nav-height: 70px;
+$footer-height: 50px;
+$footer-height-mobile: 100px;
+
+$card-padding-horizontal: 25px;
+$card-padding-header: 20px $card-padding-horizontal;
+$card-padding-main: $card-padding-header;
+
+/* Transitions */
+$transition-duration: 0.2s;
+
+/* Z-indexes */
+$zindex-sticky: 1020;
+
+@import "../customize";

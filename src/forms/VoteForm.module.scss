@@ -1,0 +1,41 @@
+@import "mixins";
+@import "variables";
+
+.list {
+  @include flex;
+  margin: 0 -10px;
+  margin-bottom: 20px;
+}
+
+.wrapper {
+  flex: 1;
+  padding: 0 10px;
+}
+
+.answer {
+  @include flex;
+  @include transition(opacity);
+
+  cursor: pointer;
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+  height: 80px;
+  opacity: 0.25;
+  text-transform: uppercase;
+
+  &:hover,
+  &.checked {
+    opacity: 1;
+  }
+}
+
+.yes {
+  border-color: $blue;
+  color: $blue;
+}
+
+.no {
+  border-color: $red;
+  color: $red;
+}

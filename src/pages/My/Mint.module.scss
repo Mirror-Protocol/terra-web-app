@@ -1,0 +1,16 @@
+@import "mixins";
+@import "variables";
+
+.idx {
+  @include flex(flex-start);
+
+  i {
+    margin-left: 5px;
+  }
+}
+
+.item {
+  $height: ($font-size * $line-height);
+  height: $height;
+  line-height: $height;
+}
