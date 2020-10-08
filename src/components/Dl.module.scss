@@ -1,0 +1,79 @@
+@import "mixins";
+@import "variables";
+
+.dl {
+  font-weight: 500;
+}
+
+.dt {
+  color: $battleship;
+  text-transform: capitalize;
+}
+
+.dd {
+  color: white;
+}
+
+/* variant */
+.horizontal {
+  @include flex(flex-start);
+}
+
+@include desktop {
+  .horizontal {
+    .dt {
+      margin-right: 5px;
+    }
+
+    .dd:not(:last-child) {
+      margin-right: 30px;
+    }
+  }
+}
+
+@include mobile {
+  .horizontal {
+    flex-wrap: wrap;
+
+    .dt,
+    .dd {
+      margin-top: 5px;
+      width: 50%;
+    }
+
+    .dd {
+      text-align: right;
+    }
+  }
+}
+
+.vertical {
+  .dt,
+  .dd {
+    display: block;
+  }
+
+  .dt {
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+
+  .dd:not(:last-child) {
+    margin-bottom: 20px;
+  }
+}
+
+/* footer */
+.footer {
+  @include desktop {
+    @include flex;
+  }
+}
+
+.margin {
+  margin-top: $gutter;
+}
+
+.item {
+  flex: 1;
+}

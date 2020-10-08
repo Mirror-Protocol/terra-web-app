@@ -1,0 +1,13 @@
+@import "mixins";
+
+$padding: 15px;
+
+.list {
+  @include flex(flex-start);
+  margin: -$padding 0;
+}
+
+.button {
+  @include link;
+  padding: $padding;
+}

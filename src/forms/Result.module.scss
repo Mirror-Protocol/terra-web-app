@@ -1,0 +1,20 @@
+@import "mixins";
+@import "variables";
+
+.success {
+  color: $aqua;
+}
+
+.failed {
+  color: $red;
+}
+
+.feedback {
+  text-align: center;
+  margin: 20px 0 40px;
+}
+
+.link {
+  @include link(inherit, inherit);
+  text-decoration: underline;
+}

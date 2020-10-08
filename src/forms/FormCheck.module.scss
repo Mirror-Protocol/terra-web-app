@@ -1,0 +1,13 @@
+@import "mixins";
+
+.group:not(:first-child) {
+  margin-top: 20px;
+}
+
+.horizontal {
+  @include flex(flex-start);
+
+  .item {
+    margin-right: 10px;
+  }
+}

@@ -1,0 +1,61 @@
+import React, { useState } from "react"
+import Contents from "../lang/Caution.json"
+import { useSettings } from "../hooks"
+import Card from "../components/Card"
+import Button from "../components/Button"
+import Checkbox from "./Checkbox"
+import styles from "./Caution.module.scss"
+
+const { title, content, footer } = Contents
+const { introduction, body, conclusion } = content
+
+interface Props extends Button {
+  goBack?: () => void
+}
+
+const Caution = ({ goBack = () => {} }: Props) => {
+  const [checked, setChecked] = useState(false)
+  const { agree } = useSettings()
+  const button = { onClick: agree, disabled: !checked }
+
+  return (
+    <Card title={title} goBack={goBack}>
+      <article className={styles.article}>
+        <p>{introduction}</p>
+
+        <ol className={styles.list}>
+          {body.map(({ title, content }, index) => (
+            <li key={title}>
+              <article>
+                <h1>
+                  {index + 1}. {title}
+                </h1>
+                <p>{content}</p>
+              </article>
+            </li>
+          ))}
+        </ol>
+
+        <p className={styles.conclusion}>{conclusion}</p>
+
+        <footer className={styles.footer}>
+          <button
+            type="button"
+            className={styles.label}
+            onClick={() => setChecked(!checked)}
+          >
+            <Checkbox checked={checked} className={styles.checkbox}>
+              {footer}
+            </Checkbox>
+          </button>
+        </footer>
+
+        <Button {...button} type="button" size="lg" submit>
+          Agree
+        </Button>
+      </article>
+    </Card>
+  )
+}
+
+export default Caution

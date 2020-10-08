@@ -1,0 +1,57 @@
+@import "mixins";
+@import "variables";
+
+.component {
+  @include flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 300px;
+}
+
+/* search */
+.search {
+  @include flex(flex-start, stretch);
+  flex: none;
+  margin-bottom: 5px;
+
+  background: fade-out($bg, 0.5);
+  border-radius: 5px;
+  height: 40px;
+
+  label {
+    @include flex;
+  }
+
+  i {
+    margin: 0 15px;
+  }
+
+  input {
+    flex: 1;
+  }
+}
+
+/* feedback */
+.feedback {
+  text-align: center;
+}
+
+/* assets */
+.list {
+  flex: 1;
+  margin: 0 -20px;
+  overflow-y: scroll;
+}
+
+.button {
+  padding: 10px 30px;
+  width: 100%;
+
+  &:not(.disabled):hover {
+    background: fade-out(white, 0.95);
+  }
+
+  &.disabled {
+    opacity: 0.3;
+  }
+}

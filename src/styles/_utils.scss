@@ -1,0 +1,44 @@
+.desktop {
+  @include mobile {
+    display: none !important;
+  }
+}
+
+.empty {
+  color: $brown;
+  font-size: 16px;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.strike {
+  text-decoration: line-through;
+  text-decoration-style: dashed;
+}
+
+/* blink */
+.loading {
+  animation: blink 1s 0.1s infinite;
+}
+
+@keyframes blink {
+  20% {
+    opacity: 1;
+  }
+
+  40% {
+    opacity: 0.75;
+  }
+
+  60% {
+    opacity: 1;
+  }
+
+  80% {
+    opacity: 0.75;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

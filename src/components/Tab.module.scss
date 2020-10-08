@@ -1,0 +1,39 @@
+@import "mixins";
+@import "variables";
+
+$radius: 10px;
+
+.tabs {
+  @include flex;
+}
+
+.tab {
+  $height: 60px;
+
+  @include flex;
+  @include link;
+
+  flex: 1;
+
+  font-size: 18px;
+  font-weight: 500;
+  height: $height;
+  text-transform: capitalize;
+
+  &.active {
+    border-bottom: 1px solid $darkblue;
+  }
+
+  &:not(.active) {
+    background: #121e3a;
+    border-bottom: 1px solid $bg;
+  }
+
+  & + & {
+    border-left: 1px solid $bg;
+  }
+}
+
+.content {
+  padding: 30px 25px;
+}

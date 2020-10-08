@@ -1,0 +1,40 @@
+@import "mixins";
+@import "variables";
+
+.label {
+  @include flex(flex-start);
+  cursor: pointer;
+  user-select: none;
+}
+
+.input {
+  @include flex;
+  border: solid 1px $slate;
+  border-radius: 3px;
+  margin-right: 5px;
+  width: 18px;
+  height: 18px;
+}
+
+.check {
+  @include transition(background-color);
+  border-radius: 1px;
+  width: 10px;
+  height: 10px;
+
+  .label:hover &:not(.checked) {
+    background-color: fade-out($blue, 0.5);
+  }
+}
+
+.checked {
+  background-color: $blue;
+}
+
+/* radio */
+.radio {
+  &,
+  .check {
+    border-radius: 50%;
+  }
+}

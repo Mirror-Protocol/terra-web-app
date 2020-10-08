@@ -1,0 +1,10 @@
+@import "mixins";
+
+.button {
+  @include flex;
+  @include link(white);
+
+  i {
+    margin-left: 5px;
+  }
+}

@@ -1,0 +1,10 @@
+@import "mixins";
+@import "variables";
+
+.wrapper {
+  @include flex;
+
+  color: $blue;
+  margin: 10px 0;
+  text-align: center;
+}

@@ -1,0 +1,57 @@
+{
+  "Wallet": {
+    "Connect": "Connect",
+    "Disconnect": "Disconnect",
+    "DownloadExtension": "Download Terra Station Extension",
+    "ConnectWallet": "Connect Wallet",
+    "CopyAddress": "Copy Address",
+    "TerraFinder": "View on Terra Finder"
+  },
+  "Component": {
+    "Tab": { "All": "All" }
+  },
+  "MyPage": {
+    "Empty": {
+      "Invested": "No asset",
+      "Minted": "No minted position",
+      "Staked": "No staking position"
+    },
+    "Tooltip": {
+      "TotalValue": "Sum of all \"Value\"",
+      "TotalCollateralValue": "Sum of all collateral's value",
+      "TotalMintedValue": "Sum of all minted asset's value",
+      "MintWarning": "Collateral ratio is close to liquidation. Close the position or deposit more collaterals",
+      "MintDanger": "Position can be liquidated anytime upon another user's request. Close the position or deposit more collaterals"
+    }
+  },
+  "Form": {
+    "Button": {
+      "ConnectWallet": "Connect Wallet",
+      "SelectAsset": "Select an asset"
+    }
+  },
+  "Confirm": {
+    "Title": {
+      "Confirm": "Confirm Transaction"
+    },
+    "Label": {
+      "EstimatedExchangeRate": "Estimated exchange rate"
+    },
+    "Warning": {
+      "Trade": "Output displayed on this page is an estimated value. The estimated amount could be different from the calculated value based on this exchange rate due to spread fee applied to it. Please be aware that the actual result of this transaction can be different from the information above due to the sudden price change of the asset.\n\nAny price change by more than 10% will revert this transaction.",
+      "Mint": "Output displayed on this page is an estimated value. Please be aware that the actual result of this transaction can be different from the information above due to the sudden price change of the asset.\n\nAny price change by more than 10% will revert this transaction.",
+      "Vote": "Vote cannot be changed after submission."
+    }
+  },
+  "Result": {
+    "LOADING": "Processing",
+    "SUCCESS": "Complete!",
+    "FAILURE": "Failed",
+    "TIMEOUT": "The execution of this transaction is taking a little longer than usual. It has been successfully broadcasted, but have not been executed yet. The transaction may fail in the future, so please check again later",
+    "DENIED": "User denied.",
+    "Button": {
+      "SUCCESS": "Go to My Page",
+      "Failed": "Try Again"
+    }
+  }
+}

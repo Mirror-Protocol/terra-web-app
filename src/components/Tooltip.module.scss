@@ -1,0 +1,21 @@
+@import "mixins";
+@import "variables";
+
+.tooltip {
+  font-size: 12px;
+  white-space: pre-line;
+}
+
+.button {
+  @include flex;
+}
+
+/* with tooltip */
+.flex {
+  @include flex(flex-start);
+}
+
+.icon {
+  color: $slate;
+  margin-left: 5px;
+}

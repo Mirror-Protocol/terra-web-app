@@ -1,0 +1,9 @@
+@import "mixins";
+
+.idx {
+  @include flex(flex-start);
+
+  i {
+    margin-left: 5px;
+  }
+}

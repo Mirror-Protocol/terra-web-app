@@ -1,0 +1,10 @@
+@import "variables";
+
+.list {
+  padding: 0 25px;
+}
+
+.item {
+  border-bottom: $border;
+  padding: $gutter 0;
+}

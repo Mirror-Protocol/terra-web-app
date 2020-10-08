@@ -1,0 +1,33 @@
+@import "mixins";
+@import "variables";
+
+.component {
+  @include flex(space-between);
+  flex-direction: column;
+  height: 100%;
+
+  .main,
+  .footer {
+    width: 100%;
+  }
+
+  .main {
+    flex: 1;
+  }
+
+  .footer {
+    flex: none;
+  }
+}
+
+.title {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+/* footer */
+.footer {
+  color: $slate;
+  font-size: 12px;
+  margin-top: 30px;
+}

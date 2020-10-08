@@ -1,0 +1,72 @@
+@import "variables";
+
+.wrapper {
+  width: 100%;
+  overflow-x: scroll;
+}
+
+.margin {
+  margin-top: 20px;
+}
+
+.cell {
+  padding: 20px;
+  white-space: nowrap;
+}
+
+.th {
+  color: $battleship;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  .colspan & {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0;
+    text-align: center;
+  }
+}
+
+.td {
+  border-top: $border;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.narrow-left {
+  padding-left: 5px;
+}
+
+.narrow-right {
+  padding-right: 5px;
+}
+
+/* color */
+.red {
+  background: fade-out($red, 0.92);
+}
+
+.bold {
+  color: white;
+  font-weight: 500;
+}
+
+/* border */
+.border-left {
+  border-left: $border;
+}
+
+.border-right {
+  border-right: $border;
+}

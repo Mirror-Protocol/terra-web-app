@@ -1,0 +1,51 @@
+@import "mixins";
+@import "variables";
+
+.component {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+
+  padding-top: 20px;
+
+  position: relative;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  @include flex;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  margin-left: 20px;
+}
+
+.title {
+  $font-size: 16px;
+  color: white;
+  font-size: $font-size;
+  text-align: center;
+  height: ($font-size * $line-height);
+
+  &:empty {
+    background: white;
+    margin: 0 auto;
+    opacity: 0.1;
+    width: 50%;
+  }
+}
+
+.stats {
+  border-top: $border;
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+.dd {
+  font-size: 16px;
+  font-weight: normal;
+}

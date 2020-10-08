@@ -1,0 +1,22 @@
+@import "mixins";
+@import "variables";
+
+.article {
+  font-weight: 600;
+}
+
+.title {
+  color: $battleship;
+  margin-bottom: 5px;
+}
+
+.content {
+  color: white;
+  font-size: 20px;
+}
+
+.footer {
+  color: $battleship;
+  font-size: 12px;
+  font-weight: 500;
+}

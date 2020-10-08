@@ -1,0 +1,65 @@
+@import "mixins";
+@import "variables";
+
+.card {
+  background: $darkblue;
+
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+
+  &.lg {
+    border-radius: 20px;
+  }
+}
+
+.shadow {
+  box-shadow: 0 0 40px 0 fade-out(black, 0.7);
+}
+
+.link {
+  @include transition(border-color);
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+
+  &:hover {
+    border-color: $blue;
+  }
+}
+
+/* main */
+.main {
+  padding: $card-padding-main;
+  height: 100%;
+
+  .lg & {
+    padding-bottom: $gutter;
+  }
+
+  .full & {
+    padding: unset;
+  }
+}
+
+/* badges */
+.badges {
+  @include flex(flex-start);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.badge {
+  @include flex;
+  display: inline-flex;
+  font-size: 11px;
+  height: 20px;
+  padding: 0 15px;
+}
+
+@each $name, $color in $colors {
+  .bg-#{$name} {
+    background: fade-out($color, 0.5);
+  }
+}

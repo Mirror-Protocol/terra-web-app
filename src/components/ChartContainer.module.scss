@@ -1,0 +1,19 @@
+@import "mixins";
+
+.header {
+  @include flex(flex-start);
+}
+
+.value {
+  color: white;
+  font-size: 20px;
+}
+
+.change {
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.chart {
+  margin-top: 20px;
+}

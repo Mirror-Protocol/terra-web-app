@@ -1,0 +1,39 @@
+@import "mixins";
+@import "variables";
+
+.item {
+  border-top: 1px solid fade-out($battleship, 0.8);
+}
+
+.list:first-child .item:first-child {
+  border-top: 0;
+}
+
+.article {
+  @include flex;
+}
+
+.title,
+.content {
+  flex: 1;
+  padding: 20px 0;
+}
+
+.title {
+  color: $battleship;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.content {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: right;
+  white-space: pre-line;
+  word-break: break-all;
+}
+
+.result {
+  color: $aqua;
+}
