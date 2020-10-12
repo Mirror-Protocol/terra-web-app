@@ -1,6 +1,6 @@
 import React from "react"
 import { minus, number } from "../../libs/math"
-import { useCombineResult, useContractsAddress, useRefetch } from "../../hooks"
+import { useCombineKeys, useContractsAddress, useRefetch } from "../../hooks"
 import { BalanceKey } from "../../hooks/contractKeys"
 import useAssetStats from "../../statistics/useAssetStats"
 import Grid from "../../components/Grid"
@@ -11,7 +11,7 @@ import styles from "./StakeList.module.scss"
 const StakeList = () => {
   const keys = [BalanceKey.LPSTAKED, BalanceKey.LPSTAKABLE]
   const { listed } = useContractsAddress()
-  const { loading } = useCombineResult(keys)
+  const { loading } = useCombineKeys(keys)
   const { apr } = useAssetStats()
   useRefetch(keys)
 

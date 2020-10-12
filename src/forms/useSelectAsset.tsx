@@ -18,8 +18,6 @@ export interface Config {
   skip?: string[]
   /** Modify token name */
   formatTokenName?: (symbol: string) => string
-  /** @deprecated */
-  omitUnheld?: boolean
 }
 
 export default (config: Config) => {

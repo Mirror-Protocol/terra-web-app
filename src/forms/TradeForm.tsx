@@ -1,17 +1,17 @@
 import React from "react"
-import { useRef, useEffect, useMemo } from "react"
+import { useRef, useEffect } from "react"
 import { useLocation } from "react-router-dom"
 import { isNil } from "ramda"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
-import { useLazyContractQuery } from "../graphql/useContractQuery"
 import useTax from "../graphql/useTax"
 import { MAX_SPREAD, UST, UUSD } from "../constants"
 import MESSAGE from "../lang/MESSAGE.json"
-import { div, gt } from "../libs/math"
+import { div } from "../libs/math"
 import { insertIf } from "../libs/utils"
 import { useRefetch } from "../hooks"
 import { format, formatAsset, lookup, lookupSymbol } from "../libs/parse"
+import { decimal } from "../libs/parse"
 import { toAmount } from "../libs/parse"
 import { useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
@@ -22,6 +22,7 @@ import { validate as v, placeholder, step, renderBalance } from "./formHelpers"
 import { toBase64 } from "./formHelpers"
 import useForm from "./useForm"
 import FormContainer from "./FormContainer"
+import useSimulate from "./useSimulate"
 import useSelectAsset from "./useSelectAsset"
 import FormGroup from "./FormGroup"
 import FormIcon from "./FormIcon"
@@ -75,81 +76,43 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const value2Ref = useRef<HTMLInputElement>(null!)
   const onSelect = (symbol: string) => {
     setValue(Key.symbol, symbol)
-    const ref = type === Type.BUY ? value2Ref : value1Ref
-    !value1 && !value2 && ref.current.focus()
+    !value1 && value1Ref.current.focus()
   }
 
   /* simulation */
-  const reverse = form.changed === Key.value2
   const { token, pair } = getListedItem(symbol)
-  const variables = useMemo(() => {
-    const asset = toToken(
-      !reverse
-        ? { symbol: symbol1, amount: amount1 }
-        : { symbol: symbol2, amount: amount2 }
-    )
+  const reverse = form.changed === Key.value2
+  const params = !reverse
+    ? { amount: amount1, symbol: symbol1 }
+    : { amount: amount2, symbol: symbol2 }
 
-    return {
-      contract: pair,
-      msg: !reverse
-        ? { simulation: { offer_asset: asset } }
-        : { reverse_simulation: { ask_asset: asset } },
-    }
-  }, [pair, reverse, symbol1, symbol2, amount1, amount2, toToken])
+  const simulation = useSimulate({ ...params, pair, reverse, type })
+  const { simulated, ...result } = simulation
+  const { loading: simulating, error } = result
 
-  interface Simulated {
-    return_amount?: string
-    offer_amount?: string
-    commission_amount: string
-    spread_amount: string
-  }
-
-  const query = useLazyContractQuery<Simulated>(variables)
-  const { result, parsed } = query
-  const simulatedAmount = !reverse
-    ? parsed?.return_amount
-    : parsed?.offer_amount
-
-  const price = {
-    [Type.BUY]: `1 ${symbol} ≈ ${format(div(amount1, amount2))} ${UST}`,
-    [Type.SELL]: `1 ${symbol} ≈ ${format(div(amount2, amount1))} ${UST}`,
-  }[type]
-
-  const simulatedContents = parsed && [
-    {
-      title: "Price",
-      content: price,
-    },
-    {
-      title: "Spread",
-      content: formatAsset(parsed.spread_amount, symbol),
-    },
-    {
-      title: "Commission",
-      content: formatAsset(parsed.commission_amount, symbol),
-    },
-  ]
-
-  const { load, loading: simulating, error } = result
-
-  useEffect(() => {
-    const { contract, msg } = variables
-    const amount = (
-      msg.simulation?.["offer_asset"] || msg.reverse_simulation?.["ask_asset"]
-    )?.amount
-
-    const valid = amount && gt(amount, 0) && contract
-    valid && load()
-  }, [variables, load])
-
-  /* simulation:set value on simulate */
+  /* on simulate */
   useEffect(() => {
     const key = reverse ? Key.value1 : Key.value2
     const symbol = reverse ? symbol1 : symbol2
-    const next = simulatedAmount ? lookup(simulatedAmount, symbol) : error && ""
+    const next = simulated ? lookup(simulated.amount, symbol) : error && ""
     // Safe to use as deps
     !isNil(next) && setValues((values) => ({ ...values, [key]: next }))
-  }, [simulatedAmount, reverse, setValues, symbol1, symbol2, error])
+  }, [simulated, reverse, setValues, symbol1, symbol2, error])
+
+  const simulatedContents = simulated && [
+    {
+      title: "Price",
+      content: `1 ${symbol} ≈ ${format(simulated.price)} ${UST}`,
+    },
+    {
+      title: "Spread",
+      content: formatAsset(simulated.spread, symbol2),
+    },
+    {
+      title: "Commission",
+      content: formatAsset(simulated.commission, symbol2),
+    },
+  ]
 
   /* render:form */
   const config = {
@@ -157,7 +120,6 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     onSelect,
     priceKey,
     balanceKey,
-    omitUnheld: type === Type.SELL,
   }
 
   const select = useSelectAsset(config)
@@ -202,6 +164,11 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   })
 
   /* confirm */
+  const price = {
+    [Type.BUY]: `1 ${symbol} ≈ ${format(div(amount1, amount2))} ${UST}`,
+    [Type.SELL]: `1 ${symbol} ≈ ${format(div(amount2, amount1))} ${UST}`,
+  }[type]
+
   const { tax } = useTax(amount1)
   const confirm = {
     contents: [
@@ -228,40 +195,32 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   /* submit */
   const newContractMsg = useNewContractMsg()
   const asset = toToken({ symbol: symbol1, amount: amount1 })
+  const swap = {
+    belief_price: decimal(find(priceKey, symbol), 18),
+    max_spread: String(MAX_SPREAD),
+  }
+
   const data = {
     [Type.BUY]: [
       newContractMsg(
         pair,
-        { swap: { offer_asset: asset } },
+        { swap: { ...swap, offer_asset: asset } },
         { amount: amount1, denom: UUSD }
       ),
     ],
     [Type.SELL]: [
       newContractMsg(token, {
-        send: {
-          amount: amount1,
-          contract: pair,
-          msg: toBase64({ swap: { max_spread: String(MAX_SPREAD) } }),
-        },
+        send: { amount: amount1, contract: pair, msg: toBase64({ swap }) },
       }),
     ],
   }[type]
 
   const disabled = invalid
   const messages = !simulating && error ? ["Simulation failed"] : undefined
-
-  const container = {
-    confirm,
-    data,
-    disabled,
-    messages,
-    tab,
-    attrs,
-    parserKey: "trade",
-  }
+  const container = { confirm, data, disabled, messages, tab, attrs }
 
   return (
-    <FormContainer {...container}>
+    <FormContainer {...container} parserKey="trade">
       <FormGroup {...fields[Key.value1]} />
       <FormIcon name="arrow_downward" />
       <FormGroup {...fields[Key.value2]} />
@@ -271,5 +230,3 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 }
 
 export default TradeForm
-
-// const { stringify: generateKey } = JSON

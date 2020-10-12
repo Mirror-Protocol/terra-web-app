@@ -12,7 +12,7 @@ const MIRSupplyCard = () => {
   return (
     <Card>
       <Summary title={`${MIR} Supply`}>
-        <CountWithResult result={supply.result} symbol={MIR} integer>
+        <CountWithResult results={[supply.result]} symbol={MIR} integer>
           {supply.value}
         </CountWithResult>
       </Summary>

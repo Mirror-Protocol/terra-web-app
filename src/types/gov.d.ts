@@ -88,4 +88,5 @@ interface GovConfig {
 /* state */
 interface GovState {
   total_share: string
+  total_deposit: string
 }

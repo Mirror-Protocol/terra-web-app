@@ -24,13 +24,13 @@ const DashboardCharts = (props: Partial<Dashboard>) => {
               </Count>
             }
             change={
-              !liquidityHistory
-                ? undefined
-                : calcChange({
+              liquidityHistory && liquidityHistory.length >= 2
+                ? calcChange({
                     yesterday:
-                      liquidityHistory[liquidityHistory.length - 2].value,
-                    today: liquidityHistory[liquidityHistory.length - 1].value,
+                      liquidityHistory[liquidityHistory.length - 2]?.value,
+                    today: liquidityHistory[liquidityHistory.length - 1]?.value,
                   })
+                : undefined
             }
             datasets={
               liquidityHistory ? toDatasets(liquidityHistory, UUSD) : []

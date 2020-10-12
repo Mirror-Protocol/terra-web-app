@@ -3,7 +3,7 @@ import classNames from "classnames/bind"
 import { UST, UUSD } from "../constants"
 import { gt } from "../libs/math"
 import { insertIf } from "../libs/utils"
-import { useContractsAddress, useContract, useCombineResult } from "../hooks"
+import { useContractsAddress, useContract, useCombineKeys } from "../hooks"
 import Icon from "../components/Icon"
 import { Config } from "./useSelectAsset"
 import Asset from "./Asset"
@@ -22,7 +22,7 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
 
   const { listed } = useContractsAddress()
   const { uusd, find } = useContract()
-  const { loading } = useCombineResult([priceKey, balanceKey])
+  const { loading } = useCombineKeys([priceKey, balanceKey])
 
   /* search */
   const [value, setValue] = useState("")

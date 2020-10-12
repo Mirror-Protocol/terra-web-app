@@ -170,7 +170,6 @@ const MintForm = ({ idx, type, tab }: Props) => {
     onSelect: onSelect(Key.symbol1),
     useUST: true,
     skip: [MIR],
-    omitUnheld: true,
   }
 
   const config2: Config = {

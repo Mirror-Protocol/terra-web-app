@@ -2,7 +2,7 @@
 $bg: #121a2f;
 $darkblue: #172240;
 
-$text: #cccccc;
+$gray: #cccccc;
 $brown: #a0a0a0;
 $light: #f0f0f0;
 $battleship: #6d738c;
@@ -12,6 +12,8 @@ $blue: #1eb2ff;
 $aqua: #47d7e2;
 $red: #e64c57;
 $orange: #dd794a;
+
+$text: $gray;
 
 $colors: (
   bg: $bg,

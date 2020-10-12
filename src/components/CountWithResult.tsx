@@ -5,11 +5,11 @@ import Count from "./Count"
 
 interface Props extends CountOptions {
   keys?: DataKey[]
-  result?: Result
+  results?: Result[]
 }
 
-const CountWithResult = ({ keys, result, ...options }: Props) => (
-  <WithResult keys={keys} result={result} dataOnly>
+const CountWithResult = ({ keys, results, ...options }: Props) => (
+  <WithResult keys={keys} results={results} dataOnly>
     <Count {...options} />
   </WithResult>
 )

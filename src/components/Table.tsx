@@ -25,6 +25,7 @@ interface Column<T> {
   colSpan?: number
   className?: string
   align?: "left" | "right" | "center"
+  fixed?: "left" | "right"
   narrow?: string[]
   border?: BorderPosition[]
   bold?: boolean
@@ -64,10 +65,19 @@ function Table<T extends DefaultRecordType>(props: Table<T>) {
     []
   )
 
-  const getClassName = ({ align, narrow, border }: Column<T>) => {
+  const getClassName = ({ align, fixed, narrow, border }: Column<T>) => {
+    const alignClassName = `text-${align}`
+    const fixedClassName = `fixed-${fixed}`
     const borderClassName = cx(border?.map((position) => `border-${position}`))
     const narrowClassName = cx(narrow?.map((position) => `narrow-${position}`))
-    return cx(styles.cell, `text-${align}`, borderClassName, narrowClassName)
+
+    return cx(
+      styles.cell,
+      alignClassName,
+      fixedClassName,
+      borderClassName,
+      narrowClassName
+    )
   }
 
   const renderColSpan = (column: Column<T>) => {

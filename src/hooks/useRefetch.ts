@@ -7,13 +7,13 @@ export default (keys: DataKey[]) => {
   const result = useResult()
 
   useEffect(() => {
-    keys.filter(Boolean).forEach((key) => {
+    keys.forEach((key) => {
       const { called, load, refetch } = result[key]
       !called ? load() : refetch && refetch()
     })
     // eslint-disable-next-line
   }, [JSON.stringify(keys)])
 
-  const results = useCombineResult(keys)
+  const results = useCombineResult(keys.map((key) => result[key]))
   return results
 }

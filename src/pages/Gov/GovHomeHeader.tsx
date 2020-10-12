@@ -1,6 +1,7 @@
 import React from "react"
 import { MIR } from "../../constants"
-import { useGov } from "../../graphql/useGov"
+import { minus } from "../../libs/math"
+import { GovKey, useGov, useRefetchGov } from "../../graphql/useGov"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
 import Summary from "../../components/Summary"
@@ -10,7 +11,8 @@ import GovMIR from "./GovMIR"
 import styles from "./GovHomeHeader.module.scss"
 
 const GovHomeHeader = () => {
-  const { result, state } = useGov()
+  const { result, balance, state } = useGov()
+  useRefetchGov([GovKey.BALANCE, GovKey.STATE])
 
   return (
     <Grid>
@@ -22,8 +24,8 @@ const GovHomeHeader = () => {
         <Grid>
           <Card>
             <Summary title={`Total Staked ${MIR}`}>
-              <CountWithResult result={result.state} symbol={MIR} integer>
-                {state?.total_share}
+              <CountWithResult results={[result.state]} symbol={MIR} integer>
+                {minus(balance, state?.total_deposit)}
               </CountWithResult>
             </Summary>
           </Card>

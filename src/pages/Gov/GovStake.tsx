@@ -16,7 +16,7 @@ const GovStake = () => {
   return (
     <Page title={MenuKey.STAKE}>
       {address && <StakeDetailsContents symbol={MIR} gov />}
-      <StakeForm type={type} symbol={MIR} tab={tab} key={type} gov />
+      {type && <StakeForm type={type} symbol={MIR} tab={tab} key={type} gov />}
     </Page>
   )
 }

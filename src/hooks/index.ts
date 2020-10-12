@@ -5,4 +5,4 @@ export { useWallet } from "./useWallet"
 export { useContract, useResult } from "./useContract"
 
 export { default as useRefetch } from "./useRefetch"
-export { default as useCombineResult } from "./useCombineResult"
+export { default as useCombineResult, useCombineKeys } from "./useCombineResult"

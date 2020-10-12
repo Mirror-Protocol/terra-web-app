@@ -1,7 +1,7 @@
 import { useResult } from "./useContract"
 import { DataKey } from "./useContract"
 
-export default (keys: (DataKey | undefined)[]): Result => {
+export const useCombineKeys = (keys: (DataKey | undefined)[]): Result => {
   const result = useResult()
   const errorKey = keys.find((key) => key && result[key].error)
 
@@ -9,5 +9,18 @@ export default (keys: (DataKey | undefined)[]): Result => {
     data: keys.every((key) => key && result[key].data),
     loading: keys.some((key) => key && result[key].loading),
     error: errorKey && result[errorKey].error,
+  }
+}
+
+export default (results: Result[]): Result => {
+  const findError = (results: Result[]) => {
+    const errorResult = Object.values(results).find(({ error }) => error)
+    return errorResult && errorResult.error
+  }
+
+  return {
+    data: results.every(({ data }) => data),
+    loading: results.some(({ loading }) => loading),
+    error: findError(results),
   }
 }

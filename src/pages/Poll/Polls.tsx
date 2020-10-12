@@ -1,6 +1,6 @@
 import React from "react"
 import { useRouteMatch } from "react-router-dom"
-import { GovKey, useGov, useRefetchPolls } from "../../graphql/useGov"
+import { GovKey, useGov, useRefetchGov } from "../../graphql/useGov"
 import Card from "../../components/Card"
 import Grid from "../../components/Grid"
 import LoadingTitle from "../../components/LoadingTitle"
@@ -12,7 +12,7 @@ const Polls = ({ title }: { title: string }) => {
   const { polls, result } = useGov()
   const { list } = polls
   const { loading } = result[GovKey.POLLS]
-  useRefetchPolls()
+  useRefetchGov([GovKey.POLLS])
 
   return (
     <article className={styles.component}>

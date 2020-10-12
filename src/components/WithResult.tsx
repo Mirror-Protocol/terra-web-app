@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react"
 import classNames from "classnames"
-import { useCombineResult, useRefetch } from "../hooks"
+import { useCombineKeys, useCombineResult, useRefetch } from "../hooks"
 import { DataKey } from "../hooks/useContract"
 import ErrorComponent from "./ErrorComponent"
 import Loading from "./Loading"
@@ -9,7 +9,7 @@ interface Props {
   /** ref:useContract.ts */
   keys?: DataKey[]
   /** Replace keys */
-  result?: Result
+  results?: Result[]
   /** Force to render data only */
   dataOnly?: boolean
   /** Show indicator during loading even if data exists */
@@ -25,27 +25,31 @@ interface Props {
   children: ReactNode | ((result: Result) => ReactNode)
 }
 
-const WithResult = ({ keys = [], size, children, ...props }: Props) => {
-  const { noBlink, loadingFirst, dataOnly } = props
+const WithResult = ({ keys = [], results = [], children, ...props }: Props) => {
+  const { size, noBlink, loadingFirst, dataOnly } = props
 
   useRefetch(keys)
-  const result = useCombineResult(keys)
-  const { data, loading, error } = props.result ?? result
+  const combinedKey = useCombineKeys(keys)
+  const combinedResult = useCombineResult(results)
+  const { data, loading, error } = keys.length ? combinedKey : combinedResult
 
   const renderLoading = () =>
-    props.renderLoading ? props.renderLoading() : <Loading size={size} />
+    props.renderLoading ? <>{props.renderLoading()}</> : <Loading size={size} />
 
   const renderError = (error: Error) =>
     props.renderError ? (
-      props.renderError()
+      <>{props.renderError()}</>
     ) : (
       <ErrorComponent>{error}</ErrorComponent>
     )
 
   const render = () => {
     const className = classNames({ loading })
-    const content = typeof children === "function" ? children(result) : children
-    return noBlink ? content : <div className={className}>{content}</div>
+    return noBlink ? (
+      <>{children}</>
+    ) : (
+      <div className={className}>{children}</div>
+    )
   }
 
   return dataOnly || (data && !(loading && loadingFirst))

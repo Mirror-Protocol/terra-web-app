@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useMemo, useState } from "react"
 import { ApolloClient, InMemoryCache } from "@apollo/client"
 import { useNetwork } from "../hooks"
 import createContext from "../hooks/createContext"
+import { DefaultApolloClientOptions } from "../layouts/Network"
 
 interface Stats {
   dashboard?: Dashboard
@@ -37,7 +38,13 @@ export const useStatsState = (): Stats => {
 export const useStatsClient = () => {
   const { stats: uri } = useNetwork()
   const client = useMemo(
-    () => new ApolloClient({ uri, cache: new InMemoryCache() }),
+    () =>
+      new ApolloClient({
+        uri,
+        cache: new InMemoryCache(),
+        connectToDevTools: true,
+        defaultOptions: DefaultApolloClientOptions,
+      }),
     [uri]
   )
   return client

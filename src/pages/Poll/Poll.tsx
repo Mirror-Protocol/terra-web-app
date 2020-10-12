@@ -1,5 +1,5 @@
 import React from "react"
-import { useRefetchPolls } from "../../graphql/useGov"
+import { GovKey, useRefetchGov } from "../../graphql/useGov"
 import Page from "../../components/Page"
 import PollForm from "../../forms/PollForm"
 import useHash from "../useHash"
@@ -19,7 +19,7 @@ export enum PollStatus {
 }
 
 const Poll = () => {
-  useRefetchPolls()
+  useRefetchGov([GovKey.POLLS])
   const { hash: type } = useHash<Type>()
   const tab = { tabs: [Type.END, Type.EXECUTE], current: type }
 

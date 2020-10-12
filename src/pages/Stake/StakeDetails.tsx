@@ -17,7 +17,7 @@ const StakeDetails = () => {
   return (
     <Page title={<StakeFormHeader>{symbol}</StakeFormHeader>}>
       {address && <StakeDetailsContents symbol={symbol} />}
-      <StakeForm type={type} symbol={symbol} tab={tab} key={type} />
+      {type && <StakeForm type={type} symbol={symbol} tab={tab} key={type} />}
     </Page>
   )
 }

@@ -273,6 +273,7 @@ const Minted = () => {
                 return <DashboardActions list={list} />
               },
               align: "right",
+              fixed: "right",
             },
           ]}
           dataSource={dataSource}

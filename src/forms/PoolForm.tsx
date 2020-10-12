@@ -120,7 +120,6 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     priceKey,
     balanceKey,
     formatTokenName: type === Type.WITHDRAW ? getLpName : undefined,
-    omitUnheld: true,
   }
 
   const select = useSelectAsset(config)

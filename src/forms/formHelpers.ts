@@ -41,9 +41,9 @@ export const validate = {
 
   length: (value: string, { min, max }: NumberRange, label: string) =>
     min && getLength(value) < min
-      ? `${label} must be longer than ${min} characters.`
+      ? `${label} must be longer than ${min} bytes.`
       : max && getLength(value) > max
-      ? `${label} must be shorter than ${max} characters.`
+      ? `${label} must be shorter than ${max} bytes.`
       : "",
 
   address: (value: string) =>

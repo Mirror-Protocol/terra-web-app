@@ -26,7 +26,7 @@ const StakeHomeHeader = () => {
 
       <Card>
         <Summary title={`${MIR} Volume(24hrs)`}>
-          <CountWithResult result={result} symbol={UUSD} integer>
+          <CountWithResult results={[result]} symbol={UUSD} integer>
             {dashboard?.latest24h?.mirVolume}
           </CountWithResult>
         </Summary>

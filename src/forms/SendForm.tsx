@@ -72,7 +72,6 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     value: symbol,
     onSelect,
     useUST: true,
-    omitUnheld: true,
   }
 
   const select = useSelectAsset(config)

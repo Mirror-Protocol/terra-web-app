@@ -8,29 +8,89 @@ import { fromBase64 } from "../forms/formHelpers"
 import { WASMQUERY } from "./gqldocs"
 import useContractQuery from "./useContractQuery"
 
-/**
- * Config: Call it once for the first time.
- * Polls: List and Details, recommended to refetch.
- * Voter: Load the id of each Details once each.
- */
-
 export enum GovKey {
-  POLLS = "polls",
+  /** Config: Call it once for the first time */
   CONFIG = "config",
   STATE = "state",
+  BALANCE = "balance",
+  POLLS = "polls",
 }
 
 interface Gov {
   result: Record<GovKey, QueryResult>
-  [GovKey.POLLS]: { data: Dictionary<Poll>; list: number[]; height?: number }
   [GovKey.CONFIG]: GovConfig | undefined
   [GovKey.STATE]: GovState | undefined
+  [GovKey.BALANCE]: string | undefined
+  [GovKey.POLLS]: { data: Dictionary<Poll>; list: number[]; height?: number }
 }
 
 export const [useGov, GovProvider] = createContext<Gov>("useGov")
 
 /* state */
 export const useGovContext = (): Gov => {
+  const config = useGovConfig()
+  const state = useGovState()
+  const balance = useMirrorBalance()
+  const { result, polls } = usePolls()
+  const { height } = polls
+
+  return {
+    result: {
+      [GovKey.CONFIG]: config.result,
+      [GovKey.STATE]: state.result,
+      [GovKey.BALANCE]: balance.result,
+      [GovKey.POLLS]: result,
+    },
+
+    [GovKey.CONFIG]: config.parsed,
+    [GovKey.STATE]: state.parsed,
+    [GovKey.BALANCE]: balance.parsed?.balance,
+    [GovKey.POLLS]: { ...polls, height: height ? number(height) : undefined },
+  }
+}
+
+/* refetch gov */
+export const useRefetchGov = (keys: GovKey[]) => {
+  const { result } = useGov()
+  useEffect(() => {
+    keys.forEach((key) => {
+      const { refetch } = result[key]
+      refetch()
+    })
+    // eslint-disable-next-line
+  }, [JSON.stringify(keys)])
+}
+
+/* config */
+const useGovConfig = () => {
+  const { contracts } = useContractsAddress()
+  const variables = { contract: contracts["gov"], msg: { config: {} } }
+  const query = useContractQuery<GovConfig>(variables)
+  return query
+}
+
+/* state */
+const useGovState = () => {
+  const { contracts } = useContractsAddress()
+  const variables = { contract: contracts["gov"], msg: { state: {} } }
+  const query = useContractQuery<GovState>(variables)
+  return query
+}
+
+/* mirror balance */
+const useMirrorBalance = () => {
+  const { contracts } = useContractsAddress()
+  const variables = {
+    contract: contracts["mirrorToken"],
+    msg: { balance: { address: contracts["gov"] } },
+  }
+
+  const query = useContractQuery<{ balance: string }>(variables)
+  return query
+}
+
+/* polls */
+const usePolls = () => {
   const { contracts } = useContractsAddress()
 
   /* contract query */
@@ -39,7 +99,8 @@ export const useGovContext = (): Gov => {
     msg: { polls: { limit: Math.pow(2, 32) - 1 } },
   }
 
-  const { result, parsed } = useContractQuery<PollsData>(variables)
+  const query = useContractQuery<PollsData>(variables)
+  const { result, parsed } = query
   const data = useSelect(parsed) ?? {}
   const height = result.data?.[WASMQUERY]?.Height
 
@@ -48,33 +109,7 @@ export const useGovContext = (): Gov => {
     .map(Number)
     .sort((a, b) => b - a)
 
-  /* config */
-  const config = useGovConfig()
-
-  /* state */
-  const state = useGovState()
-
-  return {
-    result: {
-      [GovKey.POLLS]: result,
-      [GovKey.CONFIG]: config.result,
-      [GovKey.STATE]: state.result,
-    },
-
-    [GovKey.POLLS]: { data, list, height: height ? number(height) : undefined },
-    [GovKey.CONFIG]: config.parsed,
-    [GovKey.STATE]: state.parsed,
-  }
-}
-
-/* refetch gov */
-export const useRefetchPolls = () => {
-  const { result } = useGov()
-  const { refetch } = result[GovKey.POLLS]
-
-  useEffect(() => {
-    refetch?.()
-  }, [refetch])
+  return { ...query, polls: { data, list, height } }
 }
 
 /* voters */
@@ -87,22 +122,6 @@ export const useVoters = (id: number) => {
 
   const { parsed } = useContractQuery<{ voters: Voter[] }>(variables)
   return { voters: parsed?.voters }
-}
-
-/* config */
-export const useGovConfig = () => {
-  const { contracts } = useContractsAddress()
-  const variables = { contract: contracts["gov"], msg: { config: {} } }
-  const query = useContractQuery<GovConfig>(variables)
-  return query
-}
-
-/* state */
-export const useGovState = () => {
-  const { contracts } = useContractsAddress()
-  const variables = { contract: contracts["gov"], msg: { state: {} } }
-  const query = useContractQuery<GovState>(variables)
-  return query
 }
 
 /* select */

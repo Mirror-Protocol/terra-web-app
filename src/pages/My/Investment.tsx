@@ -124,6 +124,7 @@ const Investment = () => {
                 return <DashboardActions list={list} />
               },
               align: "right",
+              fixed: "right",
             },
           ]}
           dataSource={dataSource}

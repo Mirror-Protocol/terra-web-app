@@ -175,6 +175,7 @@ const Staked = () => {
                 return <DashboardActions list={list} />
               },
               align: "right",
+              fixed: "right",
             },
           ]}
           dataSource={dataSource}
