@@ -18,7 +18,7 @@ const StakeImage = ({ symbol, bg = "bg" }: Props) => {
     <section className={styles.images}>
       <div className={classNames(styles.fill, "bg-" + bg)}>
         {notFound ? (
-          <strong className={styles.text}>{symbol}</strong>
+          <strong className={styles.text}>{getName(symbol)}</strong>
         ) : symbol === MIR ? (
           <MirrorSymbol {...size} />
         ) : (
@@ -39,3 +39,7 @@ const StakeImage = ({ symbol, bg = "bg" }: Props) => {
 }
 
 export default StakeImage
+
+/* helpers */
+const getName = (symbol: string) =>
+  symbol.startsWith("m") ? symbol.slice(1) : symbol

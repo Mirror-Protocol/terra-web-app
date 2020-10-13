@@ -1,5 +1,5 @@
 import React from "react"
-import { Switch, Route, RouteProps } from "react-router-dom"
+import { Switch, Route, RouteProps, Redirect } from "react-router-dom"
 import { Dictionary } from "ramda"
 
 import My from "./pages/My"
@@ -56,5 +56,7 @@ export default (routes: Dictionary<RouteProps> = menu, path: string = "") => (
     {Object.entries(routes).map(([key, route]) => (
       <Route {...route} path={path + route.path} key={key} />
     ))}
+
+    <Redirect to="/" />
   </Switch>
 )

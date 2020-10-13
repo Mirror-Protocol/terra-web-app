@@ -23,7 +23,7 @@ const MIRSupplyCard = () => {
 export default MIRSupplyCard
 
 /* hooks */
-const useMirrorTokenInfo = () => {
+export const useMirrorTokenInfo = () => {
   const { contracts } = useContractsAddress()
   const { result, parsed } = useContractQuery<{ total_supply: string }>({
     contract: contracts["mirrorToken"],

@@ -80,14 +80,10 @@ const Staked = () => {
           columns={[
             {
               key: "symbol",
-              title: "Ticker",
-              render: (symbol, { gov }) => (!gov ? getLpName(symbol) : symbol),
+              title: "Pool Name",
+              render: (symbol, { gov }) =>
+                !gov ? getLpName(symbol) : `${symbol} (${MenuKey.GOV})`,
               bold: true,
-            },
-            {
-              key: "name",
-              render: (name, { gov }) =>
-                !gov ? name : `${name} (${MenuKey.GOV})`,
             },
             {
               key: "APR",

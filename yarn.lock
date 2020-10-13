@@ -1511,10 +1511,10 @@
     "@svgr/plugin-svgo" "^4.3.1"
     loader-utils "^1.2.3"
 
-"@terra-money/terra.js@^0.5.7":
-  version "0.5.7"
-  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-0.5.7.tgz#467f0d67fcbce743808af43a08c07b19f4ecdbfa"
-  integrity sha512-mejlRcTNefO0REEx2P/WWPf8JOlxOSHHgU58kAoEhFyFEsSIuw+dzwnCNaLECGFqgkheGh1OvZSaXcGb+zIyUQ==
+"@terra-money/terra.js@^0.5.8":
+  version "0.5.8"
+  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-0.5.8.tgz#effd51631c596e67b782819dca924241d1903597"
+  integrity sha512-a+WqEgnxCIz0hCW/EhqF47TublEqPX/NdL5xNwve3sNFTjK7AqHcpVUS79hubimPy9HlDDZCSCF8YAXXJ7xfCQ==
   dependencies:
     axios "^0.20.0"
     bech32 "^1.1.4"
@@ -1751,10 +1751,10 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
   integrity sha512-ce5d3q03Ex0sy4R14722Rmt6MT07Ua+k4FwDfdcToYJcMKNtRVQvJ6JCAPdAmAnbRb6CsX6aYb9m96NGod9uTw==
 
-"@types/ramda@^0.27.23":
-  version "0.27.23"
-  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.27.23.tgz#30f00331944fe6e24d2c2aa0f896d20a45650a27"
-  integrity sha512-gcg91dmYVCt1c7tPr76iON1HF3YA09D77A7T5z/KgVY4SSlM7o2bnek1HQZ/JhLlbeUSmRcKMJ2f2D8d97qQMw==
+"@types/ramda@^0.27.25":
+  version "0.27.25"
+  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.27.25.tgz#8b9b1910f93d3c3344ccfad1641f9332904f9eb5"
+  integrity sha512-D6gYQumFrGwDa0K2XqUIbktTAnQ/KBnbtL+IpXbpaiJJ1qnmfDZXe0diJC7LRQf7NvjjgxceQmv7YnL/1xjw6A==
   dependencies:
     ts-toolbelt "^6.3.3"
 
@@ -1804,10 +1804,10 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
-"@types/react@^16.9.51":
-  version "16.9.51"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.51.tgz#f8aa51ffa9996f1387f63686696d9b59713d2b60"
-  integrity sha512-lQa12IyO+DMlnSZ3+AGHRUiUcpK47aakMMoBG8f7HGxJT8Yfe+WE128HIXaHOHVPReAW0oDS3KAI0JI2DDe1PQ==
+"@types/react@^16.9.52":
+  version "16.9.52"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.52.tgz#c46c72d1a1d8d9d666f4dd2066c0e22600ccfde1"
+  integrity sha512-EHRjmnxiNivwhGdMh9sz1Yw9AUxTSZFxKqdBWAAzyZx3sufWwx6ogqHYh/WB1m/I4ZpjkoZLExF5QTy2ekVi/Q==
   dependencies:
     "@types/prop-types" "*"
     csstype "^3.0.2"

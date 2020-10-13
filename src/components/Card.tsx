@@ -22,6 +22,8 @@ export interface Props {
   /** Badges */
   badges?: Badge[]
 
+  /** Card class */
+  className?: string
   /** More padding and more rounded corners */
   lg?: boolean
   /** No padding */
@@ -38,10 +40,10 @@ interface Badge {
 }
 
 const Card: FC<Props> = (props) => {
-  const { children, to, badges, lg, full, shadow } = props
+  const { children, to, badges, className, lg, full, shadow } = props
 
   const attrs = {
-    className: cx(styles.card, { lg, full, link: to, shadow }),
+    className: cx(styles.card, { lg, full, link: to, shadow }, className),
     children: (
       <>
         <CardHeader {...props} />

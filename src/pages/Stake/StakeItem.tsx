@@ -1,5 +1,6 @@
 import React from "react"
 import { useRouteMatch } from "react-router-dom"
+import classNames from "classnames/bind"
 import { LP } from "../../constants"
 import { gt } from "../../libs/math"
 import { insertIf } from "../../libs/utils"
@@ -15,7 +16,15 @@ import getLpName from "./getLpName"
 import StakeImage from "./StakeImage"
 import styles from "./StakeItem.module.scss"
 
-const StakeItem = ({ symbol, apr }: { symbol: string; apr: string }) => {
+const cx = classNames.bind(styles)
+
+interface Props {
+  symbol: string
+  apr: string
+  emphasize?: boolean
+}
+
+const StakeItem = ({ symbol, apr, emphasize }: Props) => {
   const { url } = useRouteMatch()
   const { find } = useContract()
 
@@ -30,11 +39,7 @@ const StakeItem = ({ symbol, apr }: { symbol: string; apr: string }) => {
   const stats = [
     {
       title: "APR",
-      content: (
-        <Count format={percent} plus>
-          {apr}
-        </Count>
-      ),
+      content: <Count format={percent}>{apr}</Count>,
     },
     {
       title: "Total Staked",
@@ -51,7 +56,7 @@ const StakeItem = ({ symbol, apr }: { symbol: string; apr: string }) => {
   ]
 
   return (
-    <Card to={`${url}/${symbol}`} badges={badges}>
+    <Card to={`${url}/${symbol}`} badges={badges} className={cx({ emphasize })}>
       <article className={styles.component}>
         <div className={styles.main}>
           <StakeImage symbol={symbol} />

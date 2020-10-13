@@ -1,4 +1,6 @@
 import React from "react"
+import { without } from "ramda"
+import { MIR } from "../../constants"
 import { minus, number } from "../../libs/math"
 import { useCombineKeys, useContractsAddress, useRefetch } from "../../hooks"
 import { BalanceKey } from "../../hooks/contractKeys"
@@ -10,10 +12,21 @@ import styles from "./StakeList.module.scss"
 
 const StakeList = () => {
   const keys = [BalanceKey.LPSTAKED, BalanceKey.LPSTAKABLE]
-  const { listed } = useContractsAddress()
+
+  useRefetch(keys)
+  const { listed, getListedItem } = useContractsAddress()
   const { loading } = useCombineKeys(keys)
   const { apr } = useAssetStats()
-  useRefetch(keys)
+  const mirror = getListedItem(MIR)
+
+  const renderItem = ({ symbol, token }: ListedItem): JSX.Element => (
+    <StakeItem
+      symbol={symbol}
+      apr={apr[token] ?? "0"}
+      emphasize={symbol === MIR}
+      key={symbol}
+    />
+  )
 
   return (
     <article>
@@ -22,18 +35,10 @@ const StakeList = () => {
       </LoadingTitle>
 
       <Grid wrap={3}>
-        {Array.from(listed)
+        {renderItem(mirror)}
+        {Array.from(without([mirror], listed))
           .sort(({ token: a }, { token: b }) => number(minus(apr[b], apr[a])))
-          // .sort(({ symbol: a }, { symbol: b }) => {
-          //   const stakedA = gt(find(BalanceKey.LPSTAKED, a), 0) ? 1 : 0
-          //   const stakedB = gt(find(BalanceKey.LPSTAKED, b), 0) ? 1 : 0
-          //   const stakableA = gt(find(BalanceKey.LPSTAKABLE, a), 0) ? 1 : 0
-          //   const stakableB = gt(find(BalanceKey.LPSTAKABLE, b), 0) ? 1 : 0
-          //   return stakedB - stakedA || stakableB - stakableA
-          // })
-          .map(({ symbol, token }) => (
-            <StakeItem symbol={symbol} apr={apr[token] ?? "0"} key={symbol} />
-          ))}
+          .map(renderItem)}
       </Grid>
     </article>
   )

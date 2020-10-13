@@ -49,3 +49,9 @@
   font-size: 16px;
   font-weight: normal;
 }
+
+/* emphasize */
+.emphasize {
+  border-color: fade-out($blue, 0.75);
+  box-shadow: 0 0 15px 0 fade-out($blue, 0.5);
+}
