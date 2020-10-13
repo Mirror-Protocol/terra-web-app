@@ -78,7 +78,7 @@ const RewardForm = ({ balances, type, tab }: Props) => {
   })
 
   return (
-    <FormContainer {...container} skipConfirm>
+    <FormContainer {...container}>
       <FormCheck list={list} />
     </FormContainer>
   )

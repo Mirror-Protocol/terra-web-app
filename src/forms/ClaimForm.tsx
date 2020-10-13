@@ -44,7 +44,7 @@ const ClaimForm = ({ symbol }: Props) => {
 
   const container = { confirm, data, parserKey: "claim" }
 
-  return <FormContainer {...container} skipForm />
+  return <FormContainer {...container} />
 }
 
 export default ClaimForm

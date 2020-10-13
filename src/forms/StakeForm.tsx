@@ -112,7 +112,7 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
   const container = { data, disabled, tab, attrs, messages, parserKey: "stake" }
 
   return (
-    <FormContainer {...container} skipConfirm>
+    <FormContainer {...container}>
       <FormGroup {...fields[Key.value]} />
     </FormContainer>
   )

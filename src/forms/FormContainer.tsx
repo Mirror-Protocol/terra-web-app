@@ -1,6 +1,5 @@
 import React, { useState } from "react"
 import { ReactNode, HTMLAttributes, FormEvent, KeyboardEvent } from "react"
-import { useHistory } from "react-router-dom"
 import { Msg } from "@terra-money/terra.js"
 import MESSAGE from "../lang/MESSAGE.json"
 import extension, { PostResponse } from "../terra/extension"
@@ -10,19 +9,12 @@ import Tab from "../components/Tab"
 import Button from "../components/Button"
 import useHash from "../pages/useHash"
 import Caution from "./Caution"
-import Confirm from "./Confirm"
 import Result from "./Result"
 import FormFeedback from "./FormFeedback"
 
 interface Props {
-  /** Confirm contents */
-  confirm?: Confirm
-  /** Skip form */
-  skipForm?: boolean
-  /** Skip confirm */
-  skipConfirm?: boolean
-  /** Post data */
   data: Msg[]
+
   memo?: string
   /** Form validation */
   messages?: string[]
@@ -41,11 +33,10 @@ interface Props {
 }
 
 export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
-  const { confirm, messages, label, tab, children } = props
-  const { attrs, disabled, parserKey, skipForm, skipConfirm } = props
+  const { messages, label, tab, children } = props
+  const { attrs, disabled, parserKey } = props
 
   const { hash } = useHash()
-  const { goBack } = useHistory()
 
   /* context */
   const { lcd } = useNetwork()
@@ -54,6 +45,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
 
   /* confirm */
   const [confirming, setConfirming] = useState(false)
+  const confirm = () => (hasAgreed ? submit() : setConfirming(true))
   const cancel = () => setConfirming(false)
 
   /* submit */
@@ -75,14 +67,10 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   }
 
   /* event */
-  const handleConfirm = () => {
-    skipConfirm ? submit() : setConfirming(true)
-  }
-
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault()
-      !disabled && handleConfirm()
+      !disabled && confirm()
     }
   }
 
@@ -95,7 +83,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   const render = (children: ReactNode | ((button: ReactNode) => ReactNode)) => {
     const next = address
       ? {
-          onClick: () => (skipConfirm ? submit() : handleConfirm()),
+          onClick: confirm,
           children: hash ?? label ?? "Submit",
           loading: submitted,
           disabled: disabled || !msgs?.length || submitted,
@@ -118,12 +106,6 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
     return tab ? <Tab {...tab}>{form}</Tab> : form
   }
 
-  const confirmProps = {
-    ...confirm,
-    button: { loading: submitted, disabled: submitted },
-    goBack: skipForm ? goBack : cancel,
-  }
-
   return (
     <Container sm>
       {response ? (
@@ -134,12 +116,10 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
         />
       ) : (
         <form {...attrs} onKeyDown={handleKeyDown} onSubmit={handleSubmit}>
-          {!confirming && !skipForm ? (
+          {!confirming ? (
             render(children)
-          ) : hasAgreed ? (
-            <Confirm {...confirmProps} />
           ) : (
-            <Caution goBack={confirmProps.goBack} />
+            <Caution goBack={cancel} onAgree={submit} />
           )}
         </form>
       )}

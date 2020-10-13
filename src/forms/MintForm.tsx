@@ -406,7 +406,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
   }
 
   return (
-    <FormContainer {...container} skipForm={close}>
+    <FormContainer {...container}>
       {position && (
         <Dl list={positionInfo} className={styles.dl} align="center" />
       )}

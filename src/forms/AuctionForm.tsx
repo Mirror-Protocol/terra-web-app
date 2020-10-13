@@ -34,7 +34,7 @@ const AuctionForm = ({ idx }: { idx: string }) => {
   ]
 
   const container = { data, confirm }
-  return <FormContainer {...container} skipForm />
+  return <FormContainer {...container} />
 }
 
 export default AuctionForm

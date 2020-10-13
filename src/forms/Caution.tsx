@@ -11,12 +11,17 @@ const { introduction, body, conclusion } = content
 
 interface Props extends Button {
   goBack?: () => void
+  onAgree?: () => void
 }
 
-const Caution = ({ goBack = () => {} }: Props) => {
+const Caution = ({ goBack = () => {}, onAgree = () => {} }: Props) => {
   const [checked, setChecked] = useState(false)
   const { agree } = useSettings()
-  const button = { onClick: agree, disabled: !checked }
+
+  const handleClick = () => {
+    agree()
+    onAgree()
+  }
 
   return (
     <Card title={title} goBack={goBack}>
@@ -50,7 +55,13 @@ const Caution = ({ goBack = () => {} }: Props) => {
           </button>
         </footer>
 
-        <Button {...button} type="button" size="lg" submit>
+        <Button
+          onClick={handleClick}
+          disabled={!checked}
+          type="button"
+          size="lg"
+          submit
+        >
           Agree
         </Button>
       </article>
