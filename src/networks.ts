@@ -15,6 +15,8 @@ export interface NetworkConfig {
   stats: string
   /** LCDClientConfig */
   lcd: LCDClientConfig
+  /** Fixed fee */
+  fee: { gasPrice: number; amount: number }
 }
 
 const networks: Record<NetworkKey, NetworkConfig> = {
@@ -24,6 +26,7 @@ const networks: Record<NetworkKey, NetworkConfig> = {
     mantle: "https://tequila-api.mirrorprotocol.com/graphql",
     stats: "https://tequila-graph.mirrorprotocol.com/graphql",
     lcd: { chainID: "tequila-0004", URL: "https://tequila-lcd.terra.dev" },
+    fee: { gasPrice: 0.0015, amount: 500 }, // 0.000500 UST
   },
   [NetworkKey.TESTNET]: {
     id: "moonshine",
@@ -31,6 +34,7 @@ const networks: Record<NetworkKey, NetworkConfig> = {
     mantle: "https://moonshine-mantle.terra.dev/",
     stats: "https://moonshine-graph.mirrorprotocol.com/graphql",
     lcd: { chainID: "localterra", URL: "https://moonshine-lcd.terra.dev/" },
+    fee: { gasPrice: 0.15, amount: 50000 }, // 0.050000 UST
   },
 }
 

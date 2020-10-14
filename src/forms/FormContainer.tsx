@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { ReactNode, HTMLAttributes, FormEvent, KeyboardEvent } from "react"
 import { Msg } from "@terra-money/terra.js"
 import MESSAGE from "../lang/MESSAGE.json"
-import { FEE, UUSD } from "../constants"
+import { UUSD } from "../constants"
 import { plus } from "../libs/math"
 import extension, { PostResponse } from "../terra/extension"
 import { useNetwork, useSettings, useWallet } from "../hooks"
@@ -23,7 +23,10 @@ interface Props {
 
   /** Form information */
   contents?: Content[]
+  /** uusd amount for tax calculation */
   pretax?: string
+  /** Exclude tax from the contract */
+  deduct?: boolean
   /** Form feedback */
   messages?: string[]
 
@@ -42,12 +45,12 @@ interface Props {
 }
 
 export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
-  const { contents = [], pretax, messages, label, tab, children } = props
-  const { attrs, disabled, parserKey } = props
+  const { contents = [], messages, label, tab, children } = props
+  const { attrs, disabled, pretax, deduct, parserKey } = props
 
   /* context */
   const { hash } = useHash()
-  const { lcd } = useNetwork()
+  const { lcd, fee } = useNetwork()
   const { hasAgreed } = useSettings()
   const { address, connect } = useWallet()
   const tax = useTax(pretax)
@@ -64,6 +67,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
     setSubmitted(true)
     const id = extension.post(
       { msgs, memo, lcdClientConfig: lcd },
+      { ...fee, tax: !deduct ? tax : undefined },
       (response) => response.id === id && setResponse(response)
     )
   }
@@ -104,7 +108,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
 
     const txFee = (
       <Count symbol={UUSD} dp={6}>
-        {plus(tax, FEE)}
+        {plus(tax, fee.amount)}
       </Count>
     )
     const form = (

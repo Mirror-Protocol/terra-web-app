@@ -1,6 +1,6 @@
 import { Extension, SyncTxBroadcastResult } from "@terra-money/terra.js"
-import { CreateTxOptions, LCDClientConfig } from "@terra-money/terra.js"
-import { GAS_PRICE } from "../constants"
+import { CreateTxOptions, LCDClientConfig, StdFee } from "@terra-money/terra.js"
+import { plus } from "../libs/math"
 
 export type Result = SyncTxBroadcastResult.Data
 export interface PostResponse {
@@ -24,10 +24,17 @@ export default {
     ext.on("onConnect", ({ address }: { address: string }) => callback(address))
   },
 
-  post: (options: Options, callback: (params: PostResponse) => void) => {
+  post: (
+    options: Options,
+    txFee: { gasPrice: number; amount: number; tax?: string },
+    callback: (params: PostResponse) => void
+  ) => {
+    const { gasPrice, amount, tax } = txFee
+    const gas = Math.round(amount / gasPrice)
     const lcdClientConfig = {
       ...options.lcdClientConfig,
-      gasPrices: { uusd: GAS_PRICE },
+      gasPrices: { uusd: gasPrice },
+      fee: new StdFee(gas, { uusd: plus(amount, tax) }).toData(),
     }
 
     const id = ext.post({ ...options, purgeQueue: true, lcdClientConfig })

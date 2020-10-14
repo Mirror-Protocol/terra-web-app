@@ -182,9 +182,10 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   const disabled = invalid || simulating || !!messages?.length
   const container = { contents, data, disabled, messages, tab, attrs }
+  const tax = { pretax: uusd, deduct: type === Type.SELL }
 
   return (
-    <FormContainer {...container} pretax={uusd} parserKey="trade">
+    <FormContainer {...container} {...tax} parserKey="trade">
       <FormGroup {...fields[Key.value1]} />
       <FormIcon name="arrow_downward" />
       <FormGroup {...fields[Key.value2]} />

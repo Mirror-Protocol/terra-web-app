@@ -367,11 +367,13 @@ const MintForm = ({ idx, type, tab }: Props) => {
     : undefined
 
   const container = { contents, data, disabled, messages, attrs, tab, label }
+  const deduct = type === Type.WITHDRAW || type === Type.CLOSE
+  const tax = { pretax: uusd, deduct }
 
   return type === Type.CLOSE ? (
-    <FormContainer {...container} pretax={uusd} parserKey="mint" />
+    <FormContainer {...container} {...tax} parserKey="mint" />
   ) : (
-    <FormContainer {...container} pretax={uusd} parserKey="mint">
+    <FormContainer {...container} {...tax} parserKey="mint">
       {position && (
         <Dl list={positionInfo} className={styles.dl} align="center" />
       )}

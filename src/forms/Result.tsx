@@ -77,16 +77,10 @@ const Result = ({ success, result, error, parserKey, onFailure }: Props) => {
   /* render */
   const failed = !success || timeout
   const name = failed ? "highlight_off" : loading ? "" : "check_circle_outline"
-  const icon = loading ? (
-    <Loading size={40} />
+  const icon = name ? (
+    <Icon name={name} className={cx({ failed, loading, success })} size={50} />
   ) : (
-    name && (
-      <Icon
-        name={name}
-        className={cx({ failed, loading, success })}
-        size={50}
-      />
-    )
+    loading && <Loading size={40} />
   )
 
   const title = failed

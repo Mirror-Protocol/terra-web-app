@@ -232,10 +232,11 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const disabled =
     invalid || (type === Type.PROVIDE && gt(estimated, find(balanceKey, UUSD)))
 
-  const container = { contents, data, disabled, tab, attrs, parserKey: "pool" }
+  const container = { contents, data, disabled, tab, attrs }
+  const tax = { pretax: uusd, deduct: type === Type.WITHDRAW }
 
   return (
-    <FormContainer pretax={uusd} {...container}>
+    <FormContainer {...container} {...tax} parserKey="pool">
       <FormGroup {...fields[Key.value]} />
       {icons[type]}
       <FormGroup {...fields["estimated"]} />
