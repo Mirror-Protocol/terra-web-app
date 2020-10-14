@@ -10,19 +10,18 @@ const Tab: FC<Tab> = ({ tabs, current, shadow, children }) => {
   return !current ? null : (
     <Card full shadow={shadow}>
       <section className={styles.tabs}>
-        {tabs.length > 1 &&
-          tabs.map((tab: string) => {
-            const to = { hash: tab, search, state }
-            return tab === current ? (
-              <span className={classNames(styles.tab, styles.active)} key={tab}>
-                {tab}
-              </span>
-            ) : (
-              <Link replace to={to} className={styles.tab} key={tab}>
-                {tab}
-              </Link>
-            )
-          })}
+        {tabs.map((tab: string) => {
+          const to = { hash: tab, search, state }
+          return tab === current ? (
+            <span className={classNames(styles.tab, styles.active)} key={tab}>
+              {tab}
+            </span>
+          ) : (
+            <Link replace to={to} className={styles.tab} key={tab}>
+              {tab}
+            </Link>
+          )
+        })}
       </section>
 
       <section className={styles.content}>{children}</section>

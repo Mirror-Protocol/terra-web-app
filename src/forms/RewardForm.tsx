@@ -48,9 +48,7 @@ const RewardForm = ({ balances, type, tab }: Props) => {
     ],
   }[type]
 
-  const container = { data, tab }
   const label = { [Type.FACTORY]: "Staked", [Type.COLLECTOR]: "Total" }[type]
-
   const list = listed.map(({ symbol, token }) => {
     const balance = balances[token]
     const suffix =
@@ -76,6 +74,8 @@ const RewardForm = ({ balances, type, tab }: Props) => {
       ),
     }
   })
+
+  const container = { data, tab }
 
   return (
     <FormContainer {...container}>

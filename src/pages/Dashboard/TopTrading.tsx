@@ -62,13 +62,13 @@ const TopTrading = () => {
             },
             {
               key: "liquidity",
-              render: (value) => formatAsset(value, UUSD, true),
+              render: (value) => formatAsset(value, UUSD, { integer: true }),
               align: "right",
             },
             {
               key: "volume",
               title: "Volume(24hrs)",
-              render: (value) => formatAsset(value, UUSD, true),
+              render: (value) => formatAsset(value, UUSD, { integer: true }),
               align: "right",
             },
             {

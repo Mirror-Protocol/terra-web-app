@@ -63,5 +63,5 @@ export default DashboardCharts
 /* helpers */
 const toDatasets = (data: ChartItem[], symbol?: string) =>
   data.map(({ timestamp, value }) => {
-    return { t: timestamp, y: lookup(value, symbol, true) }
+    return { t: timestamp, y: lookup(value, symbol, { integer: true }) }
   })

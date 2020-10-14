@@ -1,34 +1,17 @@
 import React from "react"
-import MESSAGE from "../lang/MESSAGE.json"
-import Card from "../components/Card"
-import Icon from "../components/Icon"
-import Button from "../components/Button"
-import PreLine from "../components/PreLine"
-import ConfirmDetails from "./ConfirmDetails"
 import styles from "./Confirm.module.scss"
 
-interface Props extends Confirm {
-  button: Button
-  goBack: () => void
-}
-
-const Confirm = ({ contents, warning, button, goBack }: Props) => (
-  <Card title={MESSAGE.Confirm.Title.Confirm} goBack={goBack} lg>
-    <ConfirmDetails contents={contents} />
-
-    {warning && (
-      <section className={styles.warning}>
-        <Icon name="error_outline" size={16} />
-        <PreLine>{warning}</PreLine>
-      </section>
-    )}
-
-    <footer>
-      <Button type="submit" {...button} size="lg" submit>
-        Confirm & Sign
-      </Button>
-    </footer>
-  </Card>
+const Confirm = ({ list }: { list: Content[] }) => (
+  <ul className={styles.list}>
+    {list.map(({ title, content }) => (
+      <li className={styles.item} key={title}>
+        <article className={styles.article}>
+          <h1 className={styles.title}>{title}</h1>
+          <p className={styles.content}>{content}</p>
+        </article>
+      </li>
+    ))}
+  </ul>
 )
 
 export default Confirm

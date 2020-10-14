@@ -66,13 +66,16 @@ interface Modal {
 }
 
 /* Modules */
-interface CountOptions {
+interface FormatConfig {
+  integer?: boolean
+  dp?: number
+}
+
+interface CountOptions extends FormatConfig {
   /** 0 if undefined */
   children?: string
   /** As a unit. */
   symbol?: string
-  /** Display only integer */
-  integer?: boolean
   /** Plus on positive */
   plus?: boolean
   /** Custom formatter */

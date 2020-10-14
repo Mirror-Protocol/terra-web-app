@@ -4,8 +4,9 @@ export const EXTENSION = "https://terra.money/extension"
 export const CHROME = "https://google.com/chrome"
 
 /* terra:configs */
-export const FEE = 100000 // 0.1 UST
-export const GAS_PRICE = 0.15
+export const GAS = 333333
+export const GAS_PRICE = 0.0015
+export const FEE = Math.round(GAS * GAS_PRICE)
 export const BLOCK_TIME = 6650 // 6.65s
 
 /* mirror:unit */

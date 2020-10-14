@@ -1,6 +1,6 @@
 import React from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
-import { lookupSymbol } from "../libs/parse"
+import { formatAsset } from "../libs/parse"
 import { useContract, useContractsAddress } from "../hooks"
 import { AccountInfoKey } from "../hooks/contractKeys"
 import { toBase64 } from "./formHelpers"
@@ -15,12 +15,10 @@ const AuctionForm = ({ idx }: { idx: string }) => {
   const symbol = prevAsset?.symbol
 
   /* confirm */
-  const confirm = {
-    contents: [
-      { title: "idx", content: idx },
-      { title: "symbol", content: lookupSymbol(symbol) },
-    ],
-  }
+  const contents = [
+    { title: "idx", content: idx },
+    { title: "Amount", content: formatAsset(amount, symbol) },
+  ]
 
   /* submit */
   const { token } = getListedItem(symbol)
@@ -33,7 +31,7 @@ const AuctionForm = ({ idx }: { idx: string }) => {
     }),
   ]
 
-  const container = { data, confirm }
+  const container = { contents, data, label: "Auction" }
   return <FormContainer {...container} />
 }
 

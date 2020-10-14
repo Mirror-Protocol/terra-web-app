@@ -2,12 +2,10 @@ import React, { useEffect, useRef } from "react"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { MIR, UUSD } from "../constants"
-import MESSAGE from "../lang/MESSAGE.json"
 import { plus, minus, times, div, floor } from "../libs/math"
 import { gt, gte, lt, isFinite } from "../libs/math"
 import { format, formatAsset, lookup, lookupSymbol } from "../libs/parse"
 import { toAmount } from "../libs/parse"
-import { percent } from "../libs/num"
 import calc from "../helpers/calc"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
@@ -24,6 +22,7 @@ import FormGroup from "./FormGroup"
 import FormIcon from "./FormIcon"
 import CollateralRatio from "./CollateralRatio"
 import Dl from "../components/Dl"
+import Count from "../components/Count"
 import styles from "./MintForm.module.scss"
 
 enum Key {
@@ -50,7 +49,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
   const { find } = useContract()
   useRefetch([balanceKey])
 
-  /* position */
+  /* context:position */
   const { [AccountInfoKey.MINTPOSITIONS]: positions } = useContract()
   const position = positions?.find((position) => position.idx === idx)
   const open = !position
@@ -110,6 +109,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
   const { symbol1, symbol2, value1, value2, ratio } = values
   const amount1 = toAmount(value1)
   const amount2 = toAmount(value2)
+  const uusd = symbol1 === UUSD ? amount1 : "0"
 
   /* form:focus input on select asset */
   const valueRef = useRef<HTMLInputElement>(null!)
@@ -252,86 +252,58 @@ const MintForm = ({ idx, type, tab }: Props) => {
   }
 
   /* confirm */
-  const confirm = {
-    [Type.OPEN]: {
-      contents: [
-        {
-          title: fields[Key.value1].label,
-          content: formatAsset(amount1, symbol1),
-        },
-        {
-          title: fields[Key.value2].label,
-          content: formatAsset(amount2, symbol2),
-        },
-        {
-          title: fields[Key.ratio].label,
-          content: percent(div(ratio, 100)),
-        },
-        {
-          title: "Estimated Exchange Rate",
-          content: `1 ${lookupSymbol(symbol2)} ≈ ${format(
-            div(amount1, amount2)
-          )} ${lookupSymbol(symbol1)}`,
-        },
-      ],
-      warning: MESSAGE.Confirm.Warning.Mint,
+  const price =
+    type === Type.OPEN
+      ? gt(amount2, 0)
+        ? div(amount1, amount2)
+        : "0"
+      : div(nextCollateralAmount, prevAsset?.amount)
+
+  const priceContent = (
+    <Count
+      format={(value) => `1 ${lookupSymbol(symbol2)} ≈ ${format(value)}`}
+      symbol={symbol1}
+    >
+      {price}
+    </Count>
+  )
+
+  const collateralContents = [
+    {
+      title: "Total collateral",
+      content: <Count symbol={symbol1}>{nextCollateralAmount}</Count>,
     },
-    [Type.CLOSE]: {
-      contents: [
-        {
-          title: "Burn Amount",
-          content: formatAsset(prevAsset?.amount, prevAsset?.symbol),
-        },
-        {
-          title: "Withdraw Amount",
-          content: formatAsset(prevCollateral?.amount, prevCollateral?.symbol),
-        },
-      ],
+    {
+      title: "Price",
+      content: priceContent,
     },
-    [Type.DEPOSIT]: {
-      contents: [
-        {
-          title: "Total collateral after transaction",
-          content: formatAsset(nextCollateralAmount, symbol1),
-        },
-        {
-          title: "Collateral added",
-          content: formatAsset(amount1, symbol1),
-        },
-        {
-          title: "Estimated collateral ratio after transaction",
-          content: percent(div(ratio, 100)),
-        },
-        {
-          title: "Estimated Exchange Rate",
-          content: `1 ${lookupSymbol(symbol2)} ≈ ${format(
-            div(nextCollateralAmount, prevAsset?.amount)
-          )} ${lookupSymbol(symbol1)}`,
-        },
-      ],
-    },
-    [Type.WITHDRAW]: {
-      contents: [
-        {
-          title: "Total collateral after transaction",
-          content: formatAsset(nextCollateralAmount, symbol1),
-        },
-        {
-          title: "Collateral removed",
-          content: formatAsset(amount1, symbol1),
-        },
-        {
-          title: "Estimated collateral ratio after transaction",
-          content: percent(div(ratio, 100)),
-        },
-        {
-          title: "Estimated Exchange Rate",
-          content: `1 ${lookupSymbol(symbol2)} ≈ ${format(
-            div(nextCollateralAmount, prevAsset?.amount)
-          )} ${lookupSymbol(symbol1)}`,
-        },
-      ],
-    },
+  ]
+
+  const contents = {
+    [Type.OPEN]: [
+      {
+        title: "Price",
+        content: priceContent,
+      },
+    ],
+
+    [Type.CLOSE]: [
+      {
+        title: "Burn Amount",
+        content: <Count symbol={prevAsset?.symbol}>{prevAsset?.amount}</Count>,
+      },
+      {
+        title: "Withdraw Amount",
+        content: (
+          <Count symbol={prevCollateral?.symbol}>
+            {prevCollateral?.amount}
+          </Count>
+        ),
+      },
+    ],
+
+    [Type.DEPOSIT]: collateralContents,
+    [Type.WITHDRAW]: collateralContents,
   }[type]
 
   /* submit */
@@ -394,19 +366,12 @@ const MintForm = ({ idx, type, tab }: Props) => {
     ? ["Entered collateral ratio is lower than safe ratio"]
     : undefined
 
-  const container = {
-    confirm,
-    data,
-    disabled,
-    messages,
-    attrs,
-    tab,
-    label,
-    parserKey: "mint",
-  }
+  const container = { contents, data, disabled, messages, attrs, tab, label }
 
-  return (
-    <FormContainer {...container}>
+  return type === Type.CLOSE ? (
+    <FormContainer {...container} pretax={uusd} parserKey="mint" />
+  ) : (
+    <FormContainer {...container} pretax={uusd} parserKey="mint">
       {position && (
         <Dl list={positionInfo} className={styles.dl} align="center" />
       )}

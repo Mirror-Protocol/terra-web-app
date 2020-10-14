@@ -40,7 +40,7 @@ export default ({ amount, symbol, pair, reverse, type }: Params) => {
       : { reverse_simulation: { ask_asset: toToken({ symbol, amount }) } },
   }
 
-  const valid = amount && gt(amount, 0) && symbol
+  const valid = amount && gt(amount, 0) && symbol && pair
   const { result, parsed } = useLazyContractQuery<SimulatedData>(variables)
   const { load, error } = result
 
@@ -51,8 +51,10 @@ export default ({ amount, symbol, pair, reverse, type }: Params) => {
   const simulatedAmount = !reverse
     ? parsed?.return_amount
     : parsed?.offer_amount
+
   const spread = parsed?.spread_amount
   const commission = parsed?.commission_amount
+
   const price = {
     [Type.BUY]: !reverse
       ? div(amount, simulatedAmount)

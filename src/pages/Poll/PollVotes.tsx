@@ -23,7 +23,7 @@ const Votes = ({ list, lg }: { list: Item[]; lg?: boolean }) => (
       <span className={classNames(styles.label, color)} key={label}>
         <strong>{label}</strong>
         <span>{percent(value)}</span>
-        <small>{lg && formatAsset(amount, MIR, true)}</small>
+        <small>{lg && formatAsset(amount, MIR, { integer: true })}</small>
       </span>
     ))}
   </section>

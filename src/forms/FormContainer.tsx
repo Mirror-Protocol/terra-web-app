@@ -2,22 +2,31 @@ import React, { useState } from "react"
 import { ReactNode, HTMLAttributes, FormEvent, KeyboardEvent } from "react"
 import { Msg } from "@terra-money/terra.js"
 import MESSAGE from "../lang/MESSAGE.json"
+import { FEE, UUSD } from "../constants"
+import { plus } from "../libs/math"
 import extension, { PostResponse } from "../terra/extension"
 import { useNetwork, useSettings, useWallet } from "../hooks"
+import useTax from "../graphql/useTax"
 import Container from "../components/Container"
 import Tab from "../components/Tab"
 import Button from "../components/Button"
+import Count from "../components/Count"
 import useHash from "../pages/useHash"
 import Caution from "./Caution"
+import Confirm from "./Confirm"
 import Result from "./Result"
 import FormFeedback from "./FormFeedback"
 
 interface Props {
   data: Msg[]
-
   memo?: string
-  /** Form validation */
+
+  /** Form information */
+  contents?: Content[]
+  pretax?: string
+  /** Form feedback */
   messages?: string[]
+
   /** Submit disabled */
   disabled?: boolean
   /** Submit label */
@@ -33,15 +42,15 @@ interface Props {
 }
 
 export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
-  const { messages, label, tab, children } = props
+  const { contents = [], pretax, messages, label, tab, children } = props
   const { attrs, disabled, parserKey } = props
 
-  const { hash } = useHash()
-
   /* context */
+  const { hash } = useHash()
   const { lcd } = useNetwork()
   const { hasAgreed } = useSettings()
   const { address, connect } = useWallet()
+  const tax = useTax(pretax)
 
   /* confirm */
   const [confirming, setConfirming] = useState(false)
@@ -93,17 +102,34 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
           children: MESSAGE.Form.Button.ConnectWallet,
         }
 
+    const txFee = (
+      <Count symbol={UUSD} dp={6}>
+        {plus(tax, FEE)}
+      </Count>
+    )
     const form = (
       <>
         {children}
+
+        <Confirm list={[...contents, { title: "Tx Fee", content: txFee }]} />
+
         {messages?.map((message) => (
           <FormFeedback key={message}>{message}</FormFeedback>
         ))}
+
         <Button {...next} type="button" size="lg" submit />
       </>
     )
 
-    return tab ? <Tab {...tab}>{form}</Tab> : form
+    return tab ? (
+      <Tab {...tab}>{form}</Tab>
+    ) : label ? (
+      <Tab tabs={[label]} current={label}>
+        {form}
+      </Tab>
+    ) : (
+      form
+    )
   }
 
   return (

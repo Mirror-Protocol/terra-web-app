@@ -296,16 +296,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     label: value,
   }))
 
-  /* confirm */
   const fieldKeys = getFieldKeys(values[Key.parameter])
-  const confirm = {
-    contents: fieldKeys
-      .filter((key) => fields[key].label && values[key])
-      .map((key) => ({
-        title: fields[key].label,
-        content: values[key] + (fields[key].unit ? ` ${fields[key].unit}` : ""),
-      })),
-  }
 
   /* submit */
   const newContractMsg = useNewContractMsg()
@@ -391,19 +382,10 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
       : undefined
 
   const disabled = invalid || loading || !!messages?.length
-
-  const container = {
-    confirm,
-    data,
-    disabled,
-    messages,
-    tab,
-    attrs,
-    parserKey: "gov",
-  }
+  const container = { data, disabled, messages, tab, attrs }
 
   return (
-    <FormContainer {...container}>
+    <FormContainer {...container} parserKey="gov">
       {fieldKeys.map((key) =>
         key === Key.parameter ? (
           <FormCheck horizontal list={radio} key={key} />

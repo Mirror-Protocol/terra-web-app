@@ -2,17 +2,18 @@ import React, { useRef } from "react"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { LP, UST, UUSD } from "../constants"
-import { minus, times, div, floor, max, gt, lt, plus } from "../libs/math"
+import { plus, minus, times, div, floor, max, gt, gte, lt } from "../libs/math"
+import { insertIf } from "../libs/utils"
 import { percent } from "../libs/num"
 import calc from "../helpers/calc"
 import { useRefetch } from "../hooks"
-import { format, formatAsset, lookup, lookupSymbol } from "../libs/parse"
+import { format, formatAsset } from "../libs/parse"
 import { toAmount } from "../libs/parse"
 import { useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey, AssetInfoKey } from "../hooks/contractKeys"
 import { parsePairPool } from "../graphql/useNormalize"
-import { DlFooter } from "../components/Dl"
 
+import Count from "../components/Count"
 import { Type } from "../pages/Pool"
 import getLpName from "../pages/Stake/getLpName"
 import { validate as v, placeholder, step, toBase64 } from "./formHelpers"
@@ -29,8 +30,8 @@ enum Key {
 }
 
 const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
-  const priceKey = PriceKey.PAIR
   const infoKey = AssetInfoKey.LPTOTALSUPPLY
+  const priceKey = PriceKey.PAIR
   const balanceKey = {
     [Type.PROVIDE]: BalanceKey.TOKEN,
     [Type.WITHDRAW]: BalanceKey.LPSTAKABLE,
@@ -56,7 +57,6 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const form = useForm<Key>(initial, validate)
   const { values, setValue, getFields, attrs, invalid } = form
   const { value, symbol } = values
-
   const amount = toAmount(value)
   const price = find(priceKey, symbol)
 
@@ -73,44 +73,47 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const estimated = price && gt(amount, 0) ? floor(times(amount, price)) : ""
 
   /* estimate:result */
-  const expect = (pairPool: PairPool): { lp?: string; assets?: Asset[] } => {
+  const expectLP = (pairPool: PairPool) => {
     const { uusd, asset, total } = parsePairPool(pairPool)
     const deposits = [
       { amount, pair: asset },
       { amount: estimated, pair: uusd },
     ]
 
-    const shares = [
-      { amount: asset, symbol },
-      { amount: uusd, symbol: UUSD },
-    ]
+    return calc.toLP(deposits, total)
+  }
 
-    return {
-      [Type.PROVIDE]: { lp: calc.toLP(deposits, total) },
-      [Type.WITHDRAW]: { assets: calc.fromLP(amount, shares, total) },
-    }[type]
+  const expectReturn = (pairPool: PairPool): { asset: Asset; uusd: Asset } => {
+    const { uusd, asset, total } = parsePairPool(pairPool)
+
+    const shares = {
+      asset: { amount: asset, symbol },
+      uusd: { amount: uusd, symbol: UUSD },
+    }
+
+    return calc.fromLP(amount, shares, total)
   }
 
   const pairPool = parsed[PriceKey.PAIR]?.[token]
-  const expected = pairPool ? expect(pairPool) : undefined
-  const expectedFormatted =
-    expected &&
-    {
-      [Type.PROVIDE]: formatAsset(expected.lp, LP),
-      [Type.WITHDRAW]: expected.assets
-        ?.map(({ amount, symbol }) => formatAsset(amount, symbol))
-        .join(" + "),
-    }[type]
+  const lpFromTx = pairPool ? expectLP(pairPool) : undefined
+  const returnFromTx = pairPool ? expectReturn(pairPool) : undefined
 
-  /* withdraw */
-  const lpAfterTx = max([minus(balance, amount), "0"])
+  const uusd = {
+    [Type.PROVIDE]: estimated,
+    [Type.WITHDRAW]: returnFromTx?.uusd.amount,
+  }[type]
+
+  const lpAfterTx = {
+    [Type.PROVIDE]: plus(balance, lpFromTx ?? "0"),
+    [Type.WITHDRAW]: max([minus(balance, amount), "0"]),
+  }[type]
 
   /* share of pool */
-  const minimum = div(0.01, 100)
+  const minimum = div(0.01, 100) // <0.01%
   const total = find(infoKey, symbol)
   const share = {
-    [Type.PROVIDE]: expected ? div(expected.lp, plus(total, expected.lp)) : "0",
-    [Type.WITHDRAW]: div(lpAfterTx, minus(total, balance)),
+    [Type.PROVIDE]: div(lpAfterTx, plus(total, lpFromTx ?? "0")),
+    [Type.WITHDRAW]: div(lpAfterTx, minus(total, amount)),
   }[type]
 
   /* render:form */
@@ -150,7 +153,11 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
       },
       [Type.WITHDRAW]: {
         label: "Output",
-        value: expectedFormatted ?? "-",
+        value: returnFromTx
+          ? Object.values(returnFromTx)
+              ?.map(({ amount, symbol }) => formatAsset(amount, symbol))
+              .join(" + ")
+          : "-",
       },
     }[type],
   }
@@ -160,74 +167,34 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     [Type.WITHDRAW]: <FormIcon name="arrow_downward" />,
   }
 
-  const footer = [
+  /* confirm */
+  const prefix = gt(share, 0) && lt(share, minimum) ? "<" : ""
+  const contents = [
     {
-      title: "Pool Ratio",
-      content: `1 ${lookupSymbol(symbol)} ≈ ${format(price)} ${UST}`,
+      title: "Pool Price",
+      content: (
+        <Count format={format} symbol={UUSD}>
+          {price}
+        </Count>
+      ),
     },
-    {
-      [Type.PROVIDE]: {
-        title: "LP from transaction",
-        content: expectedFormatted,
-      },
-      [Type.WITHDRAW]: {
-        title: "LP after transaction",
-        content: formatAsset(lpAfterTx, LP),
-      },
-    }[type],
+    ...insertIf(type === Type.PROVIDE, {
+      title: "LP from Tx",
+      content: <Count symbol={LP}>{lpFromTx}</Count>,
+    }),
+    ...insertIf(type === Type.WITHDRAW || gt(balance, 0), {
+      title: "LP after tx",
+      content: <Count symbol={LP}>{lpAfterTx}</Count>,
+    }),
     {
       title: "Pool Share",
-      content: !gt(share, 0)
-        ? percent("0")
-        : lt(share, minimum)
-        ? `<${percent(minimum)}`
-        : percent(share),
+      content: (
+        <Count format={(value) => `${prefix}${percent(value)}`}>
+          {!gt(share, 0) ? "0" : gte(share, minimum) ? share : minimum}
+        </Count>
+      ),
     },
   ]
-
-  /* confirm */
-  const confirm = {
-    [Type.PROVIDE]: {
-      contents: [
-        {
-          title: "Expected LP tokens",
-          content: expectedFormatted,
-        },
-        {
-          title: "mAsset deposit amount",
-          content: formatAsset(amount, symbol),
-        },
-        {
-          title: "UST deposit amount",
-          content: formatAsset(estimated, UUSD),
-        },
-        {
-          title: "Estimated exchange rate",
-          content: `1 ${lookupSymbol(symbol)} ≈ ${lookup(price)} ${UST}`,
-        },
-      ],
-    },
-    [Type.WITHDRAW]: {
-      contents: [
-        {
-          title: "Withdrawn LP tokens",
-          content: `${format(amount, symbol)} ${getLpName(symbol)}`,
-        },
-        {
-          title: "Estimated return amount",
-          content: expectedFormatted,
-        },
-        {
-          title: "LP balance after transaction",
-          content: formatAsset(lpAfterTx, LP),
-        },
-        {
-          title: "Estimated exchange rate",
-          content: `1 ${lookupSymbol(symbol)} ≈ ${lookup(price)} ${UST}`,
-        },
-      ],
-    },
-  }[type]
 
   /* submit */
   const newContractMsg = useNewContractMsg()
@@ -264,14 +231,14 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   const disabled =
     invalid || (type === Type.PROVIDE && gt(estimated, find(balanceKey, UUSD)))
-  const container = { confirm, data, disabled, tab, attrs, parserKey: "pool" }
+
+  const container = { contents, data, disabled, tab, attrs, parserKey: "pool" }
 
   return (
-    <FormContainer {...container}>
+    <FormContainer pretax={uusd} {...container}>
       <FormGroup {...fields[Key.value]} />
       {icons[type]}
       <FormGroup {...fields["estimated"]} />
-      {symbol && <DlFooter list={footer} margin />}
     </FormContainer>
   )
 }

@@ -68,9 +68,19 @@ export default {
    * @param shares - pair, {pool:{}}
    * @param totalShare - pair, {pool:{}}
    */
-  fromLP: (lp: string, shares: Asset[], totalShare: string): Asset[] =>
-    shares.map(({ amount, symbol }) => ({
-      amount: new BigNumber(lp).div(totalShare).times(amount).toString(),
-      symbol,
-    })),
+  fromLP: (
+    lp: string,
+    shares: { asset: Asset; uusd: Asset },
+    totalShare: string
+  ): { asset: Asset; uusd: Asset } =>
+    Object.entries(shares).reduce(
+      (acc, [key, { amount, symbol }]) => ({
+        ...acc,
+        [key]: {
+          amount: new BigNumber(lp).div(totalShare).times(amount).toString(),
+          symbol,
+        },
+      }),
+      {} as { asset: Asset; uusd: Asset }
+    ),
 }

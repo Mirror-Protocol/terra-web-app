@@ -4,19 +4,15 @@ import { useLocation } from "react-router-dom"
 import { isNil } from "ramda"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
-import useTax from "../graphql/useTax"
-import { MAX_SPREAD, UST, UUSD } from "../constants"
-import MESSAGE from "../lang/MESSAGE.json"
-import { div } from "../libs/math"
-import { insertIf } from "../libs/utils"
+import { MAX_SPREAD, UUSD } from "../constants"
 import { useRefetch } from "../hooks"
-import { format, formatAsset, lookup, lookupSymbol } from "../libs/parse"
+import { format, lookup, lookupSymbol } from "../libs/parse"
 import { decimal } from "../libs/parse"
 import { toAmount } from "../libs/parse"
 import { useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
-import { DlFooter } from "../components/Dl"
 
+import Count from "../components/Count"
 import { Type } from "../pages/Trade"
 import { validate as v, placeholder, step, renderBalance } from "./formHelpers"
 import { toBase64 } from "./formHelpers"
@@ -70,6 +66,8 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const amount2 = toAmount(value2)
   const symbol1 = { [Type.BUY]: UUSD, [Type.SELL]: symbol }[type]
   const symbol2 = { [Type.BUY]: symbol, [Type.SELL]: UUSD }[type]
+  const uusd = { [Type.BUY]: amount1, [Type.SELL]: amount2 }[type]
+  const price = find(priceKey, symbol)
 
   /* form:focus input on select asset */
   const value1Ref = useRef<HTMLInputElement>(null!)
@@ -82,13 +80,12 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   /* simulation */
   const { token, pair } = getListedItem(symbol)
   const reverse = form.changed === Key.value2
-  const params = !reverse
+  const simulationParams = !reverse
     ? { amount: amount1, symbol: symbol1 }
     : { amount: amount2, symbol: symbol2 }
 
-  const simulation = useSimulate({ ...params, pair, reverse, type })
-  const { simulated, ...result } = simulation
-  const { loading: simulating, error } = result
+  const simulation = useSimulate({ ...simulationParams, pair, reverse, type })
+  const { simulated, loading: simulating, error } = simulation
 
   /* on simulate */
   useEffect(() => {
@@ -99,29 +96,8 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     !isNil(next) && setValues((values) => ({ ...values, [key]: next }))
   }, [simulated, reverse, setValues, symbol1, symbol2, error])
 
-  const simulatedContents = simulated && [
-    {
-      title: "Price",
-      content: `1 ${symbol} ≈ ${format(simulated.price)} ${UST}`,
-    },
-    {
-      title: "Spread",
-      content: formatAsset(simulated.spread, symbol2),
-    },
-    {
-      title: "Commission",
-      content: formatAsset(simulated.commission, symbol2),
-    },
-  ]
-
   /* render:form */
-  const config = {
-    value: symbol,
-    onSelect,
-    priceKey,
-    balanceKey,
-  }
-
+  const config = { value: symbol, onSelect, priceKey, balanceKey }
   const select = useSelectAsset(config)
 
   const fields = getFields({
@@ -164,39 +140,22 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   })
 
   /* confirm */
-  const price = {
-    [Type.BUY]: `1 ${symbol} ≈ ${format(div(amount1, amount2))} ${UST}`,
-    [Type.SELL]: `1 ${symbol} ≈ ${format(div(amount2, amount1))} ${UST}`,
-  }[type]
-
-  const { tax } = useTax(amount1)
-  const confirm = {
-    contents: [
-      {
-        title: fields[Key.value1].label,
-        content: formatAsset(amount1, symbol1),
-      },
-      {
-        title: fields[Key.value2].label,
-        content: formatAsset(amount2, symbol2),
-      },
-      {
-        title: MESSAGE.Confirm.Label.EstimatedExchangeRate,
-        content: price,
-      },
-      ...insertIf(type === Type.BUY, {
-        title: "Tax",
-        content: formatAsset(tax, UUSD),
-      }),
-    ],
-    warning: MESSAGE.Confirm.Warning.Trade,
-  }
+  const contents = [
+    {
+      title: "Price",
+      content: (
+        <Count format={format} symbol={UUSD}>
+          {simulated?.price}
+        </Count>
+      ),
+    },
+  ]
 
   /* submit */
   const newContractMsg = useNewContractMsg()
   const asset = toToken({ symbol: symbol1, amount: amount1 })
   const swap = {
-    belief_price: decimal(find(priceKey, symbol), 18),
+    belief_price: decimal(price, 18),
     max_spread: String(MAX_SPREAD),
   }
 
@@ -215,16 +174,20 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     ],
   }[type]
 
-  const disabled = invalid
-  const messages = !simulating && error ? ["Simulation failed"] : undefined
-  const container = { confirm, data, disabled, messages, tab, attrs }
+  const messages = !simulating
+    ? error
+      ? ["Simulation failed"]
+      : undefined
+    : undefined
+
+  const disabled = invalid || simulating || !!messages?.length
+  const container = { contents, data, disabled, messages, tab, attrs }
 
   return (
-    <FormContainer {...container} parserKey="trade">
+    <FormContainer {...container} pretax={uusd} parserKey="trade">
       <FormGroup {...fields[Key.value1]} />
       <FormIcon name="arrow_downward" />
       <FormGroup {...fields[Key.value2]} />
-      {simulatedContents && <DlFooter list={simulatedContents} margin />}
     </FormContainer>
   )
 }

@@ -7,7 +7,7 @@ const INTERVAL = 1000 / FPS
 const DURATION = 300
 
 const Count = ({ children: target = "0", ...props }: CountOptions) => {
-  const { symbol, integer } = props
+  const { symbol, ...config } = props
   const prevRef = useRef<string>(target)
   const timeoutRef = useRef<NodeJS.Timeout>()
 
@@ -43,7 +43,7 @@ const Count = ({ children: target = "0", ...props }: CountOptions) => {
   return (
     <>
       {props.plus && gt(current, 0) && "+"}
-      {props.format?.(current) ?? format(current, symbol, integer)}
+      {props.format?.(current) ?? format(current, symbol, config)}
       {symbol ? ` ${lookupSymbol(symbol)}` : ""}
     </>
   )

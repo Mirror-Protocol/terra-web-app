@@ -2,9 +2,9 @@ import React from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { MIR } from "../constants"
 import { plus } from "../libs/math"
-import { formatAsset } from "../libs/parse"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
+import Count from "../components/Count"
 import FormContainer from "./FormContainer"
 
 interface Props {
@@ -20,18 +20,16 @@ const ClaimForm = ({ symbol }: Props) => {
   const claiming = symbol ? find(BalanceKey.REWARD, symbol) : rewards
 
   /* confirm */
-  const confirm = {
-    contents: [
-      {
-        title: "Claiming MIR",
-        content: formatAsset(claiming, MIR),
-      },
-      {
-        title: "MIR Balance After Transaction",
-        content: formatAsset(plus(balance, claiming), MIR),
-      },
-    ],
-  }
+  const contents = [
+    {
+      title: "Claiming",
+      content: <Count symbol={MIR}>{claiming}</Count>,
+    },
+    {
+      title: "MIR after Tx",
+      content: <Count symbol={MIR}>{plus(balance, claiming)}</Count>,
+    },
+  ]
 
   /* submit */
   const newContractMsg = useNewContractMsg()
@@ -42,9 +40,9 @@ const ClaimForm = ({ symbol }: Props) => {
     }),
   ]
 
-  const container = { confirm, data, parserKey: "claim" }
+  const container = { contents, data, label: "Claim" }
 
-  return <FormContainer {...container} />
+  return <FormContainer {...container} parserKey="claim" />
 }
 
 export default ClaimForm

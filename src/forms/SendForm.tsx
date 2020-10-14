@@ -5,7 +5,7 @@ import { MsgSend } from "@terra-money/terra.js"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { UUSD } from "../constants"
 import { gt } from "../libs/math"
-import { formatAsset, toAmount } from "../libs/parse"
+import { toAmount } from "../libs/parse"
 import { useRefetch } from "../hooks"
 import { useWallet, useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
@@ -58,6 +58,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
   const { values, setValue, getFields, attrs, invalid } = form
   const { to, value, symbol, memo } = values
   const amount = toAmount(value)
+  const uusd = symbol === UUSD ? amount : undefined
 
   /* form:focus input on select asset */
   const valueRef = useRef<HTMLInputElement>(null!)
@@ -103,24 +104,6 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     }),
   }
 
-  /* confirm */
-  const confirm = {
-    contents: [
-      {
-        title: fields[Key.to].label,
-        content: to,
-      },
-      {
-        title: fields[Key.value].label,
-        content: formatAsset(amount, symbol),
-      },
-      {
-        title: fields[Key.memo].label,
-        content: memo,
-      },
-    ].filter(({ content }) => content),
-  }
-
   /* submit */
   const newContractMsg = useNewContractMsg()
   const { token } = getListedItem(symbol)
@@ -133,20 +116,10 @@ const SendForm = ({ tab }: { tab: Tab }) => {
       : []
 
   const disabled = invalid
-
-  const container = {
-    confirm,
-    data,
-    memo,
-    disabled,
-    tab,
-    label: "send",
-    attrs,
-    parserKey: "send",
-  }
+  const container = { data, memo, disabled, tab, attrs }
 
   return (
-    <FormContainer {...container}>
+    <FormContainer {...container} pretax={uusd} label="send" parserKey="send">
       <FormGroup {...fields[Key.to]} />
       <FormGroup {...fields[Key.value]} />
       <FormGroup {...fields[Key.memo]} />

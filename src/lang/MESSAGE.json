@@ -34,12 +34,7 @@
     "Title": {
       "Confirm": "Confirm Transaction"
     },
-    "Label": {
-      "EstimatedExchangeRate": "Estimated exchange rate"
-    },
     "Warning": {
-      "Trade": "Output displayed on this page is an estimated value. The estimated amount could be different from the calculated value based on this exchange rate due to spread fee applied to it. Please be aware that the actual result of this transaction can be different from the information above due to the sudden price change of the asset.\n\nAny price change by more than 10% will revert this transaction.",
-      "Mint": "Output displayed on this page is an estimated value. Please be aware that the actual result of this transaction can be different from the information above due to the sudden price change of the asset.\n\nAny price change by more than 10% will revert this transaction.",
       "Vote": "Vote cannot be changed after submission."
     }
   },

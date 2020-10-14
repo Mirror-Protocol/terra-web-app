@@ -2,7 +2,6 @@ import React from "react"
 import { useRouteMatch } from "react-router-dom"
 import classNames from "classnames/bind"
 
-import MESSAGE from "../lang/MESSAGE.json"
 import { MIR } from "../constants"
 import { gt } from "../libs/math"
 import { lookup } from "../libs/parse"
@@ -56,12 +55,6 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
     },
   }
 
-  /* confirm */
-  const confirm = {
-    contents: [{ title: "Answer", content: values[Key.answer] }],
-    warning: MESSAGE.Confirm.Warning.Vote,
-  }
-
   /* submit */
   const newContractMsg = useNewContractMsg()
   const { contracts } = useContractsAddress()
@@ -76,10 +69,10 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
   ]
 
   const disabled = invalid || !gt(value, 0)
-  const container = { confirm, data, disabled, tab, attrs, parserKey: "gov" }
+  const container = { data, disabled, tab, attrs }
 
   return (
-    <FormContainer {...container}>
+    <FormContainer {...container} parserKey="gov">
       <div className={styles.list}>
         {Object.values(AnswerKey).map((answer) => {
           const checked = answer === values[Key.answer]
