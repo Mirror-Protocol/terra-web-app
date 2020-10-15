@@ -45,7 +45,7 @@ interface Props {
 }
 
 export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
-  const { contents = [], messages, label, tab, children } = props
+  const { contents, messages, label, tab, children } = props
   const { attrs, pretax, deduct, parserKey } = props
 
   /* context */
@@ -126,7 +126,9 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
       <>
         {children}
 
-        <Confirm list={[...contents, { title: "Tx Fee", content: txFee }]} />
+        {contents && (
+          <Confirm list={[...contents, { title: "Tx Fee", content: txFee }]} />
+        )}
 
         {(invalid ?? messages)?.map((message) => (
           <FormFeedback key={message}>{message}</FormFeedback>

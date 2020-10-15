@@ -382,7 +382,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
       : undefined
 
   const disabled = invalid || loading || !!messages?.length
-  const container = { data, disabled, messages, tab, attrs }
+  const container = { contents: [], data, disabled, messages, tab, attrs }
 
   return (
     <FormContainer {...container} parserKey="gov">

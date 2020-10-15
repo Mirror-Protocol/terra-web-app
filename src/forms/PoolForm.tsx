@@ -169,32 +169,34 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   /* confirm */
   const prefix = gt(share, 0) && lt(share, minimum) ? "<" : ""
-  const contents = [
-    {
-      title: "Pool Price",
-      content: (
-        <Count format={format} symbol={UUSD}>
-          {price}
-        </Count>
-      ),
-    },
-    ...insertIf(type === Type.PROVIDE, {
-      title: "LP from Tx",
-      content: <Count symbol={LP}>{lpFromTx}</Count>,
-    }),
-    ...insertIf(type === Type.WITHDRAW || gt(balance, 0), {
-      title: "LP after tx",
-      content: <Count symbol={LP}>{lpAfterTx}</Count>,
-    }),
-    {
-      title: "Pool Share",
-      content: (
-        <Count format={(value) => `${prefix}${percent(value)}`}>
-          {!gt(share, 0) ? "0" : gte(share, minimum) ? share : minimum}
-        </Count>
-      ),
-    },
-  ]
+  const contents = !gt(price, 0)
+    ? undefined
+    : [
+        {
+          title: "Pool Price",
+          content: (
+            <Count format={format} symbol={UUSD}>
+              {price}
+            </Count>
+          ),
+        },
+        ...insertIf(type === Type.PROVIDE, {
+          title: "LP from Tx",
+          content: <Count symbol={LP}>{lpFromTx}</Count>,
+        }),
+        ...insertIf(type === Type.WITHDRAW || gt(balance, 0), {
+          title: "LP after tx",
+          content: <Count symbol={LP}>{lpAfterTx}</Count>,
+        }),
+        {
+          title: "Pool Share",
+          content: (
+            <Count format={(value) => `${prefix}${percent(value)}`}>
+              {!gt(share, 0) ? "0" : gte(share, minimum) ? share : minimum}
+            </Count>
+          ),
+        },
+      ]
 
   /* submit */
   const newContractMsg = useNewContractMsg()

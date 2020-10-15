@@ -55,6 +55,9 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
     },
   }
 
+  /* confirm */
+  const contents = values[Key.answer] ? [] : undefined
+
   /* submit */
   const newContractMsg = useNewContractMsg()
   const { contracts } = useContractsAddress()
@@ -69,7 +72,7 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
   ]
 
   const disabled = invalid || !gt(value, 0)
-  const container = { data, disabled, tab, attrs }
+  const container = { contents, data, disabled, tab, attrs }
 
   return (
     <FormContainer {...container} parserKey="gov">

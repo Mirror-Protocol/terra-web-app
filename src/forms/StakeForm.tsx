@@ -69,6 +69,9 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
     },
   })
 
+  /* confirm */
+  const contents = value ? [] : undefined
+
   /* submit */
   const newContractMsg = useNewContractMsg()
   const { token, lpToken } = getListedItem(symbol)
@@ -109,10 +112,10 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
       : undefined
 
   const disabled = invalid || !!messages?.length
-  const container = { data, disabled, tab, attrs, messages, parserKey: "stake" }
+  const container = { contents, data, disabled, tab, attrs, messages }
 
   return (
-    <FormContainer {...container}>
+    <FormContainer {...container} parserKey="stake">
       <FormGroup {...fields[Key.value]} />
     </FormContainer>
   )

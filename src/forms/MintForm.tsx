@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { MIR, UUSD } from "../constants"
-import { plus, minus, times, div, floor } from "../libs/math"
+import { plus, minus, times, div, floor, max } from "../libs/math"
 import { gt, gte, lt, isFinite } from "../libs/math"
 import { format, formatAsset, lookup, lookupSymbol } from "../libs/parse"
 import { toAmount } from "../libs/parse"
@@ -56,14 +56,14 @@ const MintForm = ({ idx, type, tab }: Props) => {
   const close = type === Type.CLOSE
 
   /* form:validate */
-  const max = (symbol: string) =>
+  const getMax = (symbol: string) =>
     type === Type.WITHDRAW ? prevCollateral?.amount : find(balanceKey, symbol)
 
   const validate = ({ symbol1, symbol2, value1, ratio }: Values<Key>) => {
     const nextRatio = div(ratio, 100)
 
     return {
-      [Key.value1]: v.amount(value1, { symbol: symbol1, max: max(symbol1) }),
+      [Key.value1]: v.amount(value1, { symbol: symbol1, max: getMax(symbol1) }),
       [Key.value2]: "",
       [Key.symbol1]: v.required(symbol1),
       [Key.symbol2]: open ? v.required(symbol2) : "",
@@ -127,10 +127,10 @@ const MintForm = ({ idx, type, tab }: Props) => {
   const price1 = find(priceKey, symbol1)
   const price2 = find(priceKey, symbol2)
   const reverse = form.changed !== Key.value1
-  const nextCollateralAmount = (type === Type.DEPOSIT ? plus : minus)(
-    prevCollateral?.amount,
-    amount1
-  )
+  const nextCollateralAmount = max([
+    (type === Type.DEPOSIT ? plus : minus)(prevCollateral?.amount, amount1),
+    "0",
+  ])
 
   const calculated = calc.mint({
     collateral: {
@@ -195,7 +195,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
         },
         unit: open ? select1.button : lookupSymbol(symbol1),
         assets: select1.assets,
-        help: renderBalance(max(symbol1), symbol1),
+        help: renderBalance(getMax(symbol1), symbol1),
         focused: select1.isOpen,
       },
 
@@ -208,7 +208,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
         },
         unit: select2.button,
         assets: select2.assets,
-        help: renderBalance(max(symbol2), symbol2),
+        help: renderBalance(getMax(symbol2), symbol2),
         focused: select2.isOpen,
       },
 
@@ -280,12 +280,14 @@ const MintForm = ({ idx, type, tab }: Props) => {
   ]
 
   const contents = {
-    [Type.OPEN]: [
-      {
-        title: "Price",
-        content: priceContent,
-      },
-    ],
+    [Type.OPEN]: !gt(price, 0)
+      ? undefined
+      : [
+          {
+            title: "Price",
+            content: priceContent,
+          },
+        ],
 
     [Type.CLOSE]: [
       {

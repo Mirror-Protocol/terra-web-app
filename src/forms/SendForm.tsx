@@ -104,6 +104,9 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     }),
   }
 
+  /* confirm */
+  const contents = value ? [] : undefined
+
   /* submit */
   const newContractMsg = useNewContractMsg()
   const { token } = getListedItem(symbol)
@@ -116,7 +119,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
       : []
 
   const disabled = invalid
-  const container = { data, memo, disabled, tab, attrs }
+  const container = { contents, data, memo, disabled, tab, attrs }
 
   return (
     <FormContainer {...container} pretax={uusd} label="send" parserKey="send">

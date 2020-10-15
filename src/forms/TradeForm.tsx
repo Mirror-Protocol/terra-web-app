@@ -140,16 +140,18 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   })
 
   /* confirm */
-  const contents = [
-    {
-      title: "Price",
-      content: (
-        <Count format={format} symbol={UUSD}>
-          {simulated?.price}
-        </Count>
-      ),
-    },
-  ]
+  const contents = !(value1 && symbol)
+    ? undefined
+    : [
+        {
+          title: "Price",
+          content: (
+            <Count format={format} symbol={UUSD}>
+              {simulated?.price}
+            </Count>
+          ),
+        },
+      ]
 
   /* submit */
   const newContractMsg = useNewContractMsg()
