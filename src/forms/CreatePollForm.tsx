@@ -86,7 +86,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }
 
   /* context */
-  const { contracts, getListedItem, toAssetInfo } = useContractsAddress()
+  const { contracts, getListedItem } = useContractsAddress()
   const { result, find } = useContract()
   useRefetch([balanceKey])
 
@@ -341,7 +341,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     contract_addr: mint,
     msg: toBase64({
       update_asset: {
-        asset_info: toAssetInfo(asset),
+        asset_token: token,
         auction_discount: !auctionDiscount
           ? undefined
           : div(auctionDiscount, 100),
