@@ -3,9 +3,9 @@ import { ReactNode, HTMLAttributes, FormEvent, KeyboardEvent } from "react"
 import { Msg } from "@terra-money/terra.js"
 import MESSAGE from "../lang/MESSAGE.json"
 import { UUSD } from "../constants"
-import { plus } from "../libs/math"
+import { gt, plus, sum } from "../libs/math"
 import extension, { PostResponse } from "../terra/extension"
-import { useNetwork, useSettings, useWallet } from "../hooks"
+import { useContract, useNetwork, useSettings, useWallet } from "../hooks"
 import useTax from "../graphql/useTax"
 import Container from "../components/Container"
 import Tab from "../components/Tab"
@@ -46,14 +46,24 @@ interface Props {
 
 export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   const { contents = [], messages, label, tab, children } = props
-  const { attrs, disabled, pretax, deduct, parserKey } = props
+  const { attrs, pretax, deduct, parserKey } = props
 
   /* context */
   const { hash } = useHash()
   const { lcd, fee } = useNetwork()
   const { hasAgreed } = useSettings()
+  const { uusd, result } = useContract()
   const { address, connect } = useWallet()
+  const { loading } = result.uusd
+
+  /* tax */
   const tax = useTax(pretax)
+  const uusdAmount = !deduct
+    ? sum([pretax ?? "0", tax ?? "0", fee.amount])
+    : fee.amount
+
+  const invalid =
+    !loading && !gt(uusd, uusdAmount) ? ["Not enough UST"] : undefined
 
   /* confirm */
   const [confirming, setConfirming] = useState(false)
@@ -63,6 +73,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   /* submit */
   const [submitted, setSubmitted] = useState(false)
   const [response, setResponse] = useState<PostResponse>()
+  const disabled = props.disabled || invalid || submitted || !msgs?.length
   const submit = () => {
     setSubmitted(true)
     const id = extension.post(
@@ -99,7 +110,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
           onClick: confirm,
           children: hash ?? label ?? "Submit",
           loading: submitted,
-          disabled: disabled || !msgs?.length || submitted,
+          disabled,
         }
       : {
           onClick: connect,
@@ -117,7 +128,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
 
         <Confirm list={[...contents, { title: "Tx Fee", content: txFee }]} />
 
-        {messages?.map((message) => (
+        {(invalid ?? messages)?.map((message) => (
           <FormFeedback key={message}>{message}</FormFeedback>
         ))}
 
