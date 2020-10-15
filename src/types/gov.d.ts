@@ -58,7 +58,7 @@ interface UpdateWeight {
 }
 
 interface UpdateAsset extends Partial<AssetParams> {
-  asset_info: AssetInfo
+  asset_token: string
 }
 
 interface PassCommand {

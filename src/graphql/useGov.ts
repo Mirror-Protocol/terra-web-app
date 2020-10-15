@@ -131,7 +131,7 @@ enum PollType {
 }
 
 const useSelect = (data?: PollsData) => {
-  const { getSymbol, parseAssetInfo } = useContractsAddress()
+  const { getSymbol } = useContractsAddress()
 
   const parseParams = (decoded: DecodedExecuteMsg, id: number) => {
     const type =
@@ -167,8 +167,8 @@ const useSelect = (data?: PollsData) => {
         }
   }
 
-  const parseUpdateAsset = ({ asset_info, ...params }: UpdateAsset) => ({
-    msg: { asset: parseAssetInfo(asset_info) },
+  const parseUpdateAsset = ({ asset_token, ...params }: UpdateAsset) => ({
+    msg: { asset: getSymbol(asset_token) },
     params,
   })
 
@@ -178,7 +178,7 @@ const useSelect = (data?: PollsData) => {
       const parsed = parseParams(decoded, poll.id)
       return { ...acc, [poll.id]: { ...poll, ...parsed } }
     } catch (error) {
-      return { ...acc }
+      return { ...acc, [poll.id]: poll }
     }
   }, {})
 }
