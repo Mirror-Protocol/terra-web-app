@@ -3,11 +3,11 @@ import { useContractsAddress } from "../../hooks"
 import { useLazyContractQueries } from "../useContractQueries"
 
 export default () => {
-  const { contracts, toAssetInfo } = useContractsAddress()
+  const { contracts } = useContractsAddress()
   const generate = ({ token, symbol }: ListedItem) => {
     const variables = {
       contract: contracts["mint"],
-      msg: { asset_config: { asset_info: toAssetInfo(token) } },
+      msg: { asset_config: { asset_token: token } },
     }
 
     return symbol === MIR ? undefined : variables
