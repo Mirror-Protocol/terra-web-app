@@ -1,8 +1,8 @@
-import React, { FC } from "react"
+import React, { FC, ReactNode } from "react"
 import styles from "./Summary.module.scss"
 
 interface Props {
-  title: string
+  title: ReactNode
   footer?: string
 }
 

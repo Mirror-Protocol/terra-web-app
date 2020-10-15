@@ -5,6 +5,7 @@ import { isNil } from "ramda"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { MAX_SPREAD, UUSD } from "../constants"
+import Tooltip from "../lang/Tooltip.json"
 import { useRefetch } from "../hooks"
 import { format, lookup, lookupSymbol } from "../libs/parse"
 import { decimal } from "../libs/parse"
@@ -13,6 +14,7 @@ import { useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 
 import Count from "../components/Count"
+import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Trade"
 import { validate as v, placeholder, step, renderBalance } from "./formHelpers"
 import { toBase64 } from "./formHelpers"
@@ -144,7 +146,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     ? undefined
     : [
         {
-          title: "Price",
+          title: <TooltipIcon content={Tooltip.Trade.Price}>Price</TooltipIcon>,
           content: (
             <Count format={format} symbol={UUSD}>
               {simulated?.price}

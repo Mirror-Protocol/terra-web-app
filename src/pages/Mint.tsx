@@ -1,5 +1,6 @@
 import React from "react"
 import { useLocation } from "react-router-dom"
+import Tooltip from "../lang/Tooltip.json"
 import { MenuKey } from "../routes"
 import { insertIf } from "../libs/utils"
 import { useRefetch } from "../hooks"
@@ -22,7 +23,11 @@ const Mint = () => {
   const { hash: type } = useHash<Type>(Type.OPEN)
   const tab = [Type.DEPOSIT, Type.WITHDRAW].includes(type)
     ? { tabs: [Type.DEPOSIT, Type.WITHDRAW], current: type }
-    : { tabs: [type], current: type }
+    : {
+        tabs: [type],
+        tooltips: type === Type.OPEN ? [Tooltip.Mint.Open] : undefined,
+        current: type,
+      }
 
   /* idx */
   const { search } = useLocation()

@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { ReactNode, HTMLAttributes, FormEvent, KeyboardEvent } from "react"
 import { Msg } from "@terra-money/terra.js"
 import MESSAGE from "../lang/MESSAGE.json"
+import Tooltip from "../lang/Tooltip.json"
 import { UUSD } from "../constants"
 import { gt, plus, sum } from "../libs/math"
 import extension, { PostResponse } from "../terra/extension"
@@ -11,6 +12,7 @@ import Container from "../components/Container"
 import Tab from "../components/Tab"
 import Button from "../components/Button"
 import Count from "../components/Count"
+import { TooltipIcon } from "../components/Tooltip"
 import useHash from "../pages/useHash"
 import Caution from "./Caution"
 import Confirm from "./Confirm"
@@ -122,12 +124,25 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
         {plus(tax, fee.amount)}
       </Count>
     )
+
     const form = (
       <>
         {children}
 
         {contents && (
-          <Confirm list={[...contents, { title: "Tx Fee", content: txFee }]} />
+          <Confirm
+            list={[
+              ...contents,
+              {
+                title: (
+                  <TooltipIcon content={Tooltip.Forms.TxFee}>
+                    Tx Fee
+                  </TooltipIcon>
+                ),
+                content: txFee,
+              },
+            ]}
+          />
         )}
 
         {(invalid ?? messages)?.map((message) => (

@@ -1,6 +1,7 @@
 import React from "react"
 import { isNil } from "ramda"
 import { UST, UUSD } from "../../constants"
+import Tooltip from "../../lang/Tooltip.json"
 import { times, lt } from "../../libs/math"
 import { insertIf } from "../../libs/utils"
 import { format, formatAsset } from "../../libs/parse"
@@ -11,6 +12,7 @@ import useYesterday, { calcChange } from "../../statistics/useYesterday"
 import Card from "../../components/Card"
 import Table from "../../components/Table"
 import Change from "../../components/Change"
+import { TooltipIcon } from "../../components/Tooltip"
 import styles from "./TopTrading.module.scss"
 
 const TopTrading = () => {
@@ -52,22 +54,25 @@ const TopTrading = () => {
               render: (_value, _record, index) => index + 1,
               align: "center",
             },
-            {
-              key: "symbol",
-              title: "Ticker",
-              bold: true,
-            },
-            {
-              key: "name",
-            },
+            { key: "symbol", title: "Ticker", bold: true },
+            { key: "name" },
             {
               key: "liquidity",
+              title: (
+                <TooltipIcon content={Tooltip.TopTrading.Liquidity}>
+                  Liquidity
+                </TooltipIcon>
+              ),
               render: (value) => formatAsset(value, UUSD, { integer: true }),
               align: "right",
             },
             {
               key: "volume",
-              title: "Volume(24hrs)",
+              title: (
+                <TooltipIcon content={Tooltip.TopTrading.Volume}>
+                  Volume(24hrs)
+                </TooltipIcon>
+              ),
               render: (value) => formatAsset(value, UUSD, { integer: true }),
               align: "right",
             },

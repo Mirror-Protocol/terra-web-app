@@ -5,7 +5,7 @@ interface Result {
 }
 
 interface Content {
-  title?: string
+  title?: ReactNode
   content?: ReactNode
 }
 

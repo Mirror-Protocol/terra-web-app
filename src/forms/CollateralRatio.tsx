@@ -1,7 +1,9 @@
 import React from "react"
+import Tooltip from "../lang/Tooltip.json"
 import { times, div, gt, gte, lt } from "../libs/math"
 import { percent } from "../libs/num"
 import Progress from "../components/Progress"
+import { TooltipIcon } from "../components/Tooltip"
 import styles from "./CollateralRatio.module.scss"
 
 interface Props {
@@ -25,8 +27,22 @@ const CollateralRatio = ({ min, safe, next, onClick }: Props) => (
       },
     ]}
     axis={[
-      { x: getX(min), label: `Min: ${percent(min)}` },
-      { x: getX(safe), label: `Safe: ${percent(safe)}` },
+      {
+        x: getX(min),
+        label: (
+          <TooltipIcon content={Tooltip.Mint.MinCollateralRatio}>
+            Min: {percent(min)}
+          </TooltipIcon>
+        ),
+      },
+      {
+        x: getX(safe),
+        label: (
+          <TooltipIcon content={Tooltip.Mint.SafeCollateralRatio}>
+            Safe: {percent(safe)}
+          </TooltipIcon>
+        ),
+      },
     ]}
     className={styles.progress}
     onClick={(value) => onClick(times(value, MAX))}

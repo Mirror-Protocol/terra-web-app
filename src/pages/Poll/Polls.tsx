@@ -1,9 +1,11 @@
 import React from "react"
 import { useRouteMatch } from "react-router-dom"
+import Tooltip from "../../lang/Tooltip.json"
 import { GovKey, useGov, useRefetchGov } from "../../graphql/useGov"
 import Card from "../../components/Card"
 import Grid from "../../components/Grid"
 import LoadingTitle from "../../components/LoadingTitle"
+import { TooltipIcon } from "../../components/Tooltip"
 import PollItem from "./PollItem"
 import styles from "./Polls.module.scss"
 
@@ -17,7 +19,9 @@ const Polls = ({ title }: { title: string }) => {
   return (
     <article className={styles.component}>
       <LoadingTitle loading={loading} className={styles.title}>
-        <h1>{title}</h1>
+        <TooltipIcon content={Tooltip.Gov.Polls}>
+          <h1>{title}</h1>
+        </TooltipIcon>
       </LoadingTitle>
 
       {!loading && !list.length ? (

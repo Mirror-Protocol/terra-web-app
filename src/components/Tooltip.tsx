@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react"
+import React, { FC } from "react"
 import Tippy, { TippyProps } from "@tippyjs/react"
 import classNames from "classnames"
 import { isNil } from "ramda"
@@ -11,46 +11,45 @@ import styles from "./Tooltip.module.scss"
 export const DefaultTippyProps: TippyProps = {
   animation: false,
   interactive: true,
+  appendTo: document.body,
 }
 
 const TooltipTippyProps: TippyProps = {
   ...DefaultTippyProps,
   placement: "bottom",
+  theme: "light-border",
+  className: styles.tooltip,
 }
 
-interface Props extends TippyProps {
-  icon?: boolean
+interface Props extends Omit<TippyProps, "children"> {
   onClick?: () => void
 }
 
-const Tooltip = ({ icon, className, onClick, children, ...props }: Props) => {
-  const render = (children: ReactNode) => (
-    <Tippy
-      {...TooltipTippyProps}
-      {...props}
-      theme="light-border"
-      hideOnClick={isNil(props.visible) ? false : undefined}
-      className={styles.tooltip}
+const Tooltip: FC<Props> = ({ className, onClick, children, ...props }) => (
+  <Tippy
+    {...TooltipTippyProps}
+    {...props}
+    hideOnClick={isNil(props.visible) ? false : undefined}
+  >
+    <button
+      type="button"
+      className={classNames(styles.button, className)}
+      onClick={onClick}
     >
-      <button
-        className={classNames(styles.button, className)}
-        onClick={onClick}
-      >
-        {children}
-      </button>
-    </Tippy>
-  )
-
-  return !icon ? (
-    render(children)
-  ) : (
-    <div className={styles.flex}>
       {children}
-      <div className={styles.icon}>
-        {render(<Icon name="info_outline" size={16} />)}
-      </div>
+    </button>
+  </Tippy>
+)
+
+export const TooltipIcon: FC<Props> = ({ children, ...props }) => (
+  <div className={styles.flex}>
+    {children}
+    <div className={styles.icon}>
+      <Tooltip {...props}>
+        <Icon name="info_outline" size={16} />
+      </Tooltip>
     </div>
-  )
-}
+  </div>
+)
 
 export default Tooltip

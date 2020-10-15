@@ -1,6 +1,7 @@
 import React from "react"
 import { last } from "ramda"
 import { UUSD } from "../../constants"
+import Tooltip from "../../lang/Tooltip.json"
 import { div } from "../../libs/math"
 import { lookup } from "../../libs/parse"
 import { calcChange } from "../../statistics/useYesterday"
@@ -9,6 +10,7 @@ import Card from "../../components/Card"
 import Summary from "../../components/Summary"
 import Count from "../../components/Count"
 import ChartContainer from "../../components/ChartContainer"
+import { TooltipIcon } from "../../components/Tooltip"
 
 const DashboardCharts = (props: Partial<Dashboard>) => {
   const { latest24h, liquidityHistory, tradingVolumeHistory } = props
@@ -16,7 +18,13 @@ const DashboardCharts = (props: Partial<Dashboard>) => {
   return (
     <Grid wrap={2}>
       <Card>
-        <Summary title="Liquidity">
+        <Summary
+          title={
+            <TooltipIcon content={Tooltip.Chart.Liquidity}>
+              Liquidity
+            </TooltipIcon>
+          }
+        >
           <ChartContainer
             value={
               <Count symbol={UUSD} integer>
@@ -40,7 +48,11 @@ const DashboardCharts = (props: Partial<Dashboard>) => {
       </Card>
 
       <Card>
-        <Summary title="Volume">
+        <Summary
+          title={
+            <TooltipIcon content={Tooltip.Chart.Volume}>Volume</TooltipIcon>
+          }
+        >
           <ChartContainer
             value={
               <Count symbol={UUSD} integer>

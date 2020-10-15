@@ -45,6 +45,16 @@
   text-align: right;
 }
 
+.fixed-left {
+  position: sticky;
+  left: 0;
+}
+
+.fixed-right {
+  position: sticky;
+  right: 0;
+}
+
 .narrow-left {
   padding-left: 5px;
 }

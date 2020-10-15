@@ -1,6 +1,7 @@
 import React from "react"
 import { isNil } from "ramda"
 import MESSAGE from "../../lang/MESSAGE.json"
+import Tooltip from "../../lang/Tooltip.json"
 import { UST, UUSD } from "../../constants"
 import { div, gt, sum, times } from "../../libs/math"
 import { insertIf } from "../../libs/utils"
@@ -14,7 +15,7 @@ import Card from "../../components/Card"
 import Table from "../../components/Table"
 import { Di } from "../../components/Dl"
 import Change from "../../components/Change"
-import Tooltip from "../../components/Tooltip"
+import { TooltipIcon } from "../../components/Tooltip"
 import { Type } from "../Trade"
 import NoAssets from "./NoAssets"
 import DashboardActions from "./DashboardActions"
@@ -52,9 +53,7 @@ const Investment = () => {
 
   /* render */
   const renderTooltip = (value: string, tooltip: string) => (
-    <Tooltip content={tooltip} icon>
-      <>{formatAsset(value, UUSD)}</>
-    </Tooltip>
+    <TooltipIcon content={tooltip}>{formatAsset(value, UUSD)}</TooltipIcon>
   )
 
   const dataExists = !!dataSource.length
@@ -63,7 +62,7 @@ const Investment = () => {
   const description = dataExists && (
     <Di
       title="Total Value"
-      content={renderTooltip(totalValue, MESSAGE.MyPage.Tooltip.TotalValue)}
+      content={renderTooltip(totalValue, Tooltip.My.TotalValue)}
     />
   )
 
@@ -76,6 +75,9 @@ const Investment = () => {
             { key: "name" },
             {
               key: "balance",
+              title: (
+                <TooltipIcon content={Tooltip.My.Balance}>Balance</TooltipIcon>
+              ),
               render: (value, { symbol }) => format(value, symbol),
               align: "right",
             },
@@ -93,13 +95,20 @@ const Investment = () => {
             }),
             {
               key: "value",
+              title: (
+                <TooltipIcon content={Tooltip.My.Value}>Value</TooltipIcon>
+              ),
               render: (value) => formatAsset(value, UUSD),
               align: "right",
             },
             {
               key: "ratio",
               dataIndex: "value",
-              title: "Port ratio",
+              title: (
+                <TooltipIcon content={Tooltip.My.PortfolioRatio}>
+                  Port Ratio
+                </TooltipIcon>
+              ),
               render: (value) => percent(div(value, totalValue)),
               align: "right",
             },

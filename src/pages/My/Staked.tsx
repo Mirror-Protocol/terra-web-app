@@ -1,6 +1,7 @@
 import React from "react"
 import { LP, MIR } from "../../constants"
 import MESSAGE from "../../lang/MESSAGE.json"
+import Tooltip from "../../lang/Tooltip.json"
 import { gt } from "../../libs/math"
 import { insertIf } from "../../libs/utils"
 import { formatAsset } from "../../libs/parse"
@@ -14,6 +15,7 @@ import Card from "../../components/Card"
 import Table from "../../components/Table"
 import { Di } from "../../components/Dl"
 import LinkButton from "../../components/LinkButton"
+import { TooltipIcon } from "../../components/Tooltip"
 import { menu as stakeMenu, MenuKey as StakeMenuKey, Type } from "../Stake"
 import getLpName from "../Stake/getLpName"
 import NoAssets from "./NoAssets"
@@ -86,7 +88,8 @@ const Staked = () => {
               bold: true,
             },
             {
-              key: "APR",
+              key: "apr",
+              title: <TooltipIcon content={Tooltip.My.APR}>APR</TooltipIcon>,
               dataIndex: "token",
               render: (token, { gov }) =>
                 !gov
@@ -97,6 +100,9 @@ const Staked = () => {
             {
               key: "staked",
               dataIndex: "symbol",
+              title: (
+                <TooltipIcon content={Tooltip.My.Staked}>Staked</TooltipIcon>
+              ),
               render: (symbol, { gov }) =>
                 formatAsset(
                   find(
@@ -120,6 +126,9 @@ const Staked = () => {
             {
               key: "reward",
               dataIndex: "symbol",
+              title: (
+                <TooltipIcon content={Tooltip.My.Reward}>Reward</TooltipIcon>
+              ),
               render: (symbol, { gov }) =>
                 !gov && formatAsset(find(BalanceKey.REWARD, symbol), MIR),
               align: "right",

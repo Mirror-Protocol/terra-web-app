@@ -22,7 +22,7 @@ interface FormGroup {
   textarea?: TextArea
   select?: Select
   value?: ReactNode
-  label?: string
+  label?: ReactNode
   help?: Content
   unit?: ReactNode
   assets?: ReactNode
@@ -54,6 +54,7 @@ type Button = ButtonProps & ButtonAttrs
 /* Tab */
 interface Tab {
   tabs: string[]
+  tooltips?: string[]
   current?: string
   shadow?: boolean
 }

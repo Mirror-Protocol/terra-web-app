@@ -2,7 +2,8 @@ import React from "react"
 import { isNil } from "ramda"
 import classNames from "classnames"
 import MESSAGE from "../../lang/MESSAGE.json"
-import { UST, UUSD } from "../../constants"
+import Tooltips from "../../lang/Tooltip.json"
+import { UUSD } from "../../constants"
 import { lt, lte, minus, sum, times } from "../../libs/math"
 import { insertIf } from "../../libs/utils"
 import { format, formatAsset, lookupSymbol } from "../../libs/parse"
@@ -18,7 +19,7 @@ import Table from "../../components/Table"
 import Dl from "../../components/Dl"
 import Icon from "../../components/Icon"
 import Change from "../../components/Change"
-import Tooltip from "../../components/Tooltip"
+import Tooltip, { TooltipIcon } from "../../components/Tooltip"
 import { Type } from "../Mint"
 import NoAssets from "./NoAssets"
 import DashboardActions from "./DashboardActions"
@@ -104,9 +105,7 @@ const Minted = () => {
 
   /* render */
   const renderTooltip = (value: string, tooltip: string) => (
-    <Tooltip content={tooltip} icon>
-      <>{`${format(value, UUSD)} ${UST}`}</>
-    </Tooltip>
+    <TooltipIcon content={tooltip}>{formatAsset(value, UUSD)}</TooltipIcon>
   )
 
   const dataExists = !!dataSource.length
@@ -122,16 +121,13 @@ const Minted = () => {
       list={[
         {
           title: "Total Minted Asset Value",
-          content: renderTooltip(
-            totalAssetValue,
-            MESSAGE.MyPage.Tooltip.TotalMintedValue
-          ),
+          content: renderTooltip(totalAssetValue, Tooltips.My.TotalAssetValue),
         },
         {
           title: "Total Collateral Value",
           content: renderTooltip(
             totalCollateralValue,
-            MESSAGE.MyPage.Tooltip.TotalCollateralValue
+            Tooltips.My.TotalCollateralValue
           ),
         },
       ]}
@@ -157,8 +153,8 @@ const Minted = () => {
                     <Tooltip
                       content={
                         warning
-                          ? MESSAGE.MyPage.Tooltip.MintWarning
-                          : MESSAGE.MyPage.Tooltip.MintDanger
+                          ? Tooltips.My.PositionWarning
+                          : Tooltips.My.PositionDanger
                       }
                     >
                       <Icon name="warning" size={16} />
@@ -181,13 +177,21 @@ const Minted = () => {
                 {
                   key: "balance",
                   dataIndex: "asset",
-                  title: "Balance",
+                  title: (
+                    <TooltipIcon content={Tooltips.My.AssetBalance}>
+                      Balance
+                    </TooltipIcon>
+                  ),
                   render: ({ amount, symbol }) => format(amount, symbol),
                   align: "right",
                 },
                 {
                   key: "value",
-                  title: "Value",
+                  title: (
+                    <TooltipIcon content={Tooltips.My.MintedValue}>
+                      Value
+                    </TooltipIcon>
+                  ),
                   render: (value) => formatAsset(value, UUSD),
                   align: "right",
                   narrow: !hideChange ? ["right"] : undefined,
@@ -203,7 +207,7 @@ const Minted = () => {
             },
             {
               key: "collateral",
-              title: "Collaterals",
+              title: "Collateral",
               children: [
                 {
                   key: "symbol",
@@ -214,13 +218,21 @@ const Minted = () => {
                 {
                   key: "balance",
                   dataIndex: "collateral",
-                  title: "Balance",
+                  title: (
+                    <TooltipIcon content={Tooltips.My.CollateralBalance}>
+                      Balance
+                    </TooltipIcon>
+                  ),
                   render: ({ amount, symbol }) => format(amount, symbol),
                   align: "right",
                 },
                 {
                   key: "value",
-                  title: "Value",
+                  title: (
+                    <TooltipIcon content={Tooltips.My.MintedValue}>
+                      Value
+                    </TooltipIcon>
+                  ),
                   render: (value) => formatAsset(value, UUSD),
                   align: "right",
                   narrow: !hideChange ? ["right"] : undefined,
@@ -236,7 +248,11 @@ const Minted = () => {
             },
             {
               key: "ratio",
-              title: "Collateral Ratio (Min.)",
+              title: (
+                <TooltipIcon content={Tooltips.My.CollateralRatio}>
+                  Collateral Ratio (Min.)
+                </TooltipIcon>
+              ),
               render: (value, { minRatio, warning, danger }) => {
                 const content = `${percent(value)} (${percent(minRatio)})`
                 return warning || danger ? (

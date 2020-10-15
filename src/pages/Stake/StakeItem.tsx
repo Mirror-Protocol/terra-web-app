@@ -1,6 +1,7 @@
 import React from "react"
 import { useRouteMatch } from "react-router-dom"
 import classNames from "classnames/bind"
+import Tooltip from "../../lang/Tooltip.json"
 import { LP } from "../../constants"
 import { gt } from "../../libs/math"
 import { insertIf } from "../../libs/utils"
@@ -12,6 +13,7 @@ import Icon from "../../components/Icon"
 import Count from "../../components/Count"
 import { DlFooter } from "../../components/Dl"
 import CountWithResult from "../../components/CountWithResult"
+import { TooltipIcon } from "../../components/Tooltip"
 import getLpName from "./getLpName"
 import StakeImage from "./StakeImage"
 import styles from "./StakeItem.module.scss"
@@ -38,11 +40,15 @@ const StakeItem = ({ symbol, apr, emphasize }: Props) => {
 
   const stats = [
     {
-      title: "APR",
+      title: <TooltipIcon content={Tooltip.Stake.APR}>APR</TooltipIcon>,
       content: <Count format={percent}>{apr}</Count>,
     },
     {
-      title: "Total Staked",
+      title: (
+        <TooltipIcon content={Tooltip.Stake.TotalStaked}>
+          Total Staked
+        </TooltipIcon>
+      ),
       content: (
         <CountWithResult
           keys={[AssetInfoKey.LPTOTALSTAKED]}

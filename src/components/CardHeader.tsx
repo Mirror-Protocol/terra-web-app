@@ -32,7 +32,7 @@ const CardHeader: FC<Props> = ({ header, title, ...props }) => {
   const render = {
     [HeaderType.DEFAULT]: (
       <>
-        <section>
+        <section className={styles.wrapper}>
           <LoadingTitle loading={loading} size={16}>
             <h1 className={styles.title}>{title}</h1>
           </LoadingTitle>

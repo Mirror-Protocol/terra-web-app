@@ -1,4 +1,4 @@
-import React, { MouseEvent, useRef } from "react"
+import React, { MouseEvent, ReactNode, useRef } from "react"
 import classNames from "classnames/bind"
 import { div } from "../libs/math"
 import { percent } from "../libs/num"
@@ -14,7 +14,7 @@ interface Item {
 
 interface Props {
   data: Item[]
-  axis?: { x: string; label: string }[]
+  axis?: { x: string; label: ReactNode }[]
   className?: string
   onClick?: (x: string) => void
   noLabel?: boolean

@@ -1,4 +1,5 @@
 import React from "react"
+import Tooltip from "../lang/Tooltip.json"
 import { MenuKey } from "../routes"
 import Page from "../components/Page"
 import TradeForm from "../forms/TradeForm"
@@ -11,7 +12,11 @@ export enum Type {
 
 const Trade = () => {
   const { hash: type } = useHash<Type>(Type.BUY)
-  const tab = { tabs: [Type.BUY, Type.SELL], current: type }
+  const tab = {
+    tabs: [Type.BUY, Type.SELL],
+    tooltips: [Tooltip.Trade.General, Tooltip.Trade.General],
+    current: type,
+  }
 
   return (
     <Page title={MenuKey.TRADE}>

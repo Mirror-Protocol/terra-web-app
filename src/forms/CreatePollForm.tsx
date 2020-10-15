@@ -1,5 +1,6 @@
 import React from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
+import Tooltip from "../lang/Tooltip.json"
 import { MAX_MSG_LENGTH, MIR } from "../constants"
 import { div, gt } from "../libs/math"
 import { record, getLength } from "../libs/utils"
@@ -7,6 +8,7 @@ import { lookup } from "../libs/parse"
 import { useRefetch, useContractsAddress, useContract } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 import { GovKey, useGov } from "../graphql/useGov"
+import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Poll/CreatePoll"
 import { validate as v, step, toBase64 } from "./formHelpers"
 import { renderBalance } from "./formHelpers"
@@ -193,7 +195,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const fields = {
     deposit: {
       help: renderBalance(find(balanceKey, MIR), MIR),
-      label: "Deposit",
+      label: <TooltipIcon content={Tooltip.Gov.Deposit}>Deposit</TooltipIcon>,
       value,
       unit: MIR,
     },
@@ -237,7 +239,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
       },
 
       [Key.weight]: {
-        label: "Weight",
+        label: <TooltipIcon content={Tooltip.Gov.Weight}>Weight</TooltipIcon>,
         input: {
           type: "number",
           step: step(),
@@ -246,7 +248,11 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         unit: "%",
       },
       [Key.lpCommission]: {
-        label: "LP Commission",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.LPcommission}>
+            LP Commission
+          </TooltipIcon>
+        ),
         input: {
           type: "number",
           step: step(),
@@ -255,7 +261,11 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         unit: "%",
       },
       [Key.ownerCommission]: {
-        label: "Owner Commission",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.OwnerCommission}>
+            Owner Commission
+          </TooltipIcon>
+        ),
         input: {
           type: "number",
           step: step(),
@@ -264,7 +274,11 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         unit: "%",
       },
       [Key.auctionDiscount]: {
-        label: "Auction Discount",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.AuctionDiscount}>
+            Auction Discount
+          </TooltipIcon>
+        ),
         input: {
           type: "number",
           step: step(),
@@ -273,7 +287,11 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         unit: "%",
       },
       [Key.minCollateralRatio]: {
-        label: "Minimum Collateral Ratio",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.MinimumCollateralRatio}>
+            Minimum Collateral Ratio
+          </TooltipIcon>
+        ),
         input: {
           type: "number",
           step: step(),

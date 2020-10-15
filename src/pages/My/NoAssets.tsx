@@ -12,7 +12,7 @@ const NoAssets = ({ description, link }: Props) => (
   <article className={styles.component}>
     <p className={styles.description}>{description}</p>
     <LinkButton to={getPath(link)} className={styles.button} outline>
-      Go to {link}
+      {link}
     </LinkButton>
   </article>
 )

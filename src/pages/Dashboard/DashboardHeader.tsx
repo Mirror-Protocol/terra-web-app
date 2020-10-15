@@ -1,5 +1,6 @@
 import React from "react"
 import { MIR, UUSD } from "../../constants"
+import Tooltip from "../../lang/Tooltip.json"
 import { div } from "../../libs/math"
 import { percent } from "../../libs/num"
 import { format } from "../../libs/parse"
@@ -10,6 +11,7 @@ import Card from "../../components/Card"
 import Dl from "../../components/Dl"
 import Summary from "../../components/Summary"
 import Count from "../../components/Count"
+import { TooltipIcon } from "../../components/Tooltip"
 
 const DashboardHeader = (props: Partial<Dashboard>) => {
   const { find } = useContract()
@@ -30,14 +32,20 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
             },
             {
               title: "Transactions(24hrs)",
-              content: <Count>{latest24h?.transactions}</Count>,
+              content: (
+                <TooltipIcon content={Tooltip.Dashboard.Transactions}>
+                  <Count>{latest24h?.transactions}</Count>
+                </TooltipIcon>
+              ),
             },
             {
               title: "Fee(24hrs)",
               content: (
-                <Count symbol={UUSD} integer>
-                  {latest24h?.feeVolume}
-                </Count>
+                <TooltipIcon content={Tooltip.Dashboard.Fee}>
+                  <Count symbol={UUSD} integer>
+                    {latest24h?.feeVolume}
+                  </Count>
+                </TooltipIcon>
               ),
             },
           ]}
@@ -46,7 +54,13 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
 
       <Grid>
         <Card>
-          <Summary title="mAssets Market Cap">
+          <Summary
+            title={
+              <TooltipIcon content={Tooltip.Dashboard.MarketCap}>
+                mAssets Market Cap
+              </TooltipIcon>
+            }
+          >
             <Count symbol={UUSD} integer>
               {assetMarketCap}
             </Count>
@@ -54,7 +68,13 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
         </Card>
 
         <Card>
-          <Summary title="Total Value Locked">
+          <Summary
+            title={
+              <TooltipIcon content={Tooltip.Dashboard.TVL}>
+                Total Value Locked
+              </TooltipIcon>
+            }
+          >
             <Count symbol={UUSD} integer>
               {totalValueLocked}
             </Count>
@@ -62,7 +82,13 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
         </Card>
 
         <Card>
-          <Summary title="Collateral Ratio">
+          <Summary
+            title={
+              <TooltipIcon content={Tooltip.Dashboard.CollateralRatio}>
+                Collateral Ratio
+              </TooltipIcon>
+            }
+          >
             <Count format={(value) => percent(value, 0)}>
               {div(collateralRatio, 100)}
             </Count>

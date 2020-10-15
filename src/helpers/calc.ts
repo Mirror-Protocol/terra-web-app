@@ -77,7 +77,7 @@ export default {
       (acc, [key, { amount, symbol }]) => ({
         ...acc,
         [key]: {
-          amount: new BigNumber(lp).div(totalShare).times(amount).toString(),
+          amount: new BigNumber(lp).times(amount).div(totalShare).toString(),
           symbol,
         },
       }),

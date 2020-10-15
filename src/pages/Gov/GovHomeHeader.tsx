@@ -1,4 +1,5 @@
 import React from "react"
+import Tooltip from "../../lang/Tooltip.json"
 import { MIR } from "../../constants"
 import { div, minus, isFinite } from "../../libs/math"
 import { percent } from "../../libs/num"
@@ -7,6 +8,7 @@ import Grid from "../../components/Grid"
 import Card from "../../components/Card"
 import Summary from "../../components/Summary"
 import CountWithResult from "../../components/CountWithResult"
+import { TooltipIcon } from "../../components/Tooltip"
 import { useMirrorTokenInfo } from "../Stake/MIRSupplyCard"
 import GovMIR from "./GovMIR"
 import styles from "./GovHomeHeader.module.scss"
@@ -29,7 +31,13 @@ const GovHomeHeader = () => {
       <div className={styles.sm}>
         <Grid>
           <Card>
-            <Summary title="Total Staked">
+            <Summary
+              title={
+                <TooltipIcon content={Tooltip.Gov.TotalStaked}>
+                  Total Staked
+                </TooltipIcon>
+              }
+            >
               <CountWithResult results={[result.state]} symbol={MIR} integer>
                 {totalStaked}
               </CountWithResult>
@@ -39,7 +47,13 @@ const GovHomeHeader = () => {
 
         <Grid>
           <Card>
-            <Summary title="Staking Ratio">
+            <Summary
+              title={
+                <TooltipIcon content={Tooltip.Gov.StakingRatio}>
+                  Staking Ratio
+                </TooltipIcon>
+              }
+            >
               <CountWithResult results={[supply.result]} format={percent}>
                 {totalStakedRatio}
               </CountWithResult>

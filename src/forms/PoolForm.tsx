@@ -1,6 +1,7 @@
 import React, { useRef } from "react"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
+import Tooltip from "../lang/Tooltip.json"
 import { LP, UST, UUSD } from "../constants"
 import { plus, minus, times, div, floor, max, gt, gte, lt } from "../libs/math"
 import { insertIf } from "../libs/utils"
@@ -14,6 +15,7 @@ import { PriceKey, BalanceKey, AssetInfoKey } from "../hooks/contractKeys"
 import { parsePairPool } from "../graphql/useNormalize"
 
 import Count from "../components/Count"
+import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Pool"
 import getLpName from "../pages/Stake/getLpName"
 import { validate as v, placeholder, step, toBase64 } from "./formHelpers"
@@ -130,7 +132,14 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const fields = {
     ...getFields({
       [Key.value]: {
-        label: "Input",
+        label: {
+          [Type.PROVIDE]: (
+            <TooltipIcon content={Tooltip.Pool.InputAsset}>Asset</TooltipIcon>
+          ),
+          [Type.WITHDRAW]: (
+            <TooltipIcon content={Tooltip.Pool.LP}>Input</TooltipIcon>
+          ),
+        }[type],
         input: {
           type: "number",
           step: step(symbol),
@@ -147,12 +156,12 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
     estimated: {
       [Type.PROVIDE]: {
-        label: `Input ${UST}`,
+        label: <TooltipIcon content={Tooltip.Pool.InputUST}>{UST}</TooltipIcon>,
         value: estimated ? formatAsset(estimated, UUSD) : "-",
         help: renderBalance(find(balanceKey, UUSD), UUSD, UST),
       },
       [Type.WITHDRAW]: {
-        label: "Output",
+        label: <TooltipIcon content={Tooltip.Pool.Output}>Output</TooltipIcon>,
         value: returnFromTx
           ? Object.values(returnFromTx)
               ?.map(({ amount, symbol }) => formatAsset(amount, symbol))
@@ -173,7 +182,11 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     ? undefined
     : [
         {
-          title: "Pool Price",
+          title: (
+            <TooltipIcon content={Tooltip.Pool.PoolPrice}>
+              Pool Price
+            </TooltipIcon>
+          ),
           content: (
             <Count format={format} symbol={UUSD}>
               {price}
@@ -181,15 +194,23 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
           ),
         },
         ...insertIf(type === Type.PROVIDE, {
-          title: "LP from Tx",
+          title: (
+            <TooltipIcon content={Tooltip.Pool.LPfromTx}>
+              LP from Tx
+            </TooltipIcon>
+          ),
           content: <Count symbol={LP}>{lpFromTx}</Count>,
         }),
         ...insertIf(type === Type.WITHDRAW || gt(balance, 0), {
-          title: "LP after tx",
+          title: "LP after Tx",
           content: <Count symbol={LP}>{lpAfterTx}</Count>,
         }),
         {
-          title: "Pool Share",
+          title: (
+            <TooltipIcon content={Tooltip.Pool.PoolShare}>
+              Pool Share after Tx
+            </TooltipIcon>
+          ),
           content: (
             <Count format={(value) => `${prefix}${percent(value)}`}>
               {!gt(share, 0) ? "0" : gte(share, minimum) ? share : minimum}

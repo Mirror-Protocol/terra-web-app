@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
+import Tooltip from "../lang/Tooltip.json"
 import { MIR, UUSD } from "../constants"
 import { plus, minus, times, div, floor, max } from "../libs/math"
 import { gt, gte, lt, isFinite } from "../libs/math"
@@ -12,6 +13,9 @@ import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
 import { BalanceKey, AccountInfoKey } from "../hooks/contractKeys"
 import { MenuKey } from "../routes"
 
+import Dl from "../components/Dl"
+import Count from "../components/Count"
+import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Mint"
 import { validate as v, placeholder, step, toBase64 } from "./formHelpers"
 import { renderBalance } from "./formHelpers"
@@ -21,8 +25,6 @@ import useSelectAsset, { Config } from "./useSelectAsset"
 import FormGroup from "./FormGroup"
 import FormIcon from "./FormIcon"
 import CollateralRatio from "./CollateralRatio"
-import Dl from "../components/Dl"
-import Count from "../components/Count"
 import styles from "./MintForm.module.scss"
 
 enum Key {
@@ -200,7 +202,11 @@ const MintForm = ({ idx, type, tab }: Props) => {
       },
 
       [Key.value2]: {
-        label: "Expected Minted Asset",
+        label: (
+          <TooltipIcon content={Tooltip.Mint.ExpectedMintedAsset}>
+            Expected Minted Asset
+          </TooltipIcon>
+        ),
         input: {
           type: "number",
           step: step(symbol2),
@@ -213,7 +219,11 @@ const MintForm = ({ idx, type, tab }: Props) => {
       },
 
       [Key.ratio]: {
-        label: "Collateral Ratio",
+        label: (
+          <TooltipIcon content={Tooltip.Mint.CollateralRatio}>
+            Collateral Ratio
+          </TooltipIcon>
+        ),
         input: { type: "number", step: step(), placeholder: "200" },
         unit: "%",
       },
@@ -224,11 +234,19 @@ const MintForm = ({ idx, type, tab }: Props) => {
   const positionInfo = [
     {
       title: "Collateral",
-      content: formatAsset(prevCollateral?.amount, prevCollateral?.symbol),
+      content: (
+        <TooltipIcon content={Tooltip.Mint.Collateral}>
+          {formatAsset(prevCollateral?.amount, prevCollateral?.symbol)}
+        </TooltipIcon>
+      ),
     },
     {
       title: "Asset",
-      content: formatAsset(prevAsset?.amount, prevAsset?.symbol),
+      content: (
+        <TooltipIcon content={Tooltip.Mint.Asset}>
+          {formatAsset(prevAsset?.amount, prevAsset?.symbol)}
+        </TooltipIcon>
+      ),
     },
   ]
 
@@ -259,35 +277,28 @@ const MintForm = ({ idx, type, tab }: Props) => {
         : "0"
       : div(nextCollateralAmount, prevAsset?.amount)
 
-  const priceContent = (
-    <Count
-      format={(value) => `1 ${lookupSymbol(symbol2)} ≈ ${format(value)}`}
-      symbol={symbol1}
-    >
-      {price}
-    </Count>
-  )
+  const priceContents = {
+    title: <TooltipIcon content={Tooltip.Mint.Price}>Price</TooltipIcon>,
+    content: (
+      <Count
+        format={(value) => `1 ${lookupSymbol(symbol2)} ≈ ${format(value)}`}
+        symbol={symbol1}
+      >
+        {price}
+      </Count>
+    ),
+  }
 
   const collateralContents = [
     {
       title: "Total collateral",
       content: <Count symbol={symbol1}>{nextCollateralAmount}</Count>,
     },
-    {
-      title: "Price",
-      content: priceContent,
-    },
+    priceContents,
   ]
 
   const contents = {
-    [Type.OPEN]: !gt(price, 0)
-      ? undefined
-      : [
-          {
-            title: "Price",
-            content: priceContent,
-          },
-        ],
+    [Type.OPEN]: !gt(price, 0) ? undefined : [priceContents],
 
     [Type.CLOSE]: [
       {
