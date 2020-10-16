@@ -4,14 +4,13 @@ import { insertIf } from "../../libs/utils"
 import Dl from "../../components/Dl"
 import PreLine from "../../components/PreLine"
 import ExtLink from "../../components/ExtLink"
-import { replaceLink } from "./pollHelpers"
 
 const PollSummary = ({ description, link, msg, params }: Poll) => (
   <Dl
     list={[
       {
         title: "Description",
-        content: <PreLine {...replaceLink(description)} />,
+        content: <PreLine>{description}</PreLine>,
       },
       ...insertIf(link, {
         title: "Link",
