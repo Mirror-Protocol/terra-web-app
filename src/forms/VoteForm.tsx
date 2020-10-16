@@ -2,6 +2,7 @@ import React from "react"
 import { useRouteMatch } from "react-router-dom"
 import classNames from "classnames/bind"
 
+import MESSAGE from "../lang/MESSAGE.json"
 import { MIR } from "../constants"
 import { gt } from "../libs/math"
 import { lookup } from "../libs/parse"
@@ -72,7 +73,8 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
   ]
 
   const disabled = invalid || !gt(value, 0)
-  const container = { contents, data, disabled, tab, attrs }
+  const messages = [MESSAGE.Confirm.Warning.Vote]
+  const container = { contents, data, disabled, messages, tab, attrs }
 
   return (
     <FormContainer {...container} parserKey="gov">
