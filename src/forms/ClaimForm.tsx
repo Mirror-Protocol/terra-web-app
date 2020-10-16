@@ -1,7 +1,7 @@
 import React from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { MIR } from "../constants"
-import { plus } from "../libs/math"
+import { gt, plus } from "../libs/math"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 import Count from "../components/Count"
@@ -40,7 +40,8 @@ const ClaimForm = ({ symbol }: Props) => {
     }),
   ]
 
-  const container = { contents, data, label: "Claim" }
+  const disabled = !gt(claiming, 0)
+  const container = { contents, data, disabled, label: "Claim" }
 
   return <FormContainer {...container} parserKey="claim" />
 }

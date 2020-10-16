@@ -31,8 +31,8 @@ const GovMIRFooter = () => {
 
   return (
     <footer className={styles.footer}>
-      {contents.map((item) => (
-        <article className={styles.item} key={item.title}>
+      {contents.map((item, index) => (
+        <article className={styles.item} key={index}>
           <Di {...item} fontSize={16} type="vertical" align="center" />
         </article>
       ))}

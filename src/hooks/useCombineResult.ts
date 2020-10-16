@@ -12,15 +12,15 @@ export const useCombineKeys = (keys: (DataKey | undefined)[]): Result => {
   }
 }
 
-export default (results: Result[]): Result => {
-  const findError = (results: Result[]) => {
-    const errorResult = Object.values(results).find(({ error }) => error)
+export default (results: (Result | undefined)[]): Result => {
+  const findError = (results: (Result | undefined)[]) => {
+    const errorResult = Object.values(results).find((result) => result?.error)
     return errorResult && errorResult.error
   }
 
   return {
-    data: results.every(({ data }) => data),
-    loading: results.some(({ loading }) => loading),
+    data: results.every((result) => result?.data),
+    loading: results.some((result) => result?.loading),
     error: findError(results),
   }
 }

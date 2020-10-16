@@ -50,8 +50,8 @@ interface DlFooter extends Props {
 
 export const DlFooter = ({ list, className, margin, ...options }: DlFooter) => (
   <footer className={cx(styles.footer, { margin }, className)}>
-    {list.map((content) => (
-      <article className={styles.item} key={content.title}>
+    {list.map((content, index) => (
+      <article className={styles.item} key={index}>
         <Di {...content} type="vertical" align="center" {...options} />
       </article>
     ))}
