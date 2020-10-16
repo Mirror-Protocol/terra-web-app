@@ -4,6 +4,10 @@
 .tooltip {
   font-size: 12px;
   white-space: pre-line;
+
+  article:not(:first-child) {
+    margin-top: 1em;
+  }
 }
 
 .button {

@@ -30,10 +30,28 @@ const StakeList = () => {
     />
   )
 
+  const tooltip = (
+    <section>
+      <article>
+        <p>{Tooltip.Stake.Title}</p>
+      </article>
+
+      <article>
+        <h1>APR</h1>
+        <p>{Tooltip.Stake.APR}</p>
+      </article>
+
+      <article>
+        <h1>Total Staked</h1>
+        <p>{Tooltip.Stake.TotalStaked}</p>
+      </article>
+    </section>
+  )
+
   return (
     <article>
       <LoadingTitle className={styles.encourage} loading={loading}>
-        <TooltipIcon content={Tooltip.Stake.Title}>
+        <TooltipIcon content={tooltip}>
           <p>Earn MIR tokens by staking LP Tokens!</p>
         </TooltipIcon>
       </LoadingTitle>
