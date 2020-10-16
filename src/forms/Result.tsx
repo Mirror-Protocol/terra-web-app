@@ -22,13 +22,15 @@ import ConfirmDetails from "./ConfirmDetails"
 import styles from "./Result.module.scss"
 
 interface Props extends PostResponse {
+  gov?: boolean
   parserKey: string
   onFailure: () => void
 }
 
 const cx = classNames.bind(styles)
 
-const Result = ({ success, result, error, parserKey, onFailure }: Props) => {
+const Result = ({ success, result, error, ...props }: Props) => {
+  const { parserKey, onFailure, gov } = props
   const { txhash: hash = "" } = result ?? {}
 
   /* context */
@@ -138,11 +140,15 @@ const Result = ({ success, result, error, parserKey, onFailure }: Props) => {
         <footer>
           {failed ? (
             <Button onClick={onFailure} size="lg" submit>
-              {MESSAGE.Result.Button.Failed}
+              {MESSAGE.Result.Button.FAILURE}
             </Button>
           ) : (
-            <LinkButton to={getPath(MenuKey.MY)} size="lg" submit>
-              {MESSAGE.Result.Button.SUCCESS}
+            <LinkButton
+              to={getPath(!gov ? MenuKey.MY : MenuKey.GOV)}
+              size="lg"
+              submit
+            >
+              {!gov ? MenuKey.MY : MenuKey.GOV}
             </LinkButton>
           )}
         </footer>

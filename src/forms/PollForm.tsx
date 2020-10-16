@@ -55,7 +55,7 @@ const PollForm = ({ type, tab }: Props) => {
   const container = { data, tab, disabled, messages }
 
   return (
-    <FormContainer {...container}>
+    <FormContainer {...container} gov>
       <PollItem id={id} />
     </FormContainer>
   )

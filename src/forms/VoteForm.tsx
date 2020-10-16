@@ -77,7 +77,7 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
   const container = { contents, data, disabled, messages, tab, attrs }
 
   return (
-    <FormContainer {...container} parserKey="gov">
+    <FormContainer {...container} parserKey="gov" gov>
       <div className={styles.list}>
         {Object.values(AnswerKey).map((answer) => {
           const checked = answer === values[Key.answer]

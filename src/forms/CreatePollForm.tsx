@@ -405,7 +405,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const container = { contents: [], data, disabled, messages, tab, attrs }
 
   return (
-    <FormContainer {...container} parserKey="gov">
+    <FormContainer {...container} parserKey="gov" gov>
       {fieldKeys.map((key) =>
         key === Key.parameter ? (
           <FormCheck horizontal list={radio} key={key} />
