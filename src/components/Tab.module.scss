@@ -8,8 +8,6 @@ $radius: 10px;
 }
 
 .tab {
-  $height: 60px;
-
   @include flex;
   @include link;
 
@@ -17,8 +15,13 @@ $radius: 10px;
 
   font-size: 18px;
   font-weight: 500;
-  height: $height;
+  height: 60px;
   text-transform: capitalize;
+
+  &:only-child {
+    height: unset;
+    margin-top: 30px;
+  }
 
   &.active {
     border-bottom: 1px solid $darkblue;
