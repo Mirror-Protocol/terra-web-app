@@ -35,11 +35,11 @@ const GovMIR = () => {
           <Count format={percent}>{dashboard?.latest24h.govAPR}</Count>
         </span>
 
-        <p className={styles.desc}>
+        <section className={styles.desc}>
           <TooltipIcon content={Tooltip.Gov.APR}>
             Annual percentage rate (APR)
           </TooltipIcon>
-        </p>
+        </section>
       </section>
 
       <LinkButton {...stake} size="sm" outline>
