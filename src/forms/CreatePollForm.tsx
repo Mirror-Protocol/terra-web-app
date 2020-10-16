@@ -130,7 +130,9 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         [Key.parameter]: v.required(parameter),
 
         [Key.weight]:
-          parameter && !weight ? "" : v.amount(weight, range, "Weight"),
+          parameter && !weight
+            ? ""
+            : v.amount(weight, { ...range, max: undefined }, "Weight"),
         [Key.lpCommission]:
           parameter && lpCommission
             ? ""
