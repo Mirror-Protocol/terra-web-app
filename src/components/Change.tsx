@@ -23,8 +23,7 @@ const Change = ({ price, className, children }: Props) => {
     return (
       <span className={cx(styles.flex, styles.change, { up, down })}>
         <Icon name={icon} size="150%" />
-        {up && "+"}
-        {percent(change)}
+        {percent(abs(change))}
       </span>
     )
   }
