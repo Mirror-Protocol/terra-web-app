@@ -1,4 +1,5 @@
 import { AccAddress } from "@terra-money/terra.js"
+import MESSAGE from "../lang/MESSAGE.json"
 import { UUSD } from "../constants"
 import { gt, gte, lte } from "../libs/math"
 import { getLength, omitEmpty } from "../libs/utils"
@@ -78,7 +79,7 @@ export const validate = {
       : max && gt(max, 0) && !(gt(amount, 0) && lte(amount, max))
       ? `${label} must be between 0 and ${lookup(max, symbol)}`
       : symbol && max && !gt(max, 0)
-      ? "Insufficient balance"
+      ? MESSAGE.Form.Validate.InsufficientBalance
       : ""
   },
 

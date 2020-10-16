@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
+import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
 import { MIR, UUSD } from "../constants"
 import { plus, minus, times, div, floor, max } from "../libs/math"
@@ -71,9 +72,9 @@ const MintForm = ({ idx, type, tab }: Props) => {
       [Key.symbol2]: open ? v.required(symbol2) : "",
       [Key.ratio]:
         prevRatio && !(type === Type.DEPOSIT ? gt : lt)(nextRatio, prevRatio)
-          ? "Collateral ratio must be higher than current collateral ratio"
+          ? MESSAGE.Form.Validate.CollateralRatio.Current
           : !gte(nextRatio, find(AssetInfoKey.MINCOLLATERALRATIO, symbol2))
-          ? "Collateral ratio must be higher than minimum collateral ratio"
+          ? MESSAGE.Form.Validate.CollateralRatio.Minimum
           : v.required(ratio),
     }
   }
@@ -369,16 +370,25 @@ const MintForm = ({ idx, type, tab }: Props) => {
     [Type.WITHDRAW]: [newContractMsg(mint, withdraw)],
   }[type]
 
-  const disabled = !close && invalid
-  const label = open ? MenuKey.MINT : type
-  const messages = !touched[Key.ratio]
-    ? undefined
-    : errors[Key.ratio]
+  const ratioMessages = errors[Key.ratio]
     ? [errors[Key.ratio]]
     : lt(nextRatio, safeRatio)
-    ? ["Entered collateral ratio is lower than safe ratio"]
+    ? [MESSAGE.Form.Validate.CollateralRatio.Safe]
     : undefined
 
+  const error =
+    prevAsset && !gt(find(balanceKey, prevAsset?.symbol), prevAsset.amount)
+      ? [MESSAGE.Form.Validate.InsufficientBalance]
+      : undefined
+
+  const messages = touched[Key.ratio]
+    ? ratioMessages
+    : close
+    ? error
+    : undefined
+
+  const disabled = !close ? invalid : !!error
+  const label = open ? MenuKey.MINT : type
   const container = { contents, data, disabled, messages, attrs, tab, label }
   const deduct = type === Type.WITHDRAW || type === Type.CLOSE
   const tax = { pretax: uusd, deduct }

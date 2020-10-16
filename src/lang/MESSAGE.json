@@ -4,6 +4,14 @@
   },
 
   "Form": {
+    "Validate": {
+      "InsufficientBalance": "Insufficient balance",
+      "CollateralRatio": {
+        "Current": "Collateral ratio must be higher than current collateral ratio",
+        "Minimum": "Collateral ratio must be higher than minimum collateral ratio",
+        "Safe": "Collateral ratio is lower than safe ratio"
+      }
+    },
     "Button": {
       "ConnectWallet": "Connect Wallet",
       "SelectAsset": "Select an asset"
