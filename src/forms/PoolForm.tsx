@@ -42,7 +42,8 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   /* context */
   const { getListedItem, toToken } = useContractsAddress()
   const { parsed, find } = useContract()
-  useRefetch([priceKey, balanceKey, infoKey])
+  // Refetch the balance of stakable LP even on stake
+  useRefetch([priceKey, BalanceKey.TOKEN, BalanceKey.LPSTAKABLE, infoKey])
 
   /* form:validate */
   const validate = ({ value, symbol }: Values<Key>) => {
