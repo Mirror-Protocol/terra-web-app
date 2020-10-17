@@ -41,9 +41,10 @@ const ClaimForm = ({ symbol }: Props) => {
   ]
 
   const disabled = !gt(claiming, 0)
-  const container = { contents, data, disabled, label: "Claim" }
+  const container = { contents, data, disabled }
+  const props = { tab: { tabs: ["Claim"], current: "Claim" }, label: "Claim" }
 
-  return <FormContainer {...container} parserKey="claim" />
+  return <FormContainer {...container} {...props} parserKey="claim" />
 }
 
 export default ClaimForm

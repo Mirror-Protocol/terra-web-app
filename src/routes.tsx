@@ -12,6 +12,7 @@ import Pool from "./pages/Pool"
 import Stake from "./pages/Stake"
 import Gov from "./pages/Gov"
 
+import Migrate from "./pages/Migrate"
 import Auction from "./pages/Auction"
 import Reward from "./pages/Reward"
 import Caution from "./forms/Caution"
@@ -32,19 +33,27 @@ export enum MenuKey {
 
 export const omit = [MenuKey.DASHBOARD, MenuKey.SEND]
 export const menu: Dictionary<RouteProps> = {
+  // Not included in navigation bar
   [MenuKey.DASHBOARD]: { path: "/", exact: true, component: Dashboard },
   [MenuKey.MY]: { path: "/my", component: My },
   [MenuKey.SEND]: { path: "/send", component: Send },
 
+  // Menu
   [MenuKey.TRADE]: { path: "/trade", component: Trade },
   [MenuKey.MINT]: { path: "/mint", component: Mint },
   [MenuKey.POOL]: { path: "/pool", component: Pool },
   [MenuKey.STAKE]: { path: "/stake", component: Stake },
   [MenuKey.GOV]: { path: "/gov", component: Gov },
 
+  // Migration
+  migrate: { path: "/migrate", component: Migrate },
+
+  // For test
   auction: { path: "/auction", component: Auction },
   reward: { path: "/reward", component: Reward },
   caution: { path: "/caution", component: Caution },
+
+  // For developers
   data: { path: "/data", component: Data },
   tool: { path: "/tool", component: Tool },
 }

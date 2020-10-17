@@ -34,7 +34,7 @@
   height: 100%;
 
   .lg & {
-    padding-bottom: $gutter;
+    padding: $gutter $card-padding-horizontal;
   }
 
   .full & {

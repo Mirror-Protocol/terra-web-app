@@ -15,6 +15,11 @@
     "Button": {
       "ConnectWallet": "Connect Wallet",
       "SelectAsset": "Select an asset"
+    },
+    "Migrate": {
+      "Desc": "Passed governance poll regarding a corporate event changed the balance of the assets below",
+      "Footer": "The value of the assets remain unchanged. Confirm to use other functions.",
+      "Button": "Confirm"
     }
   },
   "Confirm": {

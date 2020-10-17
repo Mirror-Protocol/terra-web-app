@@ -12,6 +12,7 @@ import Container from "../components/Container"
 import Tab from "../components/Tab"
 import Button from "../components/Button"
 import Count from "../components/Count"
+import Card from "../components/Card"
 import { TooltipIcon } from "../components/Tooltip"
 import useHash from "../pages/useHash"
 import Caution from "./Caution"
@@ -157,15 +158,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
       </>
     )
 
-    return tab ? (
-      <Tab {...tab}>{form}</Tab>
-    ) : label ? (
-      <Tab tabs={[label]} current={label}>
-        {form}
-      </Tab>
-    ) : (
-      form
-    )
+    return tab ? <Tab {...tab}>{form}</Tab> : <Card lg>{form}</Card>
   }
 
   return (

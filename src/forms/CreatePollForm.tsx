@@ -10,7 +10,7 @@ import { BalanceKey } from "../hooks/contractKeys"
 import { GovKey, useGov } from "../graphql/useGov"
 import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Poll/CreatePoll"
-import { validate as v, step, toBase64 } from "./formHelpers"
+import { validate as v, step, toBase64, placeholder } from "./formHelpers"
 import { renderBalance } from "./formHelpers"
 import useForm from "./useForm"
 import useSelectAsset, { Config } from "./useSelectAsset"
@@ -39,12 +39,14 @@ enum Key {
   /* params:parameter change */
   parameter = "parameter",
   asset = "asset",
+  conversion = "conversion",
 }
 
 enum Parameter {
   WEIGHT = "Weight",
   COMMISSION = "Commission",
   MINT = "Mint",
+  EVENT = "Corporate Event",
 }
 
 const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
@@ -57,34 +59,29 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         [Parameter.WEIGHT]: [Key.weight],
         [Parameter.COMMISSION]: [Key.lpCommission, Key.ownerCommission],
         [Parameter.MINT]: [Key.auctionDiscount, Key.minCollateralRatio],
+        [Parameter.EVENT]: [Key.conversion],
       }[parameter as Parameter] ?? []
 
-    return {
-      [Type.WHITELIST]: [
-        Key.title,
-        Key.description,
-        Key.link,
+    return [
+      Key.title,
+      Key.description,
+      Key.link,
 
-        Key.name,
-        Key.symbol,
-        Key.oracle,
+      ...{
+        [Type.WHITELIST]: [
+          Key.name,
+          Key.symbol,
+          Key.oracle,
 
-        Key.weight,
-        Key.lpCommission,
-        Key.ownerCommission,
-        Key.auctionDiscount,
-        Key.minCollateralRatio,
-      ],
-      [Type.PARAMS]: [
-        Key.title,
-        Key.description,
-
-        Key.asset,
-        Key.parameter,
-
-        ...paramsFieldKeys,
-      ],
-    }[type]
+          Key.weight,
+          Key.lpCommission,
+          Key.ownerCommission,
+          Key.auctionDiscount,
+          Key.minCollateralRatio,
+        ],
+        [Type.PARAMS]: [Key.asset, Key.parameter, ...paramsFieldKeys],
+      }[type],
+    ]
   }
 
   /* context */
@@ -96,7 +93,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const validate = ({ title, description, link, ...values }: Values<Key>) => {
     const { name, symbol, oracle, asset, parameter } = values
     const { weight, lpCommission, ownerCommission } = values
-    const { auctionDiscount, minCollateralRatio } = values
+    const { auctionDiscount, minCollateralRatio, conversion } = values
 
     const range = { optional: type === Type.PARAMS, max: "100" }
     const ranges = {
@@ -157,6 +154,11 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
                 { ...range, max: undefined },
                 "Minimum collateral ratio"
               ),
+        [Key.conversion]: v.amount(
+          conversion,
+          { ...range, max: undefined },
+          "Conversion rate"
+        ),
       },
       "",
       getFieldKeys(parameter)
@@ -182,7 +184,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const { title, description, link } = values
   const { name, symbol, oracle, asset } = values
   const { weight, lpCommission, ownerCommission } = values
-  const { auctionDiscount, minCollateralRatio } = values
+  const { auctionDiscount, minCollateralRatio, conversion } = values
   const amount = governance[GovKey.CONFIG]?.["proposal_deposit"] ?? "0"
   const value = lookup(amount, MIR)
 
@@ -301,6 +303,11 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         },
         unit: "%",
       },
+      [Key.conversion]: {
+        label: "Conversion Rate",
+        input: { type: "number", step: step(), placeholder: placeholder() },
+        unit: "%",
+      },
     }),
   }
 
@@ -320,7 +327,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const { token } = getListedItem(asset)
+  const { token, pair } = getListedItem(asset)
   const { mirrorToken, mint, gov, factory } = contracts
 
   /* whitelist */
@@ -345,7 +352,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   /* parameter:commission */
   const commissionPassCommand = {
-    contract_addr: getListedItem(asset).pair,
+    contract_addr: pair,
     msg: toBase64({
       update_config: {
         lp_commission: !lpCommission ? undefined : div(lpCommission, 100),
@@ -372,6 +379,14 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     }),
   }
 
+  /* parameter:event */
+  const migrate_asset = {
+    name,
+    symbol,
+    from_token: token,
+    conversion_rate: !conversion ? undefined : div(conversion, 100),
+  }
+
   const message = {
     [Type.WHITELIST]: { whitelist },
     [Type.PARAMS]:
@@ -379,6 +394,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         [Parameter.WEIGHT]: { update_weight },
         [Parameter.COMMISSION]: { pass_command: commissionPassCommand },
         [Parameter.MINT]: { pass_command: mintPassCommand },
+        [Parameter.EVENT]: { migrate_asset },
       }[values[Key.parameter] as Parameter] ?? {},
   }[type]
 
