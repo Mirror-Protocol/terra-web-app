@@ -106,7 +106,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }[type]
 
   const lpAfterTx = {
-    [Type.PROVIDE]: plus(balance, lpFromTx ?? "0"),
+    [Type.PROVIDE]: plus(find(BalanceKey.LPSTAKABLE, symbol), lpFromTx ?? "0"),
     [Type.WITHDRAW]: max([minus(balance, amount), "0"]),
   }[type]
 
