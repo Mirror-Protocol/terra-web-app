@@ -14,8 +14,11 @@ interface Props {
   onClick: (ratio: string) => void
 }
 
-const MAX = 3
-const getX = (ratio: string) => div(ratio, MAX)
+const MAX = 3 // 300%
+const getX = (ratio: string) => {
+  const x = div(ratio, MAX)
+  return lt(x, 0) ? "0" : gt(x, 1) ? "1" : x
+}
 
 const CollateralRatio = ({ min, safe, next, onClick }: Props) => (
   <Progress
