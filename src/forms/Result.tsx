@@ -6,19 +6,17 @@ import { TX_POLLING_INTERVAL } from "../constants"
 import { TXINFOS } from "../graphql/gqldocs"
 import { PostResponse } from "../terra/extension"
 import MESSAGE from "../lang/MESSAGE.json"
-import { truncate } from "../libs/text"
-import { useNetwork, useResult } from "../hooks"
+import { useResult } from "../hooks"
 
 import Card from "../components/Card"
 import Icon from "../components/Icon"
 import Loading from "../components/Loading"
 import Button from "../components/Button"
 import LinkButton from "../components/LinkButton"
-import ExtLink from "../components/ExtLink"
 
 import { getPath, MenuKey } from "../routes"
-import ResultContents from "./ResultContents"
-import ConfirmDetails from "./ConfirmDetails"
+import TxHash from "./TxHash"
+import TxInfo from "./TxInfo"
 import styles from "./Result.module.scss"
 
 interface Props extends PostResponse {
@@ -29,43 +27,53 @@ interface Props extends PostResponse {
 
 const cx = classNames.bind(styles)
 
+enum STATUS {
+  SUCCESS = "success",
+  LOADING = "loading",
+  FAILURE = "failure",
+}
+
 const Result = ({ success, result, error, ...props }: Props) => {
   const { parserKey, onFailure, gov } = props
   const { txhash: hash = "" } = result ?? {}
 
   /* context */
-  const { finder } = useNetwork()
   const { uusd } = useResult()
   const { refetch } = uusd
 
   /* polling */
   const variables = { hash }
-  const [load, tx] = useLazyQuery<{ TxInfos: TxInfo[] }>(TXINFOS, { variables })
+  const [load, tx] = useLazyQuery<TxInfos>(TXINFOS, { variables })
 
   const { data, startPolling, stopPolling } = tx
-  const logs = data?.TxInfos[0]?.Logs
-  const loading = tx.loading || (hash && !logs?.length)
+  const txInfo = data?.TxInfos[0]
 
+  /* status */
   // TODO
-  // 1. When there is no response for 20 seconds
+  // 1. TIMEOUT - When there is no response for 20 seconds
   // 2. User denied
-  const timeout = false
+  const status =
+    !success || !hash || tx.error
+      ? STATUS.FAILURE
+      : tx.loading || !txInfo
+      ? STATUS.LOADING
+      : STATUS.SUCCESS
 
   useEffect(() => {
     success && hash && load()
   }, [success, hash, load])
 
   useEffect(() => {
-    if (loading) {
+    if (status === STATUS.LOADING) {
       startPolling?.(TX_POLLING_INTERVAL)
     } else {
       stopPolling?.()
       refetch?.()
     }
-  }, [loading, startPolling, stopPolling, refetch])
+  }, [status, startPolling, stopPolling, refetch])
 
   /* verbose */
-  const verbose = logs ? JSON.stringify(logs, null, 2) : undefined
+  const verbose = txInfo ? JSON.stringify(txInfo, null, 2) : undefined
   useEffect(() => {
     const log = () => {
       console.groupCollapsed("Logs")
@@ -77,82 +85,63 @@ const Result = ({ success, result, error, ...props }: Props) => {
   }, [verbose])
 
   /* render */
-  const failed = !success || timeout
-  const name = failed ? "highlight_off" : loading ? "" : "check_circle_outline"
+  const name = {
+    [STATUS.SUCCESS]: "check_circle_outline",
+    [STATUS.LOADING]: "",
+    [STATUS.FAILURE]: "highlight_off",
+  }[status]
+
   const icon = name ? (
-    <Icon name={name} className={cx({ failed, loading, success })} size={50} />
+    <Icon name={name} className={cx(status)} size={50} />
   ) : (
-    loading && <Loading size={40} />
+    <Loading size={40} />
   )
 
-  const title = failed
-    ? MESSAGE.Result.FAILURE
-    : loading
-    ? MESSAGE.Result.LOADING
-    : MESSAGE.Result.SUCCESS
+  const title = {
+    [STATUS.SUCCESS]: MESSAGE.Result.SUCCESS,
+    [STATUS.LOADING]: MESSAGE.Result.LOADING,
+    [STATUS.FAILURE]: MESSAGE.Result.FAILURE,
+  }[status]
 
   const message =
     result?.raw_log ??
     error?.message ??
     (error?.code === 1 && MESSAGE.Result.DENIED)
 
+  const content = {
+    [STATUS.SUCCESS]: txInfo && (
+      <TxInfo txInfo={txInfo} parserKey={parserKey} />
+    ),
+    [STATUS.LOADING]: (
+      <p className={styles.hash}>
+        <TxHash>{hash}</TxHash>
+      </p>
+    ),
+    [STATUS.FAILURE]: <p className={styles.feedback}>{message}</p>,
+  }[status]
+
+  const button = {
+    [STATUS.SUCCESS]: (
+      <LinkButton
+        to={getPath(!gov ? MenuKey.MY : MenuKey.GOV)}
+        size="lg"
+        submit
+      >
+        {!gov ? MenuKey.MY : MenuKey.GOV}
+      </LinkButton>
+    ),
+    [STATUS.LOADING]: null,
+    [STATUS.FAILURE]: (
+      <Button onClick={onFailure} size="lg" submit>
+        {MESSAGE.Result.Button.FAILURE}
+      </Button>
+    ),
+  }[status]
+
   return (
     <Card icon={icon} title={title} lg>
-      <section className={styles.contents}>
-        {!success ? (
-          <p className={styles.feedback}>{message}</p>
-        ) : (
-          <>
-            {logs?.map((log, index) => {
-              const results = log.Events.find(
-                ({ Type }) => Type === "from_contract"
-              )?.Attributes
-
-              return (
-                results && (
-                  <ResultContents
-                    parserKey={parserKey}
-                    results={results}
-                    key={index}
-                  />
-                )
-              )
-            })}
-
-            <ConfirmDetails
-              contents={[
-                {
-                  title: "Tx Hash",
-                  content: (
-                    <ExtLink href={finder(hash, "tx")} className={styles.link}>
-                      {truncate(hash)}
-                    </ExtLink>
-                  ),
-                },
-              ]}
-              result={!failed && !loading}
-            />
-          </>
-        )}
-      </section>
-
-      {!loading && (
-        <footer>
-          {failed ? (
-            <Button onClick={onFailure} size="lg" submit>
-              {MESSAGE.Result.Button.FAILURE}
-            </Button>
-          ) : (
-            <LinkButton
-              to={getPath(!gov ? MenuKey.MY : MenuKey.GOV)}
-              size="lg"
-              submit
-            >
-              {!gov ? MenuKey.MY : MenuKey.GOV}
-            </LinkButton>
-          )}
-        </footer>
-      )}
+      <section className={styles.contents}>{content}</section>
+      <footer>{button}</footer>
     </Card>
   )
 }

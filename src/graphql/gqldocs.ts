@@ -29,6 +29,18 @@ export const TAX = gql`
 export const TXINFOS = gql`
   query($hash: String) {
     TxInfos(TxHash: $hash) {
+      TxHash
+
+      Tx {
+        Fee {
+          Amount {
+            Amount
+            Denom
+          }
+        }
+        Memo
+      }
+
       Logs {
         Events {
           Type

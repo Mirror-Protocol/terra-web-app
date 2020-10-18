@@ -5,16 +5,17 @@
   color: $aqua;
 }
 
-.failed {
+.failure {
   color: $red;
+}
+
+.hash {
+  color: $battleship;
+  font-size: 12px;
+  text-align: center;
 }
 
 .feedback {
   text-align: center;
   margin: 20px 0 40px;
-}
-
-.link {
-  @include link(inherit, inherit);
-  text-decoration: underline;
 }
