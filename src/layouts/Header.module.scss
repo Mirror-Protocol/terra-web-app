@@ -3,6 +3,7 @@
 
 .header {
   background: $darkblue;
+  box-shadow: 0 10px 10px 0 fade-out($bg, 0.5);
   position: sticky;
   top: 0;
   z-index: $zindex-sticky;
