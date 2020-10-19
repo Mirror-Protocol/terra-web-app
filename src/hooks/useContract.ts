@@ -7,6 +7,7 @@ import { sum } from "../libs/math"
 import usePairPool from "../graphql/queries/usePairPool"
 import useOraclePrice from "../graphql/queries/useOraclePrice"
 
+import usePairConfig from "../graphql/queries/usePairConfig"
 import useMintInfo from "../graphql/queries/useMintInfo"
 import useLpTokenInfo from "../graphql/queries/useLpTokenInfo"
 
@@ -65,6 +66,7 @@ export const useContractState = (address: string): Contract => {
   const oraclePrices = useOraclePrice()
 
   /* contract info */
+  const pairConfig = usePairConfig()
   const mintInfo = useMintInfo()
   const lpTokenInfo = useLpTokenInfo()
 
@@ -84,6 +86,7 @@ export const useContractState = (address: string): Contract => {
     [PriceKey.PAIR]: pairPool.result,
     [PriceKey.ORACLE]: oraclePrices.result,
 
+    [AssetInfoKey.COMMISSION]: pairConfig.result,
     [AssetInfoKey.LIQUIDITY]: pairPool.result,
     [AssetInfoKey.MINCOLLATERALRATIO]: mintInfo.result,
     [AssetInfoKey.LPTOTALSTAKED]: stakingPool.result,
@@ -118,6 +121,9 @@ export const useContractState = (address: string): Contract => {
     [PriceKey.ORACLE]:
       oraclePrices.parsed && price[PriceKey.ORACLE](oraclePrices.parsed),
 
+    [AssetInfoKey.COMMISSION]:
+      pairConfig.parsed &&
+      contractInfo[AssetInfoKey.COMMISSION](pairConfig.parsed),
     [AssetInfoKey.LIQUIDITY]:
       pairPool.parsed && contractInfo[AssetInfoKey.LIQUIDITY](pairPool.parsed),
     [AssetInfoKey.MINCOLLATERALRATIO]:

@@ -6,6 +6,7 @@ export enum PriceKey {
 
 export enum AssetInfoKey {
   // Dictionary<string>
+  COMMISSION = "commission",
   LIQUIDITY = "liquidity",
   MINCOLLATERALRATIO = "minCollateralRatio",
   LPTOTALSTAKED = "lpTotalStaked",

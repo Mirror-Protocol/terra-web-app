@@ -6,6 +6,19 @@ interface Value {
 }
 
 export default {
+  minimumReceived: (params: {
+    offer_amount: string
+    belief_price: string
+    max_spread: string
+    commission: string
+  }) => {
+    const { offer_amount, belief_price, max_spread, commission } = params
+    const expectedAmount = new BigNumber(offer_amount).div(belief_price)
+    const rate1 = new BigNumber(1).minus(max_spread)
+    const rate2 = new BigNumber(1).minus(commission)
+    return expectedAmount.times(rate1).times(rate2).toString()
+  },
+
   /** Mint */
   mint: (params: { collateral: Value; asset: Value; ratio?: string }) => {
     const { collateral, asset, ratio } = params

@@ -13,7 +13,7 @@ export const UST = "UST"
 export const LP = "LP"
 
 /* mirror:configs */
-export const MAX_SPREAD = 0.1
+export const MAX_SPREAD = 0.01
 export const MAX_MSG_LENGTH = 1024
 
 /* network:settings */

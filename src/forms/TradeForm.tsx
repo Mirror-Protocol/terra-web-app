@@ -6,12 +6,14 @@ import { isNil } from "ramda"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { MAX_SPREAD, UUSD } from "../constants"
 import Tooltip from "../lang/Tooltip.json"
+import { div } from "../libs/math"
 import { useRefetch } from "../hooks"
 import { format, lookup, lookupSymbol } from "../libs/parse"
 import { decimal } from "../libs/parse"
 import { toAmount } from "../libs/parse"
+import calc from "../helpers/calc"
 import { useContractsAddress, useContract } from "../hooks"
-import { PriceKey, BalanceKey } from "../hooks/contractKeys"
+import { PriceKey, BalanceKey, AssetInfoKey } from "../hooks/contractKeys"
 
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
@@ -34,12 +36,13 @@ enum Key {
 const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const priceKey = PriceKey.PAIR
   const balanceKey = BalanceKey.TOKEN
+  const infoKey = AssetInfoKey.COMMISSION
 
   /* context */
   const { state } = useLocation<{ symbol: string }>()
   const { getListedItem, toToken } = useContractsAddress()
   const { find } = useContract()
-  useRefetch([priceKey, balanceKey])
+  useRefetch([priceKey, balanceKey, infoKey])
 
   /* form:validate */
   const validate = ({ value1, value2, symbol }: Values<Key>) => {
@@ -69,7 +72,6 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const symbol1 = { [Type.BUY]: UUSD, [Type.SELL]: symbol }[type]
   const symbol2 = { [Type.BUY]: symbol, [Type.SELL]: UUSD }[type]
   const uusd = { [Type.BUY]: amount1, [Type.SELL]: amount2 }[type]
-  const price = find(priceKey, symbol)
 
   /* form:focus input on select asset */
   const value1Ref = useRef<HTMLInputElement>(null!)
@@ -142,6 +144,20 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   })
 
   /* confirm */
+  const belief = {
+    [Type.BUY]: decimal(simulated?.price, 18),
+    [Type.SELL]: decimal(div(1, simulated?.price), 18),
+  }[type]
+
+  const minimumReceived = simulated
+    ? calc.minimumReceived({
+        offer_amount: amount1,
+        belief_price: belief,
+        max_spread: String(MAX_SPREAD),
+        commission: find(infoKey, symbol2),
+      })
+    : "0"
+
   const contents = !(value1 && symbol)
     ? undefined
     : [
@@ -153,13 +169,21 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
             </Count>
           ),
         },
+        {
+          title: (
+            <TooltipIcon content={Tooltip.Trade.MinimumReceived}>
+              Minimum Received
+            </TooltipIcon>
+          ),
+          content: <Count symbol={symbol2}>{minimumReceived}</Count>,
+        },
       ]
 
   /* submit */
   const newContractMsg = useNewContractMsg()
   const asset = toToken({ symbol: symbol1, amount: amount1 })
   const swap = {
-    belief_price: decimal(price, 18),
+    belief_price: belief,
     max_spread: String(MAX_SPREAD),
   }
 

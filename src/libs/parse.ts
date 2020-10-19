@@ -13,7 +13,7 @@ export const dp = (symbol?: string) => (!symbol || symbol === UUSD ? 2 : 6)
 export const validateDp = (value: string, symbol?: string) =>
   new BigNumber(value).times(new BigNumber(10).pow(dp(symbol))).isInteger()
 
-export const decimal = (value: string, dp: number = 6) =>
+export const decimal = (value = "0", dp = 6) =>
   new BigNumber(value).decimalPlaces(dp, rm).toString()
 
 export const lookup: Formatter = (amount = "0", symbol, config) => {

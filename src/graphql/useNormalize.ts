@@ -1,6 +1,6 @@
 import { Dictionary } from "ramda"
 import { MIR, UUSD } from "../constants"
-import { div, floor, gt } from "../libs/math"
+import { plus, div, floor, gt } from "../libs/math"
 import calc from "../helpers/calc"
 import { useContractsAddress } from "../hooks"
 import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
@@ -17,6 +17,10 @@ export default () => {
   }
 
   const contractInfo = {
+    [AssetInfoKey.COMMISSION]: (pairConfig: Dictionary<PairConfig>) =>
+      dict(pairConfig, ({ lp_commission, owner_commission }) =>
+        plus(lp_commission, owner_commission)
+      ),
     [AssetInfoKey.LIQUIDITY]: (pairPool: Dictionary<PairPool>) =>
       dict(pairPool, (pool) => parsePairPool(pool).asset),
     [AssetInfoKey.MINCOLLATERALRATIO]: (mintInfo: Dictionary<MintInfo>) =>

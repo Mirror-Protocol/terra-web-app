@@ -41,7 +41,8 @@
 
   "Trade": {
     "General": "The amount of asset traded is automatically calculated based on the current price, spread and commission",
-    "Price": "Price is based on the pool ratio. The effective price changes dynamically depending on the trade size.\n\n• Spread: Fee paid due to the difference between market price and estimated price.\n• Commission: Deducted from the assets that user receives."
+    "Price": "Price is based on the pool ratio. The effective price changes dynamically depending on the trade size.\n\n• Spread: Fee paid due to the difference between market price and estimated price.\n• Commission: Deducted from the assets that user receives.",
+    "MinimumReceived": "Expected minimum amount based on current price, maximum spread and commission"
   },
   "Mint": {
     "Open": "New assets will be minted when collateral is deposited. Any price change of either collateral or minted assets may lead to liquidation.",

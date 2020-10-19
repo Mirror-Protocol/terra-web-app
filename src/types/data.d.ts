@@ -16,6 +16,11 @@ interface PairPool {
   total_share: string
 }
 
+interface PairConfig {
+  lp_commission: string
+  owner_commission: string
+}
+
 /* Contract Info */
 interface MintInfo {
   min_collateral_ratio: string
