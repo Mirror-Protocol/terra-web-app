@@ -70,7 +70,9 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
     : fee.amount
 
   const invalid =
-    !loading && !gt(uusd, uusdAmount) ? ["Not enough UST"] : undefined
+    address && !loading && !gt(uusd, uusdAmount)
+      ? ["Not enough UST"]
+      : undefined
 
   /* confirm */
   const [confirming, setConfirming] = useState(false)
