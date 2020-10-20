@@ -16,7 +16,7 @@ export const DefaultTippyProps: TippyProps = {
 
 const TooltipTippyProps: TippyProps = {
   ...DefaultTippyProps,
-  placement: "bottom",
+  placement: "top",
   theme: "light-border",
   className: styles.tooltip,
 }

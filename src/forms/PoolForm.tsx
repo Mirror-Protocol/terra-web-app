@@ -1,18 +1,17 @@
 import React, { useRef } from "react"
+import { useLocation } from "react-router-dom"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import Tooltip from "../lang/Tooltip.json"
 import { LP, UST, UUSD } from "../constants"
-import { plus, minus, times, div, floor, max, gt, gte, lt } from "../libs/math"
+import { plus, minus, max, gt } from "../libs/math"
 import { insertIf } from "../libs/utils"
 import { percent } from "../libs/num"
-import calc from "../helpers/calc"
 import { useRefetch } from "../hooks"
-import { format, formatAsset } from "../libs/parse"
+import { format } from "../libs/parse"
 import { toAmount } from "../libs/parse"
 import { useContractsAddress, useContract } from "../hooks"
-import { PriceKey, BalanceKey, AssetInfoKey } from "../hooks/contractKeys"
-import { parsePairPool } from "../graphql/useNormalize"
+import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
@@ -22,6 +21,8 @@ import { validate as v, placeholder, step, toBase64 } from "./formHelpers"
 import { renderBalance } from "./formHelpers"
 import useForm from "./useForm"
 import useSelectAsset from "./useSelectAsset"
+import usePool from "./usePool"
+import usePoolShare from "./usePoolShare"
 import FormContainer from "./FormContainer"
 import FormGroup from "./FormGroup"
 import FormIcon from "./FormIcon"
@@ -32,18 +33,23 @@ enum Key {
 }
 
 const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
-  const infoKey = AssetInfoKey.LPTOTALSUPPLY
   const priceKey = PriceKey.PAIR
   const balanceKey = {
     [Type.PROVIDE]: BalanceKey.TOKEN,
-    [Type.WITHDRAW]: BalanceKey.LPSTAKABLE,
+    [Type.WITHDRAW]: BalanceKey.LPSTAKED,
   }[type]
 
   /* context */
+  const { state } = useLocation<{ symbol: string }>()
   const { getListedItem, toToken } = useContractsAddress()
-  const { parsed, find } = useContract()
+  const { find } = useContract()
   // Refetch the balance of stakable LP even on stake
-  useRefetch([priceKey, BalanceKey.TOKEN, BalanceKey.LPSTAKABLE, infoKey])
+  useRefetch([
+    priceKey,
+    BalanceKey.TOKEN,
+    BalanceKey.LPTOTAL,
+    BalanceKey.LPSTAKED,
+  ])
 
   /* form:validate */
   const validate = ({ value, symbol }: Values<Key>) => {
@@ -56,7 +62,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }
 
   /* form:hook */
-  const initial = { [Key.value]: "", [Key.symbol]: "" }
+  const initial = { [Key.value]: "", [Key.symbol]: state?.symbol ?? "" }
   const form = useForm<Key>(initial, validate)
   const { values, setValue, getFields, attrs, invalid } = form
   const { value, symbol } = values
@@ -73,51 +79,32 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   /* estimate:uusd */
   const balance = find(balanceKey, symbol)
   const { token, pair, lpToken } = getListedItem(symbol)
-  const estimated = price && gt(amount, 0) ? floor(times(amount, price)) : ""
 
   /* estimate:result */
-  const expectLP = (pairPool: PairPool) => {
-    const { uusd, asset, total } = parsePairPool(pairPool)
-    const deposits = [
-      { amount, pair: asset },
-      { amount: estimated, pair: uusd },
-    ]
-
-    return calc.toLP(deposits, total)
-  }
-
-  const expectReturn = (pairPool: PairPool): { asset: Asset; uusd: Asset } => {
-    const { uusd, asset, total } = parsePairPool(pairPool)
-
-    const shares = {
-      asset: { amount: asset, symbol },
-      uusd: { amount: uusd, symbol: UUSD },
-    }
-
-    return calc.fromLP(amount, shares, total)
-  }
-
-  const pairPool = parsed[PriceKey.PAIR]?.[token]
-  const lpFromTx = pairPool ? expectLP(pairPool) : undefined
-  const returnFromTx = pairPool ? expectReturn(pairPool) : undefined
+  const getPool = usePool()
+  const { toLP, fromLP, text, ...rest } = getPool({ amount, symbol })
+  const { uusdEstimated: estimated } = rest
 
   const uusd = {
     [Type.PROVIDE]: estimated,
-    [Type.WITHDRAW]: returnFromTx?.uusd.amount,
+    [Type.WITHDRAW]: fromLP?.uusd.amount,
   }[type]
 
+  const total = find(BalanceKey.LPTOTAL, symbol)
   const lpAfterTx = {
-    [Type.PROVIDE]: plus(find(BalanceKey.LPSTAKABLE, symbol), lpFromTx ?? "0"),
-    [Type.WITHDRAW]: max([minus(balance, amount), "0"]),
+    [Type.PROVIDE]: plus(total, toLP),
+    [Type.WITHDRAW]: max([minus(total, amount), "0"]),
   }[type]
 
   /* share of pool */
-  const minimum = div(0.01, 100) // <0.01%
-  const total = find(infoKey, symbol)
-  const share = {
-    [Type.PROVIDE]: div(lpAfterTx, plus(total, lpFromTx ?? "0")),
-    [Type.WITHDRAW]: div(lpAfterTx, minus(total, amount)),
+  const modifyTotal = {
+    [Type.PROVIDE]: (total: string) => plus(total, toLP),
+    [Type.WITHDRAW]: (total: string) => minus(total, amount),
   }[type]
+
+  const getPoolShare = usePoolShare(modifyTotal)
+  const poolShare = getPoolShare({ amount: lpAfterTx, symbol })
+  const { ratio, lessThanMinimum, minimum } = poolShare
 
   /* render:form */
   const config = {
@@ -158,16 +145,12 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     estimated: {
       [Type.PROVIDE]: {
         label: <TooltipIcon content={Tooltip.Pool.InputUST}>{UST}</TooltipIcon>,
-        value: estimated ? formatAsset(estimated, UUSD) : "-",
+        value: text.toLP,
         help: renderBalance(find(balanceKey, UUSD), UUSD, UST),
       },
       [Type.WITHDRAW]: {
         label: <TooltipIcon content={Tooltip.Pool.Output}>Output</TooltipIcon>,
-        value: returnFromTx
-          ? Object.values(returnFromTx)
-              ?.map(({ amount, symbol }) => formatAsset(amount, symbol))
-              .join(" + ")
-          : "-",
+        value: text.fromLP,
       },
     }[type],
   }
@@ -178,7 +161,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }
 
   /* confirm */
-  const prefix = gt(share, 0) && lt(share, minimum) ? "<" : ""
+  const prefix = lessThanMinimum ? "<" : ""
   const contents = !gt(price, 0)
     ? undefined
     : [
@@ -200,7 +183,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
               LP from Tx
             </TooltipIcon>
           ),
-          content: <Count symbol={LP}>{lpFromTx}</Count>,
+          content: <Count symbol={LP}>{toLP}</Count>,
         }),
         ...insertIf(type === Type.WITHDRAW || gt(balance, 0), {
           title: "LP after Tx",
@@ -214,7 +197,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
           ),
           content: (
             <Count format={(value) => `${prefix}${percent(value)}`}>
-              {!gt(share, 0) ? "0" : gte(share, minimum) ? share : minimum}
+              {lessThanMinimum ? minimum : ratio}
             </Count>
           ),
         },

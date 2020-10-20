@@ -3,8 +3,8 @@ import Page from "../components/Page"
 import { MenuKey } from "../routes"
 import Investment from "./My/Investment"
 import Minted from "./My/Minted"
+import Pool from "./My/Pool"
 import Staked from "./My/Staked"
-// import History from "./My/History"
 import ConnectionRequired from "../components/ConnectionRequired"
 import { useWallet } from "../hooks"
 import Grid from "../components/Grid"
@@ -13,7 +13,7 @@ const My = () => {
   const { address } = useWallet()
 
   return (
-    <Page title={MenuKey.MY}>
+    <Page title={MenuKey.MY} noBreak>
       {!address ? (
         <ConnectionRequired />
       ) : (
@@ -27,12 +27,12 @@ const My = () => {
           </Grid>
 
           <Grid>
-            <Staked />
+            <Pool />
           </Grid>
 
-          {/* <Grid>
-            <History />
-          </Grid> */}
+          <Grid>
+            <Staked />
+          </Grid>
         </>
       )}
     </Page>

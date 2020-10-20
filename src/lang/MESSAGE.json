@@ -52,6 +52,7 @@
     "Empty": {
       "Invested": "No asset",
       "Minted": "No minted position",
+      "Pool": "No LP",
       "Staked": "No staking position"
     }
   }

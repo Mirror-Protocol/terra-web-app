@@ -93,10 +93,11 @@ export const useContractState = (address: string): Contract => {
     [AssetInfoKey.LPTOTALSUPPLY]: lpTokenInfo.result,
 
     [BalanceKey.TOKEN]: tokenBalance.result,
+    [BalanceKey.LPTOTAL]: lpTokenBalance.result, // with LPSTAKED
     [BalanceKey.LPSTAKABLE]: lpTokenBalance.result,
     [BalanceKey.LPSTAKED]: stakingReward.result,
     [BalanceKey.MIRGOVSTAKED]: govStake.result,
-    [BalanceKey.REWARD]: stakingPool.result, // Load STAKE also
+    [BalanceKey.REWARD]: stakingPool.result, // with LPSTAKE
 
     [AccountInfoKey.UUSD]: bankBalance,
     [AccountInfoKey.MINTPOSITIONS]: mintPositions.result,
@@ -108,6 +109,7 @@ export const useContractState = (address: string): Contract => {
     [PriceKey.ORACLE]: oraclePrices.parsed,
 
     [BalanceKey.TOKEN]: tokenBalance.parsed,
+    [BalanceKey.LPTOTAL]: lpTokenBalance.parsed,
     [BalanceKey.LPSTAKABLE]: lpTokenBalance.parsed,
     [BalanceKey.LPSTAKED]: stakingReward.parsed,
     [BalanceKey.MIRGOVSTAKED]: govStake.parsed,
@@ -138,6 +140,10 @@ export const useContractState = (address: string): Contract => {
 
     [BalanceKey.TOKEN]:
       tokenBalance.parsed && balance[BalanceKey.TOKEN](tokenBalance.parsed),
+    [BalanceKey.LPTOTAL]:
+      lpTokenBalance.parsed &&
+      stakingReward.parsed &&
+      balance[BalanceKey.LPTOTAL](lpTokenBalance.parsed, stakingReward.parsed),
     [BalanceKey.LPSTAKABLE]:
       lpTokenBalance.parsed &&
       balance[BalanceKey.LPSTAKABLE](lpTokenBalance.parsed),

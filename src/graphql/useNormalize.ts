@@ -7,7 +7,7 @@ import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
 import { BalanceKey, AccountInfoKey } from "../hooks/contractKeys"
 
 export default () => {
-  const { getListedItem } = useContractsAddress()
+  const { getListedItem, listed } = useContractsAddress()
 
   const price = {
     [PriceKey.PAIR]: (pairPool: Dictionary<PairPool>) =>
@@ -34,6 +34,10 @@ export default () => {
   const balance = {
     [BalanceKey.TOKEN]: (tokenBalance: Dictionary<Balance>) =>
       dict(tokenBalance, ({ balance }) => balance),
+    [BalanceKey.LPTOTAL]: (
+      lpTokenBalance: Dictionary<Balance>,
+      stakingReward: StakingReward
+    ) => reduceLP(listed, { lpTokenBalance, stakingReward }),
     [BalanceKey.LPSTAKABLE]: (lpTokenBalance: Dictionary<Balance>) =>
       dict(lpTokenBalance, ({ balance }) => balance),
     [BalanceKey.LPSTAKED]: (stakingReward: StakingReward) =>
@@ -84,6 +88,28 @@ export const parsePairPool = ({ assets, total_share }: PairPool) => ({
   asset: assets.find(({ info }) => "token" in info)?.amount ?? "0",
   total: total_share,
 })
+
+interface LPParams {
+  lpTokenBalance: Dictionary<Balance>
+  stakingReward: StakingReward
+}
+
+const reduceLP = (
+  listed: ListedItem[],
+  { lpTokenBalance, stakingReward }: LPParams
+) =>
+  listed.reduce<Dictionary<string>>(
+    (acc, { token }) => ({
+      ...acc,
+      [token]: plus(
+        lpTokenBalance[token].balance,
+        stakingReward.reward_infos.find(
+          ({ asset_token }) => asset_token === token
+        )?.bond_amount
+      ),
+    }),
+    {}
+  )
 
 const reduceBondAmount = ({ reward_infos }: StakingReward) =>
   reward_infos.reduce<Dictionary<string>>(

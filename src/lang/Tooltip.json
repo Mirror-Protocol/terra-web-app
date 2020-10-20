@@ -30,6 +30,11 @@
     "PositionWarning": "Position is close to liquidation. Close the position or deposit more collateral.",
     "PositionDanger": "Position can be liquidated anytime upon another user's request. Close the position or deposit more collateral.",
 
+    "TotalWithdrawableValue": "Sum of UST value in all pools",
+    "LP": "Amount of LP",
+    "Withdrawable": "Amount of assets redeemable from burning LP",
+    "PoolShare": "(Pool balance) / (Total pool balance)",
+
     "APR": "(Value of total rewards per year) ÷ (Value of total staked assets)",
     "Staked": "Amount of staked tokens",
     "Reward": "Amount of claimable rewards"

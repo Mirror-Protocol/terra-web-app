@@ -11,7 +11,7 @@
     color: fade-out(#f0f0f0, 0.8);
   }
 
-  &:not(:first-child) {
+  & + & {
     margin-top: 20px;
   }
 }

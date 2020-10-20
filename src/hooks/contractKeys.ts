@@ -16,6 +16,7 @@ export enum AssetInfoKey {
 export enum BalanceKey {
   // Dictionary<string>
   TOKEN = "token",
+  LPTOTAL = "lpTotal",
   LPSTAKABLE = "lpStakable",
   LPSTAKED = "lpStaked",
   MIRGOVSTAKED = "MIRGovStaked",
