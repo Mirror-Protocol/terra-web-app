@@ -73,14 +73,6 @@ const Investment = () => {
             { key: "symbol", title: "Ticker", bold: true },
             { key: "name" },
             {
-              key: "balance",
-              title: (
-                <TooltipIcon content={Tooltip.My.Balance}>Balance</TooltipIcon>
-              ),
-              render: (value, { symbol }) => format(value, symbol),
-              align: "right",
-            },
-            {
               key: "price",
               render: (value) => `${format(value)} ${UST}`,
               align: "right",
@@ -91,6 +83,14 @@ const Investment = () => {
               title: "",
               render: (change: string) => <Change>{change}</Change>,
               narrow: ["left"],
+            },
+            {
+              key: "balance",
+              title: (
+                <TooltipIcon content={Tooltip.My.Balance}>Balance</TooltipIcon>
+              ),
+              render: (value, { symbol }) => format(value, symbol),
+              align: "right",
             },
             {
               key: "value",
@@ -105,7 +105,7 @@ const Investment = () => {
               dataIndex: "value",
               title: (
                 <TooltipIcon content={Tooltip.My.PortfolioRatio}>
-                  Port Ratio
+                  Port. Ratio
                 </TooltipIcon>
               ),
               render: (value) => percent(div(value, totalValue)),

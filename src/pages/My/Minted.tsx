@@ -143,6 +143,7 @@ const Minted = () => {
           columns={[
             {
               key: "idx",
+              title: "ID",
               render: (idx, { warning, danger }) => (
                 <span
                   className={classNames(styles.idx, { red: warning || danger })}
@@ -168,23 +169,6 @@ const Minted = () => {
               title: "Ticker",
               render: (symbol) => lookupSymbol(symbol),
               bold: true,
-            },
-            {
-              key: "ratio",
-              title: (
-                <TooltipIcon content={Tooltips.My.CollateralRatio}>
-                  Col. Ratio (Min.)
-                </TooltipIcon>
-              ),
-              render: (value, { minRatio, warning, danger }) => {
-                const content = `${percent(value)} (${percent(minRatio)})`
-                return warning || danger ? (
-                  <strong className="red">{content}</strong>
-                ) : (
-                  content
-                )
-              },
-              align: "right",
             },
             {
               key: "asset.price",
@@ -236,6 +220,23 @@ const Minted = () => {
                   <Change>{collateral.change}</Change>,
                 ]),
               narrow: ["left"],
+            },
+            {
+              key: "ratio",
+              title: (
+                <TooltipIcon content={Tooltips.My.CollateralRatio}>
+                  Col. Ratio (Min.)
+                </TooltipIcon>
+              ),
+              render: (value, { minRatio, warning, danger }) => {
+                const content = `${percent(value)} (${percent(minRatio)})`
+                return warning || danger ? (
+                  <strong className="red">{content}</strong>
+                ) : (
+                  content
+                )
+              },
+              align: "right",
             },
             {
               key: "actions",
