@@ -4,7 +4,6 @@ import MESSAGE from "../../lang/MESSAGE.json"
 import Tooltip from "../../lang/Tooltip.json"
 import { UST, UUSD } from "../../constants"
 import { div, gt, sum, times } from "../../libs/math"
-import { insertIf } from "../../libs/utils"
 import { format, formatAsset } from "../../libs/parse"
 import { percent } from "../../libs/num"
 import { getPath, MenuKey } from "../../routes"
@@ -87,12 +86,12 @@ const Investment = () => {
               align: "right",
               narrow: !hideChange ? ["right"] : undefined,
             },
-            ...insertIf(!hideChange, {
+            {
               key: "change",
               title: "",
               render: (change: string) => <Change>{change}</Change>,
               narrow: ["left"],
-            }),
+            },
             {
               key: "value",
               title: (

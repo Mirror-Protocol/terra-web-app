@@ -1,11 +1,10 @@
-import React from "react"
+import React, { ReactNode } from "react"
 import { isNil } from "ramda"
 import classNames from "classnames"
 import MESSAGE from "../../lang/MESSAGE.json"
 import Tooltips from "../../lang/Tooltip.json"
-import { UUSD } from "../../constants"
+import { UST, UUSD } from "../../constants"
 import { lt, lte, minus, sum, times } from "../../libs/math"
-import { insertIf } from "../../libs/utils"
 import { format, formatAsset, lookupSymbol } from "../../libs/parse"
 import { percent } from "../../libs/num"
 import calc from "../../helpers/calc"
@@ -165,92 +164,16 @@ const Minted = () => {
               bold: true,
             },
             {
-              key: "asset",
-              title: "Minted assets",
-              children: [
-                {
-                  key: "symbol",
-                  title: "Ticker",
-                  render: (symbol) => lookupSymbol(symbol),
-                  bold: true,
-                },
-                {
-                  key: "balance",
-                  dataIndex: "asset",
-                  title: (
-                    <TooltipIcon content={Tooltips.My.MintedBalance}>
-                      Balance
-                    </TooltipIcon>
-                  ),
-                  render: ({ amount, symbol }) => format(amount, symbol),
-                  align: "right",
-                },
-                {
-                  key: "value",
-                  title: (
-                    <TooltipIcon content={Tooltips.My.MintedValue}>
-                      Value
-                    </TooltipIcon>
-                  ),
-                  render: (value) => formatAsset(value, UUSD),
-                  align: "right",
-                  narrow: !hideChange ? ["right"] : undefined,
-                },
-                ...insertIf(!hideChange, {
-                  key: "change",
-                  title: "",
-                  render: (change: string) => <Change>{change}</Change>,
-                  align: "right" as const,
-                  narrow: ["left"],
-                }),
-              ],
-            },
-            {
-              key: "collateral",
-              title: "Collateral",
-              children: [
-                {
-                  key: "symbol",
-                  title: "Ticker",
-                  render: (symbol) => lookupSymbol(symbol),
-                  bold: true,
-                },
-                {
-                  key: "balance",
-                  dataIndex: "collateral",
-                  title: (
-                    <TooltipIcon content={Tooltips.My.CollateralBalance}>
-                      Balance
-                    </TooltipIcon>
-                  ),
-                  render: ({ amount, symbol }) => format(amount, symbol),
-                  align: "right",
-                },
-                {
-                  key: "value",
-                  title: (
-                    <TooltipIcon content={Tooltips.My.CollateralValue}>
-                      Value
-                    </TooltipIcon>
-                  ),
-                  render: (value) => formatAsset(value, UUSD),
-                  align: "right",
-                  narrow: !hideChange ? ["right"] : undefined,
-                },
-                ...insertIf(!hideChange, {
-                  key: "change",
-                  title: "",
-                  render: (change: string) => <Change>{change}</Change>,
-                  align: "right" as const,
-                  narrow: ["left"],
-                }),
-              ],
+              key: "asset.symbol",
+              title: "Ticker",
+              render: (symbol) => lookupSymbol(symbol),
+              bold: true,
             },
             {
               key: "ratio",
               title: (
                 <TooltipIcon content={Tooltips.My.CollateralRatio}>
-                  Collateral Ratio (Min.)
+                  Col. Ratio (Min.)
                 </TooltipIcon>
               ),
               render: (value, { minRatio, warning, danger }) => {
@@ -262,6 +185,57 @@ const Minted = () => {
                 )
               },
               align: "right",
+            },
+            {
+              key: "asset.price",
+              title: "Oracle Price",
+              render: (value) => `${format(value)} ${UST}`,
+              align: "right",
+            },
+            {
+              key: "balance",
+              title: renderList([
+                <TooltipIcon content={Tooltips.My.MintedBalance}>
+                  Minted Balance
+                </TooltipIcon>,
+                <TooltipIcon content={Tooltips.My.CollateralBalance}>
+                  Collateral Balance
+                </TooltipIcon>,
+              ]),
+              render: (_, { asset, collateral }) =>
+                renderList([
+                  formatAsset(asset.amount, asset.symbol),
+                  formatAsset(collateral.amount, collateral.symbol),
+                ]),
+              align: "right",
+            },
+            {
+              key: "value",
+              title: renderList([
+                <TooltipIcon content={Tooltips.My.MintedValue}>
+                  Minted Value
+                </TooltipIcon>,
+                <TooltipIcon content={Tooltips.My.CollateralValue}>
+                  Collateral Value
+                </TooltipIcon>,
+              ]),
+              render: (_, { asset, collateral }) =>
+                renderList([
+                  formatAsset(asset.value, UUSD),
+                  formatAsset(collateral.value, UUSD),
+                ]),
+              align: "right",
+              narrow: !hideChange ? ["right"] : undefined,
+            },
+            {
+              key: "change",
+              title: "",
+              render: (_, { asset, collateral }) =>
+                renderList([
+                  <Change>{asset.change}</Change>,
+                  <Change>{collateral.change}</Change>,
+                ]),
+              narrow: ["left"],
             },
             {
               key: "actions",
@@ -307,3 +281,13 @@ const Minted = () => {
 }
 
 export default Minted
+
+const renderList = (list: ReactNode[]) => (
+  <ul>
+    {list.map((item, index) => (
+      <li className={styles.item} key={index}>
+        {item}
+      </li>
+    ))}
+  </ul>
+)
