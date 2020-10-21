@@ -36,7 +36,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const priceKey = PriceKey.PAIR
   const balanceKey = {
     [Type.PROVIDE]: BalanceKey.TOKEN,
-    [Type.WITHDRAW]: BalanceKey.LPSTAKED,
+    [Type.WITHDRAW]: BalanceKey.LPSTAKABLE,
   }[type]
 
   /* context */
