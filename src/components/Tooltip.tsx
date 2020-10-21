@@ -25,12 +25,8 @@ interface Props extends Omit<TippyProps, "children"> {
   onClick?: () => void
 }
 
-const Tooltip: FC<Props> = ({ className, onClick, children, ...props }) => (
-  <Tippy
-    {...TooltipTippyProps}
-    {...props}
-    hideOnClick={isNil(props.visible) ? false : undefined}
-  >
+const Tooltip: FC<Props> = ({ className, onClick, children, ...props }) => {
+  const button = (
     <button
       type="button"
       className={classNames(styles.button, className)}
@@ -38,8 +34,20 @@ const Tooltip: FC<Props> = ({ className, onClick, children, ...props }) => (
     >
       {children}
     </button>
-  </Tippy>
-)
+  )
+
+  return props.content ? (
+    <Tippy
+      {...TooltipTippyProps}
+      {...props}
+      hideOnClick={isNil(props.visible) ? false : undefined}
+    >
+      {button}
+    </Tippy>
+  ) : (
+    button
+  )
+}
 
 export const TooltipIcon: FC<Props> = ({ children, ...props }) => (
   <div className={styles.flex}>

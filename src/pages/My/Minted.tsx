@@ -178,7 +178,7 @@ const Minted = () => {
                   key: "balance",
                   dataIndex: "asset",
                   title: (
-                    <TooltipIcon content={Tooltips.My.AssetBalance}>
+                    <TooltipIcon content={Tooltips.My.MintedBalance}>
                       Balance
                     </TooltipIcon>
                   ),
@@ -229,7 +229,7 @@ const Minted = () => {
                 {
                   key: "value",
                   title: (
-                    <TooltipIcon content={Tooltips.My.MintedValue}>
+                    <TooltipIcon content={Tooltips.My.CollateralValue}>
                       Value
                     </TooltipIcon>
                   ),

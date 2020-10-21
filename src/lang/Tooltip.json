@@ -18,25 +18,27 @@
   "My": {
     "TotalValue": "Sum of all \"Value\"",
     "Balance": "Amount of asset",
-    "Value": "(Balance) × (Pool price)",
-    "PortfolioRatio": "Weight of the asset in user's portfolio.\n(Value) ÷ (Total value)",
+    "Value": "Product of \"Balance\" and \"Price\"",
+    "PortfolioRatio": "Weight of the asset in portfolio",
 
     "TotalAssetValue": "Sum of minted asset \"Value\"",
     "TotalCollateralValue": "Sum of collateral \"Value\"",
-    "AssetBalance": "Amount of minted asset",
+    "MintedBalance": "Amount of minted asset",
+    "MintedValue": "UST value of minted asset",
     "CollateralBalance": "Amount of locked collateral",
-    "MintedValue": "(Balance) × (Oracle price)",
-    "CollateralRatio": "(Collateral value) ÷ (Minted asset value)",
+    "CollateralValue": "UST value of collateral",
+    "CollateralRatio": "Ratio of collateral value to minted asset value",
     "PositionWarning": "Position is close to liquidation. Close the position or deposit more collateral.",
-    "PositionDanger": "Position can be liquidated anytime upon another user's request. Close the position or deposit more collateral.",
+    "PositionDanger": "Position can be liquidated anytime upon request. Close the position or deposit more collateral.",
 
     "TotalWithdrawableValue": "Sum of UST value in all pools",
     "LP": "Amount of LP",
-    "Withdrawable": "Amount of assets redeemable from burning LP",
-    "PoolShare": "(Pool balance) / (Total pool balance)",
+    "Withdrawable": "Amount of assets redeemable from buring \"LP\"",
+    "PoolShare": "Ratio of pool balance to total pool balance.",
 
-    "APR": "(Value of total rewards per year) ÷ (Value of total staked assets)",
+    "APR": "Annualized staking return",
     "Staked": "Amount of staked tokens",
+    "StakingRatio": "Ratio of staked LP to total staked LP",
     "Reward": "Amount of claimable rewards"
   },
 
@@ -55,8 +57,8 @@
     "Collateral": "Current amount of collateral",
     "Asset": "Current amount of minted asset",
 
-    "ExpectedMintedAsset": "The expected amount of asset minted.\n(Collateral value ÷ Collateral ratio) ÷ (Price)",
-    "CollateralRatio": "(Collateral value) ÷ (Minted asset value)",
+    "ExpectedMintedAsset": "The expected amount of asset minted",
+    "CollateralRatio": "Ratio of collateral value to minted asset value",
     "MinCollateralRatio": "Liquidated below this ratio",
     "SafeCollateralRatio": "(Minimum collateral ratio) + 50%",
 
@@ -64,36 +66,36 @@
   },
   "Pool": {
     "Provide": "Receive LP by providing liquidity. LP can be staked to earn MIR as rewards.",
-    "Withdraw": "Withdraw your pool share by burning LP.",
+    "Withdraw": "Withdraw pool share by burning LP",
 
     "InputAsset": "Amount to add to the pool",
     "InputUST": "Equivalent amount of UST added to the pool",
     "LP": "Amount of LP to burn",
-    "Output": "lp × (pool amount) ÷ (total share)",
+    "Output": "Estimated amount of redeemed mAsset and UST",
 
     "PoolPrice": "The price determined by the pool ratio",
     "PoolShare": "Contribution percentage to the pool",
-    "LPfromTx": "min(deposit × (total share) ÷ (pool amount))"
+    "LPfromTx": "LP received from providing liquidity"
   },
   "Stake": {
     "MIRprice": "Pool price of MIR",
     "MIRvolume": "Total value of MIR traded in the last 24 hours",
     "MIRsupply": "Total number of generated MIR",
     "Title": "LP can be staked to earn MIR as rewards. LP is obtainable by providing liquidity.",
-    "APR": "Annual percentage rate of rewards.\n(MIR amount per day × 365 days) ÷ ((Total pool value) × (Staked LP) ÷ (Total LP))",
+    "APR": "Annualized LP staking return based on MIR distribution, LP staking ratio and pool value",
     "TotalStaked": "Amount of all LP staked"
   },
   "Gov": {
     "TotalStaked": "Amount of all MIR staked",
-    "StakingRatio": "(Total Staked MIR) ÷ (Total MIR Supply)",
-    "APR": "Annual percentage rate of rewards.\n(MIR amount per day × 365 days) ÷ (Total Staked MIR)",
+    "StakingRatio": "Ratio of staked MIR to total MIR",
+    "APR": "Annualized MIR staking return based on MIR distribution and staking ratio",
 
     "Polls": "Staked MIR can be used as voting power",
 
     "Weight": "Weight which MIR is distributed",
     "LPcommission": "Percentage of the receiving amount from the trade sent to the liquidity pool",
     "OwnerCommission": "Percentage of the receiving amont from the trade distributed to MIR holders",
-    "AuctionDiscount": "Discount rate applied to collateral sold in liquidation auction.\n(Oracle price) × (1 - (Auction discount))",
+    "AuctionDiscount": "Discount rate applied to collateral sold in liquidation auction",
     "MinimumCollateralRatio": "Lowest collateral ratio which users can set to mint new assets. Position will be liquidated below this ratio",
     "Deposit": "Passing the quorum will return the deposit to the creator. Failure to pass quorum will distribute the deposit to all MIR stakers."
   }

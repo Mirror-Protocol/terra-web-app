@@ -17,8 +17,8 @@
       "SelectAsset": "Select an asset"
     },
     "Migrate": {
-      "Desc": "Passed governance poll regarding a corporate event changed the balance of the assets below",
-      "Footer": "The value of the assets remain unchanged. Confirm to use other functions.",
+      "Desc": "Balance of the asset(s) below will be changed due to a passed governance poll regarding a corporate event",
+      "Footer": "The value of the asset(s) remain unchanged. Confirm to use other functions.",
       "Button": "Confirm"
     }
   },
@@ -35,7 +35,7 @@
     "SUCCESS": "Complete!",
     "FAILURE": "Failed",
     "TIMEOUT": "The execution of this transaction is taking a little longer than usual. It has been successfully broadcasted, but have not been executed yet. The transaction may fail in the future, so please check again later",
-    "DENIED": "User denied.",
+    "DENIED": "Denied by the user",
     "Button": { "FAILURE": "Try Again" }
   },
 
@@ -50,10 +50,10 @@
 
   "MyPage": {
     "Empty": {
-      "Invested": "No asset",
-      "Minted": "No minted position",
-      "Pool": "No LP",
-      "Staked": "No staking position"
+      "Invested": "No available asset",
+      "Minted": "No available minted position",
+      "Pool": "No available LP",
+      "Staked": "No available staking position"
     }
   }
 }
