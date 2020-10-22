@@ -70,7 +70,7 @@ const TopTrading = () => {
               key: "volume",
               title: (
                 <TooltipIcon content={Tooltip.TopTrading.Volume}>
-                  Volume(24hrs)
+                  Volume (24hrs)
                 </TooltipIcon>
               ),
               render: (value) => formatAsset(value, UUSD, { integer: true }),

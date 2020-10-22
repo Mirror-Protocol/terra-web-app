@@ -31,7 +31,7 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
               ),
             },
             {
-              title: "Transactions(24hrs)",
+              title: "Transactions (24hrs)",
               content: (
                 <TooltipIcon content={Tooltip.Dashboard.Transactions}>
                   <Count>{latest24h?.transactions}</Count>
@@ -39,7 +39,7 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
               ),
             },
             {
-              title: "Fee(24hrs)",
+              title: "Fee (24hrs)",
               content: (
                 <TooltipIcon content={Tooltip.Dashboard.Fee}>
                   <Count symbol={UUSD} integer>

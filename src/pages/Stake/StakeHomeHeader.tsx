@@ -36,7 +36,7 @@ const StakeHomeHeader = () => {
         <Summary
           title={
             <TooltipIcon content={Tooltip.Stake.MIRvolume}>
-              {MIR} Volume(24hrs)
+              {MIR} Volume (24hrs)
             </TooltipIcon>
           }
         >
