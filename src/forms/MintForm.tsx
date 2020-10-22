@@ -6,6 +6,7 @@ import Tooltip from "../lang/Tooltip.json"
 import { MIR, UUSD } from "../constants"
 import { plus, minus, times, div, floor, max } from "../libs/math"
 import { gt, gte, lt, isFinite } from "../libs/math"
+import { capitalize } from "../libs/utils"
 import { format, formatAsset, lookup, lookupSymbol } from "../libs/parse"
 import { toAmount } from "../libs/parse"
 import calc from "../helpers/calc"
@@ -188,7 +189,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
   const fields = {
     ...getFields({
       [Key.value1]: {
-        label: "Collateral",
+        label: open ? "Collateral" : capitalize(type),
         input: {
           type: "number",
           step: step(symbol1),
@@ -205,7 +206,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
       [Key.value2]: {
         label: (
           <TooltipIcon content={Tooltip.Mint.ExpectedMintedAsset}>
-            Expected Minted Asset
+            Minted
           </TooltipIcon>
         ),
         input: {
@@ -242,7 +243,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
       ),
     },
     {
-      title: "Asset",
+      title: "Minted",
       content: (
         <TooltipIcon content={Tooltip.Mint.Asset}>
           {formatAsset(prevAsset?.amount, prevAsset?.symbol)}

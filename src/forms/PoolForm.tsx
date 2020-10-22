@@ -125,7 +125,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
             <TooltipIcon content={Tooltip.Pool.InputAsset}>Asset</TooltipIcon>
           ),
           [Type.WITHDRAW]: (
-            <TooltipIcon content={Tooltip.Pool.LP}>Input</TooltipIcon>
+            <TooltipIcon content={Tooltip.Pool.LP}>LP</TooltipIcon>
           ),
         }[type],
         input: {
@@ -146,10 +146,13 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
       [Type.PROVIDE]: {
         label: <TooltipIcon content={Tooltip.Pool.InputUST}>{UST}</TooltipIcon>,
         value: text.toLP,
-        help: renderBalance(find(balanceKey, UUSD), UUSD, UST),
+        help: renderBalance(find(balanceKey, UUSD), UUSD),
+        unit: UST,
       },
       [Type.WITHDRAW]: {
-        label: <TooltipIcon content={Tooltip.Pool.Output}>Output</TooltipIcon>,
+        label: (
+          <TooltipIcon content={Tooltip.Pool.Output}>Received</TooltipIcon>
+        ),
         value: text.fromLP,
       },
     }[type],

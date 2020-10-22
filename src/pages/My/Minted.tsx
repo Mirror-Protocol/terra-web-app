@@ -119,7 +119,7 @@ const Minted = () => {
     <Dl
       list={[
         {
-          title: "Total Minted Asset Value",
+          title: "Total Minted Value",
           content: renderTooltip(totalAssetValue, Tooltips.My.TotalAssetValue),
         },
         {

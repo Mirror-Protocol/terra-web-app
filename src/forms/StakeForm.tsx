@@ -57,7 +57,7 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
   /* render:form */
   const fields = getFields({
     [Key.value]: {
-      label: `Amount to ${type}`,
+      label: "Amount",
       input: {
         type: "number",
         step: step(symbol),

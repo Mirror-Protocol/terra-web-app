@@ -80,11 +80,11 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     ...getFields({
       [Key.to]: {
         label: "Send to",
-        input: { placeholder: "Terra address", autoFocus: true },
+        input: { placeholder: "Terra Address", autoFocus: true },
       },
 
       [Key.value]: {
-        label: "Balance",
+        label: "Amount",
         input: {
           type: "number",
           step: step(symbol),

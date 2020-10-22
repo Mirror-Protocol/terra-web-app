@@ -1,6 +1,6 @@
 import { UUSD } from "../constants"
 import { times, floor, gt } from "../libs/math"
-import { formatAsset } from "../libs/parse"
+import { format, formatAsset } from "../libs/parse"
 import calc from "../helpers/calc"
 import { useContract, useContractsAddress, useRefetch } from "../hooks"
 import { PriceKey } from "../hooks/contractKeys"
@@ -46,7 +46,7 @@ export default () => {
     const fromLP = pairPool ? expectReturn(pairPool) : undefined
 
     const text = {
-      toLP: gt(estimated, 0) ? formatAsset(estimated, UUSD) : "-",
+      toLP: gt(estimated, 0) ? format(estimated, UUSD) : "-",
       fromLP: fromLP
         ? Object.values(fromLP)
             ?.map(({ amount, symbol }) => formatAsset(amount, symbol))
