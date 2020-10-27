@@ -2,10 +2,10 @@ import React from "react"
 import { Switch, Route, RouteProps, Redirect } from "react-router-dom"
 import { Dictionary } from "ramda"
 
-import My from "./pages/My"
 import Dashboard from "./pages/Dashboard"
-import Send from "./pages/Send"
+import My from "./pages/My"
 
+import Send from "./pages/Send"
 import Trade from "./pages/Trade"
 import Mint from "./pages/Mint"
 import Pool from "./pages/Pool"
@@ -22,8 +22,8 @@ import Tool from "./tools/Tool"
 export enum MenuKey {
   DASHBOARD = "Dashboard",
   MY = "My Page",
-  SEND = "Send",
 
+  SEND = "Send",
   TRADE = "Trade",
   MINT = "Mint",
   POOL = "Pool",
@@ -35,10 +35,10 @@ export const omit = [MenuKey.DASHBOARD, MenuKey.SEND]
 export const menu: Dictionary<RouteProps> = {
   // Not included in navigation bar
   [MenuKey.DASHBOARD]: { path: "/", exact: true, component: Dashboard },
-  [MenuKey.MY]: { path: "/my", component: My },
   [MenuKey.SEND]: { path: "/send", component: Send },
 
   // Menu
+  [MenuKey.MY]: { path: "/my", component: My },
   [MenuKey.TRADE]: { path: "/trade", component: Trade },
   [MenuKey.MINT]: { path: "/mint", component: Mint },
   [MenuKey.POOL]: { path: "/pool", component: Pool },
