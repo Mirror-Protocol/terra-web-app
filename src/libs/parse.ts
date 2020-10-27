@@ -34,9 +34,11 @@ export const lookupSymbol = (symbol?: string) =>
 
 export const format: Formatter = (amount, symbol, config) => {
   const value = new BigNumber(lookup(amount, symbol, config))
-  return value.gte(1e6)
+  const formatted = value.gte(1e6)
     ? numeral(value.div(1e4).integerValue(rm).times(1e4)).format("0,0.[00]a")
     : numeral(value).format(config?.integer ? "0,0" : "0,0.[000000]")
+
+  return formatted.toUpperCase()
 }
 
 export const formatAsset: Formatter = (amount, symbol, config) =>
