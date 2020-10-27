@@ -16,7 +16,7 @@ const AuctionForm = ({ idx }: { idx: string }) => {
 
   /* confirm */
   const contents = [
-    { title: "idx", content: idx },
+    { title: "ID", content: idx },
     { title: "Amount", content: formatAsset(amount, symbol) },
   ]
 

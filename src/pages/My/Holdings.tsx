@@ -19,7 +19,7 @@ import { Type } from "../Trade"
 import NoAssets from "./NoAssets"
 import DashboardActions from "./DashboardActions"
 
-const Investment = () => {
+const Holdings = () => {
   const priceKey = PriceKey.PAIR
   const balanceKey = BalanceKey.TOKEN
   const keys = [priceKey, balanceKey]
@@ -66,12 +66,12 @@ const Investment = () => {
   )
 
   return (
-    <Card title="Investment" description={description} loading={loading}>
+    <Card title="Holdings" description={description} loading={loading}>
       {dataExists ? (
         <Table
           columns={[
             { key: "symbol", title: "Ticker", bold: true },
-            { key: "name" },
+            { key: "name", title: "Underlying Name" },
             {
               key: "price",
               render: (value) => `${format(value)} ${UST}`,
@@ -149,4 +149,4 @@ const Investment = () => {
   )
 }
 
-export default Investment
+export default Holdings

@@ -171,7 +171,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         {
           title: (
             <TooltipIcon content={Tooltip.Pool.PoolPrice}>
-              Pool Price
+              Terraswap Price
             </TooltipIcon>
           ),
           content: (

@@ -267,7 +267,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
       [Key.ownerCommission]: {
         label: (
           <TooltipIcon content={Tooltip.Gov.OwnerCommission}>
-            Owner Commission
+            MIR Staking Commission
           </TooltipIcon>
         ),
         input: {

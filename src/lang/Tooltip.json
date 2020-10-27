@@ -78,7 +78,7 @@
     "LPfromTx": "LP received from providing liquidity"
   },
   "Stake": {
-    "MIRprice": "Pool price of MIR",
+    "MIRprice": "Terraswap price of MIR",
     "MIRvolume": "Total value of MIR traded in the last 24 hours",
     "MIRsupply": "Total number of generated MIR",
     "Title": "LP can be staked to earn MIR as rewards. LP is obtainable by providing liquidity.",

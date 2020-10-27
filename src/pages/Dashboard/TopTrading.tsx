@@ -55,7 +55,7 @@ const TopTrading = () => {
               align: "center",
             },
             { key: "symbol", title: "Ticker", bold: true },
-            { key: "name" },
+            { key: "name", title: "Underlying Name" },
             {
               key: "liquidity",
               title: (

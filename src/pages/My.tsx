@@ -1,7 +1,7 @@
 import React from "react"
 import Page from "../components/Page"
 import { MenuKey } from "../routes"
-import Investment from "./My/Investment"
+import Holdings from "./My/Holdings"
 import Minted from "./My/Minted"
 import Pool from "./My/Pool"
 import Staked from "./My/Staked"
@@ -19,7 +19,7 @@ const My = () => {
       ) : (
         <>
           <Grid>
-            <Investment />
+            <Holdings />
           </Grid>
 
           <Grid>

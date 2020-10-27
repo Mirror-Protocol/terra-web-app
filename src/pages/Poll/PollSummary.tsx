@@ -36,9 +36,18 @@ const parseContents = (
         (acc, [title, content]) => [
           ...acc,
           ...insertIf(typeof content === "string", {
-            title: title.replaceAll("_", " "),
+            title: getTitle(title),
             content: format?.(content) ?? content,
           }),
         ],
         []
       )
+
+export const getTitle = (title: string) => {
+  const Title: Dict<string> = {
+    lp_commission: "LP Commission",
+    owner_commission: "MIR Staking Commission",
+  }
+
+  return Title[title] ?? title.replaceAll("_", " ")
+}
