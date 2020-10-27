@@ -33,10 +33,17 @@ interface Props extends Poll {
   lg?: boolean
 }
 
-const PollVotes = ({ yes_votes, no_votes, lg }: Props) => {
-  useRefetchGov([GovKey.STATE])
+const PollVotes = ({ lg, ...props }: Props) => {
+  const { yes_votes, no_votes, total_share_at_end_poll } = props
   const { config, state } = useGov()
-  const votes = { yes: yes_votes ?? "0", no: no_votes ?? "0" }
+  useRefetchGov([GovKey.STATE])
+
+  const votes = {
+    yes: yes_votes ?? "0",
+    no: no_votes ?? "0",
+    total: total_share_at_end_poll ?? "0",
+  }
+
   const parsed = config && state && parseVotes(votes, config, state)
 
   return !parsed ? null : (
@@ -51,12 +58,12 @@ export default PollVotes
 
 /* helpers */
 export const parseVotes = (
-  votes: { yes: string; no: string },
+  { total, ...votes }: { yes: string; no: string; total: string },
   { quorum, ...config }: GovConfig,
   { total_share }: GovState
 ) => {
-  const yes = div(votes["yes"], total_share)
-  const no = div(votes["no"], total_share)
+  const yes = div(votes["yes"], gt(total, 0) ? total : total_share)
+  const no = div(votes["no"], gt(total, 0) ? total : total_share)
   const voted = plus(yes, no)
   const threshold = times(config.threshold, voted)
 

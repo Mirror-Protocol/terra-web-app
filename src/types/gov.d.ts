@@ -12,6 +12,7 @@ interface PollData {
 
   yes_votes?: string
   no_votes?: string
+  total_share_at_end_poll?: string
 
   title: string
   description: string
