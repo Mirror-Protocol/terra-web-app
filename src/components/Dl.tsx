@@ -12,8 +12,8 @@ interface Options {
   ddClassName?: string
 }
 
-type Di = Content & Options
-export const Di = ({ title, content, ...options }: Di) => (
+type DiProps = Content & Options
+export const Di = ({ title, content, ...options }: DiProps) => (
   <Dl {...options} list={[{ title, content }]} />
 )
 
@@ -43,19 +43,22 @@ const Dl = ({ list, fontSize, ...props }: Props) => {
   )
 }
 
-interface DlFooter extends Props {
+interface DlFooterProps extends Props {
   className?: string
   margin?: boolean
 }
 
-export const DlFooter = ({ list, className, margin, ...options }: DlFooter) => (
-  <footer className={cx(styles.footer, { margin }, className)}>
-    {list.map((content, index) => (
-      <article className={styles.item} key={index}>
-        <Di {...content} type="vertical" align="center" {...options} />
-      </article>
-    ))}
-  </footer>
-)
+export const DlFooter = (props: DlFooterProps) => {
+  const { list, className, margin, ...options } = props
+  return (
+    <footer className={cx(styles.footer, { margin }, className)}>
+      {list.map((content, index) => (
+        <article className={styles.item} key={index}>
+          <Di {...content} type="vertical" align="center" {...options} />
+        </article>
+      ))}
+    </footer>
+  )
+}
 
 export default Dl

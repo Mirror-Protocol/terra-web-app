@@ -5,7 +5,7 @@ import styles from "./Table.module.scss"
 
 const cx = classNames.bind(styles)
 
-interface Table<T> {
+interface Props<T> {
   rows?: (record: T) => Row
   columns: Column<T>[]
   dataSource: T[]
@@ -40,7 +40,7 @@ enum BorderPosition {
 const SEP = "."
 
 type DefaultRecordType = Record<string, any>
-function Table<T extends DefaultRecordType>(props: Table<T>) {
+function Table<T extends DefaultRecordType>(props: Props<T>) {
   const { rows, columns, dataSource } = props
 
   const normalized = columns.reduce<Column<T>[]>(
