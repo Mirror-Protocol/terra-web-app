@@ -66,7 +66,11 @@ const Holdings = () => {
   )
 
   return (
-    <Card title="Holdings" description={description} loading={loading}>
+    <Card
+      title={<TooltipIcon content={Tooltip.My.Holdings}>Holdings</TooltipIcon>}
+      description={description}
+      loading={loading}
+    >
       {dataExists ? (
         <Table
           columns={[
@@ -140,7 +144,7 @@ const Holdings = () => {
       ) : (
         !loading && (
           <NoAssets
-            description={MESSAGE.MyPage.Empty.Invested}
+            description={MESSAGE.MyPage.Empty.Holdings}
             link={MenuKey.TRADE}
           />
         )

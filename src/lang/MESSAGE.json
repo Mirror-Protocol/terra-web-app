@@ -50,10 +50,10 @@
 
   "MyPage": {
     "Empty": {
-      "Invested": "No available asset",
-      "Minted": "No available minted position",
-      "Pool": "No available LP",
-      "Staked": "No available staking position"
+      "Holdings": "No current asset balances",
+      "Minted": "No current asset mint positions",
+      "Pool": "No current liquidity positions",
+      "Staked": "No current staking positions"
     }
   }
 }

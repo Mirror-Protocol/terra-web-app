@@ -2,9 +2,9 @@ import React from "react"
 import Page from "../components/Page"
 import { MenuKey } from "../routes"
 import Holdings from "./My/Holdings"
-import Minted from "./My/Minted"
+import Mint from "./My/Mint"
 import Pool from "./My/Pool"
-import Staked from "./My/Staked"
+import Stake from "./My/Stake"
 import ConnectionRequired from "../components/ConnectionRequired"
 import { useWallet } from "../hooks"
 import Grid from "../components/Grid"
@@ -23,7 +23,7 @@ const My = () => {
           </Grid>
 
           <Grid>
-            <Minted />
+            <Mint />
           </Grid>
 
           <Grid>
@@ -31,7 +31,7 @@ const My = () => {
           </Grid>
 
           <Grid>
-            <Staked />
+            <Stake />
           </Grid>
         </>
       )}

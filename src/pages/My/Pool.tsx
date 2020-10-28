@@ -81,7 +81,11 @@ const Pool = () => {
   )
 
   return (
-    <Card title="Pool" description={description} loading={loading}>
+    <Card
+      title={<TooltipIcon content={Tooltip.My.Pool}>Pool</TooltipIcon>}
+      description={description}
+      loading={loading}
+    >
       {dataExists ? (
         <Table
           columns={[

@@ -22,12 +22,12 @@ import Tooltip, { TooltipIcon } from "../../components/Tooltip"
 import { Type } from "../Mint"
 import NoAssets from "./NoAssets"
 import DashboardActions from "./DashboardActions"
-import styles from "./Minted.module.scss"
+import styles from "./Mint.module.scss"
 
 const WARNING = 0.3
 const DANGER = 0
 
-const Minted = () => {
+const Mint = () => {
   const priceKey = PriceKey.ORACLE
   const keys = [
     priceKey,
@@ -134,7 +134,11 @@ const Minted = () => {
   )
 
   return (
-    <Card title="Minted" description={description} loading={loading}>
+    <Card
+      title={<TooltipIcon content={Tooltips.My.Mint}>Mint</TooltipIcon>}
+      description={description}
+      loading={loading}
+    >
       {dataExists ? (
         <Table
           rows={({ warning, danger }) => ({
@@ -281,7 +285,7 @@ const Minted = () => {
   )
 }
 
-export default Minted
+export default Mint
 
 const renderList = (list: ReactNode[]) => (
   <ul>

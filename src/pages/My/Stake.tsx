@@ -21,7 +21,7 @@ import getLpName from "../Stake/getLpName"
 import NoAssets from "./NoAssets"
 import DashboardActions from "./DashboardActions"
 
-const Staked = () => {
+const Stake = () => {
   const keys = [
     BalanceKey.TOKEN,
     BalanceKey.LPSTAKED,
@@ -72,7 +72,7 @@ const Staked = () => {
 
   return (
     <Card
-      title="Staked"
+      title={<TooltipIcon content={Tooltip.My.Stake}>Stake</TooltipIcon>}
       action={!loading && <LinkButton {...claimAll} />}
       description={description}
       loading={loading}
@@ -197,4 +197,4 @@ const Staked = () => {
   )
 }
 
-export default Staked
+export default Stake
