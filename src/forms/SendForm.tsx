@@ -42,7 +42,9 @@ const SendForm = ({ tab }: { tab: Tab }) => {
       [Key.to]: v.address(to),
       [Key.value]: v.amount(value, { symbol, max }),
       [Key.symbol]: v.required(symbol),
-      [Key.memo]: v.length(memo, { max: 256 }, "Memo"),
+      [Key.memo]: ["<", ">"].some((char) => memo.includes(char))
+        ? "Memo includes invalid bracket"
+        : v.length(memo, { max: 256 }, "Memo"),
     }
   }
 
