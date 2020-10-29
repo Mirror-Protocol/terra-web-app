@@ -57,20 +57,20 @@ const TopTrading = () => {
             { key: "symbol", title: "Ticker", bold: true },
             { key: "name", title: "Underlying Name" },
             {
-              key: "liquidity",
+              key: "volume",
               title: (
-                <TooltipIcon content={Tooltip.TopTrading.Liquidity}>
-                  Liquidity
+                <TooltipIcon content={Tooltip.TopTrading.Volume}>
+                  Volume (24hrs)
                 </TooltipIcon>
               ),
               render: (value) => formatAsset(value, UUSD, { integer: true }),
               align: "right",
             },
             {
-              key: "volume",
+              key: "liquidity",
               title: (
-                <TooltipIcon content={Tooltip.TopTrading.Volume}>
-                  Volume (24hrs)
+                <TooltipIcon content={Tooltip.TopTrading.Liquidity}>
+                  Liquidity
                 </TooltipIcon>
               ),
               render: (value) => formatAsset(value, UUSD, { integer: true }),
