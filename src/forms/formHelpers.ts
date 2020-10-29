@@ -70,7 +70,7 @@ export const validate = {
       ? ""
       : !value
       ? "Required"
-      : !gt(amount, 0)
+      : !gt(value, 0)
       ? `${label} must be greater than 0`
       : min && !gte(amount, min)
       ? `${label} must be greater than ${min}`
