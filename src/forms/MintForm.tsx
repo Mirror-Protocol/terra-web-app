@@ -51,7 +51,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
   const { contracts, getListedItem, ...helpers } = useContractsAddress()
   const { parseToken, toToken, toAssetInfo } = helpers
   const { find } = useContract()
-  useRefetch([balanceKey])
+  useRefetch([priceKey, balanceKey])
 
   /* context:position */
   const { [AccountInfoKey.MINTPOSITIONS]: positions } = useContract()
@@ -378,7 +378,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
     : undefined
 
   const error =
-    prevAsset && !gt(find(balanceKey, prevAsset?.symbol), prevAsset.amount)
+    prevAsset && !gte(find(balanceKey, prevAsset?.symbol), prevAsset.amount)
       ? [MESSAGE.Form.Validate.InsufficientBalance]
       : undefined
 
