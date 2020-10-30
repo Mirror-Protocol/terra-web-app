@@ -85,7 +85,7 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
           <Summary
             title={
               <TooltipIcon content={Tooltip.Dashboard.CollateralRatio}>
-                Collateral Ratio
+                Total Collateral Ratio
               </TooltipIcon>
             }
           >
