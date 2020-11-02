@@ -71,7 +71,7 @@ const Pool = () => {
 
   const description = dataExists && (
     <Di
-      title="Total Withdrawble Value"
+      title="Total Withdrawable Value"
       content={
         <TooltipIcon content={Tooltip.My.TotalWithdrawableValue}>
           {formatAsset(totalWithdrawable, UUSD)}
