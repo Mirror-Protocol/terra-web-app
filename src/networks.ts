@@ -23,8 +23,8 @@ const networks: Record<NetworkKey, NetworkConfig> = {
   [NetworkKey.MAINNET]: {
     id: "tequila-0004",
     contract: "/tequila.json",
-    mantle: "https://tequila-api.mirrorprotocol.com/graphql",
-    stats: "https://tequila-graph.mirrorprotocol.com/graphql",
+    mantle: "https://tequila-api.mirror.finance/graphql",
+    stats: "https://tequila-graph.mirror.finance/graphql",
     lcd: { chainID: "tequila-0004", URL: "https://tequila-lcd.terra.dev" },
     fee: { gasPrice: 0.0015, amount: 500 }, // 0.000500 UST
   },
@@ -32,7 +32,7 @@ const networks: Record<NetworkKey, NetworkConfig> = {
     id: "moonshine",
     contract: "/moonshine.json",
     mantle: "https://moonshine-mantle.terra.dev/",
-    stats: "https://moonshine-graph.mirrorprotocol.com/graphql",
+    stats: "https://moonshine-graph.mirror.finance/graphql",
     lcd: { chainID: "localterra", URL: "https://moonshine-lcd.terra.dev/" },
     fee: { gasPrice: 0.15, amount: 50000 }, // 0.050000 UST
   },
