@@ -52,7 +52,9 @@
   },
   "eslintConfig": {
     "extends": "react-app",
-    "rules": { "import/no-anonymous-default-export": "off" }
+    "rules": {
+      "import/no-anonymous-default-export": "off"
+    }
   },
   "husky": {
     "hooks": {
