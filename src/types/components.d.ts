@@ -25,6 +25,7 @@ interface FormGroup {
   label?: ReactNode
   help?: Content
   unit?: ReactNode
+  max?: () => void
   assets?: ReactNode
   focused?: boolean
   error?: string

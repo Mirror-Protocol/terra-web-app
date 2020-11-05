@@ -3,7 +3,7 @@ import React from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { LP, MIR } from "../constants"
 import { gt } from "../libs/math"
-import { formatAsset, toAmount } from "../libs/parse"
+import { formatAsset, lookup, toAmount } from "../libs/parse"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 
@@ -53,7 +53,7 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
   /* form:hook */
   const initial = { [Key.value]: "" }
   const form = useForm<Key>(initial, validate)
-  const { values, getFields, attrs, invalid } = form
+  const { values, setValue, getFields, attrs, invalid } = form
   const { value } = values
   const amount = toAmount(value)
 
@@ -69,6 +69,9 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
       },
       help: renderBalance(find(balanceKey, symbol), symbol),
       unit: gov ? MIR : LP,
+      max: gt(find(balanceKey, symbol), 0)
+        ? () => setValue(Key.value, lookup(find(balanceKey, symbol), symbol))
+        : undefined,
     },
   })
 

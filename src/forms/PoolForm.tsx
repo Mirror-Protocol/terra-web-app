@@ -6,11 +6,9 @@ import Tooltip from "../lang/Tooltip.json"
 import { LP, UST, UUSD } from "../constants"
 import { plus, minus, max, gt } from "../libs/math"
 import { insertIf } from "../libs/utils"
+import { format, lookup, toAmount } from "../libs/parse"
 import { percent } from "../libs/num"
-import { useRefetch } from "../hooks"
-import { format } from "../libs/parse"
-import { toAmount } from "../libs/parse"
-import { useContractsAddress, useContract } from "../hooks"
+import { useRefetch, useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 
 import Count from "../components/Count"
@@ -137,6 +135,9 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
           ref: valueRef,
         },
         unit: select.button,
+        max: gt(find(balanceKey, symbol), 0)
+          ? () => setValue(Key.value, lookup(find(balanceKey, symbol), symbol))
+          : undefined,
         assets: select.assets,
         help: renderBalance(balance, symbol),
         focused: type === Type.WITHDRAW && select.isOpen,

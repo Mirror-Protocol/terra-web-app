@@ -1,15 +1,24 @@
 import React from "react"
-
 import classNames from "classnames/bind"
+import Button from "../components/Button"
 import styles from "./FormGroup.module.scss"
 
 const cx = classNames.bind(styles)
 
 const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
-  const { label, help, unit, assets, focused, error, type = 1 } = props
+  const { label, help, unit, max, assets, focused, error, type = 1 } = props
   const { skipFeedback } = props
 
   const border = cx(styles.border, { focused, error, readOnly: value })
+  const maxProps = {
+    type: "button",
+    className: styles.max,
+    onClick: max,
+    color: "secondary",
+    size: "xs",
+    outline: true,
+    children: "Max",
+  }
 
   return (
     <div className={styles.component}>
@@ -42,6 +51,7 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
               )}
             </section>
 
+            {max && <Button {...maxProps} />}
             <section className={styles.unit}>{unit}</section>
           </section>
 
