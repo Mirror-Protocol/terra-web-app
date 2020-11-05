@@ -18,7 +18,7 @@ const PollItem = ({ id }: { id: number }) => {
       </section>
 
       <footer className={styles.footer}>
-        <strong>Estimated end time: </strong>
+        <strong>{estimatedTime.label}: </strong>
         {estimatedTime.end}
       </footer>
     </article>

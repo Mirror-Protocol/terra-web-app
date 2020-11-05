@@ -21,7 +21,7 @@ const PollMeta = ({ id, creator, end_height }: Poll) => {
             ),
           },
           {
-            title: "Estimated End Time",
+            title: estimatedTime.label,
             content: estimatedTime.end,
           },
         ]}

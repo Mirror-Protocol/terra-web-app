@@ -7,6 +7,11 @@ export default (id: number) => {
   const poll = data[id]
 
   return {
+    label: !height
+      ? ""
+      : poll.end_height > height
+      ? "Estimated end time"
+      : "Ended",
     end: height && poll ? estimateTime(height, poll.end_height) : "",
     execute:
       height && poll && config
