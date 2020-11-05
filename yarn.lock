@@ -1580,7 +1580,7 @@
     "@svgr/plugin-svgo" "^5.4.0"
     loader-utils "^2.0.0"
 
-"@terra-money/terra.js@^0.5.8":
+"@terra-money/terra.js@^0.5.12":
   version "0.5.12"
   resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-0.5.12.tgz#9b6efbee2125476af18e3fdc01ffff67cae2eaff"
   integrity sha512-3UZWMT3Tu+MOQrHZ8uEtHL+hurKbe1QVm8x+qWOe4+IOeY3eWdVeBIkHflhGI8NU31v/r5eznbTuy7kEMA4CMQ==
@@ -1625,7 +1625,7 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
-"@testing-library/react@^11.1.0":
+"@testing-library/react@^11.1.1":
   version "11.1.1"
   resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-11.1.1.tgz#226d8dc7491b702fcaac2d7d88d42892e655893a"
   integrity sha512-DT/P2opE9o4NWCd/oIL73b6VF/Xk9AY8iYSstKfz9cXw0XYPQ5IhA/cuYfoN9nU+mAynW8DpAVfEWdM6e7zF6g==
@@ -1633,7 +1633,7 @@
     "@babel/runtime" "^7.12.1"
     "@testing-library/dom" "^7.26.4"
 
-"@testing-library/user-event@^12.1.10":
+"@testing-library/user-event@^12.2.0":
   version "12.2.0"
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-12.2.0.tgz#fbb0710f93d68a28b9407e2380eb152354c944a7"
   integrity sha512-Vnmm1ZvJ+JSQ7+lGIWMIdGbdLFQBAeWEAZJjw6dZwKWMwVTOBXMFbAxUCewQEVM0xfD4sGrYS/Hxec311WknGw==
@@ -1697,7 +1697,7 @@
   dependencies:
     moment "^2.10.2"
 
-"@types/classnames@^2.2.10":
+"@types/classnames@^2.2.11":
   version "2.2.11"
   resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.11.tgz#2521cc86f69d15c5b90664e4829d84566052c1cf"
   integrity sha512-2koNhpWm3DgWRp5tpkiJ8JGc1xTn2q0l+jUNUE7oMKXUf5NpI9AIdC4kbjGNFBdHtcxBD18LAksoudAVhFKCjw==
@@ -1787,7 +1787,7 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
-"@types/node@*", "@types/node@^14.14.5":
+"@types/node@*", "@types/node@^14.14.6":
   version "14.14.6"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.6.tgz#146d3da57b3c636cc0d1769396ce1cfa8991147f"
   integrity sha512-6QlRuqsQ/Ox/aJEQWBEJG7A9+u7oSYl3mem/K8IzxXG/kAGbV1YPD9Bg9Zw3vyxC/YP+zONKwy8hGkSt1jxFMw==
@@ -1832,14 +1832,14 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.4.tgz#15925414e0ad2cd765bfef58842f7e26a7accb24"
   integrity sha512-1HcDas8SEj4z1Wc696tH56G8OlRaH/sqZOynNNB+HF0WOeXPaxTtbYzJY2oEfiUxjSKjhCKr+MvR7dCHcEelug==
 
-"@types/ramda@^0.27.30":
+"@types/ramda@^0.27.32":
   version "0.27.32"
   resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.27.32.tgz#4f62ff4fc3a41dc32dd9df3cde53861b6ee69e6f"
   integrity sha512-vdwZcWC+hlTxB//LZQLS1+VEdArImGI4yVKUpeqB8b9mBXgDFXCuQoOt8spQbi8fTyNLOdqRv6liSm2ckxWLog==
   dependencies:
     ts-toolbelt "^6.15.1"
 
-"@types/react-dom@^16.9.8":
+"@types/react-dom@^16.9.9":
   version "16.9.9"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.9.tgz#d2d0a6f720a0206369ccbefff752ba37b9583136"
   integrity sha512-jE16FNWO3Logq/Lf+yvEAjKzhpST/Eac8EMd1i4dgZdMczfgqC8EjpxwNgEe3SExHYLliabXDh9DEhhqnlXJhg==
@@ -1877,7 +1877,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^16.9.53":
+"@types/react@*", "@types/react@^16.9.55":
   version "16.9.55"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.55.tgz#47078587f5bfe028a23b6b46c7b94ac0d436acff"
   integrity sha512-6KLe6lkILeRwyyy7yG9rULKJ0sXplUsl98MGoCfpteXf9sPWFWWMknDcsvubcpaTdBuxtsLF6HDUwdApZL/xIg==
@@ -7567,7 +7567,7 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.1.6.tgz#1c00c743b433cd0a4e80758f7b64a57440d9ff00"
   integrity sha1-HADHQ7QzzQpOgHWPe2SldEDZ/wA=
 
-lint-staged@^10.5.0:
+lint-staged@^10.5.1:
   version "10.5.1"
   resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-10.5.1.tgz#901e915c2360072dded0e7d752a0d9a49e079daa"
   integrity sha512-fTkTGFtwFIJJzn/PbUO3RXyEBHIhbfYBE7+rJyLcOXabViaO/h6OslgeK6zpeUtzkDrzkgyAYDTLAwx6JzDTHw==
