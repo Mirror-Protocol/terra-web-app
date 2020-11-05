@@ -10,6 +10,7 @@ import useNewContractMsg from "../terra/useNewContractMsg"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 
+import useGovReceipt from "./receipts/useGovReceipt"
 import { validate as v } from "./formHelpers"
 import useForm from "./useForm"
 import FormContainer from "./FormContainer"
@@ -74,7 +75,11 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
 
   const disabled = invalid || !gt(value, 0)
   const messages = [MESSAGE.Confirm.Warning.Vote]
-  const container = { contents, data, disabled, messages, tab, attrs }
+
+  /* result */
+  const parseTx = useGovReceipt()
+
+  const container = { tab, attrs, contents, messages, disabled, data, parseTx }
 
   return (
     <FormContainer {...container} gov>

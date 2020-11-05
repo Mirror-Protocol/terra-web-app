@@ -10,7 +10,7 @@ import { BalanceKey } from "../hooks/contractKeys"
 import { GovKey, useGov } from "../graphql/useGov"
 import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Poll/CreatePoll"
-import useCreatePollReceipt from "./receipts/useCreatePollReceipt"
+import useGovReceipt from "./receipts/useGovReceipt"
 import { validate as v, step, toBase64, placeholder } from "./formHelpers"
 import { renderBalance } from "./formHelpers"
 import useForm from "./useForm"
@@ -421,7 +421,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const disabled = invalid || loading || !!messages?.length
 
   /* result */
-  const parseTx = useCreatePollReceipt()
+  const parseTx = useGovReceipt()
 
   const container = { tab, attrs, contents: [], messages, disabled, data }
 
