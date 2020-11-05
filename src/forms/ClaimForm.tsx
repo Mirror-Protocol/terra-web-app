@@ -5,6 +5,7 @@ import { gt, plus } from "../libs/math"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 import Count from "../components/Count"
+import useClaimReceipt from "./receipts/useClaimReceipt"
 import FormContainer from "./FormContainer"
 
 interface Props {
@@ -41,7 +42,11 @@ const ClaimForm = ({ symbol }: Props) => {
   ]
 
   const disabled = !gt(claiming, 0)
-  const container = { contents, data, disabled }
+
+  /* result */
+  const parseTx = useClaimReceipt()
+
+  const container = { contents, disabled, data, parseTx }
   const props = { tab: { tabs: ["Claim"], current: "Claim" }, label: "Claim" }
 
   return <FormContainer {...container} {...props} />

@@ -7,7 +7,7 @@ export default () => (logs: TxLog[]) => {
   const val = findValue(logs)
 
   const amount = val("amount")
-  const token = val("asset_token")
+  const token = val("asset_token") || val("contract_address")
   const symbol = getSymbol(token)
 
   /* contents */
