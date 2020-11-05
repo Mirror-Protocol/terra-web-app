@@ -44,7 +44,7 @@ interface Props {
   attrs?: HTMLAttributes<HTMLFormElement>
 
   /** Parser for results */
-  parserKey?: string
+  parseTx?: ResultParser
   /** Gov tx */
   gov?: boolean
 
@@ -53,7 +53,7 @@ interface Props {
 
 export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   const { contents, messages, label, tab, children } = props
-  const { attrs, pretax, deduct, parserKey, gov } = props
+  const { attrs, pretax, deduct, parseTx = () => [], gov } = props
 
   /* context */
   const { hash } = useHash()
@@ -166,12 +166,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   return (
     <Container sm>
       {response ? (
-        <Result
-          {...response}
-          parserKey={parserKey ?? "default"}
-          onFailure={reset}
-          gov={gov}
-        />
+        <Result {...response} parseTx={parseTx} onFailure={reset} gov={gov} />
       ) : (
         <form {...attrs} onKeyDown={handleKeyDown} onSubmit={handleSubmit}>
           {!confirming ? (

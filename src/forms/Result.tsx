@@ -20,8 +20,8 @@ import TxInfo from "./TxInfo"
 import styles from "./Result.module.scss"
 
 interface Props extends PostResponse {
+  parseTx: ResultParser
   gov?: boolean
-  parserKey: string
   onFailure: () => void
 }
 
@@ -34,7 +34,7 @@ enum STATUS {
 }
 
 const Result = ({ success, result, error, ...props }: Props) => {
-  const { parserKey, onFailure, gov } = props
+  const { parseTx, onFailure, gov } = props
   const { txhash: hash = "" } = result ?? {}
 
   /* context */
@@ -109,9 +109,7 @@ const Result = ({ success, result, error, ...props }: Props) => {
     (error?.code === 1 && MESSAGE.Result.DENIED)
 
   const content = {
-    [STATUS.SUCCESS]: txInfo && (
-      <TxInfo txInfo={txInfo} parserKey={parserKey} />
-    ),
+    [STATUS.SUCCESS]: txInfo && <TxInfo txInfo={txInfo} parser={parseTx} />,
     [STATUS.LOADING]: (
       <p className={styles.hash}>
         <TxHash>{hash}</TxHash>

@@ -1,38 +1,60 @@
 import React from "react"
-import ResultContents from "./ResultContents"
-import ConfirmDetails from "./ConfirmDetails"
+import { formatAsset } from "../libs/parse"
 import TxHash from "./TxHash"
+import styles from "./TxInfo.module.scss"
 
 interface Props {
   txInfo: TxInfo
-  parserKey: string
+  parser: ResultParser
 }
 
-const TxInfo = ({ txInfo, parserKey }: Props) => {
-  const { TxHash: hash } = txInfo
+const TxInfo = ({ txInfo, parser }: Props) => {
+  const { TxHash: hash, Tx } = txInfo
   const logs = txInfo?.Logs
+  const [fee] = Tx.Fee.Amount
+
+  const receipt = parser(logs)
+  const footer = [
+    {
+      title: "Tx Fee",
+      content: `+ ${formatAsset(fee.Amount, fee.Denom)}`,
+    },
+    {
+      title: "Tx Hash",
+      content: <TxHash>{hash}</TxHash>,
+    },
+  ]
 
   return (
     <>
-      {logs?.map((log, index) => {
-        const results = log.Events.find(({ Type }) => Type === "from_contract")
-          ?.Attributes
+      {receipt.map(({ title, content, children }) => (
+        <article className={styles.wrapper} key={title}>
+          <header className={styles.row}>
+            <h1 className={styles.title}>{title}</h1>
+            <p className={styles.content}>{content}</p>
+          </header>
 
-        return (
-          results && (
-            <ResultContents
-              parserKey={parserKey}
-              results={results}
-              key={index}
-            />
-          )
-        )
-      })}
+          {children && (
+            <section className={styles.children}>
+              {children.map(({ title, content }) => (
+                <article className={styles.row} key={title}>
+                  <h1 className={styles.title}>{title}</h1>
+                  <p className={styles.content}>{content}</p>
+                </article>
+              ))}
+            </section>
+          )}
+        </article>
+      ))}
 
-      <ConfirmDetails
-        contents={[{ title: "Tx Hash", content: <TxHash>{hash}</TxHash> }]}
-        result
-      />
+      <footer className={styles.footer}>
+        {footer.map(({ title, content }) => (
+          <article className={styles.row} key={title}>
+            <h1 className={styles.title}>{title}</h1>
+            <p className={styles.content}>{content}</p>
+          </article>
+        ))}
+      </footer>
     </>
   )
 }

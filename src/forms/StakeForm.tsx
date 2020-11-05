@@ -2,11 +2,14 @@ import React from "react"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { LP, MIR } from "../constants"
-import { toAmount } from "../libs/parse"
+import { gt } from "../libs/math"
+import { formatAsset, toAmount } from "../libs/parse"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 
 import { Type } from "../pages/Stake"
+import getLpName from "../pages/Stake/getLpName"
+import useStakeReceipt from "./receipts/useStakeReceipt"
 import { validate as v, placeholder, step, renderBalance } from "./formHelpers"
 import { toBase64 } from "./formHelpers"
 import useForm from "./useForm"
@@ -39,7 +42,7 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
   /* context */
   const { contracts, getListedItem } = useContractsAddress()
   const { find, parsed } = useContract()
-  useRefetch([balanceKey])
+  useRefetch([balanceKey, !gov ? BalanceKey.LPSTAKED : BalanceKey.MIRGOVSTAKED])
 
   /* form:validate */
   const validate = ({ value }: Values<Key>) => {
@@ -70,7 +73,16 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
   })
 
   /* confirm */
-  const contents = value ? [] : undefined
+  const staked = find(
+    !gov ? BalanceKey.LPSTAKED : BalanceKey.MIRGOVSTAKED,
+    symbol
+  )
+
+  const contents = !value
+    ? undefined
+    : gt(staked, 0)
+    ? [{ title: "Staked", content: formatAsset(staked, getLpName(symbol)) }]
+    : []
 
   /* submit */
   const newContractMsg = useNewContractMsg()
@@ -112,10 +124,14 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
       : undefined
 
   const disabled = invalid || !!messages?.length
-  const container = { contents, data, disabled, tab, attrs, messages }
+
+  /* result */
+  const parseTx = useStakeReceipt()
+
+  const container = { tab, attrs, contents, messages, disabled, data, parseTx }
 
   return (
-    <FormContainer {...container} parserKey="stake">
+    <FormContainer {...container}>
       <FormGroup {...fields[Key.value]} />
     </FormContainer>
   )

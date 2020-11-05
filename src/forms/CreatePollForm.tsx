@@ -10,6 +10,7 @@ import { BalanceKey } from "../hooks/contractKeys"
 import { GovKey, useGov } from "../graphql/useGov"
 import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Poll/CreatePoll"
+import useCreatePollReceipt from "./receipts/useCreatePollReceipt"
 import { validate as v, step, toBase64, placeholder } from "./formHelpers"
 import { renderBalance } from "./formHelpers"
 import useForm from "./useForm"
@@ -418,10 +419,14 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
       : undefined
 
   const disabled = invalid || loading || !!messages?.length
-  const container = { contents: [], data, disabled, messages, tab, attrs }
+
+  /* result */
+  const parseTx = useCreatePollReceipt()
+
+  const container = { tab, attrs, contents: [], messages, disabled, data }
 
   return (
-    <FormContainer {...container} parserKey="gov" gov>
+    <FormContainer {...container} parseTx={parseTx} gov>
       {fieldKeys.map((key) =>
         key === Key.parameter ? (
           <FormCheck horizontal list={radio} key={key} />

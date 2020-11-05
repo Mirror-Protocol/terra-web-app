@@ -10,6 +10,7 @@ import { useRefetch } from "../hooks"
 import { useWallet, useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 
+import useSendReceipt from "./receipts/useSendReceipt"
 import { validate as v, placeholder, step, renderBalance } from "./formHelpers"
 import useForm from "./useForm"
 import FormContainer from "./FormContainer"
@@ -121,10 +122,14 @@ const SendForm = ({ tab }: { tab: Tab }) => {
       : []
 
   const disabled = invalid
-  const container = { contents, data, memo, disabled, tab, attrs }
+
+  /* result */
+  const parseTx = useSendReceipt()
+
+  const container = { tab, attrs, contents, disabled, data, memo, parseTx }
 
   return (
-    <FormContainer {...container} pretax={uusd} label="send" parserKey="send">
+    <FormContainer {...container} pretax={uusd} label="send">
       <FormGroup {...fields[Key.to]} />
       <FormGroup {...fields[Key.value]} />
       <FormGroup {...fields[Key.memo]} />

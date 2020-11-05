@@ -1,4 +1,5 @@
 import { div, gt, lt } from "../libs/math"
+import { percent } from "../libs/num"
 import { useContract, useRefetch } from "../hooks"
 import { AssetInfoKey } from "../hooks/contractKeys"
 
@@ -12,11 +13,15 @@ export default (modifyTotal?: (total: string) => string) => {
   return ({ amount, symbol }: Asset) => {
     const total = find(infoKey, symbol)
     const ratio = div(amount, modifyTotal?.(total) ?? total)
+    const lessThanMinimum = lt(ratio, MIN) && gt(ratio, 0)
+    const prefix = lessThanMinimum ? "<" : ""
 
     return {
       ratio,
-      lessThanMinimum: lt(ratio, MIN) && gt(ratio, 0),
+      lessThanMinimum,
       minimum: MIN,
+      prefix,
+      text: `${prefix}${percent(lessThanMinimum ? MIN : ratio)}`,
     }
   }
 }

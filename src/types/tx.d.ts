@@ -6,7 +6,7 @@ interface TxInfo {
   TxHash: string
 
   Tx: {
-    Fee: { Amount: FeeAmount }
+    Fee: { Amount: FeeAmount[] }
     Memo: string
   }
 

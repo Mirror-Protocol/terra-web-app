@@ -17,6 +17,7 @@ import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Pool"
 import getLpName from "../pages/Stake/getLpName"
+import usePoolReceipt from "./receipts/usePoolReceipt"
 import { validate as v, placeholder, step, toBase64 } from "./formHelpers"
 import { renderBalance } from "./formHelpers"
 import useForm from "./useForm"
@@ -242,11 +243,14 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const disabled =
     invalid || (type === Type.PROVIDE && gt(estimated, find(balanceKey, UUSD)))
 
-  const container = { contents, data, disabled, tab, attrs }
+  /* result */
+  const parseTx = usePoolReceipt(type)
+
+  const container = { tab, attrs, contents, disabled, data, parseTx }
   const tax = { pretax: uusd, deduct: type === Type.WITHDRAW }
 
   return (
-    <FormContainer {...container} {...tax} parserKey="pool">
+    <FormContainer {...container} {...tax}>
       <FormGroup {...fields[Key.value]} />
       {icons[type]}
       <FormGroup {...fields["estimated"]} />

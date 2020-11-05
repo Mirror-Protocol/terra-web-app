@@ -19,6 +19,7 @@ import Dl from "../components/Dl"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Mint"
+import useMintReceipt from "./receipts/useMintReceipt"
 import { validate as v, placeholder, step, toBase64 } from "./formHelpers"
 import { renderBalance } from "./formHelpers"
 import useForm from "./useForm"
@@ -112,7 +113,6 @@ const MintForm = ({ idx, type, tab }: Props) => {
   const { touched, errors, attrs, invalid } = form
   const { symbol1, symbol2, value1, value2, ratio } = values
   const amount1 = toAmount(value1)
-  const amount2 = toAmount(value2)
   const uusd = symbol1 === UUSD ? amount1 : "0"
 
   /* form:focus input on select asset */
@@ -272,12 +272,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
   }
 
   /* confirm */
-  const price =
-    type === Type.OPEN
-      ? gt(amount2, 0)
-        ? div(amount1, amount2)
-        : "0"
-      : div(nextCollateralAmount, prevAsset?.amount)
+  const price = div(find(priceKey, symbol2), find(priceKey, symbol1))
 
   const priceContents = {
     title: <TooltipIcon content={Tooltip.Mint.Price}>Price</TooltipIcon>,
@@ -390,14 +385,18 @@ const MintForm = ({ idx, type, tab }: Props) => {
 
   const disabled = !close ? invalid : !!error
   const label = open ? MenuKey.MINT : type
-  const container = { contents, data, disabled, messages, attrs, tab, label }
+
+  /* result */
+  const parseTx = useMintReceipt(type, position)
+
+  const container = { tab, attrs, contents, messages, label, disabled, data }
   const deduct = type === Type.WITHDRAW || type === Type.CLOSE
   const tax = { pretax: uusd, deduct }
 
   return type === Type.CLOSE ? (
-    <FormContainer {...container} {...tax} parserKey="mint" />
+    <FormContainer {...container} {...tax} parseTx={parseTx} />
   ) : (
-    <FormContainer {...container} {...tax} parserKey="mint">
+    <FormContainer {...container} {...tax} parseTx={parseTx}>
       {position && (
         <Dl list={positionInfo} className={styles.dl} align="center" />
       )}

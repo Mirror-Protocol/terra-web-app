@@ -18,12 +18,13 @@ import { PriceKey, BalanceKey, AssetInfoKey } from "../hooks/contractKeys"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Trade"
+import useTradeReceipt from "./receipts/useTradeReceipt"
 import { validate as v, placeholder, step, renderBalance } from "./formHelpers"
 import { toBase64 } from "./formHelpers"
 import useForm from "./useForm"
-import FormContainer from "./FormContainer"
 import useSimulate from "./useSimulate"
 import useSelectAsset from "./useSelectAsset"
+import FormContainer from "./FormContainer"
 import FormGroup from "./FormGroup"
 import FormIcon from "./FormIcon"
 
@@ -162,7 +163,11 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     ? undefined
     : [
         {
-          title: <TooltipIcon content={Tooltip.Trade.Price}>Price</TooltipIcon>,
+          title: (
+            <TooltipIcon content={Tooltip.Trade.Price}>
+              Terraswap Price
+            </TooltipIcon>
+          ),
           content: (
             <Count format={format} symbol={UUSD}>
               {simulated?.price}
@@ -209,11 +214,15 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     : undefined
 
   const disabled = invalid || simulating || !!messages?.length
-  const container = { contents, data, disabled, messages, tab, attrs }
+
+  /* result */
+  const parseTx = useTradeReceipt(type)
+
+  const container = { tab, attrs, contents, data, disabled, messages, parseTx }
   const tax = { pretax: uusd, deduct: type === Type.SELL }
 
   return (
-    <FormContainer {...container} {...tax} parserKey="trade">
+    <FormContainer {...container} {...tax}>
       <FormGroup {...fields[Key.value1]} />
       <FormIcon name="arrow_downward" />
       <FormGroup {...fields[Key.value2]} />
