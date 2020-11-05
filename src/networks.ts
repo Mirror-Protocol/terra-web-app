@@ -33,7 +33,7 @@ const networks: Record<NetworkKey, NetworkConfig> = {
     contract: "/moonshine.json",
     mantle: "https://moonshine-mantle.terra.dev/",
     stats: "https://moonshine-graph.mirror.finance/graphql",
-    lcd: { chainID: "localterra", URL: "https://moonshine-lcd.terra.dev/" },
+    lcd: { chainID: "moonshine", URL: "https://moonshine-lcd.terra.dev/" },
     fee: { gasPrice: 0.15, amount: 50000 }, // 0.050000 UST
   },
 }
