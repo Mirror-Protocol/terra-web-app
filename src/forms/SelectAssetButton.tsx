@@ -7,17 +7,15 @@ import styles from "./SelectAsset.module.scss"
 
 interface Props extends Config {
   isOpen: boolean
-  asset?: string
+  symbol?: string
   onClick: () => void
 }
 
-const SelectAsset: FC<Props> = ({ isOpen, asset, onClick, ...props }) => {
-  const { formatTokenName } = props
+const SelectAsset: FC<Props> = ({ isOpen, symbol, onClick, ...props }) => {
+  const { formatTokenName = lookupSymbol } = props
   return (
     <button type="button" className={styles.button} onClick={onClick}>
-      {asset
-        ? formatTokenName?.(asset) ?? lookupSymbol(asset)
-        : MESSAGE.Form.Button.SelectAsset}
+      {symbol ? formatTokenName(symbol) : MESSAGE.Form.Button.SelectAsset}
       <Icon name={isOpen ? "arrow_drop_up" : "arrow_drop_down"} size={24} />
     </button>
   )

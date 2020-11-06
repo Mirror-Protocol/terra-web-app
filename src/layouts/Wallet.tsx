@@ -57,7 +57,7 @@ const Wallet = ({ close }: { close: () => void }) => {
       </section>
 
       <LinkButton
-        to={{ pathname: getPath(MenuKey.SEND), state: { symbol: UUSD } }}
+        to={{ pathname: getPath(MenuKey.SEND), state: { token: UUSD } }}
         onClick={close}
         className={styles.send}
         color="aqua"

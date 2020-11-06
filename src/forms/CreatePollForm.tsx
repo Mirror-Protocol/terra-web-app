@@ -86,7 +86,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }
 
   /* context */
-  const { contracts, getListedItem } = useContractsAddress()
+  const { contracts, whitelist, getToken } = useContractsAddress()
   const { result, find } = useContract()
   useRefetch([balanceKey])
 
@@ -191,7 +191,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   /* render:form */
   const config: Config = {
-    value: asset,
+    token: asset,
     onSelect: (value) => setValue(Key.asset, value),
   }
 
@@ -199,7 +199,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   const fields = {
     deposit: {
-      help: renderBalance(find(balanceKey, MIR), MIR),
+      help: renderBalance(find(balanceKey, getToken(MIR)), MIR),
       label: <TooltipIcon content={Tooltip.Gov.Deposit}>Deposit</TooltipIcon>,
       value,
       unit: MIR,
@@ -328,11 +328,12 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const { token, pair } = getListedItem(asset)
+  const token = asset
+  const { pair } = whitelist[token] ?? {}
   const { mirrorToken, mint, gov, factory } = contracts
 
   /* whitelist */
-  const whitelist = {
+  const whitelistMessage = {
     name,
     symbol,
     oracle_feeder: oracle,
@@ -389,7 +390,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }
 
   const message = {
-    [Type.WHITELIST]: { whitelist },
+    [Type.WHITELIST]: { whitelist: whitelistMessage },
     [Type.PARAMS]:
       {
         [Parameter.WEIGHT]: { update_weight },
@@ -412,7 +413,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     result[balanceKey].loading || governance.result[GovKey.CONFIG].loading
 
   const messages =
-    !loading && !gt(find(balanceKey, MIR), amount)
+    !loading && !gt(find(balanceKey, getToken(MIR)), amount)
       ? ["Insufficient balance"]
       : getLength(msg) > MAX_MSG_LENGTH
       ? ["Input is too long to be executed"]

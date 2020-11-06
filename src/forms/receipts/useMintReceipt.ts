@@ -30,29 +30,29 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
   const nextCollateral = {
     [Type.OPEN]: {
       amount: collateral.amount,
-      symbol: getSymbol(collateral.token),
+      token: collateral.token,
     },
     [Type.DEPOSIT]: {
       amount: plus(prevCollateral?.amount, deposit.amount),
-      symbol: prevCollateral?.symbol,
+      token: prevCollateral?.token,
     },
     [Type.WITHDRAW]: {
       amount: minus(prevCollateral?.amount, withdraw.amount),
-      symbol: prevCollateral?.symbol,
+      token: prevCollateral?.token,
     },
     [Type.CLOSE]: {
       amount: prevCollateral?.amount,
-      symbol: prevCollateral?.symbol,
+      token: prevCollateral?.token,
     },
   }[type]
 
   const nextAsset = open
-    ? { amount: mint.amount, symbol: getSymbol(mint.token) }
-    : { amount: prevAsset?.amount, symbol: prevAsset?.symbol }
+    ? { amount: mint.amount, token: mint.token }
+    : { amount: prevAsset?.amount, token: prevAsset?.token }
 
-  const collateralPrice = find(priceKey, nextCollateral.symbol!)
+  const collateralPrice = find(priceKey, nextCollateral.token!)
   const collateralValue = times(nextCollateral.amount, collateralPrice)
-  const mintedPrice = find(priceKey, nextAsset.symbol!)
+  const mintedPrice = find(priceKey, nextAsset.token!)
   const mintedValue = times(nextAsset.amount, mintedPrice)
   const ratio = div(collateralValue, mintedValue)
 
@@ -65,11 +65,14 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
         },
         {
           title: "Minted Assets",
-          content: formatAsset(nextAsset.amount, nextAsset.symbol),
+          content: formatAsset(nextAsset.amount, getSymbol(nextAsset.token)),
         },
         {
           title: "Collaterals",
-          content: formatAsset(nextCollateral.amount, nextCollateral.symbol),
+          content: formatAsset(
+            nextCollateral.amount,
+            getSymbol(nextCollateral.token)
+          ),
         },
       ]
     : [

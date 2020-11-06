@@ -1,5 +1,6 @@
 import { LazyQueryResult } from "@apollo/client"
 import { Dictionary } from "ramda"
+import { AccAddress } from "@terra-money/terra.js"
 
 import { UUSD } from "../constants"
 import { sum } from "../libs/math"
@@ -23,7 +24,6 @@ import useGovStake from "../graphql/queries/useGovStake"
 import useNormalize from "../graphql/useNormalize"
 
 import createContext from "./createContext"
-import { useContractsAddress } from "./useContractsAddress"
 import { PriceKey, AssetInfoKey } from "./contractKeys"
 import { BalanceKey, AccountInfoKey } from "./contractKeys"
 
@@ -40,8 +40,8 @@ interface Data extends Record<DictionaryKey, Dictionary<string> | undefined> {
 }
 
 interface Helpers {
-  /** Find the value of the symbol in the data of the given key */
-  find: (key: DictionaryKey, symbol: string) => string
+  /** Find the value of the token in the data of the given key */
+  find: (key: DictionaryKey, token: string) => string
   /** Sum */
   rewards: string
 }
@@ -59,8 +59,6 @@ export const [useContract, ContractProvider] = contract
 
 /* state */
 export const useContractState = (address: string): Contract => {
-  const { getListedItem } = useContractsAddress()
-
   /* price */
   const pairPool = usePairPool()
   const oraclePrices = useOraclePrice()
@@ -168,17 +166,20 @@ export const useContractState = (address: string): Contract => {
   }
 
   /* utils */
-  const find: Contract["find"] = (key, value) => {
-    const { token } = getListedItem(value)
+  const find: Contract["find"] = (key, token) => {
+    if (token && !(AccAddress.validate(token) || token === UUSD)) {
+      throw Error(`token must be an address: ${token}`)
+    }
+
     const result = dictionary[key]?.[token]
 
     const USTPrice = "1"
     const isUSTPrice =
-      value === UUSD && Object.values<string>(PriceKey).includes(key)
+      token === UUSD && Object.values<string>(PriceKey).includes(key)
 
     const USTBalance = data[AccountInfoKey.UUSD]
     const isUSTBalance =
-      value === UUSD && Object.values<string>(BalanceKey).includes(key)
+      token === UUSD && Object.values<string>(BalanceKey).includes(key)
 
     return result ?? (isUSTPrice ? USTPrice : isUSTBalance ? USTBalance : "0")
   }

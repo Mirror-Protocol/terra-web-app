@@ -21,6 +21,7 @@ import Change from "../../components/Change"
 import Tooltip, { TooltipIcon } from "../../components/Tooltip"
 import { Type } from "../Mint"
 import NoAssets from "./NoAssets"
+import Delisted from "./Delisted"
 import DashboardActions from "./DashboardActions"
 import styles from "./Mint.module.scss"
 
@@ -40,7 +41,7 @@ const Mint = () => {
   const hideChange = Object.values(yesterday).every(isNil)
 
   /* context */
-  const { getListedItem, parseToken } = useContractsAddress()
+  const { whitelist, parseToken } = useContractsAddress()
   const { result, find, ...contract } = useContract()
   const { [AccountInfoKey.MINTPOSITIONS]: positions } = contract
   const loading = keys.some((key) => result[key].loading)
@@ -52,26 +53,24 @@ const Mint = () => {
       : positions.map((position) => {
           /* collateral */
           const collateral = parseToken(position.collateral)
-          const collateralPrice = find(priceKey, collateral.symbol)
+          const collateralPrice = find(priceKey, collateral.token)
           const collateralValue = times(collateral.amount, collateralPrice)
-          const { token: collateralToken } = getListedItem(collateral.symbol)
           const collateralChange = calcChange({
             today: collateralPrice,
-            yesterday: yesterday[collateralToken],
+            yesterday: yesterday[collateral.token],
           })
 
           /* asset */
           const asset = parseToken(position.asset)
-          const assetPrice = find(priceKey, asset.symbol)
+          const assetPrice = find(priceKey, asset.token)
           const assetValue = times(asset.amount, assetPrice)
-          const { token: assetToken } = getListedItem(asset.symbol)
           const assetChange = calcChange({
             today: assetPrice,
-            yesterday: yesterday[assetToken],
+            yesterday: yesterday[asset.token],
           })
 
           /* ratio */
-          const minRatio = find(AssetInfoKey.MINCOLLATERALRATIO, asset.symbol)
+          const minRatio = find(AssetInfoKey.MINCOLLATERALRATIO, asset.token)
 
           const { ratio } = calc.mint({
             collateral: { ...collateral, price: collateralPrice },
@@ -148,24 +147,34 @@ const Mint = () => {
             {
               key: "idx",
               title: "ID",
-              render: (idx, { warning, danger }) => (
-                <span
-                  className={classNames(styles.idx, { red: warning || danger })}
-                >
-                  {idx}
-                  {(warning || danger) && (
-                    <Tooltip
-                      content={
-                        warning
-                          ? Tooltips.My.PositionWarning
-                          : Tooltips.My.PositionDanger
-                      }
-                    >
-                      <Icon name="warning" size={16} />
-                    </Tooltip>
-                  )}
-                </span>
-              ),
+              render: (idx, { warning, danger, collateral, asset }) => {
+                const isCollateralDelisted =
+                  collateral.token !== UUSD &&
+                  whitelist[collateral.token]["status"] === "DELISTED"
+                const isAssetDelisted =
+                  whitelist[asset.token]["status"] === "DELISTED"
+                const isDelisted = isCollateralDelisted || isAssetDelisted
+
+                const shouldWarn = warning || danger
+                const className = classNames(styles.idx, { red: shouldWarn })
+                const tooltip = warning
+                  ? Tooltips.My.PositionWarning
+                  : Tooltips.My.PositionDanger
+
+                return (
+                  <>
+                    {isDelisted && <Delisted />}
+                    <span className={className}>
+                      {idx}
+                      {shouldWarn && (
+                        <Tooltip content={tooltip}>
+                          <Icon name="warning" size={16} />
+                        </Tooltip>
+                      )}
+                    </span>
+                  </>
+                )
+              },
               bold: true,
             },
             {

@@ -6,7 +6,7 @@ import { Type } from "../pages/Trade"
 
 interface Params {
   amount: string
-  symbol: string
+  token: string
   pair: string
   reverse: boolean
   type: Type
@@ -26,7 +26,7 @@ interface Simulated {
   price: string
 }
 
-export default ({ amount, symbol, pair, reverse, type }: Params) => {
+export default ({ amount, token, pair, reverse, type }: Params) => {
   const [simulated, setSimulated] = useState<Simulated>()
 
   /* context */
@@ -36,11 +36,11 @@ export default ({ amount, symbol, pair, reverse, type }: Params) => {
   const variables = {
     contract: pair,
     msg: !reverse
-      ? { simulation: { offer_asset: toToken({ symbol, amount }) } }
-      : { reverse_simulation: { ask_asset: toToken({ symbol, amount }) } },
+      ? { simulation: { offer_asset: toToken({ token, amount }) } }
+      : { reverse_simulation: { ask_asset: toToken({ token, amount }) } },
   }
 
-  const valid = amount && gt(amount, 0) && symbol && pair
+  const valid = amount && gt(amount, 0) && token && pair
   const { result, parsed } = useLazyContractQuery<SimulatedData>(variables)
   const { load, error } = result
 

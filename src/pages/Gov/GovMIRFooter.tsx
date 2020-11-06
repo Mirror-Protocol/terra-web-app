@@ -1,13 +1,14 @@
 import React from "react"
 import { MIR } from "../../constants"
 import { formatAsset } from "../../libs/parse"
-import { useContract } from "../../hooks"
+import { useContract, useContractsAddress } from "../../hooks"
 import { BalanceKey } from "../../hooks/contractKeys"
 import WithResult from "../../components/WithResult"
 import { Di } from "../../components/Dl"
 import styles from "./GovMIRFooter.module.scss"
 
 const GovMIRFooter = () => {
+  const { getToken } = useContractsAddress()
   const { find } = useContract()
 
   const contents = [
@@ -15,7 +16,7 @@ const GovMIRFooter = () => {
       title: `Staked ${MIR}`,
       content: (
         <WithResult keys={[BalanceKey.MIRGOVSTAKED]}>
-          {formatAsset(find(BalanceKey.MIRGOVSTAKED, MIR), MIR)}
+          {formatAsset(find(BalanceKey.MIRGOVSTAKED, getToken(MIR)), MIR)}
         </WithResult>
       ),
     },
@@ -23,7 +24,7 @@ const GovMIRFooter = () => {
       title: `Stakable ${MIR}`,
       content: (
         <WithResult keys={[BalanceKey.TOKEN]}>
-          {formatAsset(find(BalanceKey.TOKEN, MIR), MIR)}
+          {formatAsset(find(BalanceKey.TOKEN, getToken(MIR)), MIR)}
         </WithResult>
       ),
     },

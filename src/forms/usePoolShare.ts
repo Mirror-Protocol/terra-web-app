@@ -10,8 +10,8 @@ export default (modifyTotal?: (total: string) => string) => {
   const { find } = useContract()
   useRefetch([infoKey])
 
-  return ({ amount, symbol }: Asset) => {
-    const total = find(infoKey, symbol)
+  return ({ amount, token }: Asset) => {
+    const total = find(infoKey, token)
     const ratio = div(amount, modifyTotal?.(total) ?? total)
     const lessThanMinimum = lt(ratio, MIN) && gt(ratio, 0)
     const prefix = lessThanMinimum ? "<" : ""

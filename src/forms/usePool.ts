@@ -8,11 +8,11 @@ import { parsePairPool } from "../graphql/useNormalize"
 
 export default () => {
   const priceKey = PriceKey.PAIR
-  const { getListedItem } = useContractsAddress()
+  const { getSymbol } = useContractsAddress()
   const { parsed, find } = useContract()
   useRefetch([priceKey])
 
-  return ({ amount, symbol }: Asset) => {
+  return ({ amount, token }: Asset) => {
     const expectLP = (pairPool: PairPool) => {
       const { uusd, asset, total } = parsePairPool(pairPool)
       const deposits = [
@@ -29,17 +29,16 @@ export default () => {
       const { uusd, asset, total } = parsePairPool(pairPool)
 
       const shares = {
-        asset: { amount: asset, symbol },
-        uusd: { amount: uusd, symbol: UUSD },
+        asset: { amount: asset, token },
+        uusd: { amount: uusd, token: UUSD },
       }
 
       return calc.fromLP(amount, shares, total)
     }
 
-    const price = find(priceKey, symbol)
+    const price = find(priceKey, token)
     const estimated = price && gt(amount, 0) ? floor(times(amount, price)) : "0"
 
-    const { token } = getListedItem(symbol)
     const pairPool = parsed[PriceKey.PAIR]?.[token]
 
     const toLP = pairPool ? expectLP(pairPool) : undefined
@@ -49,7 +48,7 @@ export default () => {
       toLP: gt(estimated, 0) ? format(estimated, UUSD) : "-",
       fromLP: fromLP
         ? Object.values(fromLP)
-            ?.map(({ amount, symbol }) => formatAsset(amount, symbol))
+            ?.map(({ amount, token }) => formatAsset(amount, getSymbol(token)))
             .join(" + ")
         : "-",
     }

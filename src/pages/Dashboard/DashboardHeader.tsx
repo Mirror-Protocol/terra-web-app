@@ -4,7 +4,7 @@ import Tooltip from "../../lang/Tooltip.json"
 import { div } from "../../libs/math"
 import { percent } from "../../libs/num"
 import { format } from "../../libs/parse"
-import { useContract } from "../../hooks"
+import { useContract, useContractsAddress } from "../../hooks"
 import { PriceKey } from "../../hooks/contractKeys"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
@@ -14,6 +14,7 @@ import Count from "../../components/Count"
 import { TooltipIcon } from "../../components/Tooltip"
 
 const DashboardHeader = (props: Partial<Dashboard>) => {
+  const { getToken } = useContractsAddress()
   const { find } = useContract()
   const { latest24h, assetMarketCap, totalValueLocked, collateralRatio } = props
 
@@ -26,7 +27,7 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
               title: "MIR Price",
               content: (
                 <Count format={format} symbol={UUSD}>
-                  {find(PriceKey.PAIR, MIR)}
+                  {find(PriceKey.PAIR, getToken(MIR))}
                 </Count>
               ),
             },

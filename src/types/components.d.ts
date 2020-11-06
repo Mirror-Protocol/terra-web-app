@@ -91,6 +91,7 @@ interface Confirm {
 
 interface AssetItem {
   symbol: string
+  token: string
   name: string
   price?: string
   balance?: string

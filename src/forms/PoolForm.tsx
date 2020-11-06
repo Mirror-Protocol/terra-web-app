@@ -27,7 +27,7 @@ import FormGroup from "./FormGroup"
 import FormIcon from "./FormIcon"
 
 enum Key {
-  symbol = "symbol",
+  token = "token",
   value = "value",
 }
 
@@ -39,8 +39,8 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }[type]
 
   /* context */
-  const { state } = useLocation<{ symbol: string }>()
-  const { getListedItem, toToken } = useContractsAddress()
+  const { state } = useLocation<{ token: string }>()
+  const { whitelist, getSymbol, toToken } = useContractsAddress()
   const { find } = useContract()
   // Refetch the balance of stakable LP even on stake
   useRefetch([
@@ -51,37 +51,39 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   ])
 
   /* form:validate */
-  const validate = ({ value, symbol }: Values<Key>) => {
-    const max = find(balanceKey, symbol)
+  const validate = ({ value, token }: Values<Key>) => {
+    const max = find(balanceKey, token)
+    const symbol = getSymbol(token)
 
     return {
       [Key.value]: v.amount(value, { symbol, max }),
-      [Key.symbol]: v.required(symbol),
+      [Key.token]: v.required(token),
     }
   }
 
   /* form:hook */
-  const initial = { [Key.value]: "", [Key.symbol]: state?.symbol ?? "" }
+  const initial = { [Key.value]: "", [Key.token]: state?.token ?? "" }
   const form = useForm<Key>(initial, validate)
   const { values, setValue, getFields, attrs, invalid } = form
-  const { value, symbol } = values
+  const { value, token } = values
   const amount = toAmount(value)
-  const price = find(priceKey, symbol)
+  const symbol = getSymbol(token)
+  const price = find(priceKey, token)
 
   /* form:focus input on select asset */
   const valueRef = useRef<HTMLInputElement>(null!)
-  const onSelect = (symbol: string) => {
-    setValue(Key.symbol, symbol)
+  const onSelect = (token: string) => {
+    setValue(Key.token, token)
     !value && valueRef.current.focus()
   }
 
   /* estimate:uusd */
-  const balance = find(balanceKey, symbol)
-  const { token, pair, lpToken } = getListedItem(symbol)
+  const balance = find(balanceKey, token)
+  const { pair, lpToken } = whitelist[token] ?? {}
 
   /* estimate:result */
   const getPool = usePool()
-  const { toLP, fromLP, text, ...rest } = getPool({ amount, symbol })
+  const { toLP, fromLP, text, ...rest } = getPool({ amount, token })
   const { uusdEstimated: estimated } = rest
 
   const uusd = {
@@ -89,7 +91,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     [Type.WITHDRAW]: fromLP?.uusd.amount,
   }[type]
 
-  const total = find(BalanceKey.LPTOTAL, symbol)
+  const total = find(BalanceKey.LPTOTAL, token)
   const lpAfterTx = {
     [Type.PROVIDE]: plus(total, toLP),
     [Type.WITHDRAW]: max([minus(total, amount), "0"]),
@@ -102,12 +104,12 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }[type]
 
   const getPoolShare = usePoolShare(modifyTotal)
-  const poolShare = getPoolShare({ amount: lpAfterTx, symbol })
+  const poolShare = getPoolShare({ amount: lpAfterTx, token })
   const { ratio, lessThanMinimum, minimum } = poolShare
 
   /* render:form */
   const config = {
-    value: symbol,
+    token,
     onSelect,
     priceKey,
     balanceKey,
@@ -115,6 +117,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }
 
   const select = useSelectAsset(config)
+  const delisted = whitelist[token]?.["status"] === "DELISTED"
 
   const fields = {
     ...getFields({
@@ -134,9 +137,9 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
           autoFocus: true,
           ref: valueRef,
         },
-        unit: select.button,
-        max: gt(find(balanceKey, symbol), 0)
-          ? () => setValue(Key.value, lookup(find(balanceKey, symbol), symbol))
+        unit: delisted ? symbol : select.button,
+        max: gt(find(balanceKey, token), 0)
+          ? () => setValue(Key.value, lookup(find(balanceKey, token), symbol))
           : undefined,
         assets: select.assets,
         help: renderBalance(balance, symbol),
@@ -222,8 +225,8 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
             {
               provide_liquidity: {
                 assets: [
-                  toToken({ amount, symbol }),
-                  toToken({ amount: estimated, symbol: UUSD }),
+                  toToken({ amount, token }),
+                  toToken({ amount: estimated, token: UUSD }),
                 ],
               },
             },

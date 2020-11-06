@@ -7,10 +7,12 @@ export default (keys: DataKey[]) => {
   const result = useResult()
 
   useEffect(() => {
-    keys.forEach((key) => {
-      const { called, load, refetch } = result[key]
-      !called ? load() : refetch && refetch()
-    })
+    keys
+      .filter((key) => result[key])
+      .forEach((key) => {
+        const { called, load, refetch } = result[key]
+        !called ? load() : refetch && refetch()
+      })
     // eslint-disable-next-line
   }, [JSON.stringify(keys)])
 

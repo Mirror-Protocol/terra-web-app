@@ -3,24 +3,28 @@ import { useContractsAddress } from "../../hooks"
 import { Type } from "../../pages/Pool"
 import getLpName from "../../pages/Stake/getLpName"
 import usePoolShare from "../usePoolShare"
-import { findValue, parseTokenText } from "./receiptHelpers"
+import { findValue, fromContract, parseTokenText } from "./receiptHelpers"
 
 export default (type: Type) => (logs: TxLog[]) => {
   const { getSymbol } = useContractsAddress()
   const getPoolShare = usePoolShare()
   const val = findValue(logs)
+  const fc = fromContract(logs)
 
   const join = (array: { amount: string; token: string }[]) =>
     array
       .map(({ amount, token }) => formatAsset(amount, getSymbol(token)))
       .join(" + ")
 
-  const symbol = getSymbol(val("contract_address"))
+  const token = val("contract_address")
+  const symbol = getSymbol(token)
   const deposit = parseTokenText(val("assets", 1))
   const received = val("share", 1)
-  const poolShare = getPoolShare({ amount: received, symbol })
+  const poolShare = getPoolShare({ amount: received, token })
   const refund = parseTokenText(val("refund_assets"))
   const withdrawn = val("withdrawn_share")
+  const withdrawnToken = fc[0]?.["transfer"]?.["contract_address"]
+  const withdrawnSymbol = getSymbol(withdrawnToken)
 
   /* contents */
   return {
@@ -42,7 +46,7 @@ export default (type: Type) => (logs: TxLog[]) => {
       },
       {
         title: "Withdrawn",
-        content: formatAsset(withdrawn, getLpName(symbol)),
+        content: formatAsset(withdrawn, getLpName(withdrawnSymbol)),
       },
     ],
   }[type]

@@ -17,6 +17,7 @@ import Change from "../../components/Change"
 import { TooltipIcon } from "../../components/Tooltip"
 import { Type } from "../Trade"
 import NoAssets from "./NoAssets"
+import Delisted from "./Delisted"
 import DashboardActions from "./DashboardActions"
 
 const Holdings = () => {
@@ -26,7 +27,7 @@ const Holdings = () => {
   const { data } = useRefetch(keys)
 
   /* context */
-  const { listed } = useContractsAddress()
+  const { listedAll } = useContractsAddress()
   const { result, find } = useContract()
   const { [priceKey]: yesterday } = useYesterday()
   const loading = keys.some((key) => result[key].loading)
@@ -35,11 +36,11 @@ const Holdings = () => {
   /* table */
   const dataSource = !data
     ? []
-    : listed
+    : listedAll
         .map((item) => {
           const { token } = item
-          const balance = find(balanceKey, item.symbol)
-          const price = find(priceKey, item.symbol)
+          const balance = find(balanceKey, token)
+          const price = find(priceKey, token)
           const value = times(balance, price)
           const change = calcChange({
             today: price,
@@ -74,7 +75,17 @@ const Holdings = () => {
       {dataExists ? (
         <Table
           columns={[
-            { key: "symbol", title: "Ticker", bold: true },
+            {
+              key: "symbol",
+              title: "Ticker",
+              render: (symbol, { status }) => (
+                <>
+                  {status === "DELISTED" && <Delisted />}
+                  {symbol}
+                </>
+              ),
+              bold: true,
+            },
             { key: "name", title: "Underlying Name" },
             {
               key: "price",
@@ -117,11 +128,11 @@ const Holdings = () => {
             },
             {
               key: "actions",
-              dataIndex: "symbol",
-              render: (symbol) => {
+              dataIndex: "token",
+              render: (token) => {
                 const to = {
                   pathname: getPath(MenuKey.TRADE),
-                  state: { symbol },
+                  state: { token },
                 }
 
                 const list = [

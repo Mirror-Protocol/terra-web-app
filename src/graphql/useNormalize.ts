@@ -7,7 +7,7 @@ import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
 import { BalanceKey, AccountInfoKey } from "../hooks/contractKeys"
 
 export default () => {
-  const { getListedItem, listed } = useContractsAddress()
+  const { listedAll, getToken } = useContractsAddress()
 
   const price = {
     [PriceKey.PAIR]: (pairPool: Dictionary<PairPool>) =>
@@ -37,13 +37,13 @@ export default () => {
     [BalanceKey.LPTOTAL]: (
       lpTokenBalance: Dictionary<Balance>,
       stakingReward: StakingReward
-    ) => reduceLP(listed, { lpTokenBalance, stakingReward }),
+    ) => reduceLP(listedAll, { lpTokenBalance, stakingReward }),
     [BalanceKey.LPSTAKABLE]: (lpTokenBalance: Dictionary<Balance>) =>
       dict(lpTokenBalance, ({ balance }) => balance),
     [BalanceKey.LPSTAKED]: (stakingReward: StakingReward) =>
       reduceBondAmount(stakingReward),
     [BalanceKey.MIRGOVSTAKED]: (govStake: Balance) => {
-      const { token } = getListedItem(MIR)
+      const token = getToken(MIR)
       return { [token]: govStake.balance }
     },
     [BalanceKey.REWARD]: (
@@ -95,10 +95,10 @@ interface LPParams {
 }
 
 const reduceLP = (
-  listed: ListedItem[],
+  listedAll: ListedItem[],
   { lpTokenBalance, stakingReward }: LPParams
 ) =>
-  listed.reduce<Dictionary<string>>(
+  listedAll.reduce<Dictionary<string>>(
     (acc, { token }) => ({
       ...acc,
       [token]: plus(

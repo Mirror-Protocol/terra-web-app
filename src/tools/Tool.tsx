@@ -15,10 +15,11 @@ import Icon from "../components/Icon"
 import Pre from "../components/Pre"
 
 const Data = () => {
-  const { contracts, listed, getListedItem } = useContractsAddress()
+  const { contracts, listed, whitelist, getToken } = useContractsAddress()
+  const { pair: mirrorPair } = whitelist[getToken(MIR)]
 
   /* input */
-  const [contract, setContract] = useState<string>(getListedItem(MIR).pair)
+  const [contract, setContract] = useState<string>(mirrorPair)
   const [message, setMessage] = useState<string>('{ "pool": {} }')
   const getURL = useURL()
   const url = getURL(contract, message)

@@ -22,13 +22,13 @@ enum Key {
 
 interface Props {
   type: Type
-  symbol: string
+  token: string
   tab: Tab
   /** Gov stake */
   gov?: boolean
 }
 
-const StakeForm = ({ type, symbol, tab, gov }: Props) => {
+const StakeForm = ({ type, token, tab, gov }: Props) => {
   const balanceKey = (!gov
     ? {
         [Type.STAKE]: BalanceKey.LPSTAKABLE,
@@ -40,13 +40,14 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
       })[type as Type]
 
   /* context */
-  const { contracts, getListedItem } = useContractsAddress()
+  const { contracts, whitelist, getSymbol } = useContractsAddress()
   const { find, parsed } = useContract()
   useRefetch([balanceKey, !gov ? BalanceKey.LPSTAKED : BalanceKey.MIRGOVSTAKED])
 
   /* form:validate */
   const validate = ({ value }: Values<Key>) => {
-    const max = find(balanceKey, symbol)
+    const max = find(balanceKey, token)
+    const symbol = getSymbol(token)
     return { [Key.value]: v.amount(value, { symbol, max }) }
   }
 
@@ -56,6 +57,7 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
   const { values, setValue, getFields, attrs, invalid } = form
   const { value } = values
   const amount = toAmount(value)
+  const symbol = getSymbol(token)
 
   /* render:form */
   const fields = getFields({
@@ -67,10 +69,10 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
         placeholder: placeholder(symbol),
         autoFocus: true,
       },
-      help: renderBalance(find(balanceKey, symbol), symbol),
+      help: renderBalance(find(balanceKey, token), symbol),
       unit: gov ? MIR : LP,
-      max: gt(find(balanceKey, symbol), 0)
-        ? () => setValue(Key.value, lookup(find(balanceKey, symbol), symbol))
+      max: gt(find(balanceKey, token), 0)
+        ? () => setValue(Key.value, lookup(find(balanceKey, token), symbol))
         : undefined,
     },
   })
@@ -78,7 +80,7 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
   /* confirm */
   const staked = find(
     !gov ? BalanceKey.LPSTAKED : BalanceKey.MIRGOVSTAKED,
-    symbol
+    token
   )
 
   const contents = !value
@@ -89,7 +91,7 @@ const StakeForm = ({ type, symbol, tab, gov }: Props) => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const { token, lpToken } = getListedItem(symbol)
+  const { lpToken } = whitelist[token] ?? {}
   const assetToken = { asset_token: token }
   const data = {
     [Type.STAKE]: [

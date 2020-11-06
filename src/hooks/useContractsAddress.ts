@@ -14,14 +14,15 @@ interface ContractAddressJSON {
 interface ContractAddressHelpers {
   /** Array of listed item */
   listed: ListedItem[]
-  /** Find contract address with any key */
-  getListedItem: (key?: string) => ListedItem
-  getSymbol: (key?: string) => string
+  listedAll: ListedItem[]
+  /** Find token with symbol */
+  getToken: (symbol?: string) => string
+  /** Find symbol with token */
+  getSymbol: (token?: string) => string
   /** Convert structure for chain */
-  toAssetInfo: (symbol: string) => AssetInfo | NativeInfo
+  toAssetInfo: (token: string) => AssetInfo | NativeInfo
   toToken: (params: Asset) => Token
   /** Convert from token of structure for chain */
-  parseAssetInfo: (info: AssetInfo | NativeInfo) => string
   parseToken: (token: AssetToken | NativeToken) => Asset
 }
 
@@ -47,47 +48,50 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
   const helpers = ({
     whitelist,
   }: ContractAddressJSON): ContractAddressHelpers => {
-    const listed = Object.values(whitelist)
+    const listedAll = Object.values(whitelist)
+    const listed = listedAll.filter(({ status }) => status === "LISTED")
 
-    const getListedItem = (key?: string) =>
-      listed.find((item) => Object.values(item).includes(key)) ?? {
-        symbol: "",
-        name: "",
-        token: "",
-        pair: "",
-        lpToken: "",
-      }
+    const getToken = (symbol?: string) =>
+      !symbol
+        ? ""
+        : symbol === UUSD
+        ? symbol
+        : listed.find((item) => item.symbol === symbol)?.["token"] ?? ""
 
-    const getSymbol = (key?: string) =>
-      key === UUSD ? key : getListedItem(key).symbol
+    const getSymbol = (token?: string) =>
+      !token ? "" : token === UUSD ? token : whitelist[token]?.["symbol"] ?? ""
 
-    const toAssetInfo = (symbol: string) =>
-      symbol === UUSD
-        ? { native_token: { denom: symbol } }
-        : { token: { contract_addr: getListedItem(symbol)["token"] } }
+    const toAssetInfo = (token: string) =>
+      token === UUSD
+        ? { native_token: { denom: token } }
+        : { token: { contract_addr: token } }
 
-    const toToken = ({ amount, symbol }: Asset) => ({
+    const toToken = ({ amount, token }: Asset) => ({
       amount,
-      info: toAssetInfo(symbol),
+      info: toAssetInfo(token),
     })
 
-    const parseAssetInfo = (info: AssetInfo | NativeInfo) =>
-      "native_token" in info
-        ? info.native_token.denom
-        : getSymbol(info.token.contract_addr)
+    const parseAssetInfo = (info: AssetInfo | NativeInfo) => {
+      const token =
+        "native_token" in info
+          ? info.native_token.denom
+          : info.token.contract_addr
+
+      return { token, symbol: getSymbol(token) }
+    }
 
     const parseToken = ({ amount, info }: AssetToken | NativeToken) => ({
       amount,
-      symbol: parseAssetInfo(info),
+      ...parseAssetInfo(info),
     })
 
     return {
       listed,
-      getListedItem,
+      listedAll,
+      getToken,
       getSymbol,
       toAssetInfo,
       toToken,
-      parseAssetInfo,
       parseToken,
     }
   }

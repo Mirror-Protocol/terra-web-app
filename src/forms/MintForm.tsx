@@ -33,8 +33,8 @@ import styles from "./MintForm.module.scss"
 enum Key {
   value1 = "value1",
   value2 = "value2",
-  symbol1 = "symbol1",
-  symbol2 = "symbol2",
+  token1 = "token1",
+  token2 = "token2",
   ratio = "ratio",
 }
 
@@ -49,10 +49,10 @@ const MintForm = ({ idx, type, tab }: Props) => {
   const balanceKey = BalanceKey.TOKEN
 
   /* context */
-  const { contracts, getListedItem, ...helpers } = useContractsAddress()
-  const { parseToken, toToken, toAssetInfo } = helpers
+  const { contracts, ...helpers } = useContractsAddress()
+  const { getSymbol, parseToken, toToken, toAssetInfo } = helpers
   const { find } = useContract()
-  useRefetch([priceKey, balanceKey])
+  const { loading } = useRefetch([priceKey, balanceKey])
 
   /* context:position */
   const { [AccountInfoKey.MINTPOSITIONS]: positions } = useContract()
@@ -61,21 +61,22 @@ const MintForm = ({ idx, type, tab }: Props) => {
   const close = type === Type.CLOSE
 
   /* form:validate */
-  const getMax = (symbol: string) =>
-    type === Type.WITHDRAW ? prevCollateral?.amount : find(balanceKey, symbol)
+  const getMax = (token: string) =>
+    type === Type.WITHDRAW ? prevCollateral?.amount : find(balanceKey, token)
 
-  const validate = ({ symbol1, symbol2, value1, ratio }: Values<Key>) => {
+  const validate = ({ token1, token2, value1, ratio }: Values<Key>) => {
+    const symbol1 = getSymbol(token1)
     const nextRatio = div(ratio, 100)
 
     return {
-      [Key.value1]: v.amount(value1, { symbol: symbol1, max: getMax(symbol1) }),
+      [Key.value1]: v.amount(value1, { symbol: symbol1, max: getMax(token1) }),
       [Key.value2]: "",
-      [Key.symbol1]: v.required(symbol1),
-      [Key.symbol2]: open ? v.required(symbol2) : "",
+      [Key.token1]: v.required(token1),
+      [Key.token2]: open ? v.required(token2) : "",
       [Key.ratio]:
         prevRatio && !(type === Type.DEPOSIT ? gt : lt)(nextRatio, prevRatio)
           ? MESSAGE.Form.Validate.CollateralRatio.Current
-          : !gte(nextRatio, find(AssetInfoKey.MINCOLLATERALRATIO, symbol2))
+          : !gte(nextRatio, find(AssetInfoKey.MINCOLLATERALRATIO, token2))
           ? MESSAGE.Form.Validate.CollateralRatio.Minimum
           : v.required(ratio),
     }
@@ -89,11 +90,11 @@ const MintForm = ({ idx, type, tab }: Props) => {
     prevAsset && {
       collateral: {
         amount: prevCollateral.amount,
-        price: find(priceKey, prevCollateral.symbol),
+        price: find(priceKey, prevCollateral.token),
       },
       asset: {
         amount: prevAsset.amount,
-        price: find(priceKey, prevAsset.symbol),
+        price: find(priceKey, prevAsset.token),
       },
     }
 
@@ -101,35 +102,37 @@ const MintForm = ({ idx, type, tab }: Props) => {
 
   const initial = {
     [Key.value1]:
-      (close && lookup(prevCollateral?.amount, prevCollateral?.symbol)) || "",
+      (close && lookup(prevCollateral?.amount, prevCollateral?.token)) || "",
     [Key.value2]: "",
-    [Key.symbol1]: prevCollateral?.symbol ?? UUSD,
-    [Key.symbol2]: prevAsset?.symbol ?? "",
+    [Key.token1]: prevCollateral?.token ?? UUSD,
+    [Key.token2]: prevAsset?.token ?? "",
     [Key.ratio]: prevRatio ? lookup(times(prevRatio, 100)) : "200",
   }
 
   const form = useForm<Key>(initial, validate)
   const { values, setValue, setValues, getFields } = form
   const { touched, errors, attrs, invalid } = form
-  const { symbol1, symbol2, value1, value2, ratio } = values
+  const { token1, token2, value1, value2, ratio } = values
   const amount1 = toAmount(value1)
-  const uusd = symbol1 === UUSD ? amount1 : "0"
+  const symbol1 = getSymbol(token1)
+  const symbol2 = getSymbol(token2)
+  const uusd = token1 === UUSD ? amount1 : "0"
 
   /* form:focus input on select asset */
   const valueRef = useRef<HTMLInputElement>(null!)
-  const onSelect = (name: Key) => (symbol: string) => {
+  const onSelect = (name: Key) => (token: string) => {
     const next: Partial<Record<Key, Partial<Values<Key>>>> = {
-      [Key.symbol1]: { symbol2: symbol === symbol2 ? "" : symbol2 },
-      [Key.symbol2]: { symbol1: symbol === symbol1 ? "" : symbol1 },
+      [Key.token1]: { token2: token === token2 ? "" : token2 },
+      [Key.token2]: { token1: token === token1 ? "" : token1 },
     }
 
-    setValues({ ...values, ...next[name], [name]: symbol })
+    setValues({ ...values, ...next[name], [name]: token })
     !value1 && valueRef.current.focus()
   }
 
   /* simulation */
-  const price1 = find(priceKey, symbol1)
-  const price2 = find(priceKey, symbol2)
+  const price1 = find(priceKey, token1)
+  const price2 = find(priceKey, token2)
   const reverse = form.changed !== Key.value1
   const nextCollateralAmount = max([
     (type === Type.DEPOSIT ? plus : minus)(prevCollateral?.amount, amount1),
@@ -170,15 +173,15 @@ const MintForm = ({ idx, type, tab }: Props) => {
 
   /* render:form */
   const config1: Config = {
-    value: symbol1,
-    onSelect: onSelect(Key.symbol1),
+    token: token1,
+    onSelect: onSelect(Key.token1),
     useUST: true,
     skip: [MIR],
   }
 
   const config2: Config = {
-    value: symbol2,
-    onSelect: onSelect(Key.symbol2),
+    token: token2,
+    onSelect: onSelect(Key.token2),
     useUST: false,
     skip: [MIR],
   }
@@ -199,7 +202,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
         },
         unit: open ? select1.button : lookupSymbol(symbol1),
         assets: select1.assets,
-        help: renderBalance(getMax(symbol1), symbol1),
+        help: renderBalance(getMax(token1), symbol1),
         focused: select1.isOpen,
       },
 
@@ -216,7 +219,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
         },
         unit: select2.button,
         assets: select2.assets,
-        help: renderBalance(getMax(symbol2), symbol2),
+        help: renderBalance(getMax(token2), symbol2),
         focused: select2.isOpen,
       },
 
@@ -253,8 +256,8 @@ const MintForm = ({ idx, type, tab }: Props) => {
   ]
 
   /* render:ratio */
-  const minRatio = symbol2
-    ? find(AssetInfoKey.MINCOLLATERALRATIO, symbol2)
+  const minRatio = token2
+    ? find(AssetInfoKey.MINCOLLATERALRATIO, token2)
     : "1.5"
 
   const safeRatio = plus(minRatio, 0.5)
@@ -272,7 +275,7 @@ const MintForm = ({ idx, type, tab }: Props) => {
   }
 
   /* confirm */
-  const price = div(find(priceKey, symbol2), find(priceKey, symbol1))
+  const price = div(find(priceKey, token2), find(priceKey, token1))
 
   const priceContents = {
     title: <TooltipIcon content={Tooltip.Mint.Price}>Price</TooltipIcon>,
@@ -318,10 +321,8 @@ const MintForm = ({ idx, type, tab }: Props) => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const collateral = toToken({ amount: amount1, symbol: symbol1 })
-  const { token: token1 } = getListedItem(symbol1)
-  const { token: token2 } = getListedItem(symbol2)
-  const isCollateralUST = symbol1 === UUSD
+  const collateral = toToken({ amount: amount1, token: token1 })
+  const isCollateralUST = token1 === UUSD
 
   const { mint } = contracts
   const createSend = (msg: object, amount?: string) => ({
@@ -373,7 +374,9 @@ const MintForm = ({ idx, type, tab }: Props) => {
     : undefined
 
   const error =
-    prevAsset && !gte(find(balanceKey, prevAsset?.symbol), prevAsset.amount)
+    !loading &&
+    prevAsset &&
+    !gte(find(balanceKey, prevAsset?.token), prevAsset.amount)
       ? [MESSAGE.Form.Validate.InsufficientBalance]
       : undefined
 

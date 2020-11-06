@@ -30,13 +30,14 @@ const TopTrading = () => {
 
   const dataSource = listed
     .map((item) => {
-      const { symbol, token } = item
-      const price = find(priceKey, symbol)
+      const { token } = item
+      const price = find(priceKey, token)
+      const liquidity = find(infoKey, token)
 
       return {
         ...item,
         price,
-        liquidity: times(find(infoKey, symbol), find(priceKey, symbol)),
+        liquidity: times(liquidity, price),
         change: calcChange({ today: price, yesterday: yesterday[token] }),
         volume: volume[token] ?? "0",
       }

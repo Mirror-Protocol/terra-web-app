@@ -1,18 +1,19 @@
 import React from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { formatAsset } from "../libs/parse"
-import { useContract, useContractsAddress } from "../hooks"
-import { AccountInfoKey } from "../hooks/contractKeys"
+import { useContractsAddress } from "../hooks"
 import { toBase64 } from "./formHelpers"
 import FormContainer from "./FormContainer"
 
-const AuctionForm = ({ idx }: { idx: string }) => {
-  const { contracts, getListedItem, parseToken } = useContractsAddress()
-  const { [AccountInfoKey.MINTPOSITIONS]: positions } = useContract()
-  const position = positions?.find((position) => position.idx === idx)
-  const prevAsset = position && parseToken(position.asset)
-  const amount = prevAsset?.amount
-  const symbol = prevAsset?.symbol
+interface Props {
+  idx: string
+  position: MintPosition
+}
+
+const AuctionForm = ({ idx, position }: Props) => {
+  const { contracts, getSymbol, parseToken } = useContractsAddress()
+  const { amount, token } = parseToken(position.asset)
+  const symbol = getSymbol(token)
 
   /* confirm */
   const contents = [
@@ -21,7 +22,6 @@ const AuctionForm = ({ idx }: { idx: string }) => {
   ]
 
   /* submit */
-  const { token } = getListedItem(symbol)
   const newContractMsg = useNewContractMsg()
   const auction = { auction: { position_idx: idx } }
 

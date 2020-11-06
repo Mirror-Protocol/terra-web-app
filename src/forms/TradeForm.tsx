@@ -29,7 +29,7 @@ import FormGroup from "./FormGroup"
 import FormIcon from "./FormIcon"
 
 enum Key {
-  symbol = "symbol",
+  token = "token",
   value1 = "value1",
   value2 = "value2",
 }
@@ -40,21 +40,23 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const infoKey = AssetInfoKey.COMMISSION
 
   /* context */
-  const { state } = useLocation<{ symbol: string }>()
-  const { getListedItem, toToken } = useContractsAddress()
+  const { state } = useLocation<{ token: string }>()
+  const { whitelist, getSymbol, toToken } = useContractsAddress()
   const { find } = useContract()
   useRefetch([priceKey, balanceKey, infoKey])
 
   /* form:validate */
-  const validate = ({ value1, value2, symbol }: Values<Key>) => {
-    const symbol1 = { [Type.BUY]: UUSD, [Type.SELL]: symbol }[type]
-    const symbol2 = { [Type.BUY]: symbol, [Type.SELL]: UUSD }[type]
-    const max = find(balanceKey, symbol1)
+  const validate = ({ value1, value2, token }: Values<Key>) => {
+    const token1 = { [Type.BUY]: UUSD, [Type.SELL]: token }[type]
+    const token2 = { [Type.BUY]: token, [Type.SELL]: UUSD }[type]
+    const symbol1 = getSymbol(token1)
+    const symbol2 = getSymbol(token2)
+    const max = find(balanceKey, token1)
 
     return {
       [Key.value1]: v.amount(value1, { symbol: symbol1, max }),
-      [Key.value2]: !symbol ? "" : v.amount(value2, { symbol: symbol2 }),
-      [Key.symbol]: v.required(symbol),
+      [Key.value2]: !token ? "" : v.amount(value2, { symbol: symbol2 }),
+      [Key.token]: v.required(token),
     }
   }
 
@@ -62,32 +64,34 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const initial = {
     [Key.value1]: "",
     [Key.value2]: "",
-    [Key.symbol]: state?.symbol ?? "",
+    [Key.token]: state?.token ?? "",
   }
 
   const form = useForm<Key>(initial, validate)
   const { values, setValue, setValues, getFields, attrs, invalid } = form
-  const { value1, value2, symbol } = values
+  const { value1, value2, token } = values
   const amount1 = toAmount(value1)
   const amount2 = toAmount(value2)
-  const symbol1 = { [Type.BUY]: UUSD, [Type.SELL]: symbol }[type]
-  const symbol2 = { [Type.BUY]: symbol, [Type.SELL]: UUSD }[type]
+  const token1 = { [Type.BUY]: UUSD, [Type.SELL]: token }[type]
+  const token2 = { [Type.BUY]: token, [Type.SELL]: UUSD }[type]
+  const symbol1 = getSymbol(token1)
+  const symbol2 = getSymbol(token2)
   const uusd = { [Type.BUY]: amount1, [Type.SELL]: amount2 }[type]
 
   /* form:focus input on select asset */
   const value1Ref = useRef<HTMLInputElement>(null!)
   const value2Ref = useRef<HTMLInputElement>(null!)
-  const onSelect = (symbol: string) => {
-    setValue(Key.symbol, symbol)
+  const onSelect = (token: string) => {
+    setValue(Key.token, token)
     !value1 && value1Ref.current.focus()
   }
 
   /* simulation */
-  const { token, pair } = getListedItem(symbol)
+  const { pair } = whitelist[token] ?? {}
   const reverse = form.changed === Key.value2
   const simulationParams = !reverse
-    ? { amount: amount1, symbol: symbol1 }
-    : { amount: amount2, symbol: symbol2 }
+    ? { amount: amount1, token: token1 }
+    : { amount: amount2, token: token2 }
 
   const simulation = useSimulate({ ...simulationParams, pair, reverse, type })
   const { simulated, loading: simulating, error } = simulation
@@ -102,8 +106,9 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }, [simulated, reverse, setValues, symbol1, symbol2, error])
 
   /* render:form */
-  const config = { value: symbol, onSelect, priceKey, balanceKey }
+  const config = { token, onSelect, priceKey, balanceKey }
   const select = useSelectAsset(config)
+  const delisted = whitelist[token1]?.["status"] === "DELISTED"
 
   const fields = getFields({
     [Key.value1]: {
@@ -118,10 +123,10 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
       },
       unit: {
         [Type.BUY]: lookupSymbol(symbol1),
-        [Type.SELL]: select.button,
+        [Type.SELL]: delisted ? symbol1 : select.button,
       }[type],
       assets: type === Type.SELL && select.assets,
-      help: renderBalance(find(balanceKey, symbol1), symbol1),
+      help: renderBalance(find(balanceKey, token1), symbol1),
       focused: type === Type.SELL && select.isOpen,
     },
 
@@ -139,7 +144,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         [Type.SELL]: lookupSymbol(symbol2),
       }[type],
       assets: type === Type.BUY && select.assets,
-      help: renderBalance(find(balanceKey, symbol2), symbol2),
+      help: renderBalance(find(balanceKey, token2), symbol2),
       focused: type === Type.BUY && select.isOpen,
     },
   })
@@ -155,11 +160,11 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         offer_amount: amount1,
         belief_price: belief,
         max_spread: String(MAX_SPREAD),
-        commission: find(infoKey, symbol2),
+        commission: find(infoKey, token2),
       })
     : "0"
 
-  const contents = !(value1 && symbol)
+  const contents = !(value1 && token)
     ? undefined
     : [
         {
@@ -186,7 +191,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const asset = toToken({ symbol: symbol1, amount: amount1 })
+  const asset = toToken({ token: token1, amount: amount1 })
   const swap = {
     belief_price: belief,
     max_spread: String(MAX_SPREAD),

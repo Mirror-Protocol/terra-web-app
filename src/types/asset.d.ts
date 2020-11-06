@@ -5,7 +5,8 @@ interface Coin {
 
 interface Asset {
   amount: string
-  symbol: string
+  token: string
+  symbol?: string
 }
 
 interface ListedItem {

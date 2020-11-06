@@ -9,16 +9,17 @@ import useClaimReceipt from "./receipts/useClaimReceipt"
 import FormContainer from "./FormContainer"
 
 interface Props {
-  symbol?: string
+  token?: string
 }
 
-const ClaimForm = ({ symbol }: Props) => {
+const ClaimForm = ({ token }: Props) => {
   /* context */
-  const { contracts, getListedItem } = useContractsAddress()
+  const { contracts, getToken } = useContractsAddress()
   const { find, rewards } = useContract()
   useRefetch([BalanceKey.TOKEN, BalanceKey.LPSTAKED, BalanceKey.REWARD])
-  const balance = find(BalanceKey.TOKEN, MIR)
-  const claiming = symbol ? find(BalanceKey.REWARD, symbol) : rewards
+
+  const balance = find(BalanceKey.TOKEN, getToken(MIR))
+  const claiming = token ? find(BalanceKey.REWARD, token) : rewards
 
   /* confirm */
   const contents = [
@@ -34,7 +35,6 @@ const ClaimForm = ({ symbol }: Props) => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const { token } = getListedItem(symbol)
   const data = [
     newContractMsg(contracts["staking"], {
       withdraw: token ? { asset_token: token } : {},

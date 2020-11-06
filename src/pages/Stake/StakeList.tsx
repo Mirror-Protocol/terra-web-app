@@ -16,14 +16,14 @@ const StakeList = () => {
   const keys = [BalanceKey.LPSTAKED, BalanceKey.LPSTAKABLE]
 
   useRefetch(keys)
-  const { listed, getListedItem } = useContractsAddress()
+  const { listed, whitelist, getToken } = useContractsAddress()
   const { loading } = useCombineKeys(keys)
   const { apr } = useAssetStats()
-  const mirror = getListedItem(MIR)
+  const mirror = whitelist[getToken(MIR)]
 
   const renderItem = ({ symbol, token }: ListedItem): JSX.Element => (
     <StakeItem
-      symbol={symbol}
+      token={token}
       apr={apr[token] ?? "0"}
       emphasize={symbol === MIR}
       key={symbol}

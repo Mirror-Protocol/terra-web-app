@@ -32,6 +32,7 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
   const balanceKey = BalanceKey.MIRGOVSTAKED
 
   /* context */
+  const { getToken } = useContractsAddress()
   const { find } = useContract()
   const { params } = useRouteMatch<{ id: string }>()
   const id = Number(params.id)
@@ -46,7 +47,7 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
   const initial = { [Key.answer]: "" }
   const form = useForm<Key>(initial, validate)
   const { values, handleChange, attrs, invalid } = form
-  const amount = find(balanceKey, MIR)
+  const amount = find(balanceKey, getToken(MIR))
   const value = lookup(amount, MIR)
 
   /* render:form */

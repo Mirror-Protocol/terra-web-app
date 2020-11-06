@@ -5,7 +5,7 @@ import { LP } from "../../constants"
 import { gt } from "../../libs/math"
 import { insertIf } from "../../libs/utils"
 import { percent } from "../../libs/num"
-import { useContract } from "../../hooks"
+import { useContract, useContractsAddress } from "../../hooks"
 import { BalanceKey, AssetInfoKey } from "../../hooks/contractKeys"
 import Card from "../../components/Card"
 import Icon from "../../components/Icon"
@@ -19,17 +19,19 @@ import styles from "./StakeItem.module.scss"
 const cx = classNames.bind(styles)
 
 interface Props {
-  symbol: string
+  token: string
   apr: string
   emphasize?: boolean
 }
 
-const StakeItem = ({ symbol, apr, emphasize }: Props) => {
+const StakeItem = ({ token, apr, emphasize }: Props) => {
   const { url } = useRouteMatch()
+  const { getSymbol } = useContractsAddress()
   const { find } = useContract()
+  const symbol = getSymbol(token)
 
-  const staked = gt(find(BalanceKey.LPSTAKED, symbol), 0)
-  const stakable = gt(find(BalanceKey.LPSTAKABLE, symbol), 0)
+  const staked = gt(find(BalanceKey.LPSTAKED, token), 0)
+  const stakable = gt(find(BalanceKey.LPSTAKABLE, token), 0)
 
   const badges = [
     ...insertIf(staked, { label: "Staked", color: "blue" }),
@@ -49,14 +51,14 @@ const StakeItem = ({ symbol, apr, emphasize }: Props) => {
           symbol={LP}
           integer
         >
-          {find(AssetInfoKey.LPTOTALSTAKED, symbol)}
+          {find(AssetInfoKey.LPTOTALSTAKED, token)}
         </CountWithResult>
       ),
     },
   ]
 
   return (
-    <Card to={`${url}/${symbol}`} badges={badges} className={cx({ emphasize })}>
+    <Card to={`${url}/${token}`} badges={badges} className={cx({ emphasize })}>
       <article className={styles.component}>
         <div className={styles.main}>
           <StakeImage symbol={symbol} />

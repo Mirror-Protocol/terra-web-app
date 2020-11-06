@@ -2,7 +2,7 @@ import React from "react"
 import Tooltip from "../../lang/Tooltip.json"
 import { MIR, UUSD } from "../../constants"
 import { format } from "../../libs/parse"
-import { useContract } from "../../hooks"
+import { useContract, useContractsAddress } from "../../hooks"
 import { PriceKey } from "../../hooks/contractKeys"
 import useDashboard from "../../statistics/useDashboard"
 import Grid from "../../components/Grid"
@@ -13,6 +13,7 @@ import { TooltipIcon } from "../../components/Tooltip"
 import MIRSupplyCard from "./MIRSupplyCard"
 
 const StakeHomeHeader = () => {
+  const { getToken } = useContractsAddress()
   const { find } = useContract()
   const { dashboard, ...result } = useDashboard()
 
@@ -27,7 +28,7 @@ const StakeHomeHeader = () => {
           }
         >
           <CountWithResult keys={[PriceKey.PAIR]} symbol={UUSD} format={format}>
-            {find(PriceKey.PAIR, MIR)}
+            {find(PriceKey.PAIR, getToken(MIR))}
           </CountWithResult>
         </Summary>
       </Card>

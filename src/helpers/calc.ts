@@ -87,11 +87,11 @@ export default {
     totalShare: string
   ): { asset: Asset; uusd: Asset } =>
     Object.entries(shares).reduce(
-      (acc, [key, { amount, symbol }]) => ({
+      (acc, [key, { amount, token }]) => ({
         ...acc,
         [key]: {
           amount: new BigNumber(lp).times(amount).div(totalShare).toString(),
-          symbol,
+          token,
         },
       }),
       {} as { asset: Asset; uusd: Asset }

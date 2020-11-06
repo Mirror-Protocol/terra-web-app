@@ -19,6 +19,7 @@ import { TooltipIcon } from "../../components/Tooltip"
 import { menu as stakeMenu, MenuKey as StakeMenuKey, Type } from "../Stake"
 import getLpName from "../Stake/getLpName"
 import NoAssets from "./NoAssets"
+import Delisted from "./Delisted"
 import DashboardActions from "./DashboardActions"
 
 const Stake = () => {
@@ -35,7 +36,7 @@ const Stake = () => {
   const { apr } = useAssetStats()
 
   /* context */
-  const { listed, getListedItem } = useContractsAddress()
+  const { listedAll, whitelist, getToken } = useContractsAddress()
   const { result, find, rewards } = useContract()
   const loading = keys.some((key) => result[key].loading)
 
@@ -43,13 +44,13 @@ const Stake = () => {
   const dataSource: (ListedItem & { gov?: boolean })[] = !data
     ? []
     : [
-        ...insertIf(gt(find(BalanceKey.MIRGOVSTAKED, MIR), 0), {
-          ...getListedItem(MIR),
+        ...insertIf(gt(find(BalanceKey.MIRGOVSTAKED, getToken(MIR)), 0), {
+          ...whitelist[getToken(MIR)],
           gov: true,
         }),
-        ...listed.filter(({ symbol }) =>
+        ...listedAll.filter(({ token }) =>
           [BalanceKey.LPSTAKED, BalanceKey.LPSTAKABLE].some((key) =>
-            gt(find(key, symbol), 0)
+            gt(find(key, token), 0)
           )
         ),
       ]
@@ -83,8 +84,12 @@ const Stake = () => {
             {
               key: "symbol",
               title: "Pool Name",
-              render: (symbol, { gov }) =>
-                !gov ? getLpName(symbol) : `${symbol} (${MenuKey.GOV})`,
+              render: (symbol, { status, gov }) => (
+                <>
+                  {status === "DELISTED" && <Delisted />}
+                  {!gov ? getLpName(symbol) : `${symbol} (${MenuKey.GOV})`}
+                </>
+              ),
               bold: true,
             },
             {
@@ -99,15 +104,15 @@ const Stake = () => {
             },
             {
               key: "staked",
-              dataIndex: "symbol",
+              dataIndex: "token",
               title: (
                 <TooltipIcon content={Tooltip.My.Staked}>Staked</TooltipIcon>
               ),
-              render: (symbol, { gov }) =>
+              render: (token, { gov }) =>
                 formatAsset(
                   find(
                     !gov ? BalanceKey.LPSTAKED : BalanceKey.MIRGOVSTAKED,
-                    symbol
+                    token
                   ),
                   !gov ? LP : MIR
                 ),
@@ -115,34 +120,34 @@ const Stake = () => {
             },
             {
               key: "stakable",
-              dataIndex: "symbol",
-              render: (symbol, { gov }) =>
+              dataIndex: "token",
+              render: (token, { gov }) =>
                 formatAsset(
-                  find(!gov ? BalanceKey.LPSTAKABLE : BalanceKey.TOKEN, symbol),
+                  find(!gov ? BalanceKey.LPSTAKABLE : BalanceKey.TOKEN, token),
                   !gov ? LP : MIR
                 ),
               align: "right",
             },
             {
               key: "reward",
-              dataIndex: "symbol",
+              dataIndex: "token",
               title: (
                 <TooltipIcon content={Tooltip.My.Reward}>Reward</TooltipIcon>
               ),
-              render: (symbol, { gov }) =>
-                !gov && formatAsset(find(BalanceKey.REWARD, symbol), MIR),
+              render: (token, { gov }) =>
+                !gov && formatAsset(find(BalanceKey.REWARD, token), MIR),
               align: "right",
             },
             {
               key: "actions",
-              dataIndex: "symbol",
-              render: (symbol, { gov }) => {
+              dataIndex: "token",
+              render: (token, { gov }) => {
                 const edit = !gov
-                  ? `${getPath(MenuKey.STAKE)}/${symbol}`
+                  ? `${getPath(MenuKey.STAKE)}/${token}`
                   : `${getPath(MenuKey.GOV)}/stake`
 
                 const claim = !gov
-                  ? `${getPath(MenuKey.STAKE)}/${symbol}/claim`
+                  ? `${getPath(MenuKey.STAKE)}/${token}/claim`
                   : ``
 
                 const list = [
@@ -152,7 +157,7 @@ const Stake = () => {
                     disabled: !gt(
                       find(
                         !gov ? BalanceKey.LPSTAKABLE : BalanceKey.TOKEN,
-                        symbol
+                        token
                       ),
                       0
                     ),
@@ -163,7 +168,7 @@ const Stake = () => {
                     disabled: !gt(
                       find(
                         !gov ? BalanceKey.LPSTAKED : BalanceKey.MIRGOVSTAKED,
-                        symbol
+                        token
                       ),
                       0
                     ),
@@ -172,7 +177,7 @@ const Stake = () => {
                     to: claim,
                     children: StakeMenuKey.CLAIMSYMBOL,
                     disabled: !gov
-                      ? !gt(find(BalanceKey.REWARD, symbol), 0)
+                      ? !gt(find(BalanceKey.REWARD, token), 0)
                       : false,
                   },
                 ]
