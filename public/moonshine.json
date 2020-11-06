@@ -15,84 +15,104 @@
       "name": "Mirror",
       "token": "terra1g6uv2xzfcc4mae8mw6unhdzv9cdy5p62ck8ylr",
       "pair": "terra1sfga5c35trjwvgpfz8r7mh0zfecs3y2flf4khl",
-      "lpToken": "terra15cv6vq9rn273p99hk0df5cc8z0kmjsevwlwjar"
+      "lpToken": "terra15cv6vq9rn273p99hk0df5cc8z0kmjsevwlwjar",
+      "status": "LISTED"
     },
     "terra1y336dak40tf300jyamuq3trlxne9qajczc884s": {
       "symbol": "mAAPL",
       "name": "Apple",
       "token": "terra1y336dak40tf300jyamuq3trlxne9qajczc884s",
       "pair": "terra1edqzdggfclw6t5dg8y0n05kk0k7te3ra5n6yw9",
-      "lpToken": "terra1pe72s6w69rdzrqyuu4eaf7sp8ushzf6w757gyf"
+      "lpToken": "terra1pe72s6w69rdzrqyuu4eaf7sp8ushzf6w757gyf",
+      "status": "LISTED"
     },
     "terra1umwqjum7f4zmp9alr2kpmq4y5j4hyxlalxtnud": {
       "symbol": "mGOOGL",
       "name": "Google",
       "token": "terra1umwqjum7f4zmp9alr2kpmq4y5j4hyxlalxtnud",
       "pair": "terra1p5zd0yg6pdatpqjqq0spunfzxn397fpdcnde3e",
-      "lpToken": "terra1atgpe9ypjg037ahw8yjzydzkesaudhu7kp0fac"
+      "lpToken": "terra1atgpe9ypjg037ahw8yjzydzkesaudhu7kp0fac",
+      "status": "LISTED"
     },
     "terra1jkeeazyekj2uhwume6h8kj33xmxrskg8qyej0t": {
       "symbol": "mTSLA",
       "name": "Tesla",
       "token": "terra1jkeeazyekj2uhwume6h8kj33xmxrskg8qyej0t",
       "pair": "terra1a4a3lvfyuuv0flp3ett6s8sfwym0acs24tjy4p",
-      "lpToken": "terra16mdzjcwgyual93vtc55sxhjzgwv6vnh3r0mk9m"
+      "lpToken": "terra16mdzjcwgyual93vtc55sxhjzgwv6vnh3r0mk9m",
+      "status": "LISTED"
     },
     "terra14uwzxrcfj2fm4fz7c8fctrqq3nwyh6jehpdqdd": {
       "symbol": "mNFLX",
       "name": "Netflix",
       "token": "terra14uwzxrcfj2fm4fz7c8fctrqq3nwyh6jehpdqdd",
       "pair": "terra1p8wptg7qna0aurmn5pktw8qzs79ejlnmwztudv",
-      "lpToken": "terra1fjn3yfeh2p27exf5dpt055kl5fn0dmf2jry5hc"
+      "lpToken": "terra1fjn3yfeh2p27exf5dpt055kl5fn0dmf2jry5hc",
+      "status": "LISTED"
     },
     "terra13lf0zkfmevpypguy569afrh8j8253pcr64wx8r": {
       "symbol": "mQQQ",
       "name": "Invesco QQQ Trust",
       "token": "terra13lf0zkfmevpypguy569afrh8j8253pcr64wx8r",
       "pair": "terra1h7k9cwv0h8z5fd425af9ws42arkzcpareygrny",
-      "lpToken": "terra1fp4zk4d7ct05l5uqaa5cmz2vpwcuelp8gc8lxk"
+      "lpToken": "terra1fp4zk4d7ct05l5uqaa5cmz2vpwcuelp8gc8lxk",
+      "status": "LISTED"
     },
     "terra1yueur9ee7axuh0uwp752jvgav87wepr5hshd32": {
       "symbol": "mTWTR",
       "name": "Twitter",
       "token": "terra1yueur9ee7axuh0uwp752jvgav87wepr5hshd32",
       "pair": "terra1ljvr3ffpezeyshszfaaqclu78e628vs8lun2q7",
-      "lpToken": "terra17flgn3xvm3p3m8tj9zwnucah7s9cxclzjxfw0m"
+      "lpToken": "terra17flgn3xvm3p3m8tj9zwnucah7s9cxclzjxfw0m",
+      "status": "LISTED"
     },
     "terra120eeaq9c7wkdlshdkr5nauvsmwpcly0muludw3": {
       "symbol": "mBABA",
       "name": "Alibaba Group Holdings Ltd ADR",
       "token": "terra120eeaq9c7wkdlshdkr5nauvsmwpcly0muludw3",
       "pair": "terra15268gfsnemrnpp6dk0lcxuzmhr3xgfy8u23new",
-      "lpToken": "terra19w7upl7s5j4sv2v3nkypcvhq4jy3nh7rnm5fwl"
+      "lpToken": "terra19w7upl7s5j4sv2v3nkypcvhq4jy3nh7rnm5fwl",
+      "status": "LISTED"
     },
     "terra1yhjesmnnfke9gwuruf78w6qe08d7hwnjgm8wgw": {
       "symbol": "mIAU",
       "name": "iShares Gold Trust",
       "token": "terra1yhjesmnnfke9gwuruf78w6qe08d7hwnjgm8wgw",
       "pair": "terra1wxdgckadag9ej0zwyn884hstm0uqlmyjnlmwf3",
-      "lpToken": "terra1wasg8uu3w9f0rwe56gsaa79nrcs6zp2ad8hjt6"
-    },
-    "terra1y0dkgvvxcj2cg399ljx97r2fjmttfuw8arwqne": {
-      "symbol": "mSLV",
-      "name": "iShares Silver Trust",
-      "token": "terra1y0dkgvvxcj2cg399ljx97r2fjmttfuw8arwqne",
-      "pair": "terra15s2ntgqr7ruccskye82hg6uj2wq45lvj02u7cv",
-      "lpToken": "terra1ecxrgj7wcrwennf9ygd6dhjdjpz0w86pdej9s9"
+      "lpToken": "terra1wasg8uu3w9f0rwe56gsaa79nrcs6zp2ad8hjt6",
+      "status": "LISTED"
     },
     "terra1z9xsra0sjl8cswcual6uqr7wjpeqxufgf23yt8": {
       "symbol": "mUSO",
       "name": "United States Oil Fund, LP",
       "token": "terra1z9xsra0sjl8cswcual6uqr7wjpeqxufgf23yt8",
       "pair": "terra1zmm3mgu7fy5k6fjq84udu65x954x9nukdspzvj",
-      "lpToken": "terra12rx0d75m8yq3nugh4mxtxr5dafz3g6mhcwrsjn"
+      "lpToken": "terra12rx0d75m8yq3nugh4mxtxr5dafz3g6mhcwrsjn",
+      "status": "LISTED"
     },
     "terra1c5ndjdkek3z5rlrme5v2czjat69hzsz5l4azmf": {
       "symbol": "mVIXY",
       "name": "ProShares VIX",
       "token": "terra1c5ndjdkek3z5rlrme5v2czjat69hzsz5l4azmf",
       "pair": "terra1fda7cecjqnvu57npv6q329c6npc8dc6h7h2xxv",
-      "lpToken": "terra1v0glxeug9ng539xksdtsxuxwnl304j6rv5c7fa"
+      "lpToken": "terra1v0glxeug9ng539xksdtsxuxwnl304j6rv5c7fa",
+      "status": "LISTED"
+    },
+    "terra1k02rs5jmuum26rjwmf30grwuxj7u2h9vd8dftf": {
+      "symbol": "mSLV",
+      "name": "iShares Silver Trust",
+      "token": "terra1k02rs5jmuum26rjwmf30grwuxj7u2h9vd8dftf",
+      "pair": "terra1mn2xjemy954r7kwufez7n6setlp9d2a3ueu5ms",
+      "lpToken": "terra1gmcx9gtvz788tsvpa50frt29ezycqmxlw6f770",
+      "status": "LISTED"
+    },
+    "terra1y0dkgvvxcj2cg399ljx97r2fjmttfuw8arwqne": {
+      "symbol": "mSLV",
+      "name": "iShares Silver Trust",
+      "token": "terra1y0dkgvvxcj2cg399ljx97r2fjmttfuw8arwqne",
+      "pair": "terra15s2ntgqr7ruccskye82hg6uj2wq45lvj02u7cv",
+      "lpToken": "terra1ecxrgj7wcrwennf9ygd6dhjdjpz0w86pdej9s9",
+      "status": "DELISTED"
     }
   }
 }

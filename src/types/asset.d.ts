@@ -14,6 +14,7 @@ interface ListedItem {
   token: string
   pair: string
   lpToken: string
+  status: "LISTED" | "DELISTED"
 }
 
 /* chain */
