@@ -12,7 +12,6 @@ import Pool from "./pages/Pool"
 import Stake from "./pages/Stake"
 import Gov from "./pages/Gov"
 
-import Migrate from "./pages/Migrate"
 import Auction from "./pages/Auction"
 import Reward from "./pages/Reward"
 import Caution from "./forms/Caution"
@@ -44,9 +43,6 @@ export const menu: Dictionary<RouteProps> = {
   [MenuKey.POOL]: { path: "/pool", component: Pool },
   [MenuKey.STAKE]: { path: "/stake", component: Stake },
   [MenuKey.GOV]: { path: "/gov", component: Gov },
-
-  // Migration
-  migrate: { path: "/migrate", component: Migrate },
 
   // For test
   auction: { path: "/auction", component: Auction },

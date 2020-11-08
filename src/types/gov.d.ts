@@ -35,7 +35,6 @@ interface Poll extends PollData {
 
 type DecodedExecuteMsg =
   | { whitelist: Whitelist }
-  | { migrate_asset: MigrateAsset }
   | { update_weight: UpdateWeight }
   | { pass_command: PassCommand }
 
@@ -44,13 +43,6 @@ interface Whitelist {
   symbol: string
   oracle_feeder: string
   params: AssetParams
-}
-
-interface MigrateAsset {
-  name: string
-  symbol: string
-  from_token: string
-  conversion_rate: string
 }
 
 interface AssetParams {
