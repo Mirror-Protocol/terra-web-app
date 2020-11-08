@@ -410,7 +410,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     <FormContainer {...container} parseTx={parseTx} gov>
       {fieldKeys.map((key) =>
         key === Key.parameter ? (
-          <FormCheck horizontal list={radio} key={key} />
+          <FormCheck horizontal label="Parameter" list={radio} key={key} />
         ) : (
           <FormGroup {...fields[key]} type={2} key={key} />
         )

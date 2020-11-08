@@ -1,6 +1,10 @@
 @import "mixins";
 @import "variables";
 
+.group + .group {
+  margin-top: 20px;
+}
+
 .component {
   input,
   textarea {
@@ -9,10 +13,6 @@
 
   ::placeholder {
     color: fade-out(#f0f0f0, 0.8);
-  }
-
-  & + & {
-    margin-top: 20px;
   }
 }
 
