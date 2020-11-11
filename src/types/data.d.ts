@@ -2,6 +2,10 @@ interface Price {
   price: string
 }
 
+interface Rate {
+  rate: string
+}
+
 interface Balance {
   balance: string
 }

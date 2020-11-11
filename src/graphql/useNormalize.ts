@@ -12,8 +12,8 @@ export default () => {
   const price = {
     [PriceKey.PAIR]: (pairPool: Dictionary<PairPool>) =>
       dict(pairPool, calcPairPrice),
-    [PriceKey.ORACLE]: (oraclePrice: Dictionary<Price>) =>
-      dict(oraclePrice, ({ price }) => price),
+    [PriceKey.ORACLE]: (oraclePrice: Dictionary<Rate>) =>
+      dict(oraclePrice, ({ rate }) => rate),
   }
 
   const contractInfo = {

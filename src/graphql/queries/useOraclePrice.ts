@@ -7,12 +7,12 @@ export default () => {
   const generate = ({ token, symbol }: ListedItem) => {
     const variables = {
       contract: contracts["oracle"],
-      msg: { price: { asset_token: token } },
+      msg: { price: { base_asset: token, quote_asset: "uusd" } },
     }
 
     return symbol === MIR ? undefined : variables
   }
 
-  const query = useLazyContractQueries<Price>(generate)
+  const query = useLazyContractQueries<Rate>(generate)
   return query
 }
