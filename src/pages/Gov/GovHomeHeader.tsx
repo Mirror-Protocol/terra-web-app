@@ -9,7 +9,7 @@ import Card from "../../components/Card"
 import Summary from "../../components/Summary"
 import CountWithResult from "../../components/CountWithResult"
 import { TooltipIcon } from "../../components/Tooltip"
-import { useMirrorTokenInfo } from "../Stake/MIRSupplyCard"
+import useMirrorTokenInfo from "../Stake/useMirrorTokenInfo"
 import GovMIR from "./GovMIR"
 import styles from "./GovHomeHeader.module.scss"
 

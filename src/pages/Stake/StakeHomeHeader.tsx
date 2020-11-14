@@ -10,12 +10,13 @@ import Card from "../../components/Card"
 import Summary from "../../components/Summary"
 import CountWithResult from "../../components/CountWithResult"
 import { TooltipIcon } from "../../components/Tooltip"
-import MIRSupplyCard from "./MIRSupplyCard"
+import useMirrorTokenInfo from "./useMirrorTokenInfo"
 
 const StakeHomeHeader = () => {
   const { getToken } = useContractsAddress()
   const { find } = useContract()
   const { dashboard, ...result } = useDashboard()
+  const supply = useMirrorTokenInfo()
 
   return (
     <Grid>
@@ -47,7 +48,19 @@ const StakeHomeHeader = () => {
         </Summary>
       </Card>
 
-      <MIRSupplyCard />
+      <Card>
+        <Summary
+          title={
+            <TooltipIcon content={Tooltip.Stake.MIRsupply}>
+              {MIR} Supply
+            </TooltipIcon>
+          }
+        >
+          <CountWithResult results={[supply.result]} symbol={MIR} integer>
+            {supply.value}
+          </CountWithResult>
+        </Summary>
+      </Card>
     </Grid>
   )
 }
