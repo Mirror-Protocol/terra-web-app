@@ -18,49 +18,52 @@ const StakeHomeHeader = () => {
   const { dashboard, ...result } = useDashboard()
   const supply = useMirrorTokenInfo()
 
+  const contents = [
+    {
+      title: (
+        <TooltipIcon content={Tooltip.Stake.MIRprice}>{MIR} Price</TooltipIcon>
+      ),
+      content: (
+        <CountWithResult keys={[PriceKey.PAIR]} symbol={UUSD} format={format}>
+          {find(PriceKey.PAIR, getToken(MIR))}
+        </CountWithResult>
+      ),
+    },
+
+    {
+      title: (
+        <TooltipIcon content={Tooltip.Stake.MIRvolume}>
+          {MIR} Volume (24hrs)
+        </TooltipIcon>
+      ),
+      content: (
+        <CountWithResult results={[result]} symbol={UUSD} integer>
+          {dashboard?.latest24h?.mirVolume}
+        </CountWithResult>
+      ),
+    },
+
+    {
+      title: (
+        <TooltipIcon content={Tooltip.Stake.MIRsupply}>
+          {MIR} Supply
+        </TooltipIcon>
+      ),
+      content: (
+        <CountWithResult results={[supply.result]} symbol={MIR} integer>
+          {supply.value}
+        </CountWithResult>
+      ),
+    },
+  ]
+
   return (
     <Grid>
-      <Card>
-        <Summary
-          title={
-            <TooltipIcon content={Tooltip.Stake.MIRprice}>
-              {MIR} Price
-            </TooltipIcon>
-          }
-        >
-          <CountWithResult keys={[PriceKey.PAIR]} symbol={UUSD} format={format}>
-            {find(PriceKey.PAIR, getToken(MIR))}
-          </CountWithResult>
-        </Summary>
-      </Card>
-
-      <Card>
-        <Summary
-          title={
-            <TooltipIcon content={Tooltip.Stake.MIRvolume}>
-              {MIR} Volume (24hrs)
-            </TooltipIcon>
-          }
-        >
-          <CountWithResult results={[result]} symbol={UUSD} integer>
-            {dashboard?.latest24h?.mirVolume}
-          </CountWithResult>
-        </Summary>
-      </Card>
-
-      <Card>
-        <Summary
-          title={
-            <TooltipIcon content={Tooltip.Stake.MIRsupply}>
-              {MIR} Supply
-            </TooltipIcon>
-          }
-        >
-          <CountWithResult results={[supply.result]} symbol={MIR} integer>
-            {supply.value}
-          </CountWithResult>
-        </Summary>
-      </Card>
+      {contents.map(({ title, content }, index) => (
+        <Card key={index}>
+          <Summary title={title}>{content}</Summary>
+        </Card>
+      ))}
     </Grid>
   )
 }
