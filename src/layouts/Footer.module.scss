@@ -26,22 +26,11 @@
 /* network */
 .network {
   @include flex;
-  margin: -15px;
-}
-
-.button {
-  @include flex;
-  @include link;
-  @include transition(color);
-  padding: 15px;
+  color: white;
   text-transform: capitalize;
 
   i {
     margin-right: 5px;
-  }
-
-  &:disabled {
-    color: white;
   }
 }
 

@@ -5,7 +5,6 @@ import discord from "../images/Community/discord.png"
 import telegram from "../images/Community/telegram.png"
 import wechat from "../images/Community/wechat.png"
 import github from "../images/Community/github.png"
-import { NetworkKey } from "../networks"
 import { useNetwork } from "../hooks"
 import Container from "../components/Container"
 import ExtLink from "../components/ExtLink"
@@ -21,23 +20,14 @@ const community = [
 ]
 
 const Footer = () => {
-  const { key: current, setKey } = useNetwork()
+  const { key: current } = useNetwork()
 
   return (
     <footer className={styles.footer}>
       <Container className={styles.container}>
         <section className={styles.network}>
-          {Object.values(NetworkKey).map((key) => (
-            <button
-              className={styles.button}
-              onClick={() => setKey(key)}
-              disabled={key === current}
-              key={key}
-            >
-              <Icon name="wifi_tethering" size={20} />
-              {key}
-            </button>
-          ))}
+          <Icon name="wifi_tethering" size={20} />
+          {current}
         </section>
 
         <section className={styles.community}>
