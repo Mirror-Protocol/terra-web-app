@@ -49,5 +49,5 @@ export const getTitle = (title: string) => {
     owner_commission: "MIR Staking Commission",
   }
 
-  return Title[title] ?? title.replaceAll("_", " ")
+  return Title[title] ?? title.replace(/_/g, " ")
 }
