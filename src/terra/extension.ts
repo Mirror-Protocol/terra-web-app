@@ -15,7 +15,7 @@ const ext = new Extension()
 export default {
   init: () => !!ext.isAvailable,
 
-  info: (callback: (network: ExtNetworkConfig) => void) => {
+  info: (callback: (network?: ExtNetworkConfig) => void) => {
     ext.info()
     ext.on("onInfo", callback)
   },
