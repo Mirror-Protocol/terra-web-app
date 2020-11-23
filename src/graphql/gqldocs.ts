@@ -29,6 +29,7 @@ export const TAX = gql`
 export const TXINFOS = gql`
   query($hash: String) {
     TxInfos(TxHash: $hash) {
+      Height
       TxHash
 
       Tx {

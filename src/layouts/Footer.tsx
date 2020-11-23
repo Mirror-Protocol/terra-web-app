@@ -20,7 +20,7 @@ const community = [
 ]
 
 const Footer = () => {
-  const { key: current } = useNetwork()
+  const { name: current } = useNetwork()
 
   return (
     <footer className={styles.footer}>

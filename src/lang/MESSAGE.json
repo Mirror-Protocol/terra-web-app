@@ -42,6 +42,9 @@
     "CopyAddress": "Copy Address",
     "TerraFinder": "View on Terra Finder"
   },
+  "Network": {
+    "NoContract": "Mirror contracts could not be found on the selected network. Select a different network from the Terra Station extension."
+  },
 
   "MyPage": {
     "Empty": {

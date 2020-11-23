@@ -17,8 +17,13 @@ export const MAX_SPREAD = 0.01
 export const MAX_MSG_LENGTH = 1024
 
 /* network:settings */
-export const DEFAULT_NETWORK = "moonshine"
 export const TX_POLLING_INTERVAL = 1000
+export const ICON_URL = "https://whitelist.mirror.finance/images/"
+export const DEFAULT_EXT_NETWORK: ExtNetworkConfig = {
+  name: "testnet",
+  chainID: "tequila",
+  lcd: "https://tequila-lcd.terra.dev",
+}
 
 /* project */
 export const MEDIUM = ""

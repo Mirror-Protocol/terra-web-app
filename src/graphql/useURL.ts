@@ -7,7 +7,7 @@ export default () => {
       typeof msg === "string"
         ? toQueryMsg(msg)
         : encodeURIComponent(JSON.stringify(msg))
-    return `${lcd.URL}wasm/contracts/${contract}/store?query_msg=${query_msg}`
+    return `${lcd}/wasm/contracts/${contract}/store?query_msg=${query_msg}`
   }
 }
 

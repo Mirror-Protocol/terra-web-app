@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import classNames from "classnames"
-import { MIR } from "../../constants"
+import { ICON_URL, MIR } from "../../constants"
 import { ReactComponent as MirrorSymbol } from "../../images/MIR.svg"
 import USTIcon from "../../images/UST.png"
 import styles from "./StakeImage.module.scss"
@@ -13,6 +13,9 @@ interface Props {
 const StakeImage = ({ symbol, bg = "bg" }: Props) => {
   const [notFound, setNotFound] = useState(false)
   const size = { width: 25, height: 25 }
+  const icon = `${ICON_URL}${
+    symbol.startsWith("m") ? symbol.slice(1) : symbol
+  }.png`
 
   return (
     <section className={styles.images}>
@@ -22,12 +25,7 @@ const StakeImage = ({ symbol, bg = "bg" }: Props) => {
         ) : symbol === MIR ? (
           <MirrorSymbol {...size} />
         ) : (
-          <img
-            {...size}
-            src={`${process.env.PUBLIC_URL}/logo/${symbol}.png`}
-            onError={() => setNotFound(true)}
-            alt=""
-          />
+          <img {...size} src={icon} onError={() => setNotFound(true)} alt="" />
         )}
       </div>
 

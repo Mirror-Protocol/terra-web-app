@@ -1580,10 +1580,10 @@
     "@svgr/plugin-svgo" "^5.4.0"
     loader-utils "^2.0.0"
 
-"@terra-money/terra.js@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-1.0.1.tgz#1caecceed9a62d476d7ceb43a5131d3fb4231d2c"
-  integrity sha512-ovId58u1BLKF+XooMUryIV6lmq4jHKMW2bPoYGaF7JFI6V0rGZsWinAWeXJ1dJH1pugMx2Pxd7xUWxWA1SN5Jg==
+"@terra-money/terra.js@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-1.1.1.tgz#e0c6bca2f9b1704d6c67823eab94859ba2f03836"
+  integrity sha512-ZB+HFxun9pAKBkvm29hQDyLtIynqgy13kfH6HMSNhXCaSGk/9NIeBdPdBSEhF8B1Rx0tSz5ff5z/CjRd01oWfw==
   dependencies:
     axios "^0.20.0"
     bech32 "^1.1.4"

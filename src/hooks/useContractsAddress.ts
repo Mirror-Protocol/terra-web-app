@@ -42,7 +42,7 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
       setData(json)
     }
 
-    load()
+    url && load()
   }, [url])
 
   const helpers = ({

@@ -57,7 +57,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
 
   /* context */
   const { hash } = useHash()
-  const { lcd, fee } = useNetwork()
+  const { fee } = useNetwork()
   const { hasAgreed } = useSettings()
   const { uusd, result } = useContract()
   const { address, connect } = useWallet()
@@ -85,8 +85,9 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   const disabled = props.disabled || invalid || submitted || !msgs?.length
   const submit = () => {
     setSubmitted(true)
+
     const id = extension.post(
-      { msgs, memo, lcdClientConfig: lcd },
+      { msgs, memo },
       { ...fee, tax: !deduct ? tax : undefined },
       (response) => response.id === id && setResponse(response)
     )
