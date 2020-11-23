@@ -18,7 +18,7 @@ export const [useNetwork, NetworkProvider] = context
 
 /* state */
 export const useNetworkState = (): Network => {
-  const [key, setKey] = useLocalStorage("network", NetworkKey.TESTNET)
+  const [key, setKey] = useLocalStorage("network", NetworkKey.TEQUILA)
   const network = networks[key]
 
   const finder = (address: string, path: string = "account") =>

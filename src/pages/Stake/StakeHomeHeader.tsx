@@ -51,7 +51,7 @@ const StakeHomeHeader = () => {
       ),
       content: (
         <CountWithResult results={[supply.result]} symbol={MIR} integer>
-          {supply.value}
+          {"0" || supply.value}
         </CountWithResult>
       ),
     },
