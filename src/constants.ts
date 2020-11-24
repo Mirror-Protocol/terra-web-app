@@ -21,7 +21,7 @@ export const TX_POLLING_INTERVAL = 1000
 export const ICON_URL = "https://whitelist.mirror.finance/images/"
 export const DEFAULT_EXT_NETWORK: ExtNetworkConfig = {
   name: "testnet",
-  chainID: "tequila",
+  chainID: "tequila-0004",
   lcd: "https://tequila-lcd.terra.dev",
 }
 
