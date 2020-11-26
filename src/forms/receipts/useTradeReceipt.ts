@@ -13,10 +13,7 @@ export default (type: Type) => (logs: TxLog[]) => {
   const rtn = val("return_amount")
   const rtnAsset = val("ask_asset")
   const spread = val("spread_amount")
-  const commission = plus(
-    val("lp_commission_amount"),
-    val("owner_commission_amount")
-  )
+  const commission = val("commission_amount")
 
   const rtnSymbol = getSymbol(rtnAsset)
   const offerSymbol = getSymbol(offerAsset)
