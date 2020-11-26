@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react"
+import { ChangeEvent, useState } from "react"
 import { Dictionary } from "ramda"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { MIR } from "../constants"

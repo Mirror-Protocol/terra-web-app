@@ -1,4 +1,3 @@
-import React from "react"
 import { MenuKey } from "../routes"
 import useDashboard from "../statistics/useDashboard"
 import Page from "../components/Page"

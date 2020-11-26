@@ -1,4 +1,3 @@
-import React from "react"
 import Tooltip from "../../lang/Tooltip.json"
 import { TooltipIcon } from "../../components/Tooltip"
 

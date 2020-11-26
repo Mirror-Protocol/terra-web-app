@@ -1,4 +1,3 @@
-import React from "react"
 import { MenuKey } from "../Gov"
 import Page from "../../components/Page"
 import VoteForm from "../../forms/VoteForm"

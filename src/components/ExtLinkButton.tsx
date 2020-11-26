@@ -1,4 +1,3 @@
-import React from "react"
 import { getAttrs } from "./Button"
 import ExtLink, { Props as ExtLinkProps } from "./ExtLink"
 

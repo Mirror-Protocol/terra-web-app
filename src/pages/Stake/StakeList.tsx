@@ -1,4 +1,3 @@
-import React from "react"
 import { without } from "ramda"
 import { MIR } from "../../constants"
 import { minus, number } from "../../libs/math"

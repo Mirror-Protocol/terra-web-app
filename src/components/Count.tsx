@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect } from "react"
 import { plus, minus, div, gt, lt } from "../libs/math"
 import { format, lookupSymbol } from "../libs/parse"
 

@@ -1,4 +1,3 @@
-import React from "react"
 import { isNil } from "ramda"
 import MESSAGE from "../../lang/MESSAGE.json"
 import Tooltip from "../../lang/Tooltip.json"

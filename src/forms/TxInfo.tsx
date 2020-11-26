@@ -1,4 +1,3 @@
-import React from "react"
 import { formatAsset } from "../libs/parse"
 import TxHash from "./TxHash"
 import styles from "./TxInfo.module.scss"

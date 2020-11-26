@@ -1,4 +1,3 @@
-import React from "react"
 import Tooltip from "../../lang/Tooltip.json"
 import { MIR, UUSD } from "../../constants"
 import { format } from "../../libs/parse"

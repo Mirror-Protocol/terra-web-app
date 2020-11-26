@@ -1,4 +1,3 @@
-import React from "react"
 import { useRouteMatch } from "react-router-dom"
 import Tooltip from "../../lang/Tooltip.json"
 import { MIR } from "../../constants"

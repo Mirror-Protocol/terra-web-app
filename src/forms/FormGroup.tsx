@@ -1,4 +1,3 @@
-import React from "react"
 import classNames from "classnames/bind"
 import Button from "../components/Button"
 import styles from "./FormGroup.module.scss"

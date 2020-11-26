@@ -1,4 +1,3 @@
-import React from "react"
 import Tooltip from "../lang/Tooltip.json"
 import { times, div, gt, gte, lt } from "../libs/math"
 import { percent } from "../libs/num"

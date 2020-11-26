@@ -1,4 +1,3 @@
-import React from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { MIR } from "../constants"
 import { gt, plus } from "../libs/math"

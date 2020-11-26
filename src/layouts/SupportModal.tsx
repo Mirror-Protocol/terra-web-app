@@ -1,4 +1,3 @@
-import React from "react"
 import { CHROME, EXTENSION } from "../constants"
 import { useWallet } from "../hooks"
 import Modal from "../components/Modal"

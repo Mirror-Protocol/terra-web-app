@@ -1,4 +1,3 @@
-import React from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { formatAsset } from "../libs/parse"
 import { useContractsAddress } from "../hooks"

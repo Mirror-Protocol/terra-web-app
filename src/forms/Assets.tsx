@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import classNames from "classnames/bind"
 import { UST, UUSD } from "../constants"
 import { gt } from "../libs/math"

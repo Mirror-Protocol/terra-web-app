@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { ReactNode, HTMLAttributes, FormEvent, KeyboardEvent } from "react"
 import { Msg } from "@terra-money/terra.js"
 import MESSAGE from "../lang/MESSAGE.json"

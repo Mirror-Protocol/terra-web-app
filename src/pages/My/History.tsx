@@ -1,4 +1,3 @@
-import React from "react"
 import { MenuKey } from "../../routes"
 import TabCard from "../../components/TabCard"
 import HistoryList from "./HistoryList"

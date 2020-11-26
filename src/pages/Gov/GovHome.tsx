@@ -1,4 +1,3 @@
-import React from "react"
 import { useRouteMatch } from "react-router-dom"
 import { MenuKey } from "../../routes"
 import Page from "../../components/Page"

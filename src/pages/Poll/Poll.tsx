@@ -1,4 +1,3 @@
-import React from "react"
 import { GovKey, useRefetchGov } from "../../graphql/useGov"
 import Page from "../../components/Page"
 import PollForm from "../../forms/PollForm"

@@ -1,4 +1,3 @@
-import React from "react"
 import HistoryItem from "./HistoryItem"
 import styles from "./HistoryList.module.scss"
 

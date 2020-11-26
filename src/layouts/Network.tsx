@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC } from "react"
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 import { DefaultOptions } from "@apollo/client"
 import { NetworkProvider, useNetworkState } from "../hooks/useNetwork"

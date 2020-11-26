@@ -1,4 +1,3 @@
-import React from "react"
 import MESSAGE from "../lang/MESSAGE.json"
 import { EXTENSION } from "../constants"
 import { useWallet } from "../hooks"

@@ -1,4 +1,3 @@
-import React from "react"
 import { truncate } from "../../libs/text"
 import ExtLink from "../../components/ExtLink"
 import Badge from "../../components/Badge"

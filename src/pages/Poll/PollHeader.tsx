@@ -1,4 +1,3 @@
-import React from "react"
 import { useParams, useRouteMatch } from "react-router-dom"
 import classNames from "classnames"
 import LinkButton from "../../components/LinkButton"

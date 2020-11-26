@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react"
+import { ReactNode } from "react"
 import { helpers, ChartPoint } from "chart.js"
 import { Line, defaults } from "react-chartjs-2"
 import { gt, lt } from "../libs/math"

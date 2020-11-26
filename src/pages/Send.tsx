@@ -1,4 +1,3 @@
-import React from "react"
 import { MenuKey } from "../routes"
 import Page from "../components/Page"
 import SendForm from "../forms/SendForm"

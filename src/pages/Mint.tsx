@@ -1,4 +1,3 @@
-import React from "react"
 import { useLocation } from "react-router-dom"
 import Tooltip from "../lang/Tooltip.json"
 import { MenuKey } from "../routes"

@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react"
+import { FC, ReactNode } from "react"
 import Container from "./Container"
 import styles from "./Page.module.scss"
 

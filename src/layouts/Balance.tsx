@@ -1,4 +1,3 @@
-import React from "react"
 import { UUSD } from "../constants"
 import { useContract } from "../hooks"
 import { AccountInfoKey } from "../hooks/contractKeys"

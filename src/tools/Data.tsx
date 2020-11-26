@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { is } from "ramda"
 import { useContract, useContractsAddress, useRefetch } from "../hooks"
 import { DataKey } from "../hooks/useContract"

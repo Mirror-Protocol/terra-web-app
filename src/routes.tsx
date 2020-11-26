@@ -1,4 +1,3 @@
-import React from "react"
 import { Switch, Route, RouteProps, Redirect } from "react-router-dom"
 import { Dictionary } from "ramda"
 

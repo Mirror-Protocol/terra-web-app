@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import classNames from "classnames"
 import { ICON_URL, MIR } from "../../constants"
 import { ReactComponent as MirrorSymbol } from "../../images/MIR.svg"

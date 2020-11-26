@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC } from "react"
 import Tippy, { TippyProps } from "@tippyjs/react"
 import classNames from "classnames"
 import { isNil } from "ramda"

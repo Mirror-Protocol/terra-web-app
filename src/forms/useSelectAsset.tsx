@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { useContractsAddress } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 import SelectAssetButton from "./SelectAssetButton"

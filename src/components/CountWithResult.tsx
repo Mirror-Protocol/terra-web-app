@@ -1,4 +1,3 @@
-import React from "react"
 import { DataKey } from "../hooks/useContract"
 import WithResult from "./WithResult"
 import Count from "./Count"

@@ -1,4 +1,3 @@
-import React from "react"
 import Tooltip from "../lang/Tooltip.json"
 import { MenuKey } from "../routes"
 import Page from "../components/Page"

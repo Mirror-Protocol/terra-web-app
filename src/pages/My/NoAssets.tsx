@@ -1,4 +1,3 @@
-import React from "react"
 import LinkButton from "../../components/LinkButton"
 import { getPath, MenuKey } from "../../routes"
 import styles from "./NoAssets.module.scss"

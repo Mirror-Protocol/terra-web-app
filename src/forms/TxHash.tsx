@@ -1,4 +1,3 @@
-import React from "react"
 import { truncate } from "../libs/text"
 import { useNetwork } from "../hooks"
 import ExtLink from "../components/ExtLink"

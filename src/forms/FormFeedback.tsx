@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC } from "react"
 import Icon from "../components/Icon"
 import styles from "./FormFeedback.module.scss"
 

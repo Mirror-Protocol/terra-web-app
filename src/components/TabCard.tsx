@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react"
+import { ReactNode, useState } from "react"
 import classNames from "classnames"
 import MESSAGE from "../lang/MESSAGE.json"
 import Card from "./Card"

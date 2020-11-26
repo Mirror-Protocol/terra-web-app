@@ -1,4 +1,3 @@
-import React from "react"
 import classNames from "classnames/bind"
 import { MIR } from "../../constants"
 import { div, gt, plus, times } from "../../libs/math"

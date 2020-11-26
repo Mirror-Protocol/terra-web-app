@@ -1,4 +1,3 @@
-import React from "react"
 import { LP, UUSD } from "../../constants"
 import MESSAGE from "../../lang/MESSAGE.json"
 import Tooltip from "../../lang/Tooltip.json"

@@ -1,4 +1,3 @@
-import React from "react"
 import { MIR } from "../../constants"
 import { useContractsAddress } from "../../hooks"
 import Page from "../../components/Page"

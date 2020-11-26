@@ -1,4 +1,3 @@
-import React from "react"
 import { isNil } from "ramda"
 import { UST, UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"

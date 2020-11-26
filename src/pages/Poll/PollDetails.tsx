@@ -1,4 +1,3 @@
-import React from "react"
 import { useRouteMatch } from "react-router-dom"
 import { gt, plus } from "../../libs/math"
 import { useGov } from "../../graphql/useGov"

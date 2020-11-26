@@ -1,4 +1,3 @@
-import React from "react"
 import { useRouteMatch } from "react-router-dom"
 import classNames from "classnames/bind"
 import { LP } from "../../constants"

@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react"
+import { FC, ReactNode } from "react"
 import { Link } from "react-router-dom"
 import classNames from "classnames/bind"
 import CardHeader from "./CardHeader"

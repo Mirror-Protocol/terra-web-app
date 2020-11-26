@@ -1,4 +1,4 @@
-import React, { Fragment } from "react"
+import { Fragment } from "react"
 import classNames from "classnames/bind"
 import styles from "./Dl.module.scss"
 

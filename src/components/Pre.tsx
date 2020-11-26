@@ -1,5 +1,3 @@
-import React from "react"
-
 const Pre = ({ children }: { children: any }) => (
   <pre>{stringify(children)}</pre>
 )

@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC } from "react"
 import classNames from "classnames/bind"
 import Icon from "./Icon"
 import LoadingTitle from "./LoadingTitle"

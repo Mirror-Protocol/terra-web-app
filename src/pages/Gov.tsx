@@ -1,4 +1,3 @@
-import React from "react"
 import { RouteProps, useRouteMatch } from "react-router-dom"
 import routes from "../routes"
 import { GovProvider, useGovContext } from "../graphql/useGov"

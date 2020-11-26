@@ -1,4 +1,3 @@
-import React from "react"
 import getLpName from "./getLpName"
 import StakeImage from "./StakeImage"
 import styles from "./StakeFormHeader.module.scss"

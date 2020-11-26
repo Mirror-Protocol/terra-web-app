@@ -1,4 +1,3 @@
-import React from "react"
 import { head } from "ramda"
 import { ApolloError } from "@apollo/client"
 import ContractError, { useParseContractError } from "./ContractError"

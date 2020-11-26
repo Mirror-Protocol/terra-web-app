@@ -1,4 +1,3 @@
-import React from "react"
 import routes from "../routes"
 import Container from "../components/Container"
 import { SettingsProvider, useSettingsState } from "../hooks/useSettings"

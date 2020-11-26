@@ -1,4 +1,3 @@
-import React from "react"
 import { useGov } from "../../graphql/useGov"
 import useEstimateTime from "./useEstimateTime"
 import PollHeader from "./PollHeader"

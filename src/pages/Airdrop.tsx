@@ -1,4 +1,3 @@
-import React from "react"
 import AirdropForm from "../forms/AirdropForm"
 
 const Airdrop = () => {

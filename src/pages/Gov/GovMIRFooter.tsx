@@ -1,4 +1,3 @@
-import React from "react"
 import { MIR } from "../../constants"
 import { formatAsset } from "../../libs/parse"
 import { useContract, useContractsAddress } from "../../hooks"

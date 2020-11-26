@@ -1,4 +1,3 @@
-import React from "react"
 import Page from "../../components/Page"
 import CreatePollForm from "../../forms/CreatePollForm"
 import { MenuKey } from "../Gov"

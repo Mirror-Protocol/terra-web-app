@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react"
+import { FC, useState } from "react"
 import ReactModal from "react-modal"
 import styles from "./Modal.module.scss"
 

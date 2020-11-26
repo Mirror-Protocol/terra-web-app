@@ -1,4 +1,3 @@
-import React from "react"
 import Page from "../components/Page"
 import RewardForm from "../forms/RewardForm"
 import useContractQueries from "../graphql/useContractQueries"

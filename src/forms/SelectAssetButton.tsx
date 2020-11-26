@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC } from "react"
 import MESSAGE from "../lang/MESSAGE.json"
 import { lookupSymbol } from "../libs/parse"
 import Icon from "../components/Icon"

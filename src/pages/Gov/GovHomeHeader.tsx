@@ -1,4 +1,3 @@
-import React from "react"
 import Tooltip from "../../lang/Tooltip.json"
 import { MIR } from "../../constants"
 import { div, minus, isFinite } from "../../libs/math"

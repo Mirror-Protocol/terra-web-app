@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC } from "react"
 import { Link, useLocation } from "react-router-dom"
 import classNames from "classnames"
 import Card from "./Card"

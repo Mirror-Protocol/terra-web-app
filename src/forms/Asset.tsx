@@ -1,4 +1,3 @@
-import React from "react"
 import { UST } from "../constants"
 import { gt } from "../libs/math"
 import { format, lookupSymbol } from "../libs/parse"

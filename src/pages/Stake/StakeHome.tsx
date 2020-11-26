@@ -1,4 +1,3 @@
-import React from "react"
 import { useRouteMatch } from "react-router-dom"
 import { gt } from "../../libs/math"
 import { useContract, useRefetch } from "../../hooks"

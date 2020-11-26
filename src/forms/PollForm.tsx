@@ -1,4 +1,3 @@
-import React from "react"
 import { useRouteMatch } from "react-router-dom"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { useContractsAddress } from "../hooks"

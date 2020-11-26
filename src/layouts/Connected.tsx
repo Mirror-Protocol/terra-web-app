@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react"
+import { ReactNode, useEffect, useRef, useState } from "react"
 import useOnClickOutside from "use-onclickoutside"
 import classNames from "classnames"
 import { truncate } from "../libs/text"

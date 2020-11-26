@@ -1,4 +1,3 @@
-import React from "react"
 import MESSAGE from "../lang/MESSAGE.json"
 import Button from "../components/Button"
 

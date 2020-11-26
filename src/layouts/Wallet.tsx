@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import MESSAGE from "../lang/MESSAGE.json"
 import { UUSD } from "../constants"
 import { truncate } from "../libs/text"

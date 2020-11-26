@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import Contents from "../lang/Caution.json"
 import { useSettings } from "../hooks"
 import Card from "../components/Card"

@@ -1,4 +1,3 @@
-import React from "react"
 import styles from "./Confirm.module.scss"
 
 const Confirm = ({ list }: { list: Content[] }) => (

@@ -1,4 +1,3 @@
-import React from "react"
 import { useParams } from "react-router-dom"
 import { useContractsAddress } from "../../hooks"
 import Page from "../../components/Page"

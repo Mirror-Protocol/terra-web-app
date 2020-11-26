@@ -1,4 +1,3 @@
-import React from "react"
 import { useRouteMatch } from "react-router-dom"
 import Page from "../../components/Page"
 import ClaimForm from "../../forms/ClaimForm"

@@ -1,4 +1,3 @@
-import React from "react"
 import useURL from "../graphql/useURL"
 import { useContractsAddress, useWallet } from "../hooks"
 import ExtLink from "./ExtLink"

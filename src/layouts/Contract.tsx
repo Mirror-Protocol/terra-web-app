@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC } from "react"
 import { useContractsAddressState } from "../hooks/useContractsAddress"
 import { ContractsAddressProvider } from "../hooks/useContractsAddress"
 

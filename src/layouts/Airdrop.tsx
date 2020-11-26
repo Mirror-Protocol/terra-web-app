@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { MIR } from "../constants"
 import { ReactComponent as Logo } from "../images/MIR.svg"
 import useAirdrops from "../statistics/useAirdrops"

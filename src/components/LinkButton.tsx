@@ -1,4 +1,3 @@
-import React from "react"
 import { Link, LinkProps as Props } from "react-router-dom"
 import { getAttrs } from "./Button"
 

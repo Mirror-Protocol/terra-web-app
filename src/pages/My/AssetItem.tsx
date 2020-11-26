@@ -1,4 +1,3 @@
-import React from "react"
 import { format } from "../../libs/parse"
 import { MenuKey } from "../../routes"
 import Button from "../../components/Button"

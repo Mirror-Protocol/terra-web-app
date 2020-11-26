@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 import { useLazyQuery } from "@apollo/client"
 import classNames from "classnames/bind"
 

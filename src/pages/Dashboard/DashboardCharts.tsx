@@ -1,4 +1,3 @@
-import React from "react"
 import { last } from "ramda"
 import { UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"

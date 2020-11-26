@@ -1,4 +1,4 @@
-import React, { FC, LabelHTMLAttributes } from "react"
+import { FC, LabelHTMLAttributes } from "react"
 import classNames from "classnames/bind"
 import styles from "./Checkbox.module.scss"
 

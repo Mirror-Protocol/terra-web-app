@@ -1,4 +1,3 @@
-import React from "react"
 import { MEDIUM, DISCORD, TELEGRAM, WECHAT, GITHUB } from "../constants"
 import medium from "../images/Community/medium.png"
 import discord from "../images/Community/discord.png"

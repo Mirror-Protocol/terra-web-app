@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react"
+import { ReactNode } from "react"
 import { isNil } from "ramda"
 import classNames from "classnames"
 import MESSAGE from "../../lang/MESSAGE.json"

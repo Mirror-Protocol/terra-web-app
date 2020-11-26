@@ -1,4 +1,3 @@
-import React from "react"
 import { percent } from "../../libs/num"
 import { insertIf } from "../../libs/utils"
 import Dl from "../../components/Dl"
