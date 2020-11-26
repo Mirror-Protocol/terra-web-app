@@ -4,8 +4,8 @@ import { Dictionary } from "ramda"
 
 import Dashboard from "./pages/Dashboard"
 import My from "./pages/My"
-
 import Send from "./pages/Send"
+import Airdrop from "./pages/Airdrop"
 import Trade from "./pages/Trade"
 import Mint from "./pages/Mint"
 import Pool from "./pages/Pool"
@@ -21,8 +21,8 @@ import Tool from "./tools/Tool"
 export enum MenuKey {
   DASHBOARD = "Dashboard",
   MY = "My Page",
-
   SEND = "Send",
+  AIRDROP = "Airdrop",
   TRADE = "Trade",
   MINT = "Mint",
   POOL = "Pool",
@@ -30,11 +30,12 @@ export enum MenuKey {
   GOV = "Governance",
 }
 
-export const omit = [MenuKey.DASHBOARD, MenuKey.SEND]
+export const omit = [MenuKey.DASHBOARD, MenuKey.SEND, MenuKey.AIRDROP]
 export const menu: Dictionary<RouteProps> = {
   // Not included in navigation bar
   [MenuKey.DASHBOARD]: { path: "/", exact: true, component: Dashboard },
   [MenuKey.SEND]: { path: "/send", component: Send },
+  [MenuKey.AIRDROP]: { path: "/airdrop", component: Airdrop },
 
   // Menu
   [MenuKey.MY]: { path: "/my", component: My },
