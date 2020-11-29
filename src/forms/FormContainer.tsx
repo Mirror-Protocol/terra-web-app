@@ -1,24 +1,27 @@
 import { useState } from "react"
 import { ReactNode, HTMLAttributes, FormEvent, KeyboardEvent } from "react"
 import { Msg } from "@terra-money/terra.js"
+
 import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
 import { UUSD } from "../constants"
 import { gt, plus, sum } from "../libs/math"
+import useHash from "../libs/useHash"
 import extension, { PostResponse } from "../terra/extension"
 import { useContract, useNetwork, useSettings, useWallet } from "../hooks"
 import useTax from "../graphql/useTax"
+
 import Container from "../components/Container"
 import Tab from "../components/Tab"
+import Card from "../components/Card"
+import Confirm from "../components/Confirm"
+import FormFeedback from "../components/FormFeedback"
 import Button from "../components/Button"
 import Count from "../components/Count"
-import Card from "../components/Card"
 import { TooltipIcon } from "../components/Tooltip"
-import useHash from "../pages/useHash"
+
 import Caution from "./Caution"
-import Confirm from "./Confirm"
 import Result from "./Result"
-import FormFeedback from "./FormFeedback"
 
 interface Props {
   data: Msg[]

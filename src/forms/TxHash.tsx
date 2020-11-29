@@ -1,16 +1,9 @@
-import { truncate } from "../libs/text"
 import { useNetwork } from "../hooks"
-import ExtLink from "../components/ExtLink"
-import styles from "./TxHash.module.scss"
+import TxLink from "../components/TxLink"
 
 const TxHash = ({ children: hash }: { children: string }) => {
   const { finder } = useNetwork()
-
-  return (
-    <ExtLink href={finder(hash, "tx")} className={styles.link}>
-      {truncate(hash, [10, 10])}
-    </ExtLink>
-  )
+  return <TxLink hash={hash} link={finder(hash, "tx")} />
 }
 
 export default TxHash

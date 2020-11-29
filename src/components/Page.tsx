@@ -15,16 +15,18 @@ const Page: FC<Props> = ({ title, description, children, ...props }) => {
 
   return (
     <article className={styles.article}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>{title}</h1>
-        {action && <section className={styles.action}>{action}</section>}
-      </header>
+      {title && (
+        <header className={styles.header}>
+          <h1 className={styles.title}>{title}</h1>
+          {action && <section className={styles.action}>{action}</section>}
+        </header>
+      )}
 
       {description && (
         <section className={styles.description}>{description}</section>
       )}
 
-      {!noBreak && <hr />}
+      {!!title && !noBreak && <hr />}
 
       {sm ? <Container sm>{children}</Container> : children}
     </article>

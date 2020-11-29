@@ -26,9 +26,6 @@
     }
   },
   "Result": {
-    "LOADING": "Processing",
-    "SUCCESS": "Complete!",
-    "FAILURE": "Failed",
     "TIMEOUT": "The execution of this transaction is taking a little longer than usual. It has been successfully broadcasted, but have not been executed yet. The transaction may fail in the future, so please check again later",
     "DENIED": "Denied by the user",
     "Button": { "FAILURE": "Try Again" }
@@ -39,8 +36,7 @@
     "Disconnect": "Disconnect",
     "DownloadExtension": "Download Terra Station Extension",
     "ConnectWallet": "Connect Wallet",
-    "CopyAddress": "Copy Address",
-    "TerraFinder": "View on Terra Finder"
+    "TerraFinder": "Terra Finder"
   },
   "Network": {
     "NoContract": "Mirror contracts could not be found on the selected network. Select a different network from the Terra Station extension."

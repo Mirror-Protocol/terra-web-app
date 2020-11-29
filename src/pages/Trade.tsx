@@ -1,8 +1,8 @@
 import Tooltip from "../lang/Tooltip.json"
+import useHash from "../libs/useHash"
 import { MenuKey } from "../routes"
 import Page from "../components/Page"
 import TradeForm from "../forms/TradeForm"
-import useHash from "./useHash"
 
 export enum Type {
   "BUY" = "buy",

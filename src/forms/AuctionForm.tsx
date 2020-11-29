@@ -1,7 +1,7 @@
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { formatAsset } from "../libs/parse"
+import { toBase64 } from "../libs/formHelpers"
 import { useContractsAddress } from "../hooks"
-import { toBase64 } from "./formHelpers"
 import FormContainer from "./FormContainer"
 
 interface Props {

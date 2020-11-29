@@ -36,7 +36,7 @@
 
 .button:not(.outline) {
   background-color: $blue;
-  color: white;
+  color: $button;
 
   @include hover {
     background-color: fade-out($blue, 0.25);

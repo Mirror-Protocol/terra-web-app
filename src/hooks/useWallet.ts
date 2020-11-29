@@ -3,7 +3,7 @@ import { useMutation } from "@apollo/client"
 import useLocalStorage from "../libs/useLocalStorage"
 import extension from "../terra/extension"
 import { CONNECT } from "../statistics/gqldocs"
-import { useStatsClient } from "../statistics/useStats"
+import useStatsClient from "../statistics/useStatsClient"
 import createContext from "./createContext"
 import { useNetwork } from "./useNetwork"
 

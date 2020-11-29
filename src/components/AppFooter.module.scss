@@ -1,0 +1,56 @@
+@import "mixins";
+@import "variables";
+
+.footer {
+  color: $slate;
+
+  @include desktop {
+    height: $footer-height;
+  }
+
+  @include mobile {
+    height: $footer-height-mobile;
+  }
+
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.container {
+  @include desktop {
+    @include flex(space-between);
+  }
+}
+
+/* network */
+.network {
+  @include flex;
+  color: white;
+  text-transform: capitalize;
+
+  i {
+    margin-right: 5px;
+  }
+}
+
+/* author */
+.community {
+  @include flex;
+  margin: -10px;
+
+  @include mobile {
+    margin-top: 20px;
+  }
+}
+
+.link {
+  @include flex;
+  @include transition(opacity);
+  padding: 10px;
+  opacity: 0.3;
+
+  &:hover {
+    opacity: 1;
+  }
+}

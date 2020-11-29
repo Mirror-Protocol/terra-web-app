@@ -1,7 +1,7 @@
+import useHash from "../../libs/useHash"
 import { GovKey, useRefetchGov } from "../../graphql/useGov"
 import Page from "../../components/Page"
 import PollForm from "../../forms/PollForm"
-import useHash from "../useHash"
 import { MenuKey } from "../Gov"
 import PollDetails from "./PollDetails"
 

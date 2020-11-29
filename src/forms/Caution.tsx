@@ -3,7 +3,7 @@ import Contents from "../lang/Caution.json"
 import { useSettings } from "../hooks"
 import Card from "../components/Card"
 import Button from "../components/Button"
-import Checkbox from "./Checkbox"
+import Checkbox from "../components/Checkbox"
 import styles from "./Caution.module.scss"
 
 const { title, content, footer } = Contents

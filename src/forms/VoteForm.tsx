@@ -5,15 +5,15 @@ import MESSAGE from "../lang/MESSAGE.json"
 import { MIR } from "../constants"
 import { gt } from "../libs/math"
 import { lookup } from "../libs/parse"
+import useForm from "../libs/useForm"
+import { validate as v } from "../libs/formHelpers"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 
+import FormGroup from "../components/FormGroup"
 import useGovReceipt from "./receipts/useGovReceipt"
-import { validate as v } from "./formHelpers"
-import useForm from "./useForm"
 import FormContainer from "./FormContainer"
-import FormGroup from "./FormGroup"
 import styles from "./VoteForm.module.scss"
 
 const cx = classNames.bind(styles)

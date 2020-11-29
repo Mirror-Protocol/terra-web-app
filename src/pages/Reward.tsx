@@ -1,10 +1,10 @@
+import useHash from "../libs/useHash"
 import Page from "../components/Page"
 import RewardForm from "../forms/RewardForm"
 import useContractQueries from "../graphql/useContractQueries"
 import { dict } from "../graphql/useNormalize"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey, PriceKey } from "../hooks/contractKeys"
-import useHash from "./useHash"
 
 export enum Type {
   "FACTORY" = "factory",

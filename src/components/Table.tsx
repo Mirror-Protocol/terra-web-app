@@ -110,7 +110,7 @@ function Table<T extends DefaultRecordType>(props: Props<T>) {
   }
 
   const colspan = columns.some(({ children }) => children)
-  return (
+  return !dataSource.length ? null : (
     <div className={styles.wrapper}>
       <table className={cx({ margin: colspan })}>
         <thead>

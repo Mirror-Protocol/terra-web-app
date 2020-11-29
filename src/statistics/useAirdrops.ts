@@ -1,13 +1,8 @@
 import { useState } from "react"
-import { gql, useQuery } from "@apollo/client"
-import { useStatsClient } from "./useStats"
+import { useQuery } from "@apollo/client"
+import useStatsClient from "./useStatsClient"
 import { useWallet } from "../hooks/useWallet"
-
-const AIRDROP = gql`
-  query airdrop($address: String!) {
-    airdrop(address: $address)
-  }
-`
+import AIRDROP from "../airdrop/gqldocs"
 
 export default () => {
   const [airdrop, setAirdrop] = useState<Airdrop[]>()

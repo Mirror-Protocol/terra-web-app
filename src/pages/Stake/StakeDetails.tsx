@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom"
+import useHash from "../../libs/useHash"
 import { useContractsAddress } from "../../hooks"
 import Page from "../../components/Page"
+import StakeDetailsHeader from "../../components/StakeDetailsHeader"
 import StakeForm from "../../forms/StakeForm"
-import useHash from "../useHash"
 import { Type } from "../Stake"
-import StakeFormHeader from "./StakeFormHeader"
 
 const StakeDetails = () => {
   const { token } = useParams<{ token: string }>()
@@ -13,7 +13,7 @@ const StakeDetails = () => {
   const tab = { tabs: [Type.STAKE, Type.UNSTAKE], current: type }
 
   return (
-    <Page title={<StakeFormHeader>{getSymbol(token)}</StakeFormHeader>}>
+    <Page title={<StakeDetailsHeader>{getSymbol(token)}</StakeDetailsHeader>}>
       {type && <StakeForm type={type} token={token} tab={tab} key={type} />}
     </Page>
   )

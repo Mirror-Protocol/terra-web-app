@@ -5,7 +5,8 @@ import { dict } from "../graphql/useNormalize"
 import { useContractsAddress } from "../hooks/useContractsAddress"
 import { PriceKey } from "../hooks/contractKeys"
 import { prices } from "./gqldocs"
-import { useStats, useStatsClient } from "./useStats"
+import { useStats } from "./useStats"
+import useStatsClient from "./useStatsClient"
 
 export default () => {
   const { yesterday, store } = useStats()

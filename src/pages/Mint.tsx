@@ -2,13 +2,13 @@ import { useLocation } from "react-router-dom"
 import Tooltip from "../lang/Tooltip.json"
 import { MenuKey } from "../routes"
 import { insertIf } from "../libs/utils"
+import useHash from "../libs/useHash"
 import { useRefetch } from "../hooks"
 import { useContract } from "../hooks/useContract"
 import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
 import { AccountInfoKey } from "../hooks/contractKeys"
 import Page from "../components/Page"
 import MintForm from "../forms/MintForm"
-import useHash from "./useHash"
 
 export enum Type {
   "OPEN" = "open",

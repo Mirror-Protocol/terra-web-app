@@ -1,36 +1,21 @@
 import { useEffect } from "react"
 import { useLazyQuery } from "@apollo/client"
-import classNames from "classnames/bind"
 
 import { TX_POLLING_INTERVAL } from "../constants"
 import { TXINFOS } from "../graphql/gqldocs"
 import { PostResponse } from "../terra/extension"
 import MESSAGE from "../lang/MESSAGE.json"
 import { useResult } from "../hooks"
-
-import Card from "../components/Card"
-import Icon from "../components/Icon"
-import Loading from "../components/Loading"
-import Button from "../components/Button"
-import LinkButton from "../components/LinkButton"
-
 import { getPath, MenuKey } from "../routes"
+
+import Wait, { STATUS } from "../components/Wait"
 import TxHash from "./TxHash"
 import TxInfo from "./TxInfo"
-import styles from "./Result.module.scss"
 
 interface Props extends PostResponse {
   parseTx: ResultParser
   gov?: boolean
   onFailure: () => void
-}
-
-const cx = classNames.bind(styles)
-
-enum STATUS {
-  SUCCESS = "success",
-  LOADING = "loading",
-  FAILURE = "failure",
 }
 
 const Result = ({ success, result, error, ...props }: Props) => {
@@ -85,24 +70,6 @@ const Result = ({ success, result, error, ...props }: Props) => {
   }, [verbose])
 
   /* render */
-  const name = {
-    [STATUS.SUCCESS]: "check_circle_outline",
-    [STATUS.LOADING]: "",
-    [STATUS.FAILURE]: "highlight_off",
-  }[status]
-
-  const icon = name ? (
-    <Icon name={name} className={cx(status)} size={50} />
-  ) : (
-    <Loading size={40} />
-  )
-
-  const title = {
-    [STATUS.SUCCESS]: MESSAGE.Result.SUCCESS,
-    [STATUS.LOADING]: MESSAGE.Result.LOADING,
-    [STATUS.FAILURE]: MESSAGE.Result.FAILURE,
-  }[status]
-
   const message =
     txInfo?.RawLog ||
     result?.raw_log ||
@@ -111,38 +78,33 @@ const Result = ({ success, result, error, ...props }: Props) => {
 
   const content = {
     [STATUS.SUCCESS]: txInfo && <TxInfo txInfo={txInfo} parser={parseTx} />,
-    [STATUS.LOADING]: (
-      <p className={styles.hash}>
-        <TxHash>{hash}</TxHash>
-      </p>
-    ),
-    [STATUS.FAILURE]: <p className={styles.feedback}>{message}</p>,
-  }[status]
-
-  const button = {
-    [STATUS.SUCCESS]: (
-      <LinkButton
-        to={getPath(!gov ? MenuKey.MY : MenuKey.GOV)}
-        size="lg"
-        submit
-      >
-        {!gov ? MenuKey.MY : MenuKey.GOV}
-      </LinkButton>
-    ),
     [STATUS.LOADING]: null,
-    [STATUS.FAILURE]: (
-      <Button onClick={onFailure} size="lg" submit>
-        {MESSAGE.Result.Button.FAILURE}
-      </Button>
-    ),
+    [STATUS.FAILURE]: message,
   }[status]
 
-  return (
-    <Card icon={icon} title={title} lg>
-      <section className={styles.contents}>{content}</section>
-      <footer>{button}</footer>
-    </Card>
-  )
+  const wait = {
+    status,
+
+    hash: status === STATUS.LOADING && <TxHash>{hash}</TxHash>,
+
+    link:
+      status === STATUS.SUCCESS
+        ? {
+            to: getPath(!gov ? MenuKey.MY : MenuKey.GOV),
+            children: !gov ? MenuKey.MY : MenuKey.GOV,
+          }
+        : undefined,
+
+    button:
+      status === STATUS.FAILURE
+        ? {
+            onClick: onFailure,
+            children: MESSAGE.Result.Button.FAILURE,
+          }
+        : undefined,
+  }
+
+  return <Wait {...wait}>{content}</Wait>
 }
 
 export default Result

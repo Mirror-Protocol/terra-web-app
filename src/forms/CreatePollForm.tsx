@@ -1,22 +1,23 @@
+import { AccAddress } from "@terra-money/terra.js"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import Tooltip from "../lang/Tooltip.json"
 import { MAX_MSG_LENGTH, MIR } from "../constants"
 import { div, gt } from "../libs/math"
 import { record, getLength } from "../libs/utils"
 import { lookup } from "../libs/parse"
+import useForm from "../libs/useForm"
+import { validate as v, step, toBase64 } from "../libs/formHelpers"
+import { renderBalance } from "../libs/formHelpers"
 import { useRefetch, useContractsAddress, useContract } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 import { GovKey, useGov } from "../graphql/useGov"
 import { TooltipIcon } from "../components/Tooltip"
 import { Type } from "../pages/Poll/CreatePoll"
 import useGovReceipt from "./receipts/useGovReceipt"
-import { validate as v, step, toBase64 } from "./formHelpers"
-import { renderBalance } from "./formHelpers"
-import useForm from "./useForm"
 import useSelectAsset, { Config } from "./useSelectAsset"
 import FormContainer from "./FormContainer"
-import FormGroup from "./FormGroup"
-import FormCheck from "./FormCheck"
+import FormGroup from "../components/FormGroup"
+import FormCheck from "../components/FormCheck"
 
 enum Key {
   /* poll */
@@ -120,7 +121,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
           v.symbol(symbol),
         [Key.asset]: v.required(asset),
 
-        [Key.oracle]: v.address(oracle),
+        [Key.oracle]: v.address(oracle, [AccAddress.validate]),
         [Key.parameter]: v.required(parameter),
 
         [Key.weight]:

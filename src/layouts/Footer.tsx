@@ -5,10 +5,7 @@ import telegram from "../images/Community/telegram.png"
 import wechat from "../images/Community/wechat.png"
 import github from "../images/Community/github.png"
 import { useNetwork } from "../hooks"
-import Container from "../components/Container"
-import ExtLink from "../components/ExtLink"
-import Icon from "../components/Icon"
-import styles from "./Footer.module.scss"
+import AppFooter from "../components/AppFooter"
 
 const community = [
   { href: MEDIUM, src: medium, alt: "Medium" },
@@ -19,29 +16,8 @@ const community = [
 ]
 
 const Footer = () => {
-  const { name: current } = useNetwork()
-
-  return (
-    <footer className={styles.footer}>
-      <Container className={styles.container}>
-        <section className={styles.network}>
-          <Icon name="wifi_tethering" size={20} />
-          {current}
-        </section>
-
-        <section className={styles.community}>
-          {community.map(
-            ({ href, src, alt }) =>
-              href && (
-                <ExtLink href={href} className={styles.link} key={alt}>
-                  <img src={src} alt={alt} width={20} height={20} />
-                </ExtLink>
-              )
-          )}
-        </section>
-      </Container>
-    </footer>
-  )
+  const { name } = useNetwork()
+  return <AppFooter network={name} community={community} />
 }
 
 export default Footer

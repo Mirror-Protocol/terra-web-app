@@ -14,10 +14,10 @@ import Table from "../../components/Table"
 import { Di } from "../../components/Dl"
 import Change from "../../components/Change"
 import { TooltipIcon } from "../../components/Tooltip"
+import Delisted from "../../components/Delisted"
+import DashboardActions from "../../components/DashboardActions"
 import { Type } from "../Trade"
 import NoAssets from "./NoAssets"
-import Delisted from "./Delisted"
-import DashboardActions from "./DashboardActions"
 
 const Holdings = () => {
   const priceKey = PriceKey.PAIR

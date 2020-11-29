@@ -1,21 +1,22 @@
 import { useRef } from "react"
 import { useLocation } from "react-router-dom"
-import { MsgSend } from "@terra-money/terra.js"
+import { AccAddress, MsgSend } from "@terra-money/terra.js"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { UUSD } from "../constants"
 import { gt } from "../libs/math"
 import { toAmount } from "../libs/parse"
+import useForm from "../libs/useForm"
+import { validate as v, placeholder, step } from "../libs/formHelpers"
+import { renderBalance } from "../libs/formHelpers"
 import { useRefetch } from "../hooks"
 import { useWallet, useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 
+import FormGroup from "../components/FormGroup"
 import useSendReceipt from "./receipts/useSendReceipt"
-import { validate as v, placeholder, step, renderBalance } from "./formHelpers"
-import useForm from "./useForm"
 import FormContainer from "./FormContainer"
 import useSelectAsset, { Config } from "./useSelectAsset"
-import FormGroup from "./FormGroup"
 
 enum Key {
   to = "to",
@@ -41,7 +42,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     const symbol = getSymbol(token)
 
     return {
-      [Key.to]: v.address(to),
+      [Key.to]: v.address(to, [AccAddress.validate]),
       [Key.value]: v.amount(value, { symbol, max }),
       [Key.token]: v.required(token),
       [Key.memo]: ["<", ">"].some((char) => memo.includes(char))

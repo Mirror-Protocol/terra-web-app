@@ -2,7 +2,7 @@ import { MIR } from "../../constants"
 import { formatAsset } from "../../libs/parse"
 import { useContract, useContractsAddress } from "../../hooks"
 import { BalanceKey } from "../../hooks/contractKeys"
-import WithResult from "../../components/WithResult"
+import WithResult from "../../containers/WithResult"
 import { Di } from "../../components/Dl"
 import styles from "./GovMIRFooter.module.scss"
 

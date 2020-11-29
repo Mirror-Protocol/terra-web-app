@@ -5,9 +5,9 @@ import { MIR } from "../constants"
 import { gt } from "../libs/math"
 import { format } from "../libs/parse"
 import { useContractsAddress } from "../hooks"
+import FormCheck from "../components/FormCheck"
 import { Type } from "../pages/Reward"
 import FormContainer from "./FormContainer"
-import FormCheck from "./FormCheck"
 
 interface Props {
   balances: Dictionary<string>

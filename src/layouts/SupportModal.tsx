@@ -1,6 +1,6 @@
 import { CHROME, EXTENSION } from "../constants"
 import { useWallet } from "../hooks"
-import Modal from "../components/Modal"
+import Modal from "../containers/Modal"
 import Card from "../components/Card"
 import ExtLinkButton from "../components/ExtLinkButton"
 import styles from "./SupportModal.module.scss"

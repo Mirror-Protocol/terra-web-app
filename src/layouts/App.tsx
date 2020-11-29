@@ -7,6 +7,7 @@ import { StatsProvider, useStatsState } from "../statistics/useStats"
 import Airdrop from "./Airdrop"
 import Header from "./Header"
 import Footer from "./Footer"
+import "./App.scss"
 
 const App = () => {
   const settings = useSettingsState()

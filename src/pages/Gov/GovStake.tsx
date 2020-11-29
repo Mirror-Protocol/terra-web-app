@@ -1,8 +1,8 @@
 import { MIR } from "../../constants"
+import useHash from "../../libs/useHash"
 import { useContractsAddress } from "../../hooks"
 import Page from "../../components/Page"
 import StakeForm from "../../forms/StakeForm"
-import useHash from "../useHash"
 import { Type } from "../Stake"
 import { MenuKey } from "../Gov"
 

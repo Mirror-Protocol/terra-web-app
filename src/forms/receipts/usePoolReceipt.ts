@@ -1,7 +1,7 @@
 import { formatAsset } from "../../libs/parse"
+import getLpName from "../../libs/getLpName"
 import { useContractsAddress } from "../../hooks"
 import { Type } from "../../pages/Pool"
-import getLpName from "../../pages/Stake/getLpName"
 import usePoolShare from "../usePoolShare"
 import { findValue, fromContract, parseTokenText } from "./receiptHelpers"
 

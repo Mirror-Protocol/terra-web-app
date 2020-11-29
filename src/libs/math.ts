@@ -13,6 +13,9 @@ export const times = (a?: BN.Value, b?: BN.Value): string =>
 export const div = (a?: BN.Value, b?: BN.Value): string =>
   new BN(a || 0).div(b || 1).toString()
 
+export const pow = (a: BN.Value, b: BN.Value): string =>
+  new BN(a).pow(b).toString()
+
 export const sum = (array: BN.Value[]): string =>
   BN.sum.apply(null, array.filter(isFinite)).toString()
 

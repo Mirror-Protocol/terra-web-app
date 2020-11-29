@@ -81,6 +81,7 @@ th {
 
 button,
 input,
+select,
 textarea {
   border: 0;
   padding: 0;
@@ -90,7 +91,8 @@ textarea {
   font: inherit;
 }
 
-button {
+button,
+select {
   cursor: pointer;
   user-select: none;
 
@@ -100,7 +102,8 @@ button {
 }
 
 input:disabled,
-textarea:disabled {
+textarea:disabled,
+select:disabled {
   opacity: 0.5;
 }
 

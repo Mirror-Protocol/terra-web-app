@@ -7,7 +7,7 @@ import useDashboard from "../../statistics/useDashboard"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
 import Summary from "../../components/Summary"
-import CountWithResult from "../../components/CountWithResult"
+import CountWithResult from "../../containers/CountWithResult"
 import { TooltipIcon } from "../../components/Tooltip"
 import useMirrorTokenInfo from "./useMirrorTokenInfo"
 

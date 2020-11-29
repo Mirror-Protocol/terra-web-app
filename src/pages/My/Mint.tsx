@@ -19,10 +19,10 @@ import Dl from "../../components/Dl"
 import Icon from "../../components/Icon"
 import Change from "../../components/Change"
 import Tooltip, { TooltipIcon } from "../../components/Tooltip"
+import Delisted from "../../components/Delisted"
+import DashboardActions from "../../components/DashboardActions"
 import { Type } from "../Mint"
 import NoAssets from "./NoAssets"
-import Delisted from "./Delisted"
-import DashboardActions from "./DashboardActions"
 import styles from "./Mint.module.scss"
 
 const WARNING = 0.3

@@ -28,7 +28,7 @@ $radius: 10px;
   }
 
   &:not(.active) {
-    background: #121e3a;
+    background: saturate(darken($darkblue, 2%), 6%);
     border-bottom: 1px solid $bg;
   }
 

@@ -1,7 +1,7 @@
+import useHash from "../../libs/useHash"
 import Page from "../../components/Page"
 import CreatePollForm from "../../forms/CreatePollForm"
 import { MenuKey } from "../Gov"
-import useHash from "../useHash"
 
 export enum Type {
   "WHITELIST" = "whitelist",

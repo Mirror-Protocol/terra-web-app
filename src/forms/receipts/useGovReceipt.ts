@@ -1,3 +1,4 @@
+import { capitalize } from "../../libs/utils"
 import { formatAsset } from "../../libs/parse"
 import { useContractsAddress } from "../../hooks"
 import { findValue } from "./receiptHelpers"
@@ -15,6 +16,6 @@ export default () => (logs: TxLog[]) => {
   return [
     { title: "Poll ID", content: id },
     { title: "Deposit", content: formatAsset(amount, symbol) },
-    { title: "Answer", content: answer },
+    { title: "Answer", content: capitalize(answer) },
   ]
 }

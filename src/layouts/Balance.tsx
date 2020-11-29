@@ -2,7 +2,7 @@ import { UUSD } from "../constants"
 import { useContract } from "../hooks"
 import { AccountInfoKey } from "../hooks/contractKeys"
 import Count from "../components/Count"
-import WithResult from "../components/WithResult"
+import WithResult from "../containers/WithResult"
 
 const Balance = () => {
   const { uusd } = useContract()

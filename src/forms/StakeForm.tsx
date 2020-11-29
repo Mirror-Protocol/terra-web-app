@@ -2,17 +2,18 @@ import useNewContractMsg from "../terra/useNewContractMsg"
 import { LP, MIR } from "../constants"
 import { gt } from "../libs/math"
 import { formatAsset, lookup, toAmount } from "../libs/parse"
+import useForm from "../libs/useForm"
+import { validate as v, placeholder, step } from "../libs/formHelpers"
+import { renderBalance } from "../libs/formHelpers"
+import getLpName from "../libs/getLpName"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 
+import FormGroup from "../components/FormGroup"
 import { Type } from "../pages/Stake"
-import getLpName from "../pages/Stake/getLpName"
 import useStakeReceipt from "./receipts/useStakeReceipt"
-import { validate as v, placeholder, step, renderBalance } from "./formHelpers"
-import { toBase64 } from "./formHelpers"
-import useForm from "./useForm"
+import { toBase64 } from "../libs/formHelpers"
 import FormContainer from "./FormContainer"
-import FormGroup from "./FormGroup"
 
 enum Key {
   value = "value",

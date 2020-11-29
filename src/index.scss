@@ -3,15 +3,3 @@
 @import "reboot";
 @import "colors";
 @import "utils";
-
-#mirror {
-  font-size: $font-size;
-
-  position: relative;
-  min-height: 100vh;
-  padding-bottom: $footer-height;
-
-  @include mobile {
-    padding-bottom: $footer-height-mobile;
-  }
-}

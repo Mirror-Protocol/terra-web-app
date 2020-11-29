@@ -1,9 +1,9 @@
 import { useRouteMatch } from "react-router-dom"
 import Page from "../../components/Page"
 import ClaimForm from "../../forms/ClaimForm"
+import StakeDetailsHeader from "../../components/StakeDetailsHeader"
 import { useContractsAddress } from "../../hooks"
 import { MenuKey } from "../Stake"
-import StakeFormHeader from "./StakeFormHeader"
 
 const Claim = () => {
   const { params } = useRouteMatch<{ token?: string }>()
@@ -12,7 +12,7 @@ const Claim = () => {
   const { getSymbol } = useContractsAddress()
   const symbol = getSymbol(token)
   const title = symbol ? (
-    <StakeFormHeader>{symbol}</StakeFormHeader>
+    <StakeDetailsHeader>{symbol}</StakeDetailsHeader>
   ) : (
     MenuKey.CLAIMALL
   )

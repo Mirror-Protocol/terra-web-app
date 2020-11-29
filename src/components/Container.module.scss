@@ -3,7 +3,7 @@
 .container {
   margin: 0 auto;
   padding: 0 $gutter;
-  max-width: (1200px + 2 * $gutter);
+  max-width: ($max-width + 2 * $gutter);
 }
 
 .sm {

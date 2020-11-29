@@ -4,7 +4,7 @@ import Holdings from "./My/Holdings"
 import Mint from "./My/Mint"
 import Pool from "./My/Pool"
 import Stake from "./My/Stake"
-import ConnectionRequired from "../components/ConnectionRequired"
+import ConnectionRequired from "../containers/ConnectionRequired"
 import { useWallet } from "../hooks"
 import Grid from "../components/Grid"
 

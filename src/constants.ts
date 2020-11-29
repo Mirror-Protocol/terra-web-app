@@ -7,6 +7,7 @@ export const CHROME = "https://google.com/chrome"
 export const BLOCK_TIME = 6650 // 6.65s
 
 /* mirror:unit */
+export const SMALLEST = 1e6
 export const MIR = "MIR"
 export const UUSD = "uusd"
 export const UST = "UST"
@@ -18,7 +19,6 @@ export const MAX_MSG_LENGTH = 1024
 
 /* network:settings */
 export const TX_POLLING_INTERVAL = 1000
-export const ICON_URL = "https://whitelist.mirror.finance/images/"
 export const DEFAULT_EXT_NETWORK: ExtNetworkConfig = {
   name: "testnet",
   chainID: "tequila-0004",

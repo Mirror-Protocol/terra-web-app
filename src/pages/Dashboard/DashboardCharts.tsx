@@ -8,7 +8,7 @@ import Grid from "../../components/Grid"
 import Card from "../../components/Card"
 import Summary from "../../components/Summary"
 import Count from "../../components/Count"
-import ChartContainer from "../../components/ChartContainer"
+import ChartContainer from "../../containers/ChartContainer"
 import { TooltipIcon } from "../../components/Tooltip"
 
 const DashboardCharts = (props: Partial<Dashboard>) => {

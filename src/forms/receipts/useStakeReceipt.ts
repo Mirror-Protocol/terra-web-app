@@ -1,6 +1,6 @@
 import { formatAsset } from "../../libs/parse"
+import getLpName from "../../libs/getLpName"
 import { useContractsAddress } from "../../hooks"
-import getLpName from "../../pages/Stake/getLpName"
 import { findValue } from "./receiptHelpers"
 
 export default () => (logs: TxLog[]) => {

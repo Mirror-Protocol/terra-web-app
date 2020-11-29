@@ -2,7 +2,7 @@
 @import "variables";
 
 .wrapper {
-  background: #121d3a;
+  background: saturate(darken($darkblue, 2%), 6%);
   border-radius: 10px;
   margin-bottom: 15px;
   padding: 0 20px;
