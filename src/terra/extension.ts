@@ -1,6 +1,6 @@
 import { Coins, Extension, SyncTxBroadcastResult } from "@terra-money/terra.js"
 import { CreateTxOptions, StdFee } from "@terra-money/terra.js"
-import { plus } from "../libs/math"
+import { sum } from "../libs/math"
 
 export type Result = SyncTxBroadcastResult.Data
 export interface PostResponse {
@@ -36,7 +36,7 @@ export default {
     const id = ext.post({
       ...options,
       gasPrices: new Coins({ uusd: gasPrice }),
-      fee: new StdFee(gas, { uusd: plus(amount, tax) }),
+      fee: new StdFee(gas, { uusd: sum([amount, tax ?? 0, 1]) }),
       purgeQueue: true,
     })
 
