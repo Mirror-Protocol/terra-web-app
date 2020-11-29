@@ -31,6 +31,8 @@ export const TXINFOS = gql`
     TxInfos(TxHash: $hash) {
       Height
       TxHash
+      Success
+      RawLog
 
       Tx {
         Fee {

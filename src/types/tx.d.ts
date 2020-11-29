@@ -3,6 +3,9 @@ interface TxInfos {
 }
 
 interface TxInfo {
+  Success: boolean
+  RawLog: string
+
   TxHash: string
 
   Tx: {

@@ -53,7 +53,7 @@ const Result = ({ success, result, error, ...props }: Props) => {
   // 1. TIMEOUT - When there is no response for 20 seconds
   // 2. User denied
   const status =
-    !success || !hash || tx.error
+    !success || !hash || tx.error || (txInfo && !txInfo?.Success)
       ? STATUS.FAILURE
       : tx.loading || !txInfo
       ? STATUS.LOADING
@@ -104,8 +104,9 @@ const Result = ({ success, result, error, ...props }: Props) => {
   }[status]
 
   const message =
-    result?.raw_log ??
-    error?.message ??
+    txInfo?.RawLog ||
+    result?.raw_log ||
+    error?.message ||
     (error?.code === 1 && MESSAGE.Result.DENIED)
 
   const content = {
