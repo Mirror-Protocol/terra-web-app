@@ -1,6 +1,7 @@
 import { useRef } from "react"
 import { useLocation } from "react-router-dom"
 import { AccAddress, MsgSend } from "@terra-money/terra.js"
+import { ethers } from "ethers"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { UUSD } from "../constants"
@@ -9,7 +10,7 @@ import { toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
 import { validate as v, placeholder, step } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
-import { useRefetch } from "../hooks"
+import { useNetwork, useRefetch } from "../hooks"
 import { useWallet, useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 
@@ -31,6 +32,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
 
   /* context */
   const { state } = useLocation<{ token: string }>()
+  const { shuttle } = useNetwork()
   const { address } = useWallet()
   const { getSymbol } = useContractsAddress()
   const { find } = useContract()
@@ -42,7 +44,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     const symbol = getSymbol(token)
 
     return {
-      [Key.to]: v.address(to, [AccAddress.validate]),
+      [Key.to]: v.address(to, [AccAddress.validate, ethers.utils.isAddress]),
       [Key.value]: v.amount(value, { symbol, max }),
       [Key.token]: v.required(token),
       [Key.memo]: ["<", ">"].some((char) => memo.includes(char))
@@ -61,10 +63,11 @@ const SendForm = ({ tab }: { tab: Tab }) => {
 
   const form = useForm<Key>(initial, validate)
   const { values, setValue, getFields, attrs, invalid } = form
-  const { to, value, token, memo } = values
+  const { to, value, token, memo: $memo } = values
   const amount = toAmount(value)
   const symbol = getSymbol(token)
   const uusd = token === UUSD ? amount : undefined
+  const isEthereum = ethers.utils.isAddress(to)
 
   /* form:focus input on select asset */
   const valueRef = useRef<HTMLInputElement>(null!)
@@ -86,7 +89,11 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     ...getFields({
       [Key.to]: {
         label: "Send to",
-        input: { placeholder: "Terra Address", autoFocus: true },
+        input: {
+          placeholder: "Terra address or Ethereum address",
+          autoFocus: true,
+        },
+        unit: isEthereum && "Ethereum",
       },
 
       [Key.value]: {
@@ -114,13 +121,16 @@ const SendForm = ({ tab }: { tab: Tab }) => {
   const contents = value ? [] : undefined
 
   /* submit */
+  const recipient = !isEthereum ? to : shuttle
+  const memo = !isEthereum ? $memo : to
+
   const newContractMsg = useNewContractMsg()
 
   const data = !(gt(amount, 0) && token)
     ? []
     : symbol === UUSD
-    ? [new MsgSend(address, to, amount + symbol)]
-    : [newContractMsg(token, { transfer: { recipient: to, amount } })]
+    ? [new MsgSend(address, recipient, amount + symbol)]
+    : [newContractMsg(token, { transfer: { recipient, amount } })]
 
   const disabled = invalid
 
@@ -133,7 +143,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     <FormContainer {...container} pretax={uusd} label="send">
       <FormGroup {...fields[Key.to]} />
       <FormGroup {...fields[Key.value]} />
-      <FormGroup {...fields[Key.memo]} />
+      {!isEthereum && <FormGroup {...fields[Key.memo]} />}
     </FormContainer>
   )
 }
