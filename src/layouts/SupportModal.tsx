@@ -19,7 +19,7 @@ const SupportModal = (modal: Modal) => {
         <Card>
           <article className={styles.article}>
             <p className={styles.desc}>
-              {"Mirror currently\nonly support Chrome"}
+              {"Mirror currently\nonly supports Chrome"}
             </p>
 
             <ExtLinkButton href={CHROME} size="lg" block>
