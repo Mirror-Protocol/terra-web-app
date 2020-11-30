@@ -1,4 +1,4 @@
-import { div, plus } from "../../libs/math"
+import { div } from "../../libs/math"
 import { format, formatAsset, lookupSymbol } from "../../libs/parse"
 import { useContractsAddress } from "../../hooks"
 import { Type } from "../../pages/Trade"
