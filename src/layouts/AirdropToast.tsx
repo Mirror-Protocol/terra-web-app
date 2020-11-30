@@ -1,12 +1,12 @@
 import { useState } from "react"
 import { MIR } from "../constants"
-import { ReactComponent as Logo } from "../images/MIR.svg"
+import { ReactComponent as Image } from "../images/Airdrop.svg"
 import useAirdrops from "../statistics/useAirdrops"
 import LinkButton from "../components/LinkButton"
 import Icon from "../components/Icon"
-import styles from "./Airdrop.module.scss"
+import styles from "./AirdropToast.module.scss"
 
-const Airdrop = () => {
+const AirdropToast = () => {
   const airdrops = useAirdrops()
 
   /* Toggle */
@@ -19,20 +19,15 @@ const Airdrop = () => {
         <Icon name="close" size={18} />
       </button>
 
-      <header className={styles.header}>
-        <Logo height={24} />
-        {MIR} tokens can be claimed
-      </header>
+      <Image height={80} />
+      <header className={styles.header}>{MIR} Airdrop</header>
+      <p className={styles.content}>Claim your {MIR} tokens</p>
 
-      <p className={styles.content}>
-        Claim your {MIR} tokens to participate in Mirror.
-      </p>
-
-      <LinkButton to="/airdrop" onClick={close} color="aqua" size="sm" block>
+      <LinkButton to="/airdrop" onClick={close} color="aqua" block>
         Claim
       </LinkButton>
     </div>
   )
 }
 
-export default Airdrop
+export default AirdropToast

@@ -108,6 +108,10 @@ textarea {
   resize: none;
 }
 
+svg {
+  fill: white;
+}
+
 [type="number"]::-webkit-inner-spin-button,
 [type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
