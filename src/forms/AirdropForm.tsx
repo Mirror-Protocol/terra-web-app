@@ -1,3 +1,4 @@
+import { sum } from "../libs/math"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { MIR } from "../constants"
 import { formatAsset } from "../libs/parse"
@@ -11,12 +12,10 @@ const AirdropForm = () => {
   const { contracts } = useContractsAddress()
 
   /* confirm */
+  const amount = sum(airdrops?.map(({ amount }) => amount) ?? [])
   const contents = !airdrops?.length
     ? undefined
-    : airdrops.map(({ stage, amount }) => ({
-        title: `Stage ${stage}`,
-        content: formatAsset(amount, MIR),
-      }))
+    : [{ title: "Amount", content: formatAsset(amount, MIR) }]
 
   /* submit */
   const newContractMsg = useNewContractMsg()

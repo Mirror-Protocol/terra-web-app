@@ -4,7 +4,7 @@ import { SettingsProvider, useSettingsState } from "../hooks/useSettings"
 import { WalletProvider, useWalletState } from "../hooks/useWallet"
 import { ContractProvider, useContractState } from "../hooks/useContract"
 import { StatsProvider, useStatsState } from "../statistics/useStats"
-import AirdropToast from "./AirdropToast"
+import Airdrop from "./Airdrop"
 import Header from "./Header"
 import Footer from "./Footer"
 
@@ -22,7 +22,7 @@ const App = () => {
             <Header />
             <Container>{routes()}</Container>
             <Footer />
-            <AirdropToast />
+            <Airdrop />
           </StatsProvider>
         </ContractProvider>
       </WalletProvider>
