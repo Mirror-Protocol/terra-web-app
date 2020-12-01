@@ -53,9 +53,11 @@ const GovHomeHeader = () => {
                 </TooltipIcon>
               }
             >
-              <CountWithResult results={[supply.result]} format={percent}>
-                {totalStakedRatio}
-              </CountWithResult>
+              {"-" || (
+                <CountWithResult results={[supply.result]} format={percent}>
+                  {totalStakedRatio}
+                </CountWithResult>
+              )}
             </Summary>
           </Card>
         </Grid>
