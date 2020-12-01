@@ -9,11 +9,11 @@ export default () => {
   const { address } = useWallet()
   const client = useStatsClient()
 
-  useQuery<{ airdrop: Airdrop[] }>(AIRDROP, {
+  const { loading } = useQuery<{ airdrop: Airdrop[] }>(AIRDROP, {
     variables: { address },
     client,
     onCompleted: ({ airdrop }) => setAirdrop(airdrop),
   })
 
-  return airdrop
+  return { airdrop, loading }
 }

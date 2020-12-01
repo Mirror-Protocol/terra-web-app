@@ -8,26 +8,27 @@ import FormContainer from "./FormContainer"
 
 const AirdropForm = () => {
   /* context */
-  const airdrops = useAirdrops()
+  const { airdrop, loading } = useAirdrops()
   const { contracts } = useContractsAddress()
 
   /* confirm */
-  const amount = sum(airdrops?.map(({ amount }) => amount) ?? [])
-  const contents = !airdrops?.length
+  const amount = sum(airdrop?.map(({ amount }) => amount) ?? [])
+  const contents = !airdrop?.length
     ? undefined
     : [{ title: "Amount", content: formatAsset(amount, MIR) }]
 
   /* submit */
   const newContractMsg = useNewContractMsg()
   const data =
-    airdrops?.map(({ amount, proof, stage }) =>
+    airdrop?.map(({ amount, proof, stage }) =>
       newContractMsg(contracts["airdrop"], {
         claim: { amount, stage, proof: JSON.parse(proof) },
       })
     ) ?? []
 
-  const messages = !airdrops?.length ? ["Airdrop not found"] : undefined
-  const disabled = !airdrops?.length
+  const messages =
+    !loading && !airdrop?.length ? ["Airdrop not found"] : undefined
+  const disabled = !airdrop?.length
 
   /* result */
   const parseTx = undefined

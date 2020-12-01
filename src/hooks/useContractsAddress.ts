@@ -37,9 +37,13 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
 
   useEffect(() => {
     const load = async () => {
-      const response = await fetch(url)
-      const json: ContractAddressJSON = await response.json()
-      setData(json)
+      try {
+        const response = await fetch(url)
+        const json: ContractAddressJSON = await response.json()
+        setData(json)
+      } catch {
+        setData({ contracts: {}, whitelist: {} })
+      }
     }
 
     url && load()
