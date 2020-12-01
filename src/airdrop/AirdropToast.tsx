@@ -14,7 +14,7 @@ const AirdropToast = () => {
         <Icon name="close" size={18} />
       </button>
 
-      <Image height={80} />
+      <Image height={80} className={styles.image} />
       <header className={styles.header}>MIR Airdrop</header>
       <p className={styles.content}>Claim your MIR tokens</p>
 

@@ -21,6 +21,30 @@
   right: 20px;
 }
 
+.image {
+  animation: rotate 2s infinite;
+  animation-timing-function: linear;
+  transform-origin: bottom;
+}
+
+@keyframes rotate {
+  25% {
+    transform: rotate(-10deg);
+  }
+
+  50% {
+    transform: rotate(0);
+  }
+
+  75% {
+    transform: rotate(10deg);
+  }
+
+  100% {
+    transform: rotate(0);
+  }
+}
+
 .header {
   color: white;
   font-size: 20px;
