@@ -86,14 +86,13 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   const [submitted, setSubmitted] = useState(false)
   const [response, setResponse] = useState<PostResponse>()
   const disabled = props.disabled || invalid || submitted || !msgs?.length
-  const submit = () => {
+  const submit = async () => {
     setSubmitted(true)
 
-    const id = extension.post(
+    setResponse(await extension.post(
       { msgs, memo },
-      { ...fee, tax: !deduct ? tax : undefined },
-      (response) => response.id === id && setResponse(response)
-    )
+      { ...fee, tax: !deduct ? tax : undefined }
+    ))
   }
 
   /* reset */

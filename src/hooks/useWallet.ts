@@ -25,13 +25,15 @@ export const [useWallet, WalletProvider] = createContext<Wallet>("useWallet")
 /* state */
 export const useWalletState = (): Wallet => {
   /* init */
-  const init = extension.init()
+  const init = extension.init
   const [installed, setInstalled] = useLocalStorage("extension", init)
   const install = () => setInstalled(true)
 
   /* connect */
   const [address, setAddress] = useLocalStorage("address", "")
-  const connect = () => extension.connect(({ address }) => setAddress(address))
+  const connect = async () => {
+    setAddress((await extension.connect()).address)
+  }
   const disconnect = () => setAddress("")
 
   useConnectGraph(address)

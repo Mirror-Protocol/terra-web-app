@@ -15,8 +15,9 @@ export const useNetworkState = (): Network => {
     DEFAULT_EXT_NETWORK
   )
 
-  const refresh = () =>
-    extension.info((network) => network && setExtNetwork(network))
+  const refresh = async () => {
+    setExtNetwork(await extension.info())
+  }
 
   useEffect(() => {
     refresh()

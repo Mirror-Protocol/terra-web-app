@@ -12,36 +12,39 @@ export interface PostResponse {
 }
 
 const ext = new Extension()
-export default {
-  init: () => !!ext.isAvailable,
 
-  info: (callback: (network?: ExtNetworkConfig) => void) => {
-    ext.info()
-    ext.on("onInfo", callback)
-  },
+class ExtensionSingleton {
+  get init() {
+    return !!ext.isAvailable
+  }
 
-  connect: (callback: (params: { address: string }) => void) => {
-    ext.connect()
-    ext.on("onConnect", callback)
-  },
+  async info(): Promise<ExtNetworkConfig> {
+    const res = await ext.request("info")
+    return res.payload as any
+  }
 
-  post: (
+  async connect(): Promise<{ address: string }> {
+    const res = await ext.request("connect")
+    return res.payload as any
+  }
+
+  async post(
     options: CreateTxOptions,
-    txFee: { gasPrice: number; amount: number; tax?: string },
-    callback: (params: PostResponse) => void
-  ) => {
+    txFee: { gasPrice: number; amount: number; tax?: string }
+  ): Promise<PostResponse> {
     const { gasPrice, amount, tax } = txFee
     const gas = Math.floor(amount / gasPrice)
     const feeAmount = ceil(times(gas, gasPrice))
-
-    const id = ext.post({
-      ...options,
-      gasPrices: new Coins({ uusd: gasPrice }),
-      fee: new StdFee(gas, { uusd: plus(feeAmount, tax) }),
+    const res = await ext.request("post", {
+      msgs: options.msgs.map(msg => msg.toJSON()),
+      memo: options.memo,
+      gasPrices: `${gasPrice}uusd`,
+      fee: new StdFee(gas, { uusd: plus(feeAmount, tax) }).toJSON(),
       purgeQueue: true,
     })
 
-    ext.on("onPost", callback)
-    return id
-  },
+    return res.payload as any
+  }
 }
+
+export default new ExtensionSingleton()
