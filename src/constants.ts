@@ -31,3 +31,7 @@ export const DISCORD = ""
 export const TELEGRAM = ""
 export const WECHAT = ""
 export const GITHUB = "https://github.com/Mirror-Protocol/mirror-web-app"
+
+/* sentry */
+export const DSN =
+  "https://b1532961e54e491fbb57e67805cb36a4@o247107.ingest.sentry.io/5540998"
