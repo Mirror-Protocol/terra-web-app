@@ -160,17 +160,19 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   /* form:hook */
   const defaultParams = {
-    [Key.weight]: "100",
-    [Key.lpCommission]: "0.25",
-    [Key.ownerCommission]: "0.05",
-    [Key.auctionDiscount]: "20",
-    [Key.minCollateralRatio]: "150",
-  }
+    [Type.WHITELIST]: {
+      [Key.weight]: "100",
+      [Key.lpCommission]: "0.25",
+      [Key.ownerCommission]: "0.05",
+      [Key.auctionDiscount]: "20",
+      [Key.minCollateralRatio]: "150",
+    },
+    [Type.PARAMS]: {
+      [Key.parameter]: Parameter.MINT,
+    },
+  }[type]
 
-  const initial = Object.assign(
-    record(Key, ""),
-    type === Type.WHITELIST && defaultParams
-  )
+  const initial = Object.assign(record(Key, ""), defaultParams)
 
   const form = useForm<Key>(initial, validate)
   const { values, setValue, handleChange, getFields, attrs, invalid } = form
@@ -241,6 +243,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
           type: "number",
           step: step(),
           placeholder: defaultParams[Key.weight],
+          disabled: true,
         },
         unit: "%",
       },
@@ -254,6 +257,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
           type: "number",
           step: step(),
           placeholder: defaultParams[Key.lpCommission],
+          disabled: true,
         },
         unit: "%",
       },
@@ -267,6 +271,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
           type: "number",
           step: step(),
           placeholder: defaultParams[Key.ownerCommission],
+          disabled: true,
         },
         unit: "%",
       },
@@ -299,19 +304,18 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     }),
   }
 
-  const radio = Object.entries(Parameter)
-    .filter(([, value]) => value !== Parameter.COMMISSION)
-    .map(([key, value]) => ({
-      attrs: {
-        type: "radio",
-        id: key,
-        name: Key.parameter,
-        value,
-        checked: value === values[Key.parameter],
-        onChange: handleChange,
-      },
-      label: value,
-    }))
+  const radio = Object.entries(Parameter).map(([key, value]) => ({
+    attrs: {
+      type: "radio",
+      id: key,
+      name: Key.parameter,
+      value,
+      checked: value === values[Key.parameter],
+      onChange: handleChange,
+      disabled: value !== Parameter.MINT,
+    },
+    label: value,
+  }))
 
   const fieldKeys = getFieldKeys(values[Key.parameter])
 
@@ -409,11 +413,13 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   return (
     <FormContainer {...container} parseTx={parseTx} gov>
       {fieldKeys.map((key) =>
-        key === Key.parameter ? (
-          <FormCheck horizontal label="Parameter" list={radio} key={key} />
-        ) : (
-          <FormGroup {...fields[key]} type={2} key={key} />
-        )
+        key === Key.parameter
+          ? radio.filter(({ attrs }) => !attrs.disabled).length > 1 && (
+              <FormCheck horizontal label="Parameter" list={radio} key={key} />
+            )
+          : !fields[key].input?.disabled && (
+              <FormGroup {...fields[key]} type={2} key={key} />
+            )
       )}
 
       <FormGroup {...fields["deposit"]} type={2} />
