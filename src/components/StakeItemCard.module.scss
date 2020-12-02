@@ -7,6 +7,7 @@
   flex-direction: column;
   padding-top: 20px;
   position: relative;
+  height: 100%;
 }
 
 .main {
@@ -19,10 +20,13 @@
   @include flex;
   margin-top: 10px;
   margin-bottom: 30px;
-  margin-left: 20px;
+
+  &.to {
+    margin-left: 20px;
+  }
 }
 
-.title {
+.heading {
   $font-size: 16px;
   color: white;
   font-size: $font-size;
@@ -37,6 +41,7 @@
   }
 }
 
+/* stats */
 .stats {
   border-top: $border;
   padding-top: 20px;
@@ -46,6 +51,26 @@
 .dd {
   font-size: 16px;
   font-weight: normal;
+}
+
+.vertical {
+  border-top: $border;
+  padding: 20px;
+}
+
+.item {
+  @include flex(space-between);
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.title {
+  color: fade-out(white, 0.6);
+  font-weight: 500;
+}
+
+.content {
+  color: $light;
 }
 
 /* emphasize */
