@@ -8,8 +8,9 @@ import { useContract, useContractsAddress } from "../../hooks"
 import { BalanceKey, AssetInfoKey } from "../../hooks/contractKeys"
 import useAssetStats from "../../statistics/useAssetStats"
 
+import Grid from "../../components/Grid"
+import StakeItemCard from "../../components/StakeItemCard"
 import LoadingTitle from "../../components/LoadingTitle"
-import StakeListGrid from "../../components/StakeListGrid"
 import Count from "../../components/Count"
 import CountWithResult from "../../containers/CountWithResult"
 
@@ -27,7 +28,7 @@ const StakeList = () => {
   const stats = useAssetStats()
   const { apr } = stats
 
-  const renderItem = ({ token }: ListedItem) => {
+  const getItem = ({ token }: ListedItem) => {
     const apr = stats["apr"][token] ?? "0"
     const symbol = getSymbol(token)
 
@@ -57,11 +58,18 @@ const StakeList = () => {
         <StakeListTitle />
       </LoadingTitle>
 
-      <StakeListGrid
-        list={listed
+      <Grid wrap={3}>
+        {listed
+          .map(getItem)
+          .sort(
+            ({ symbol: a }, { symbol: b }) =>
+              Number(b === "MIR") - Number(a === "MIR")
+          )
           .sort(({ token: a }, { token: b }) => number(minus(apr[b], apr[a])))
-          .map(renderItem)}
-      />
+          .map((item) => (
+            <StakeItemCard {...item} key={item.token} />
+          ))}
+      </Grid>
     </article>
   )
 }
