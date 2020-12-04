@@ -1,5 +1,4 @@
 import { useQuery } from "@apollo/client"
-import { div } from "../libs/math"
 import { ASSETSTATS } from "./gqldocs"
 import { useStats } from "./useStats"
 import useStatsClient from "./useStatsClient"
@@ -22,6 +21,6 @@ const parse = (assets: AssetStatsData[]) => ({
     return { ...acc, [token]: statistic.volume24h }
   }, {}),
   apr: assets.reduce((acc, { token, statistic }) => {
-    return { ...acc, [token]: div(statistic.apr, 100) }
+    return { ...acc, [token]: statistic.apr }
   }, {}),
 })
