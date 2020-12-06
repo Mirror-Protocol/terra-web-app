@@ -43,7 +43,8 @@
 
     "APR": "Annualized staking return",
     "Staked": "Quantity of staked LP tokens for the corresponding asset liquidity pool",
-    "Reward": "Quantity of claimable rewards for the corresponding staking position"
+    "Reward": "Quantity of claimable rewards for the corresponding staking position",
+    "GovReward": "Protocol fee paid from withdrawing collateral is distributed to MIR stakers and increases staked MIR"
   },
 
   "Forms": {

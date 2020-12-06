@@ -135,7 +135,11 @@ const Stake = () => {
                 <TooltipIcon content={Tooltip.My.Reward}>Reward</TooltipIcon>
               ),
               render: (token, { gov }) =>
-                !gov && formatAsset(find(BalanceKey.REWARD, token), MIR),
+                !gov ? (
+                  formatAsset(find(BalanceKey.REWARD, token), MIR)
+                ) : (
+                  <TooltipIcon content={Tooltip.My.GovReward}>-</TooltipIcon>
+                ),
               align: "right",
             },
             {
