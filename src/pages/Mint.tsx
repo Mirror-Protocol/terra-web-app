@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
+import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
 import { MenuKey } from "../routes"
 import { insertIf } from "../libs/utils"
@@ -18,6 +20,8 @@ export enum Type {
 }
 
 const Mint = () => {
+  const { isClosed, error } = useLatest()
+
   /* type */
   const { hash: type } = useHash<Type>(Type.OPEN)
   const tab = [Type.DEPOSIT, Type.WITHDRAW].includes(type)
@@ -42,13 +46,45 @@ const Mint = () => {
   useRefetch(keys)
   const { result } = useContract()
 
+  /* latest price */
+  const message = error
+    ? MESSAGE.Form.Validate.LastestPrice.FailedToFetch
+    : isClosed
+    ? MESSAGE.Form.Validate.LastestPrice.Closed
+    : undefined
+
+  const props = { type, tab, message }
+
   return (
     <Page title={MenuKey.MINT}>
       {(!idx || keys.every((key) => result[key].data)) && (
-        <MintForm idx={idx} type={type} tab={tab} key={type} />
+        <MintForm idx={idx} {...props} key={type} />
       )}
     </Page>
   )
 }
 
 export default Mint
+
+/* hook */
+const useLatest = () => {
+  const [isClosed, setClosed] = useState<boolean>(false)
+  const [error, setError] = useState<Error>()
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const url = "https://price.mirror.finance/latest"
+        const response = await fetch(url)
+        const json: { marketStatus: "OPEN" | "CLOSED" } = await response.json()
+        setClosed(json.marketStatus === "CLOSED")
+      } catch (error) {
+        setError(error)
+      }
+    }
+
+    load()
+  }, [])
+
+  return { isClosed, error }
+}

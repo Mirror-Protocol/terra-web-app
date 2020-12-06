@@ -42,9 +42,10 @@ interface Props {
   idx?: string
   type: Type
   tab?: Tab
+  message?: string
 }
 
-const MintForm = ({ idx, type, tab }: Props) => {
+const MintForm = ({ idx, type, tab, message }: Props) => {
   const priceKey = PriceKey.ORACLE
   const balanceKey = BalanceKey.TOKEN
 
@@ -409,13 +410,15 @@ const MintForm = ({ idx, type, tab }: Props) => {
       ? [MESSAGE.Form.Validate.InsufficientBalance]
       : undefined
 
-  const messages = touched[Key.ratio]
+  const messages = message
+    ? [message]
+    : touched[Key.ratio]
     ? ratioMessages
     : close
     ? error
     : undefined
 
-  const disabled = !close ? invalid : !!error
+  const disabled = !!message || (!close ? invalid : !!error)
   const label = open ? MenuKey.MINT : type
 
   /* result */
