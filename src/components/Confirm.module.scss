@@ -3,7 +3,7 @@
 
 .list {
   background: saturate(darken($darkblue, 2%), 6%);
-  border-radius: 10px;
+  border-radius: $border-radius;
   font-size: 12px;
   padding: 20px;
 

@@ -3,7 +3,7 @@
 
 .wrapper {
   background: saturate(darken($darkblue, 2%), 6%);
-  border-radius: 10px;
+  border-radius: $border-radius;
   margin-bottom: 15px;
   padding: 0 20px;
 }
