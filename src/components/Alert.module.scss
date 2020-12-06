@@ -1,0 +1,31 @@
+@import "mixins";
+
+.component {
+  @include flex(space-between);
+
+  background: fade-out($blue, 0.92);
+  border: 1px solid $blue;
+  border-radius: $border-radius;
+  padding: 20px;
+  margin-top: $gutter;
+
+  @include desktop {
+    display: none;
+  }
+}
+
+.main {
+  @include flex;
+
+  color: $blue;
+  font-size: 12px;
+
+  i {
+    margin-right: 5px;
+  }
+}
+
+.close {
+  @include flex;
+  @include link(fade-out(white, 0.7));
+}
