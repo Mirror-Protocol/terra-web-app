@@ -1,8 +1,6 @@
-import { isNil } from "ramda"
 import { UST, UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"
-import { times, lt } from "../../libs/math"
-import { insertIf } from "../../libs/utils"
+import { times, lt, gt } from "../../libs/math"
 import { format, formatAsset } from "../../libs/parse"
 import { useContractsAddress, useContract, useRefetch } from "../../hooks"
 import { AssetInfoKey, PriceKey } from "../../hooks/contractKeys"
@@ -15,29 +13,39 @@ import { TooltipIcon } from "../../components/Tooltip"
 import styles from "./TopTrading.module.scss"
 
 const TopTrading = () => {
-  const priceKey = PriceKey.PAIR
   const infoKey = AssetInfoKey.LIQUIDITY
+  const keys = [PriceKey.PAIR, PriceKey.ORACLE, infoKey]
 
   const { listed } = useContractsAddress()
   const { find } = useContract()
-  const { loading, data } = useRefetch([priceKey, infoKey])
-
-  const { [priceKey]: yesterday } = useYesterday()
-  const hideChange = Object.values(yesterday).every(isNil)
-
+  const yesterday = useYesterday()
   const { volume } = useAssetStats()
+  const { loading, data } = useRefetch(keys)
 
   const dataSource = listed
     .map((item) => {
       const { token } = item
-      const price = find(priceKey, token)
+      const pair = find(PriceKey.PAIR, token)
+      const oracle = find(PriceKey.ORACLE, token)
       const liquidity = find(infoKey, token)
 
       return {
         ...item,
-        price,
-        liquidity: times(liquidity, price),
-        change: calcChange({ today: price, yesterday: yesterday[token] }),
+        liquidity: times(liquidity, pair),
+        pair: {
+          price: pair,
+          change: calcChange({
+            today: pair,
+            yesterday: yesterday[PriceKey.PAIR][token],
+          }),
+        },
+        oracle: {
+          price: oracle,
+          change: calcChange({
+            today: oracle,
+            yesterday: yesterday[PriceKey.ORACLE][token],
+          }),
+        },
         volume: volume[token] ?? "0",
       }
     })
@@ -77,17 +85,41 @@ const TopTrading = () => {
               align: "right",
             },
             {
-              key: "price",
-              render: (value) => `${format(value)} ${UST}`,
+              key: "oracle",
+              title: (
+                <TooltipIcon content={Tooltip.TopTrading.Oracle}>
+                  Oracle Price
+                </TooltipIcon>
+              ),
+              render: ({ price }) => gt(price, 0) && `${format(price)} ${UST}`,
               align: "right",
-              narrow: !hideChange ? ["right"] : undefined,
+              narrow: ["right"],
             },
-            ...insertIf(!hideChange, {
-              key: "change",
+            {
+              key: "oracle.change",
+              dataIndex: "oracle",
               title: "",
-              render: (change: string) => <Change>{change}</Change>,
+              render: ({ change }: { change: string }) => (
+                <Change>{change}</Change>
+              ),
               narrow: ["left"],
-            }),
+            },
+            {
+              key: "pair",
+              title: "Terraswap Price",
+              render: ({ price }) => gt(price, 0) && `${format(price)} ${UST}`,
+              align: "right",
+              narrow: ["right"],
+            },
+            {
+              key: "pair.change",
+              dataIndex: "pair",
+              title: "",
+              render: ({ change }: { change: string }) => (
+                <Change>{change}</Change>
+              ),
+              narrow: ["left"],
+            },
           ]}
           dataSource={dataSource}
         />

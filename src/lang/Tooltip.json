@@ -12,7 +12,8 @@
   },
   "TopTrading": {
     "Liquidity": "Current liquidity value of the mAsset and UST in the pool",
-    "Volume": "Total value of the corresponding asset traded within the last 24 hours"
+    "Volume": "Total value of the corresponding asset traded within the last 24 hours",
+    "Oracle": "The oracle price changes only during market hours. During non-market hours, the price shown is the last voted price."
   },
 
   "My": {
