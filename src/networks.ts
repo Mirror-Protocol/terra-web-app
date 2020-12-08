@@ -11,14 +11,14 @@ const networks: Record<string, LocalNetworkConfig> = {
     mantle: "https://tequila-mantle.terra.dev/",
     stats: "https://tequila-graph.mirror.finance/graphql",
     shuttle: "terra10a29fyas9768pw8mewdrar3kzr07jz8f3n73t3",
-    fee: { gasPrice: 0.15, amount: 100000 }, // 0.100000 UST
+    fee: { gasPrice: 0.15, amount: 150000 }, // 0.150000 UST
   },
   moonshine: {
     contract: "https://whitelist.mirror.finance/moonshine.json",
     mantle: "https://moonshine-mantle.terra.dev/",
     stats: "https://moonshine-graph.mirror.finance/graphql",
     shuttle: "",
-    fee: { gasPrice: 0.15, amount: 100000 }, // 0.100000 UST
+    fee: { gasPrice: 0.15, amount: 150000 }, // 0.150000 UST
   },
 }
 
