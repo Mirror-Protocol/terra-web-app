@@ -4,6 +4,7 @@ import classNames from "classnames/bind"
 import Container from "./Container"
 import Icon from "./Icon"
 import Menu from "./Menu"
+import Badge from "./Badge"
 import styles from "./AppHeader.module.scss"
 
 const cx = classNames.bind(styles)
@@ -13,9 +14,10 @@ interface Props {
   menu: MenuItem[]
   connect: ReactNode
   border?: boolean
+  testnet?: boolean
 }
 
-const AppHeader = ({ logo, menu, connect, border }: Props) => {
+const AppHeader = ({ logo, menu, connect, border, testnet }: Props) => {
   const { key } = useLocation()
   const [isOpen, setIsOpen] = useState(false)
   const toggle = () => setIsOpen(!isOpen)
@@ -36,6 +38,8 @@ const AppHeader = ({ logo, menu, connect, border }: Props) => {
               </Link>
             </h1>
 
+            {testnet && <Badge className={styles.badge}>Testnet</Badge>}
+
             {!hideToggle && (
               <button className={styles.toggle} onClick={toggle}>
                 <Icon name={!isOpen ? "menu" : "close"} size={24} />
@@ -49,7 +53,7 @@ const AppHeader = ({ logo, menu, connect, border }: Props) => {
           </section>
         </div>
 
-        {border && <hr className={styles.hr} />}
+        {border && !isOpen && <hr className={styles.hr} />}
       </Container>
     </header>
   )
