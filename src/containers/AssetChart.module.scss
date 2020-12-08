@@ -1,0 +1,46 @@
+@import "mixins";
+
+.component {
+  background: saturate(darken($darkblue, 2%), 6%);
+  border-radius: $border-radius;
+  margin-top: $gutter;
+}
+
+.header {
+  @include flex(space-between);
+  padding: 20px;
+  padding-bottom: 0;
+}
+
+.token {
+  @include flex;
+  font-size: 12px;
+}
+
+.symbol {
+  color: $battleship;
+}
+
+.price {
+  margin-left: 5px;
+}
+
+.button {
+  @include transition;
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: $battleship;
+  border-radius: 50%;
+  color: $battleship;
+  font-size: 11px;
+  font-weight: 500;
+  margin-left: 10px;
+  width: 20px;
+  height: 20px;
+
+  &.active {
+    border-color: white;
+    color: white;
+  }
+}

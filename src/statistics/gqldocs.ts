@@ -49,6 +49,28 @@ export const ASSETSTATS = gql`
   }
 `
 
+export const PRICEHISTORY = gql`
+  query asset(
+    $token: String!
+    $interval: Float!
+    $from: Float!
+    $to: Float!
+    $yesterday: Float!
+  ) {
+    asset(token: $token) {
+      prices {
+        price
+        priceAt(timestamp: $yesterday)
+
+        history(interval: $interval, from: $from, to: $to) {
+          timestamp
+          price
+        }
+      }
+    }
+  }
+`
+
 const alias = (
   token: string,
   timestamp: number

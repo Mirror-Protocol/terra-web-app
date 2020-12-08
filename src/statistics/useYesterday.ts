@@ -27,7 +27,7 @@ export default () => {
 }
 
 /* calc */
-type Params = { yesterday?: string; today: string }
+type Params = { yesterday?: string; today?: string }
 export const calcChange = ({ yesterday, today }: Params) => {
   const result = div(minus(today, yesterday), yesterday)
   return [yesterday, today, result].every(isFinite) && gt(result, -1)

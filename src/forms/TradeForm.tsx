@@ -20,6 +20,7 @@ import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 import FormGroup from "../components/FormGroup"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
+import AssetChart from "../containers/AssetChart"
 import { Type } from "../pages/Trade"
 import useTradeReceipt from "./receipts/useTradeReceipt"
 import { toBase64 } from "../libs/formHelpers"
@@ -73,6 +74,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const amount2 = toAmount(value2)
   const token1 = { [Type.BUY]: UUSD, [Type.SELL]: token }[type]
   const token2 = { [Type.BUY]: token, [Type.SELL]: UUSD }[type]
+  const symbol = getSymbol(token)
   const symbol1 = getSymbol(token1)
   const symbol2 = getSymbol(token2)
   const uusd = { [Type.BUY]: amount1, [Type.SELL]: amount2 }[type]
@@ -230,6 +232,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
       <FormGroup {...fields[Key.value1]} />
       <FormIcon name="arrow_downward" />
       <FormGroup {...fields[Key.value2]} />
+      <AssetChart token={token} symbol={symbol} />
     </FormContainer>
   )
 }

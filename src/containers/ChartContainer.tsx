@@ -1,6 +1,7 @@
 import { ReactNode } from "react"
 import { helpers, ChartPoint } from "chart.js"
 import { Line, defaults } from "react-chartjs-2"
+import { format as formatDate } from "date-fns"
 import { gt, lt } from "../libs/math"
 import { format } from "../libs/parse"
 import Change from "../components/Change"
@@ -19,33 +20,39 @@ defaults.global.defaultFontColor = $slate
 defaults.global.defaultFontFamily = $font
 
 interface Props {
-  value: ReactNode
+  value?: ReactNode
   change?: string
   datasets: ChartPoint[]
+  fmt?: { t: string }
+  compact?: boolean
 }
 
-const ChartContainer = ({ value, change, datasets }: Props) => {
+const ChartContainer = ({ value, change, datasets, ...props }: Props) => {
+  const { fmt, compact } = props
+
   const borderColor =
     (change && (gt(change, 0) ? $aqua : lt(change, 0) && $red)) || $text
 
   return (
     <article>
-      <header className={styles.header}>
-        <strong className={styles.value}>{value}</strong>
-        <Change className={styles.change}>{change}</Change>
-      </header>
+      {value && (
+        <header className={styles.header}>
+          <strong className={styles.value}>{value}</strong>
+          <Change className={styles.change}>{change}</Change>
+        </header>
+      )}
 
       {datasets.length > 1 && (
         <section className={styles.chart}>
           <Line
-            height={240}
+            height={compact ? 120 : 240}
             data={{
               datasets: [
                 {
                   fill: false,
                   borderColor,
                   borderCapStyle: "round",
-                  borderWidth: 6,
+                  borderWidth: compact ? 3 : 6,
                   pointRadius: 0,
                   pointHoverRadius: 0,
                   data: datasets,
@@ -57,16 +64,21 @@ const ChartContainer = ({ value, change, datasets }: Props) => {
               maintainAspectRatio: false,
               animation: { duration: 0 },
               legend: { display: false },
+              layout: compact ? { padding: 20 } : undefined,
               scales: {
                 xAxes: [
                   {
                     type: "time",
-                    ticks: { source: "data" },
+                    display: !compact,
+                    ticks: compact
+                      ? { source: "auto", autoSkip: true }
+                      : { source: "data" },
                     gridLines: { display: false },
                   },
                 ],
                 yAxes: [
                   {
+                    display: !compact,
                     position: "right",
                     gridLines: {
                       drawBorder: false,
@@ -96,7 +108,11 @@ const ChartContainer = ({ value, change, datasets }: Props) => {
                 callbacks: {
                   title: ([{ value }]) => (value ? format(value) : ""),
                   label: ({ label }) =>
-                    label ? new Date(label).toDateString() : "",
+                    label
+                      ? fmt
+                        ? formatDate(new Date(label), fmt.t)
+                        : new Date(label).toDateString()
+                      : "",
                 },
               },
             }}

@@ -28,14 +28,14 @@ const Change = ({ price, className, children }: Props) => {
     )
   }
 
-  return !(price || change) ? null : change ? (
-    render(change)
-  ) : (
+  return price ? (
     <span className={cx(styles.flex, className)}>
       <span className={styles.price}>{price}</span>
       {change && render(change)}
     </span>
-  )
+  ) : change ? (
+    render(change)
+  ) : null
 }
 
 export default Change
