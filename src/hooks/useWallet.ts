@@ -36,8 +36,8 @@ export const useWalletState = (): Wallet => {
   const glance = setAddress
 
   const connect = async () => {
-    const { address } = await extension.connect()
-    setAddress(address)
+    const response = await extension.connect()
+    setAddress(response?.address ?? "")
   }
 
   const disconnect = () => setAddress("")
