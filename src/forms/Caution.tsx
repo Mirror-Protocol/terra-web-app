@@ -50,9 +50,7 @@ const Caution = ({ goBack = () => {}, onAgree = () => {} }: Props) => {
             className={styles.label}
             onClick={() => setChecked(!checked)}
           >
-            <Checkbox checked={checked} className={styles.checkbox}>
-              {footer}
-            </Checkbox>
+            <Checkbox checked={checked}>{footer}</Checkbox>
           </button>
         </footer>
 

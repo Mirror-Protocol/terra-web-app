@@ -14,10 +14,11 @@ const Checkbox: FC<Props> = (props) => {
   const { type = "checkbox", checked, className, children, ...attrs } = props
 
   return (
-    <label {...attrs} className={styles.label}>
-      <div className={cx(styles.input, type, className)}>
+    <label {...attrs} className={classNames(styles.label, className)}>
+      <div className={cx(styles.input, type)}>
         <div className={cx(styles.check, { checked })} />
       </div>
+
       {children}
     </label>
   )

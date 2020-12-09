@@ -1,0 +1,8 @@
+@import "mixins";
+
+.hide {
+  @include link;
+
+  font-size: 12px;
+  font-weight: 500;
+}

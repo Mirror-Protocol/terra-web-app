@@ -1,0 +1,14 @@
+@import "mixins";
+
+.flex {
+  @include desktop {
+    @include flex(space-between);
+  }
+}
+
+.hide {
+  @include mobile {
+    text-align: right;
+    margin-top: 10px;
+  }
+}
