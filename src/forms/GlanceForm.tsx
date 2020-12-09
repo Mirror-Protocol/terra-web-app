@@ -4,6 +4,7 @@ import MESSAGE from "../lang/MESSAGE.json"
 import useForm from "../libs/useForm"
 import { validate as v } from "../libs/formHelpers"
 import { useWallet } from "../hooks"
+import Container from "../components/Container"
 import FormGroup from "../components/FormGroup"
 import Button from "../components/Button"
 
@@ -28,12 +29,14 @@ const GlanceForm = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FormGroup {...fields["address"]} />
-      <Button type="submit" size="lg" submit disabled={invalid}>
-        {MESSAGE.Form.Button.ConnectWallet}
-      </Button>
-    </form>
+    <Container sm>
+      <form onSubmit={handleSubmit}>
+        <FormGroup {...fields["address"]} />
+        <Button type="submit" size="lg" submit disabled={invalid}>
+          {MESSAGE.Form.Button.ConnectWallet}
+        </Button>
+      </form>
+    </Container>
   )
 }
 

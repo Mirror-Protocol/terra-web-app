@@ -1,4 +1,4 @@
-@import "variables";
+@import "mixins";
 
 .container {
   margin: 0 auto;
@@ -7,6 +7,9 @@
 }
 
 .sm {
-  margin: 60px auto;
   max-width: 620px;
+
+  @include desktop {
+    margin: 60px auto;
+  }
 }
