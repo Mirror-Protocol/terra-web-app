@@ -1,11 +1,10 @@
 import routes from "../routes"
-import MESSAGE from "../lang/MESSAGE.json"
 import Container from "../components/Container"
-import Alert from "../components/Alert"
 import { SettingsProvider, useSettingsState } from "../hooks/useSettings"
 import { WalletProvider, useWalletState } from "../hooks/useWallet"
 import { ContractProvider, useContractState } from "../hooks/useContract"
 import { StatsProvider, useStatsState } from "../statistics/useStats"
+import MobileAlert from "./MobileAlert"
 import Airdrop from "./Airdrop"
 import Header from "./Header"
 import Footer from "./Footer"
@@ -24,7 +23,7 @@ const App = () => {
           <StatsProvider value={stats}>
             <Header />
             <Container>
-              <Alert>{MESSAGE.App.Mobile}</Alert>
+              <MobileAlert />
               {routes()}
             </Container>
             <Footer />

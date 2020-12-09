@@ -2,8 +2,7 @@ import useLocalStorage from "../libs/useLocalStorage"
 import createContext from "./createContext"
 
 interface Settings {
-  hasAgreed: boolean
-  agree: () => void
+  agreementState: LocalStorage<boolean>
 }
 
 const context = createContext<Settings>("useSettings")
@@ -11,6 +10,6 @@ export const [useSettings, SettingsProvider] = context
 
 /* state */
 export const useSettingsState = (): Settings => {
-  const [hasAgreed, setHasAgreed] = useLocalStorage("agreement", false)
-  return { hasAgreed, agree: () => setHasAgreed(true) }
+  const agreementState = useLocalStorage("agreement", false)
+  return { agreementState }
 }

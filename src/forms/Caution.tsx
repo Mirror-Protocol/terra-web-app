@@ -16,10 +16,11 @@ interface Props extends Button {
 
 const Caution = ({ goBack = () => {}, onAgree = () => {} }: Props) => {
   const [checked, setChecked] = useState(false)
-  const { agree } = useSettings()
+  const { agreementState } = useSettings()
+  const [, agree] = agreementState
 
   const handleClick = () => {
-    agree()
+    agree(true)
     onAgree()
   }
 

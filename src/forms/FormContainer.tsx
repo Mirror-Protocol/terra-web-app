@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { ReactNode, HTMLAttributes, FormEvent, KeyboardEvent } from "react"
+import { ReactNode, HTMLAttributes, FormEvent } from "react"
 import { Msg } from "@terra-money/terra.js"
 
 import MESSAGE from "../lang/MESSAGE.json"
@@ -61,7 +61,9 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   /* context */
   const { hash } = useHash()
   const { fee } = useNetwork()
-  const { hasAgreed } = useSettings()
+  const { agreementState } = useSettings()
+  const [hasAgreed] = agreementState
+
   const { uusd, result } = useContract()
   const { address, connect } = useWallet()
   const { loading } = result.uusd
@@ -106,16 +108,9 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   }
 
   /* event */
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault()
-      !disabled && confirm()
-    }
-  }
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    submit()
+    !disabled && submit()
   }
 
   /* render */
@@ -174,7 +169,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
       {response ? (
         <Result {...response} parseTx={parseTx} onFailure={reset} gov={gov} />
       ) : (
-        <form {...attrs} onKeyDown={handleKeyDown} onSubmit={handleSubmit}>
+        <form {...attrs} onSubmit={handleSubmit}>
           {!confirming ? (
             render(children)
           ) : (
