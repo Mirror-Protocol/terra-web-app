@@ -1,20 +1,20 @@
-import { LP, MIR } from "../../constants"
+import { LP, MIR, UUSD } from "../../constants"
 import MESSAGE from "../../lang/MESSAGE.json"
 import Tooltip from "../../lang/Tooltip.json"
-import { gt } from "../../libs/math"
+import { gt, times } from "../../libs/math"
 import { insertIf } from "../../libs/utils"
 import { formatAsset } from "../../libs/parse"
 import { percent } from "../../libs/num"
 import getLpName from "../../libs/getLpName"
 import { getPath, MenuKey } from "../../routes"
 import { useContractsAddress, useContract, useRefetch } from "../../hooks"
-import { BalanceKey } from "../../hooks/contractKeys"
+import { BalanceKey, PriceKey } from "../../hooks/contractKeys"
 import useDashboard from "../../statistics/useDashboard"
 import useAssetStats from "../../statistics/useAssetStats"
 
 import Card from "../../components/Card"
 import Table from "../../components/Table"
-import { Di } from "../../components/Dl"
+import Dl from "../../components/Dl"
 import LinkButton from "../../components/LinkButton"
 import { TooltipIcon } from "../../components/Tooltip"
 import Delisted from "../../components/Delisted"
@@ -23,7 +23,9 @@ import { menu as stakeMenu, MenuKey as StakeMenuKey, Type } from "../Stake"
 import NoAssets from "./NoAssets"
 
 const Stake = () => {
+  const priceKey = PriceKey.PAIR
   const keys = [
+    priceKey,
     BalanceKey.TOKEN,
     BalanceKey.LPSTAKED,
     BalanceKey.LPSTAKABLE,
@@ -41,11 +43,12 @@ const Stake = () => {
   const loading = keys.some((key) => result[key].loading)
 
   /* table */
+  const mir = getToken(MIR)
   const dataSource: (ListedItem & { gov?: boolean })[] = !data
     ? []
     : [
-        ...insertIf(gt(find(BalanceKey.MIRGOVSTAKED, getToken(MIR)), 0), {
-          ...whitelist[getToken(MIR)],
+        ...insertIf(gt(find(BalanceKey.MIRGOVSTAKED, mir), 0), {
+          ...whitelist[mir],
           gov: true,
         }),
         ...listedAll.filter(({ token }) =>
@@ -68,8 +71,21 @@ const Stake = () => {
 
   const dataExists = !!dataSource.length
 
+  const price = find(priceKey, mir)
+  const totalRewardValue = times(rewards, price)
   const description = dataExists && (
-    <Di title="Total Reward" content={formatAsset(rewards, MIR)} />
+    <Dl
+      list={[
+        {
+          title: "Total Reward",
+          content: formatAsset(rewards, MIR),
+        },
+        {
+          title: "Total Reward Value",
+          content: formatAsset(totalRewardValue, UUSD),
+        },
+      ]}
+    />
   )
 
   return (

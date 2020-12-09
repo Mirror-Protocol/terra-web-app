@@ -60,7 +60,7 @@ const Holdings = () => {
   const totalValue = sum(dataSource.map(({ value }) => value))
   const description = dataExists && (
     <Di
-      title="Total Value"
+      title="Total Holding Value"
       content={renderTooltip(totalValue, Tooltip.My.TotalValue)}
     />
   )
