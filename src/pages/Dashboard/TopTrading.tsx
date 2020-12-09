@@ -96,15 +96,6 @@ const TopTrading = () => {
               narrow: ["right"],
             },
             {
-              key: "oracle.change",
-              dataIndex: "oracle",
-              title: "",
-              render: ({ change }: { change: string }) => (
-                <Change>{change}</Change>
-              ),
-              narrow: ["left"],
-            },
-            {
               key: "pair",
               title: "Terraswap Price",
               render: ({ price }) => gt(price, 0) && `${format(price)} ${UST}`,
