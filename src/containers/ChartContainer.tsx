@@ -52,7 +52,7 @@ const ChartContainer = ({ value, change, datasets, ...props }: Props) => {
                   fill: false,
                   borderColor,
                   borderCapStyle: "round",
-                  borderWidth: compact ? 3 : 6,
+                  borderWidth: compact ? 2 : 6,
                   pointRadius: 0,
                   pointHoverRadius: 0,
                   data: datasets,

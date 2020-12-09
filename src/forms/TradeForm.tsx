@@ -20,7 +20,7 @@ import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 import FormGroup from "../components/FormGroup"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
-import AssetChart from "../containers/AssetChart"
+import PriceChart from "../containers/PriceChart"
 import { Type } from "../pages/Trade"
 import useTradeReceipt from "./receipts/useTradeReceipt"
 import { toBase64 } from "../libs/formHelpers"
@@ -232,7 +232,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
       <FormGroup {...fields[Key.value1]} />
       <FormIcon name="arrow_downward" />
       <FormGroup {...fields[Key.value2]} />
-      <AssetChart token={token} symbol={symbol} />
+      <PriceChart token={token} symbol={symbol} />
     </FormContainer>
   )
 }

@@ -11,7 +11,7 @@ import { PRICEHISTORY } from "../statistics/gqldocs"
 import useStatsClient from "../statistics/useStatsClient"
 import { calcChange } from "../statistics/useYesterday"
 import ChartContainer from "./ChartContainer"
-import styles from "./AssetChart.module.scss"
+import styles from "./PriceChart.module.scss"
 
 const cx = classNames.bind(styles)
 
@@ -30,32 +30,32 @@ interface Response {
   asset: { prices: Data }
 }
 
-const AssetChart = ({ token, symbol }: { token: string; symbol: string }) => {
+const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
   const now = startOfMinute(new Date())
   const yesterday = subDays(now, 1).getTime()
 
   const ranges = [
     {
       label: "D",
-      interval: 1,
+      interval: 60 / 4, // 15 minutes
       from: subDays(now, 1).getTime(),
       fmt: "EEE, LLL dd, HH:mm aa",
     },
     {
       label: "W",
-      interval: 15,
+      interval: 60 * 1, // 1 hour
       from: subWeeks(now, 1).getTime(),
       fmt: "EEE, LLL dd, HH:mm aa",
     },
     {
       label: "M",
-      interval: 60,
+      interval: 60 * 24, // 1 day
       from: subMonths(now, 1).getTime(),
       fmt: "LLL dd, yyyy",
     },
     {
       label: "Y",
-      interval: 60 * 24,
+      interval: 60 * 24 * 7, // 1 week
       from: subYears(now, 1).getTime(),
       fmt: "LLL dd, yyyy",
     },
@@ -119,4 +119,4 @@ const AssetChart = ({ token, symbol }: { token: string; symbol: string }) => {
   )
 }
 
-export default AssetChart
+export default PriceChart
