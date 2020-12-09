@@ -59,8 +59,16 @@ const useMyStake = () => {
   const price = find(priceKey, mir)
   const totalRewards = rewards
   const totalRewardsValue = times(rewards, price)
+  const govStakedValue = times(find(BalanceKey.MIRGOVSTAKED, mir), price)
 
-  return { keys, loading, dataSource, totalRewards, totalRewardsValue }
+  return {
+    keys,
+    loading,
+    dataSource,
+    totalRewards,
+    totalRewardsValue,
+    govStakedValue,
+  }
 }
 
 export default useMyStake

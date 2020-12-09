@@ -9,17 +9,22 @@ import Holdings from "./My/Holdings"
 import Mint from "./My/Mint"
 import Pool from "./My/Pool"
 import Stake from "./My/Stake"
+import TotalValue from "./My/TotalValue"
 
 const My = () => {
   const { address, disconnect } = useWallet()
-  const { holdings, mint, pool, stake } = useMy()
+  const { holdings, mint, pool, stake, total } = useMy()
 
   return (
-    <Page title={MenuKey.MY} noBreak>
+    <Page title={MenuKey.MY}>
       {!address ? (
         <ConnectionRequired />
       ) : (
         <>
+          <Grid>
+            <TotalValue {...total} />
+          </Grid>
+
           <Grid>
             <Holdings {...holdings} />
           </Grid>

@@ -17,12 +17,14 @@
   },
 
   "My": {
+    "TotalValue": "Total value of all holdings, collateral, withdrawable liquidity, rewards, staked MIR and UST.",
+
     "Holdings": "List of mAssets held",
     "Mint": "List of mint positions",
     "Pool": "List of liquidity provider positions",
     "Stake": "List of LP token and MIR stake positions",
 
-    "TotalValue": "Total value of all assets held",
+    "TotalHoldingValue": "Total value of all assets held",
     "Balance": "Quantity of the corresponding asset held",
     "Value": "Value of the corresponding asset held",
     "PortfolioRatio": "Percent allocation of the corresponding asset held",

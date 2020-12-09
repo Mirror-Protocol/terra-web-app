@@ -38,7 +38,7 @@ const Holdings = ({ loading, totalValue, dataSource }: Props) => {
   const description = dataExists && (
     <Di
       title="Total Holding Value"
-      content={renderTooltip(totalValue, Tooltip.My.TotalValue)}
+      content={renderTooltip(totalValue, Tooltip.My.TotalHoldingValue)}
     />
   )
 

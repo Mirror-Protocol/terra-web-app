@@ -17,7 +17,7 @@ export const pow = (a: BN.Value, b: BN.Value): string =>
   new BN(a).pow(b).toString()
 
 export const sum = (array: BN.Value[]): string =>
-  BN.sum.apply(null, array.filter(isFinite)).toString()
+  array.length ? BN.sum.apply(null, array.filter(isFinite)).toString() : "0"
 
 export const min = (array: BN.Value[]): string =>
   BN.min.apply(null, array.filter(isFinite)).toString()
