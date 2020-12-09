@@ -58,6 +58,7 @@ const Stake = () => {
   /* render */
   const claimAll = {
     to: getPath(MenuKey.STAKE) + stakeMenu[StakeMenuKey.CLAIMALL].path,
+    className: "desktop",
     children: StakeMenuKey.CLAIMALL,
     disabled: !gt(rewards, 0),
     color: "aqua",

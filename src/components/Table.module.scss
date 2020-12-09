@@ -1,4 +1,4 @@
-@import "variables";
+@import "mixins";
 
 .wrapper {
   width: 100%;
@@ -46,13 +46,17 @@
 }
 
 .fixed-left {
-  position: sticky;
-  left: 0;
+  @include desktop {
+    position: sticky;
+    left: 0;
+  }
 }
 
 .fixed-right {
-  position: sticky;
-  right: 0;
+  @include desktop {
+    position: sticky;
+    right: 0;
+  }
 }
 
 .narrow-left {

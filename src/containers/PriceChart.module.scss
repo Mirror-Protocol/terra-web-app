@@ -7,13 +7,16 @@
 }
 
 .header {
-  @include flex(space-between);
+  @include desktop {
+    @include flex(space-between);
+  }
+
   padding: 20px;
   padding-bottom: 0;
 }
 
 .token {
-  @include flex;
+  @include flex(flex-start);
   font-size: 12px;
 }
 
@@ -23,6 +26,16 @@
 
 .price {
   margin-left: 5px;
+}
+
+.ranges {
+  @include mobile {
+    margin-top: 10px;
+  }
+
+  .button:not(:first-child) {
+    margin-left: 10px;
+  }
 }
 
 .button {
@@ -35,7 +48,6 @@
   color: $battleship;
   font-size: 11px;
   font-weight: 500;
-  margin-left: 10px;
   width: 20px;
   height: 20px;
 
