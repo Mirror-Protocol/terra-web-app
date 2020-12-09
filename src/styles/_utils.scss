@@ -4,6 +4,12 @@
   }
 }
 
+.mobile {
+  @include desktop {
+    display: none !important;
+  }
+}
+
 .empty {
   color: $brown;
   font-size: 16px;

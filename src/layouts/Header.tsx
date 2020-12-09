@@ -8,7 +8,6 @@ const Header = () => {
   const menuKeys = Object.values(MenuKey).filter((key) => !omit.includes(key))
   const menu = menuKeys.map((key: MenuKey) => ({
     attrs: { to: getPath(key), children: key },
-    desktopOnly: key === MenuKey.MY,
   }))
 
   const { name } = useNetwork()

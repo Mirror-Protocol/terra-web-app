@@ -3,6 +3,7 @@ import { Dictionary } from "ramda"
 
 import Dashboard from "./pages/Dashboard"
 import Info from "./pages/Info"
+import Auth from "./pages/Auth"
 import My from "./pages/My"
 import Send from "./pages/Send"
 import Airdrop from "./pages/Airdrop"
@@ -21,6 +22,7 @@ import Tool from "./tools/Tool"
 export enum MenuKey {
   DASHBOARD = "Dashboard",
   INFO = "Info",
+  AUTH = "Auth",
   MY = "My Page",
   SEND = "Send",
   AIRDROP = "Airdrop",
@@ -33,6 +35,7 @@ export enum MenuKey {
 
 export const omit = [
   MenuKey.DASHBOARD,
+  MenuKey.AUTH,
   MenuKey.INFO,
   MenuKey.SEND,
   MenuKey.AIRDROP,
@@ -41,6 +44,7 @@ export const omit = [
 export const menu: Dictionary<RouteProps> = {
   // Not included in navigation bar
   [MenuKey.DASHBOARD]: { path: "/", exact: true, component: Dashboard },
+  [MenuKey.AUTH]: { path: "/auth", component: Auth },
   [MenuKey.INFO]: { path: "/info", component: Info },
   [MenuKey.SEND]: { path: "/send", component: Send },
   [MenuKey.AIRDROP]: { path: "/airdrop", component: Airdrop },

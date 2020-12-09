@@ -15,6 +15,7 @@ interface Wallet {
   /** Set as installed */
   install: () => void
   /** Connect wallet */
+  glance: (address: string) => void
   connect: () => void
   /** Disconnect wallet */
   disconnect: () => void
@@ -32,6 +33,8 @@ export const useWalletState = (): Wallet => {
   /* connect */
   const [address, setAddress] = useLocalStorage("address", "")
 
+  const glance = setAddress
+
   const connect = async () => {
     const { address } = await extension.connect()
     setAddress(address)
@@ -41,7 +44,7 @@ export const useWalletState = (): Wallet => {
 
   useConnectGraph(address)
 
-  return { address, installed, install, connect, disconnect }
+  return { address, installed, install, glance, connect, disconnect }
 }
 
 /* graph */

@@ -43,6 +43,8 @@
 }
 
 .toggle {
+  @include flex;
+
   @include desktop {
     display: none;
   }

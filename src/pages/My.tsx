@@ -1,15 +1,16 @@
-import Page from "../components/Page"
 import { MenuKey } from "../routes"
+import { useWallet } from "../hooks"
+import Page from "../components/Page"
+import Grid from "../components/Grid"
+import Button from "../components/Button"
+import ConnectionRequired from "../containers/ConnectionRequired"
 import Holdings from "./My/Holdings"
 import Mint from "./My/Mint"
 import Pool from "./My/Pool"
 import Stake from "./My/Stake"
-import ConnectionRequired from "../containers/ConnectionRequired"
-import { useWallet } from "../hooks"
-import Grid from "../components/Grid"
 
 const My = () => {
-  const { address } = useWallet()
+  const { address, disconnect } = useWallet()
 
   return (
     <Page title={MenuKey.MY} noBreak>
@@ -32,6 +33,19 @@ const My = () => {
           <Grid>
             <Stake />
           </Grid>
+
+          {disconnect && (
+            <Button
+              className="mobile"
+              onClick={disconnect}
+              color="secondary"
+              outline
+              block
+              submit
+            >
+              Disconnect
+            </Button>
+          )}
         </>
       )}
     </Page>
