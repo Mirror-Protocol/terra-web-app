@@ -3,7 +3,7 @@ import Card from "./Card"
 
 const Empty: FC = ({ children }) => (
   <Card>
-    <p className="empty">{children}</p>
+    <section className="empty">{children}</section>
   </Card>
 )
 

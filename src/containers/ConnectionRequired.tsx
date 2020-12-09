@@ -13,20 +13,19 @@ const ConnectionRequired = () => {
   const action = !installed ? (
     <ExtLink href={EXTENSION}>{MESSAGE.Wallet.DownloadExtension}</ExtLink>
   ) : (
-    <>
+    <button className={styles.button} onClick={connect}>
+      {MESSAGE.Wallet.ConnectWallet}
+    </button>
+  )
+
+  return (
+    <Empty>
       <Link to="/auth" className={classNames(styles.button, "mobile")}>
         {MESSAGE.Wallet.Glance}
       </Link>
-      <button
-        className={classNames(styles.button, "desktop")}
-        onClick={connect}
-      >
-        {MESSAGE.Wallet.ConnectWallet}
-      </button>
-    </>
+      <div className="desktop">{action}</div>
+    </Empty>
   )
-
-  return <Empty>{action}</Empty>
 }
 
 export default ConnectionRequired
