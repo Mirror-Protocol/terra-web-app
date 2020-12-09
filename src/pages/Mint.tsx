@@ -20,7 +20,7 @@ export enum Type {
 }
 
 const Mint = () => {
-  const { isClosed, error } = useLatest()
+  const { isClosed } = useLatest()
 
   /* type */
   const { hash: type } = useHash<Type>(Type.OPEN)
@@ -47,9 +47,7 @@ const Mint = () => {
   const { result } = useContract()
 
   /* latest price */
-  const message = error
-    ? MESSAGE.Form.Validate.LastestPrice.FailedToFetch
-    : isClosed
+  const message = isClosed
     ? MESSAGE.Form.Validate.LastestPrice.Closed
     : undefined
 
