@@ -1,18 +1,11 @@
 import { ReactNode } from "react"
-import { isNil } from "ramda"
 import classNames from "classnames"
 import MESSAGE from "../../lang/MESSAGE.json"
 import Tooltips from "../../lang/Tooltip.json"
 import { UST, UUSD } from "../../constants"
-import { lt, lte, minus, sum, times } from "../../libs/math"
 import { format, formatAsset, lookupSymbol } from "../../libs/parse"
 import { percent } from "../../libs/num"
-import calc from "../../helpers/calc"
 import { getPath, MenuKey } from "../../routes"
-import { useContractsAddress, useContract, useRefetch } from "../../hooks"
-import { PriceKey, AssetInfoKey } from "../../hooks/contractKeys"
-import { AccountInfoKey } from "../../hooks/contractKeys"
-import useYesterday, { calcChange } from "../../statistics/useYesterday"
 import Card from "../../components/Card"
 import Table from "../../components/Table"
 import Dl from "../../components/Dl"
@@ -25,101 +18,44 @@ import { Type } from "../Mint"
 import NoAssets from "./NoAssets"
 import styles from "./Mint.module.scss"
 
-const WARNING = 0.3
-const DANGER = 0
+interface AssetData extends Asset {
+  price: string
+  value: string
+  change?: string
+  delisted: boolean
+}
 
-const Mint = () => {
-  const priceKey = PriceKey.ORACLE
-  const keys = [
-    priceKey,
-    AccountInfoKey.MINTPOSITIONS,
-    AssetInfoKey.MINCOLLATERALRATIO,
-  ]
+interface Data {
+  idx: string
+  collateral: AssetData
+  asset: AssetData
+  ratio?: string
+  minRatio: string
+  danger: boolean
+  warning: boolean
+}
 
-  const { data } = useRefetch(keys)
-  const { [priceKey]: yesterday } = useYesterday()
-  const hideChange = Object.values(yesterday).every(isNil)
+interface Props {
+  loading: boolean
+  totalMintedValue: string
+  totalCollateralValue: string
+  dataSource: Data[]
+}
 
-  /* context */
-  const { whitelist, parseToken } = useContractsAddress()
-  const { result, find, ...contract } = useContract()
-  const { [AccountInfoKey.MINTPOSITIONS]: positions } = contract
-  const loading = keys.some((key) => result[key].loading)
+const Mint = ({ loading, dataSource, ...props }: Props) => {
+  const { totalMintedValue, totalCollateralValue } = props
 
-  /* table */
-  const dataSource =
-    !data || !positions
-      ? []
-      : positions.map((position) => {
-          /* collateral */
-          const collateral = parseToken(position.collateral)
-          const collateralPrice = find(priceKey, collateral.token)
-          const collateralValue = times(collateral.amount, collateralPrice)
-          const collateralChange = calcChange({
-            today: collateralPrice,
-            yesterday: yesterday[collateral.token],
-          })
-
-          /* asset */
-          const asset = parseToken(position.asset)
-          const assetPrice = find(priceKey, asset.token)
-          const assetValue = times(asset.amount, assetPrice)
-          const assetChange = calcChange({
-            today: assetPrice,
-            yesterday: yesterday[asset.token],
-          })
-
-          /* ratio */
-          const minRatio = find(AssetInfoKey.MINCOLLATERALRATIO, asset.token)
-
-          const { ratio } = calc.mint({
-            collateral: { ...collateral, price: collateralPrice },
-            asset: { ...asset, price: assetPrice },
-          })
-
-          const danger = lt(minus(ratio, minRatio), DANGER)
-          const warning = !danger && lte(minus(ratio, minRatio), WARNING)
-
-          return {
-            ...position,
-            collateral: {
-              ...collateral,
-              price: collateralPrice,
-              value: collateralValue,
-              change: collateralChange,
-            },
-            asset: {
-              ...asset,
-              price: assetPrice,
-              value: assetValue,
-              change: assetChange,
-            },
-            ratio,
-            minRatio,
-            danger,
-            warning,
-          }
-        })
-
-  /* render */
   const renderTooltip = (value: string, tooltip: string) => (
     <TooltipIcon content={tooltip}>{formatAsset(value, UUSD)}</TooltipIcon>
   )
 
   const dataExists = !!dataSource.length
-
-  const totalCollateralValue = sum(
-    dataSource.map(({ collateral }) => collateral.value)
-  )
-
-  const totalAssetValue = sum(dataSource.map(({ asset }) => asset.value))
-
   const description = dataExists && (
     <Dl
       list={[
         {
           title: "Total Minted Value",
-          content: renderTooltip(totalAssetValue, Tooltips.My.TotalAssetValue),
+          content: renderTooltip(totalMintedValue, Tooltips.My.TotalAssetValue),
         },
         {
           title: "Total Collateral Value",
@@ -148,13 +84,7 @@ const Mint = () => {
               key: "idx",
               title: "ID",
               render: (idx, { warning, danger, collateral, asset }) => {
-                const isCollateralDelisted =
-                  collateral.token !== UUSD &&
-                  whitelist[collateral.token]["status"] === "DELISTED"
-                const isAssetDelisted =
-                  whitelist[asset.token]["status"] === "DELISTED"
-                const isDelisted = isCollateralDelisted || isAssetDelisted
-
+                const isDelisted = collateral.delisted || asset.delisted
                 const shouldWarn = warning || danger
                 const className = classNames(styles.idx, { red: shouldWarn })
                 const tooltip = warning
@@ -222,7 +152,7 @@ const Mint = () => {
                   formatAsset(collateral.value, UUSD),
                 ]),
               align: "right",
-              narrow: !hideChange ? ["right"] : undefined,
+              narrow: ["right"],
             },
             {
               key: "change",

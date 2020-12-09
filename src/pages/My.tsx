@@ -4,6 +4,7 @@ import Page from "../components/Page"
 import Grid from "../components/Grid"
 import Button from "../components/Button"
 import ConnectionRequired from "../containers/ConnectionRequired"
+import useMy from "./My/useMy"
 import Holdings from "./My/Holdings"
 import Mint from "./My/Mint"
 import Pool from "./My/Pool"
@@ -11,6 +12,7 @@ import Stake from "./My/Stake"
 
 const My = () => {
   const { address, disconnect } = useWallet()
+  const { holdings, mint, pool, stake } = useMy()
 
   return (
     <Page title={MenuKey.MY} noBreak>
@@ -19,19 +21,19 @@ const My = () => {
       ) : (
         <>
           <Grid>
-            <Holdings />
+            <Holdings {...holdings} />
           </Grid>
 
           <Grid>
-            <Mint />
+            <Mint {...mint} />
           </Grid>
 
           <Grid>
-            <Pool />
+            <Pool {...pool} />
           </Grid>
 
           <Grid>
-            <Stake />
+            <Stake {...stake} />
           </Grid>
 
           {disconnect && (

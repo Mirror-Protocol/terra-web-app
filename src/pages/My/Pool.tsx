@@ -1,13 +1,9 @@
 import { LP, UUSD } from "../../constants"
 import MESSAGE from "../../lang/MESSAGE.json"
 import Tooltip from "../../lang/Tooltip.json"
-import { plus, times, sum, gt } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
-import { percent } from "../../libs/num"
 import getLpName from "../../libs/getLpName"
 import { getPath, MenuKey } from "../../routes"
-import { useContractsAddress, useContract, useRefetch } from "../../hooks"
-import { BalanceKey, PriceKey } from "../../hooks/contractKeys"
 
 import Card from "../../components/Card"
 import Table from "../../components/Table"
@@ -15,68 +11,31 @@ import { Di } from "../../components/Dl"
 import { TooltipIcon } from "../../components/Tooltip"
 import Delisted from "../../components/Delisted"
 import DashboardActions from "../../components/DashboardActions"
-import usePool from "../../forms/usePool"
-import usePoolShare from "../../forms/usePoolShare"
 
 import { Type } from "../Pool"
 import { Type as StakeType } from "../Stake"
 import NoAssets from "./NoAssets"
 
-const Pool = () => {
-  const priceKey = PriceKey.PAIR
-  const keys = [
-    priceKey,
-    BalanceKey.TOKEN,
-    BalanceKey.LPTOTAL,
-    BalanceKey.LPSTAKED,
-  ]
+interface Data extends ListedItem {
+  balance: string
+  withdrawable: string
+  share: string
+}
 
-  const { data } = useRefetch(keys)
+interface Props {
+  loading: boolean
+  totalWithdrawableValue: string
+  dataSource: Data[]
+}
 
-  /* context */
-  const { listedAll } = useContractsAddress()
-  const { result, find } = useContract()
-  const getPool = usePool()
-  const getPoolShare = usePoolShare()
-  const loading = keys.some((key) => result[key].loading)
-
-  /* table */
-  const dataSource = !data
-    ? []
-    : listedAll
-        .filter(({ token }) => gt(find(BalanceKey.LPTOTAL, token), 0))
-        .map((item) => {
-          const { token } = item
-
-          return {
-            ...item,
-            balance: find(BalanceKey.LPTOTAL, token),
-            stakable: find(BalanceKey.LPSTAKABLE, token),
-          }
-        })
-
-  /* render */
+const Pool = ({ loading, totalWithdrawableValue, dataSource }: Props) => {
   const dataExists = !!dataSource.length
-
-  const getAssetValue = (asset: Asset) => {
-    const price = find(priceKey, asset.token)
-    return times(asset.amount, price)
-  }
-
-  const totalWithdrawable = sum(
-    dataSource.map(({ balance, token }) => {
-      const { fromLP } = getPool({ amount: balance, token })
-      const assetValue = fromLP && getAssetValue(fromLP.asset)
-      return plus(fromLP?.uusd.amount, assetValue)
-    })
-  )
-
   const description = dataExists && (
     <Di
       title="Total Withdrawable Value"
       content={
         <TooltipIcon content={Tooltip.My.TotalWithdrawableValue}>
-          {formatAsset(totalWithdrawable, UUSD)}
+          {formatAsset(totalWithdrawableValue, UUSD)}
         </TooltipIcon>
       }
     />
@@ -117,11 +76,6 @@ const Pool = () => {
                   Withdrawable Asset
                 </TooltipIcon>
               ),
-              dataIndex: "balance",
-              render: (amount, { token }) => {
-                const { text } = getPool({ amount, token })
-                return text.fromLP
-              },
               align: "right",
             },
             {
@@ -131,13 +85,6 @@ const Pool = () => {
                   Pool share
                 </TooltipIcon>
               ),
-              dataIndex: "balance",
-              render: (amount, { token }) => {
-                const poolShare = getPoolShare({ amount, token })
-                const { ratio, lessThanMinimum, minimum } = poolShare
-                const prefix = lessThanMinimum ? "<" : ""
-                return prefix + percent(lessThanMinimum ? minimum : ratio)
-              },
               align: "right",
             },
             {
@@ -155,7 +102,6 @@ const Pool = () => {
                   {
                     to: { ...to, hash: Type.PROVIDE },
                     children: Type.PROVIDE,
-                    disabled: !gt(find(BalanceKey.TOKEN, token), 0),
                   },
                   {
                     to: { ...to, hash: Type.WITHDRAW },
