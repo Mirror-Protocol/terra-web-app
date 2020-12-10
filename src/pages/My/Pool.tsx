@@ -18,7 +18,7 @@ import NoAssets from "./NoAssets"
 
 interface Data extends ListedItem {
   balance: string
-  withdrawable: string
+  withdrawable: { value: string; text: string }
   share: string
 }
 
@@ -70,12 +70,18 @@ const Pool = ({ loading, totalWithdrawableValue, dataSource }: Props) => {
               align: "right",
             },
             {
-              key: "withdrawable",
+              key: "withdrawable.text",
               title: (
                 <TooltipIcon content={Tooltip.My.Withdrawable}>
                   Withdrawable Asset
                 </TooltipIcon>
               ),
+              align: "right",
+            },
+            {
+              key: "withdrawable.value",
+              title: "Withdrawable Value",
+              render: (value) => formatAsset(value, UUSD),
               align: "right",
             },
             {

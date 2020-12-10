@@ -1,4 +1,4 @@
-import { plus, times, sum, gt } from "../../libs/math"
+import { sum, gt } from "../../libs/math"
 import { percent } from "../../libs/num"
 import { useContractsAddress, useContract, useCombineKeys } from "../../hooks"
 import { BalanceKey, PriceKey } from "../../hooks/contractKeys"
@@ -27,7 +27,7 @@ const useMyPool = () => {
         .map((item) => {
           const { token } = item
           const balance = find(BalanceKey.LPTOTAL, token)
-          const { text } = getPool({ amount: balance, token })
+          const { fromLP } = getPool({ amount: balance, token })
           const poolShare = getPoolShare({ amount: balance, token })
           const { ratio, lessThanMinimum, minimum } = poolShare
           const prefix = lessThanMinimum ? "<" : ""
@@ -35,23 +35,14 @@ const useMyPool = () => {
           return {
             ...item,
             balance,
-            withdrawable: text.fromLP,
+            withdrawable: fromLP,
             share: prefix + percent(lessThanMinimum ? minimum : ratio),
           }
         })
         .filter(({ balance }) => gt(balance, 0))
 
-  const getAssetValue = (asset: Asset) => {
-    const price = find(priceKey, asset.token)
-    return times(asset.amount, price)
-  }
-
   const totalWithdrawableValue = sum(
-    dataSource.map(({ balance, token }) => {
-      const { fromLP } = getPool({ amount: balance, token })
-      const assetValue = fromLP && getAssetValue(fromLP.asset)
-      return plus(fromLP?.uusd.amount, assetValue)
-    })
+    dataSource.map(({ withdrawable }) => withdrawable.value)
   )
 
   return { keys, loading, dataSource, totalWithdrawableValue }

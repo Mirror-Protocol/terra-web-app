@@ -83,8 +83,10 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   /* estimate:result */
   const getPool = usePool()
-  const { toLP, fromLP, text, ...rest } = getPool({ amount, token })
-  const { uusdEstimated: estimated } = rest
+  const pool = token ? getPool({ amount, token }) : undefined
+  const toLP = pool?.toLP
+  const fromLP = pool?.fromLP
+  const estimated = pool?.toLP.estimated
 
   const uusd = {
     [Type.PROVIDE]: estimated,
@@ -93,13 +95,13 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   const total = find(BalanceKey.LPTOTAL, token)
   const lpAfterTx = {
-    [Type.PROVIDE]: plus(total, toLP),
+    [Type.PROVIDE]: plus(total, toLP?.value),
     [Type.WITHDRAW]: max([minus(total, amount), "0"]),
   }[type]
 
   /* share of pool */
   const modifyTotal = {
-    [Type.PROVIDE]: (total: string) => plus(total, toLP),
+    [Type.PROVIDE]: (total: string) => plus(total, toLP?.value),
     [Type.WITHDRAW]: (total: string) => minus(total, amount),
   }[type]
 
@@ -150,7 +152,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     estimated: {
       [Type.PROVIDE]: {
         label: <TooltipIcon content={Tooltip.Pool.InputUST}>{UST}</TooltipIcon>,
-        value: text.toLP,
+        value: toLP?.text,
         help: renderBalance(find(balanceKey, UUSD), UUSD),
         unit: UST,
       },
@@ -158,7 +160,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         label: (
           <TooltipIcon content={Tooltip.Pool.Output}>Received</TooltipIcon>
         ),
-        value: text.fromLP,
+        value: fromLP?.text,
       },
     }[type],
   }
@@ -191,7 +193,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
               LP from Tx
             </TooltipIcon>
           ),
-          content: <Count symbol={LP}>{toLP}</Count>,
+          content: <Count symbol={LP}>{toLP?.value}</Count>,
         }),
         ...insertIf(type === Type.WITHDRAW || gt(balance, 0), {
           title: "LP after Tx",
@@ -244,8 +246,8 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         ],
       }[type]
 
-  const disabled =
-    invalid || (type === Type.PROVIDE && gt(estimated, find(balanceKey, UUSD)))
+  const insufficient = !!estimated && gt(estimated, find(balanceKey, UUSD))
+  const disabled = invalid || (type === Type.PROVIDE && insufficient)
 
   /* result */
   const parseTx = usePoolReceipt(type)
