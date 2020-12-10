@@ -51,8 +51,10 @@ const useMyStake = () => {
         ),
         ...listedAll
           .map(getData)
-          .filter(({ staked, stakable }) =>
-            [staked, stakable].some((balance) => gt(balance, 0))
+          .filter(({ staked, stakable, reward }) =>
+            [staked, stakable, reward].some(
+              (balance) => balance && gt(balance, 0)
+            )
           ),
       ]
 
