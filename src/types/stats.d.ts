@@ -2,6 +2,7 @@ interface Dashboard {
   assetMarketCap: string
   totalValueLocked: string
   collateralRatio: string
+  mirCirculatingSupply: string
 
   latest24h: {
     transactions: string

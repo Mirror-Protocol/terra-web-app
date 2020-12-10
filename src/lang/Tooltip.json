@@ -89,7 +89,6 @@
   "Stake": {
     "MIRprice": "Terraswap price of MIR that is determined by the current pool ratio",
     "MIRvolume": "Total value of MIR traded in the last 24 hours",
-    "MIRsupply": "Total quantity of MIR tokens minted since genesis",
     "Title": "LP tokens can be staked to earn MIR as rewards. LP tokens are obtained by providing asset liquidity.",
     "APR": "Annualized LP staking return based on the MIR distribution, LP staking ratio, and pool value",
     "TotalStaked": "Quantity of LP tokens staked for the corresponding asset liquidity pool"

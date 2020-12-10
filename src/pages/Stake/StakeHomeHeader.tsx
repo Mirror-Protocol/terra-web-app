@@ -7,15 +7,13 @@ import useDashboard from "../../statistics/useDashboard"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
 import Summary from "../../components/Summary"
-import CountWithResult from "../../containers/CountWithResult"
 import { TooltipIcon } from "../../components/Tooltip"
-import useMirrorTokenInfo from "./useMirrorTokenInfo"
+import CountWithResult from "../../containers/CountWithResult"
 
 const StakeHomeHeader = () => {
   const { getToken } = useContractsAddress()
   const { find } = useContract()
   const { dashboard, ...result } = useDashboard()
-  const supply = useMirrorTokenInfo()
 
   const contents = [
     {
@@ -43,14 +41,10 @@ const StakeHomeHeader = () => {
     },
 
     {
-      title: (
-        <TooltipIcon content={Tooltip.Stake.MIRsupply}>
-          {MIR} Supply
-        </TooltipIcon>
-      ),
-      content: "-" || (
-        <CountWithResult results={[supply.result]} symbol={MIR} integer>
-          {supply.value}
+      title: `${MIR} Circulating Supply`,
+      content: (
+        <CountWithResult results={[result]} symbol={MIR} integer>
+          {dashboard?.mirCirculatingSupply}
         </CountWithResult>
       ),
     },

@@ -14,6 +14,7 @@ export const STATISTICS = gql`
       assetMarketCap
       totalValueLocked
       collateralRatio
+      mirCirculatingSupply
 
       latest24h {
         transactions

@@ -3,26 +3,27 @@ import { MIR } from "../../constants"
 import { div, minus, isFinite } from "../../libs/math"
 import { percent } from "../../libs/num"
 import { GovKey, useGov, useRefetchGov } from "../../graphql/useGov"
+import useDashboard from "../../statistics/useDashboard"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
 import Summary from "../../components/Summary"
-import CountWithResult from "../../containers/CountWithResult"
 import { TooltipIcon } from "../../components/Tooltip"
-import useMirrorTokenInfo from "../Stake/useMirrorTokenInfo"
+import CountWithResult from "../../containers/CountWithResult"
 import GovMIR from "./GovMIR"
 import styles from "./GovHomeHeader.module.scss"
 
 const GovHomeHeader = () => {
   useRefetchGov([GovKey.BALANCE, GovKey.STATE])
   const { result, balance, state } = useGov()
-  const supply = useMirrorTokenInfo()
+  const dashboard = useDashboard()
+  const supply = dashboard.dashboard?.mirCirculatingSupply
 
   const totalStaked = [balance, state?.total_deposit].every(isFinite)
     ? minus(balance, state?.total_deposit)
     : "0"
 
-  const totalStakedRatio = [totalStaked, supply.value].every(isFinite)
-    ? div(totalStaked, supply.value)
+  const totalStakedRatio = [totalStaked, supply].every(isFinite)
+    ? div(totalStaked, supply)
     : "0"
 
   return (
@@ -53,11 +54,9 @@ const GovHomeHeader = () => {
                 </TooltipIcon>
               }
             >
-              {"-" || (
-                <CountWithResult results={[supply.result]} format={percent}>
-                  {totalStakedRatio}
-                </CountWithResult>
-              )}
+              <CountWithResult results={[dashboard]} format={percent}>
+                {totalStakedRatio}
+              </CountWithResult>
             </Summary>
           </Card>
         </Grid>
