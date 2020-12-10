@@ -2,17 +2,7 @@
 @import "variables";
 
 .wallet {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 10px;
-  padding: 25px;
-  width: 310px;
-
-  background: $darkblue;
-  border: 1px solid fade-out($blue, 0.75);
-  border-radius: $border-radius;
-  box-shadow: 0 20px 40px fade-out(black, 0.5);
+  width: 260px;
 
   i {
     margin-right: 5px;

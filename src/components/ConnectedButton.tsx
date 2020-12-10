@@ -1,6 +1,6 @@
-import { FC, ReactNode, useEffect, useRef, useState } from "react"
-import useOnClickOutside from "use-onclickoutside"
+import { FC, ReactNode } from "react"
 import ConnectButton from "./ConnectButton"
+import WithAbsolute from "./WithAbsolute"
 import styles from "./ConnectedButton.module.scss"
 
 interface Props {
@@ -9,22 +9,9 @@ interface Props {
   info: (close: () => void) => ReactNode
 }
 
-const ConnectedButton: FC<Props> = ({ address, balance, info }) => {
-  const ref = useRef(null)
-  const [isOpen, setIsOpen] = useState(false)
-  const close = () => setIsOpen(false)
-  const toggle = () => setIsOpen(!isOpen)
-
-  /* close card on click outside */
-  useOnClickOutside(ref, close)
-
-  /* close card on disconnected */
-  useEffect(() => {
-    close()
-  }, [address])
-
-  return (
-    <div className={styles.wrapper} ref={ref}>
+const ConnectedButton: FC<Props> = ({ address, balance, info }) => (
+  <WithAbsolute content={({ close }) => info(close)} trigger={address}>
+    {({ toggle }) => (
       <ConnectButton
         address={address}
         className={styles.connected}
@@ -32,10 +19,8 @@ const ConnectedButton: FC<Props> = ({ address, balance, info }) => {
       >
         {balance && <strong className={styles.balance}>{balance}</strong>}
       </ConnectButton>
-
-      {isOpen && info(close)}
-    </div>
-  )
-}
+    )}
+  </WithAbsolute>
+)
 
 export default ConnectedButton

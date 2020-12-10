@@ -1,9 +1,4 @@
 @import "mixins";
-@import "variables";
-
-.wrapper {
-  position: relative;
-}
 
 .connected {
   @include flex(center, stretch);
