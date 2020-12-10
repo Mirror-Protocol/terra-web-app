@@ -1,0 +1,60 @@
+@import "mixins";
+
+.header {
+  @include flex(space-between);
+  color: $light;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.main {
+  @include flex;
+
+  .button {
+    flex: 1;
+  }
+
+  .button:not(:first-child) {
+    margin-left: 20px;
+  }
+}
+
+.button {
+  @include flex(flex-start);
+  @include link(white, white);
+  @include transition(border-color);
+
+  border-radius: 20px;
+  border-width: 1px;
+  border-style: solid;
+  padding: 0 20px;
+  text-align: left;
+  height: 40px;
+
+  &:hover {
+    text-decoration: none;
+    border-color: $blue;
+  }
+}
+
+.terra {
+  $bg: #232d4b;
+  background: $bg;
+  border-color: $bg;
+}
+
+.eth {
+  $bg: #1e1b21;
+  background: $bg;
+  border-color: $bg;
+}
+
+.kucoin {
+  fill: #0296e6;
+}
+
+.name {
+  flex: 1;
+  margin-left: 10px;
+}

@@ -63,6 +63,7 @@
 }
 
 .connect {
+  @include flex;
   padding-left: 15px;
 
   @include mobile {

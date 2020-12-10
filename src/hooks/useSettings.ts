@@ -1,4 +1,4 @@
-import useLocalStorage from "../libs/useLocalStorage"
+import useLocalStorage, { LocalStorage } from "../libs/useLocalStorage"
 import createContext from "./createContext"
 
 interface Settings {

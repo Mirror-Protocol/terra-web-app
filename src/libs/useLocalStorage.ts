@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+export type LocalStorage<T> = [T, (value: T | ((val: T) => T)) => void]
+
 const useLocalStorage = <T>(key: string, initial?: T): LocalStorage<T> => {
   const [stored, setStored] = useState<T>(() => {
     try {

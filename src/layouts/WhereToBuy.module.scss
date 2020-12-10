@@ -1,0 +1,11 @@
+@import "mixins";
+
+.button {
+  @include flex;
+  margin-left: 15px;
+  color: $blue;
+}
+
+.card {
+  width: 310px;
+}
