@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import { UST, UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"
 import { times, lt, gt } from "../../libs/math"
@@ -6,10 +7,12 @@ import { useContractsAddress, useContract, useRefetch } from "../../hooks"
 import { AssetInfoKey, PriceKey } from "../../hooks/contractKeys"
 import useAssetStats from "../../statistics/useAssetStats"
 import useYesterday, { calcChange } from "../../statistics/useYesterday"
+import { getPath, MenuKey } from "../../routes"
 import Card from "../../components/Card"
 import Table from "../../components/Table"
 import Change from "../../components/Change"
 import { TooltipIcon } from "../../components/Tooltip"
+import { Type } from "../Trade"
 import styles from "./TopTrading.module.scss"
 
 const TopTrading = () => {
@@ -62,7 +65,21 @@ const TopTrading = () => {
               render: (_value, _record, index) => index + 1,
               align: "center",
             },
-            { key: "symbol", title: "Ticker", bold: true },
+            {
+              key: "symbol",
+              title: "Ticker",
+              render: (symbol, { token }) => {
+                const path = getPath(MenuKey.TRADE)
+                const to = { pathname: path, hash: Type.BUY, state: { token } }
+
+                return (
+                  <Link className={styles.link} to={to}>
+                    {symbol}
+                  </Link>
+                )
+              },
+              bold: true,
+            },
             { key: "name", title: "Underlying Name" },
             {
               key: "volume",
