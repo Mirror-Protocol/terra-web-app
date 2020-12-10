@@ -65,6 +65,7 @@ const useMyStake = () => {
     keys,
     loading,
     dataSource,
+    price,
     totalRewards,
     totalRewardsValue,
     govStakedValue,

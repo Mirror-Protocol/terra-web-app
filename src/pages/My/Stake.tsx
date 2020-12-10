@@ -1,8 +1,8 @@
-import { LP, MIR, UUSD } from "../../constants"
+import { LP, MIR, UST, UUSD } from "../../constants"
 import MESSAGE from "../../lang/MESSAGE.json"
 import Tooltip from "../../lang/Tooltip.json"
 import { gt } from "../../libs/math"
-import { formatAsset } from "../../libs/parse"
+import { format, formatAsset } from "../../libs/parse"
 import { percent } from "../../libs/num"
 import getLpName from "../../libs/getLpName"
 import { getPath, MenuKey } from "../../routes"
@@ -27,13 +27,14 @@ interface Data extends ListedItem {
 
 interface Props {
   loading: boolean
+  price: string
   totalRewards: string
   totalRewardsValue: string
   dataSource: Data[]
 }
 
 const Stake = ({ loading, dataSource, ...props }: Props) => {
-  const { totalRewards, totalRewardsValue } = props
+  const { price, totalRewards, totalRewardsValue } = props
 
   const claimAll = {
     to: getPath(MenuKey.STAKE) + stakeMenu[StakeMenuKey.CLAIMALL].path,
@@ -52,6 +53,10 @@ const Stake = ({ loading, dataSource, ...props }: Props) => {
         {
           title: "Total Reward",
           content: formatAsset(totalRewards, MIR),
+        },
+        {
+          title: `${MIR} Price`,
+          content: `${format(price)} ${UST}`,
         },
         {
           title: "Total Reward Value",
