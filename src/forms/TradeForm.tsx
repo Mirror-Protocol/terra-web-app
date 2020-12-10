@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom"
 import { isNil } from "ramda"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
-import { COMMISSION, MAX_SPREAD, UUSD } from "../constants"
+import { COMMISSION, MAX_SPREAD, MIR, UUSD } from "../constants"
 import Tooltip from "../lang/Tooltip.json"
 import { div } from "../libs/math"
 import { useRefetch } from "../hooks"
@@ -41,7 +41,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   /* context */
   const { state } = useLocation<{ token: string }>()
-  const { whitelist, getSymbol, toToken } = useContractsAddress()
+  const { whitelist, getToken, getSymbol, toToken } = useContractsAddress()
   const { find } = useContract()
   useRefetch([priceKey, balanceKey])
 
@@ -64,7 +64,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const initial = {
     [Key.value1]: "",
     [Key.value2]: "",
-    [Key.token]: state?.token ?? "",
+    [Key.token]: state?.token ?? getToken(MIR),
   }
 
   const form = useForm<Key>(initial, validate)
