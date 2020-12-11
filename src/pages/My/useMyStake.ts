@@ -46,7 +46,7 @@ const useMyStake = () => {
     ? []
     : [
         ...insertIf(
-          gt(find(BalanceKey.MIRGOVSTAKED, mir), 0),
+          gt(find(BalanceKey.MIRGOVSTAKED, mir), 1),
           getData({ ...whitelist[mir], gov: true })
         ),
         ...listedAll
