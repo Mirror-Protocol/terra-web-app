@@ -47,6 +47,7 @@
   padding: 10px 30px;
   width: 100%;
 
+  &.selected,
   &:not(.disabled):hover {
     background: fade-out(white, 0.95);
   }

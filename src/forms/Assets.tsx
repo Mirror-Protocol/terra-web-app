@@ -82,7 +82,7 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
               <li key={token}>
                 <button
                   type="button"
-                  className={cx(styles.button, { disabled: isSelected })}
+                  className={cx(styles.button, { selected: isSelected })}
                   onClick={() => onSelect(token)}
                   disabled={priceKey && (!price || !gt(price, 0))}
                 >
