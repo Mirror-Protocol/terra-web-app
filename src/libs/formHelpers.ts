@@ -1,4 +1,5 @@
-import { div, gt, gte, lte, pow } from "./math"
+import { AccAddress } from "@terra-money/terra.js"
+import { div, gt, gte, isInteger, lte, pow } from "./math"
 import { getLength, omitEmpty } from "./utils"
 import { dp, validateDp, lookup, format, toAmount } from "./parse"
 
@@ -41,7 +42,7 @@ export const validate = {
       ? `${label} must be shorter than ${max} bytes.`
       : "",
 
-  address: (value: string, isAddress: ((value: string) => boolean)[]) =>
+  address: (value: string, isAddress = [AccAddress.validate]) =>
     !value
       ? "Required"
       : !isAddress.some((validate) => validate(value))
@@ -59,6 +60,9 @@ export const validate = {
         : "Invalid URL"
     }
   },
+
+  integer: (value: string, label: string) =>
+    !isInteger(value) ? `${label} must be an integer` : "",
 
   amount: (value: string, range: AmountRange = {}, label = "Amount") => {
     const { optional, symbol, min, max } = range

@@ -118,7 +118,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
     const next = address
       ? {
           onClick: confirm,
-          children: hash ?? label ?? "Submit",
+          children: label ?? hash ?? "Submit",
           loading: submitted,
           disabled,
         }

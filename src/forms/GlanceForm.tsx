@@ -1,5 +1,4 @@
 import { FormEvent } from "react"
-import { AccAddress } from "@terra-money/terra.js"
 import MESSAGE from "../lang/MESSAGE.json"
 import useForm from "../libs/useForm"
 import { validate as v } from "../libs/formHelpers"
@@ -14,7 +13,7 @@ const GlanceForm = () => {
   const { values, getFields, invalid } = useForm(
     { address: "" },
     ({ address }) => ({
-      address: v.address(address, [AccAddress.validate]),
+      address: v.address(address),
     })
   )
 

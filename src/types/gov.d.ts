@@ -79,6 +79,9 @@ interface Voter {
 
 /* config */
 interface GovConfig {
+  owner: string
+  voting_period: number
+  expiration_period: number
   effective_delay: number
   quorum: string
   threshold: string

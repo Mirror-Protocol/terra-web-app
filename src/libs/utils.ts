@@ -17,7 +17,8 @@ export const record = <T, V>(
 export const omitEmpty = (object: object): object =>
   Object.entries(object).reduce((acc, [key, value]) => {
     const next = is(Object, value) ? omitEmpty(value) : value
-    return Object.assign({}, acc, value && { [key]: next })
+    const valid = Number.isFinite(value) || value
+    return Object.assign({}, acc, valid && { [key]: next })
   }, {})
 
 /* array */

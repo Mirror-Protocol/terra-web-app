@@ -1,179 +1,284 @@
-import { AccAddress } from "@terra-money/terra.js"
+import { Fragment } from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import Tooltip from "../lang/Tooltip.json"
 import { MAX_MSG_LENGTH, MIR } from "../constants"
-import { div, gt } from "../libs/math"
+import { div, gt, times } from "../libs/math"
 import { record, getLength } from "../libs/utils"
-import { lookup } from "../libs/parse"
+import { lookup, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
-import { validate as v, step, toBase64 } from "../libs/formHelpers"
+import { validate as v, step, toBase64, placeholder } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import { useRefetch, useContractsAddress, useContract } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 import { GovKey, useGov } from "../graphql/useGov"
+import useContractQuery from "../graphql/useContractQuery"
 import { TooltipIcon } from "../components/Tooltip"
+import FormGroup from "../components/FormGroup"
+import FormFeedback from "../components/FormFeedback"
 import { Type } from "../pages/Poll/CreatePoll"
 import useGovReceipt from "./receipts/useGovReceipt"
 import useSelectAsset, { Config } from "./useSelectAsset"
 import FormContainer from "./FormContainer"
-import FormGroup from "../components/FormGroup"
-import FormCheck from "../components/FormCheck"
 
 enum Key {
-  /* poll */
   title = "title",
   description = "description",
   link = "link",
 
-  /* asset */
+  /* Type.TEXT_WHITELIST */
   name = "name",
-  symbol = "symbol",
-  oracle = "oracle",
+  ticker = "ticker",
+  listed = "listed",
+  suggestedOracle = "suggestedOracle",
 
-  /* params:whitelist */
-  weight = "weight",
-  lpCommission = "lpCommission",
-  ownerCommission = "ownerCommission",
+  /* Type.WHITELIST */
+  symbol = "symbol",
+  reference = "reference",
+  oracle = "oracle",
   auctionDiscount = "auctionDiscount",
   minCollateralRatio = "minCollateralRatio",
 
-  /* params:parameter change */
-  parameter = "parameter",
+  /* Type.MINT_UPDATE */
   asset = "asset",
+
+  /* Type.GOV_UPDATE */
+  owner = "owner",
+  quorum = "quorum",
+  threshold = "threshold",
+  votingPeriod = "votingPeriod",
+  effectiveDelay = "effectiveDelay",
+  expirationPeriod = "expirationPeriod",
+  proposalDeposit = "proposalDeposit",
+
+  /* Type.COMMUNITY_SPEND */
+  recipient = "recipient",
+  amount = "amount",
 }
 
-enum Parameter {
-  WEIGHT = "Weight",
-  COMMISSION = "Commission",
-  MINT = "Mint",
-}
-
-const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
+const CreatePollForm = ({ type }: { type: Type }) => {
   const balanceKey = BalanceKey.TOKEN
   const governance = useGov()
+  const { config } = governance
+  const communityPool = useCommunityPool()
+  const spend_limit = communityPool.parsed?.spend_limit
 
-  const getFieldKeys = (parameter?: string) => {
-    const paramsFieldKeys =
-      {
-        [Parameter.WEIGHT]: [Key.weight],
-        [Parameter.COMMISSION]: [Key.lpCommission, Key.ownerCommission],
-        [Parameter.MINT]: [Key.auctionDiscount, Key.minCollateralRatio],
-      }[parameter as Parameter] ?? []
+  const getFieldKeys = () => {
+    // Determine here which key to use for each type.
+    // Filter out the validation and the fields to be printed on the screen based on this.
 
-    return [
-      Key.title,
-      Key.description,
-      Key.link,
+    const defaultKeys = [Key.title, Key.description, Key.link]
+    const additionalKeys = {
+      [Type.TEXT]: defaultKeys,
+      [Type.TEXT_WHITELIST]: [
+        Key.name,
+        Key.ticker,
+        Key.listed,
+        Key.description,
+        Key.link,
+        Key.suggestedOracle,
+      ],
+      [Type.WHITELIST]: [
+        ...defaultKeys,
+        Key.name,
+        Key.symbol,
+        Key.reference,
+        Key.oracle,
+        Key.auctionDiscount,
+        Key.minCollateralRatio,
+      ],
+      [Type.MINT_UPDATE]: [
+        ...defaultKeys,
+        Key.asset,
+        Key.auctionDiscount,
+        Key.minCollateralRatio,
+      ],
+      [Type.GOV_UPDATE]: [
+        ...defaultKeys,
+        Key.quorum,
+        Key.threshold,
+        Key.votingPeriod,
+        Key.effectiveDelay,
+        Key.expirationPeriod,
+        Key.proposalDeposit,
+      ],
+      [Type.COMMUNITY_SPEND]: [...defaultKeys, Key.recipient, Key.amount],
+    }
 
-      ...{
-        [Type.WHITELIST]: [
-          Key.name,
-          Key.symbol,
-          Key.oracle,
+    return additionalKeys[type]
+  }
 
-          Key.weight,
-          Key.lpCommission,
-          Key.ownerCommission,
-          Key.auctionDiscount,
-          Key.minCollateralRatio,
-        ],
-        [Type.PARAMS]: [Key.asset, Key.parameter, ...paramsFieldKeys],
-      }[type],
+  const combineTitle = ({ title, name, ticker }: Values<Key>) =>
+    type === Type.TEXT_WHITELIST ? `[Whitelist] ${name} (${ticker})` : title
+
+  const combineDescription = ({ description, ...values }: Values<Key>) => {
+    const { listed, suggestedOracle, reference } = values
+
+    const combined = [
+      description,
+      listed && `Listed Exchange: ${listed}`,
+      suggestedOracle && `Suggested Oracle: ${suggestedOracle}`,
+      reference && `Reference Poll ID: ${reference}`,
     ]
+
+    return combined.filter(Boolean).join("\n")
   }
 
   /* context */
-  const { contracts, whitelist, getToken } = useContractsAddress()
+  const { contracts, getToken } = useContractsAddress()
   const { result, find } = useContract()
   useRefetch([balanceKey])
 
   /* form:validate */
-  const validate = ({ title, description, link, ...values }: Values<Key>) => {
-    const { name, symbol, oracle, asset, parameter } = values
+  const validate = (values: Values<Key>) => {
+    const { title, description, link } = values
+    const { name, ticker, symbol, oracle, asset } = values
     const { auctionDiscount, minCollateralRatio } = values
+    const { owner, quorum, threshold, votingPeriod } = values
+    const { effectiveDelay, expirationPeriod, proposalDeposit } = values
+    const { recipient, amount } = values
+    const { listed, reference } = values
 
-    const range = { optional: type === Type.PARAMS, max: "100" }
-    const ranges = {
+    const paramRange = {
+      optional: [Type.MINT_UPDATE, Type.GOV_UPDATE].includes(type),
+      max: "100",
+    }
+
+    const textRanges = {
       [Key.title]: { min: 4, max: 64 },
       [Key.description]: { min: 4, max: 64 },
       [Key.link]: { min: 12, max: 128 },
       [Key.name]: { min: 3, max: 50 },
+      [Key.ticker]: { min: 2, max: 11 },
       [Key.symbol]: { min: 3, max: 12 },
     }
 
     return record(
       {
         [Key.title]:
-          v.required(title) || v.length(title, ranges[Key.title], "Title"),
+          type === Type.TEXT_WHITELIST
+            ? ""
+            : v.required(title) ||
+              v.length(title, textRanges[Key.title], "Title"),
         [Key.description]:
           v.required(description) ||
-          v.length(description, ranges[Key.description], "Description"),
-        [Key.link]: link
-          ? v.length(link, ranges[Key.link], "Link") || v.url(link)
-          : "",
+          v.length(description, textRanges[Key.description], "Description"),
+        [Key.link]: !link
+          ? ""
+          : v.length(link, textRanges[Key.link], "Link") || v.url(link),
 
+        // Type.TEXT_WHITELIST
         [Key.name]:
-          v.required(name) || v.length(name, ranges[Key.name], "Name"),
+          v.required(name) || v.length(name, textRanges[Key.name], "Name"),
+        [Key.ticker]:
+          v.required(ticker) ||
+          v.length(ticker, textRanges[Key.ticker], "Ticker") ||
+          v.symbol(ticker),
+        [Key.listed]: v.required(listed),
+        [Key.suggestedOracle]: "",
+
+        // Type.WHITELIST
         [Key.symbol]:
           v.required(symbol) ||
-          v.length(symbol, ranges[Key.symbol], "Symbol") ||
+          v.length(symbol, textRanges[Key.symbol], "Symbol") ||
           v.symbol(symbol),
+        [Key.reference]: !reference
+          ? ""
+          : v.integer(reference, "Reference Poll ID"),
+        [Key.oracle]: v.address(oracle),
+
+        // Type.MINT_UPDATE
         [Key.asset]: v.required(asset),
 
-        [Key.oracle]: v.address(oracle, [AccAddress.validate]),
-        [Key.parameter]: v.required(parameter),
+        [Key.auctionDiscount]: v.amount(
+          auctionDiscount,
+          paramRange,
+          "Auction discount"
+        ),
+        [Key.minCollateralRatio]: v.amount(
+          minCollateralRatio,
+          { ...paramRange, max: undefined },
+          "Minimum collateral ratio"
+        ),
 
-        [Key.weight]: "",
-        [Key.lpCommission]: "",
-        [Key.ownerCommission]: "",
-        [Key.auctionDiscount]:
-          parameter && auctionDiscount
-            ? ""
-            : v.amount(auctionDiscount, range, "Auction discount"),
-        [Key.minCollateralRatio]:
-          parameter && minCollateralRatio
-            ? ""
-            : v.amount(
-                minCollateralRatio,
-                { ...range, max: undefined },
-                "Minimum collateral ratio"
-              ),
+        // Type.GOV_UPDATE
+        [Key.owner]: !owner ? "" : v.address(owner),
+        [Key.quorum]: !quorum ? "" : v.amount(quorum, paramRange, "Quorum"),
+        [Key.threshold]: !threshold
+          ? ""
+          : v.amount(threshold, paramRange, "Threshold"),
+        [Key.votingPeriod]: !votingPeriod
+          ? ""
+          : v.integer(votingPeriod, "Voting Period"),
+        [Key.effectiveDelay]: !effectiveDelay
+          ? ""
+          : v.integer(effectiveDelay, "Effective Delay"),
+        [Key.expirationPeriod]: !expirationPeriod
+          ? ""
+          : v.integer(expirationPeriod, "Expiration Period"),
+        [Key.proposalDeposit]: !proposalDeposit
+          ? ""
+          : v.amount(proposalDeposit, { symbol: MIR }),
+
+        // Type.COMMUNITY_SPEND
+        [Key.recipient]: v.address(recipient),
+        [Key.amount]: v.amount(amount, { symbol: MIR }),
       },
       "",
-      getFieldKeys(parameter)
+      getFieldKeys()
     )
   }
 
   /* form:hook */
-  const defaultParams = {
-    [Type.WHITELIST]: {
-      [Key.auctionDiscount]: "20",
-      [Key.minCollateralRatio]: "150",
-    },
-    [Type.PARAMS]: {
-      [Key.parameter]: Parameter.MINT,
-    },
-  }[type]
-
-  const initial = Object.assign(record(Key, ""), defaultParams)
+  const initial = Object.assign(record(Key, ""))
 
   const form = useForm<Key>(initial, validate)
-  const { values, setValue, handleChange, getFields, attrs, invalid } = form
-  const { title, description, link } = values
+  const { values, setValue, getFields, attrs, invalid } = form
+
+  const title = combineTitle(values)
+  const description = combineDescription(values)
+
+  const { link } = values
   const { name, symbol, oracle, asset } = values
-  const { weight, lpCommission, ownerCommission } = values
   const { auctionDiscount, minCollateralRatio } = values
-  const amount = governance[GovKey.CONFIG]?.["proposal_deposit"] ?? "0"
-  const value = lookup(amount, MIR)
+  const { owner, quorum, threshold, votingPeriod } = values
+  const { effectiveDelay, expirationPeriod, proposalDeposit } = values
+  const { recipient, amount } = values
+
+  const deposit = config?.proposal_deposit ?? "0"
+  const value = lookup(deposit, MIR)
 
   /* render:form */
-  const config: Config = {
+  const selectAssetConfig: Config = {
     token: asset,
     onSelect: (value) => setValue(Key.asset, value),
     skip: ["MIR"],
   }
 
-  const select = useSelectAsset(config)
+  const select = useSelectAsset(selectAssetConfig)
+
+  const descriptionLabel = {
+    [Type.TEXT]: "Description",
+    [Type.TEXT_WHITELIST]: "Reason for listing",
+    [Type.WHITELIST]: "Description",
+    [Type.MINT_UPDATE]: "Reason for modifying mint parameter",
+    [Type.GOV_UPDATE]: "Reason for modifying governance parameter",
+    [Type.COMMUNITY_SPEND]: "Reason for community pool spending",
+  }[type]
+
+  const mintPlaceholders = {
+    [Key.auctionDiscount]: "20",
+    [Key.minCollateralRatio]: "150",
+  }
+
+  const configPlaceholders = {
+    [Key.owner]: config?.owner ?? "",
+    [Key.quorum]: times(config?.quorum, 100),
+    [Key.threshold]: times(config?.threshold, 100),
+    [Key.votingPeriod]: config?.voting_period ?? "",
+    [Key.effectiveDelay]: config?.effective_delay ?? "",
+    [Key.expirationPeriod]: config?.expiration_period ?? "",
+    [Key.proposalDeposit]: lookup(config?.proposal_deposit, MIR) ?? "",
+  }
 
   const fields = {
     deposit: {
@@ -189,60 +294,59 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         input: { placeholder: "", autoFocus: true },
       },
       [Key.description]: {
-        label: "Description",
-        textarea: {
-          placeholder: "",
-        },
+        label: descriptionLabel,
+        textarea: { placeholder: "" },
       },
       [Key.link]: {
-        label: "Information Link",
-        input: { placeholder: "URL to asset detail" },
+        label: "Information Link (Optional)",
+        input: {
+          placeholder: [Type.TEXT_WHITELIST, Type.WHITELIST].includes(type)
+            ? "URL for additional asset information (Bloomberg, Investing.com, Yahoo Finance, etc.)"
+            : "URL for additional information",
+        },
       },
 
+      // Type.TEXT_WHITELIST
       [Key.name]: {
         label: "Asset Name",
-        input: { placeholder: "" },
+        input: {
+          placeholder: "Apple Inc.",
+          autoFocus: type === Type.TEXT_WHITELIST,
+        },
       },
+      [Key.ticker]: {
+        label: "Ticker",
+        input: { placeholder: "AAPL" },
+      },
+      [Key.listed]: {
+        label: "Listed Exchange",
+        input: { placeholder: "NASDAQ" },
+      },
+      [Key.suggestedOracle]: {
+        label: "Suggested Oracle (Optional)",
+        input: { placeholder: "Band Protocol" },
+      },
+
+      // Type.WHITELIST
       [Key.symbol]: {
         label: "Symbol",
+        input: { placeholder: "mAAPL" },
+      },
+      [Key.oracle]: {
+        label: "Oracle Feeder",
+        input: { placeholder: "Terra address of the oracle feeder" },
+      },
+      [Key.reference]: {
+        label: "Reference Poll ID (Optional)",
         input: { placeholder: "" },
       },
+
+      // Type.MINT_UPDATE
       [Key.asset]: {
         label: "Asset",
         select: select.button,
         assets: select.assets,
         focused: select.isOpen,
-      },
-
-      [Key.oracle]: {
-        label: "Oracle Feeder",
-        input: {
-          placeholder: "Terra address of the oracle feeder",
-        },
-      },
-
-      [Key.weight]: {
-        label: <TooltipIcon content={Tooltip.Gov.Weight}>Weight</TooltipIcon>,
-        input: { type: "number", step: step(), disabled: true },
-        unit: "%",
-      },
-      [Key.lpCommission]: {
-        label: (
-          <TooltipIcon content={Tooltip.Gov.LPcommission}>
-            LP Commission
-          </TooltipIcon>
-        ),
-        input: { type: "number", step: step(), disabled: true },
-        unit: "%",
-      },
-      [Key.ownerCommission]: {
-        label: (
-          <TooltipIcon content={Tooltip.Gov.OwnerCommission}>
-            MIR Staking Commission
-          </TooltipIcon>
-        ),
-        input: { type: "number", step: step(), disabled: true },
-        unit: "%",
       },
       [Key.auctionDiscount]: {
         label: (
@@ -253,7 +357,7 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         input: {
           type: "number",
           step: step(),
-          placeholder: defaultParams[Key.auctionDiscount],
+          placeholder: mintPlaceholders[Key.auctionDiscount],
         },
         unit: "%",
       },
@@ -266,35 +370,75 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         input: {
           type: "number",
           step: step(),
-          placeholder: defaultParams[Key.minCollateralRatio],
+          placeholder: mintPlaceholders[Key.minCollateralRatio],
         },
         unit: "%",
+      },
+
+      // Type.GOV_UPDATE
+      [Key.owner]: {
+        label: "Owner (Optional)",
+        input: { placeholder: configPlaceholders[Key.owner] },
+      },
+      [Key.quorum]: {
+        label: "Quorum (Optional)",
+        input: {
+          type: "number",
+          step: step(),
+          placeholder: configPlaceholders[Key.quorum],
+        },
+        unit: "%",
+      },
+      [Key.threshold]: {
+        label: "Threshold (Optional)",
+        input: {
+          type: "number",
+          step: step(),
+          placeholder: configPlaceholders[Key.threshold],
+        },
+        unit: "%",
+      },
+      [Key.votingPeriod]: {
+        label: "Voting Period (Optional)",
+        input: { placeholder: configPlaceholders[Key.votingPeriod] },
+        unit: "Block(s)",
+      },
+      [Key.effectiveDelay]: {
+        label: "Effective Delay (Optional)",
+        input: { placeholder: configPlaceholders[Key.effectiveDelay] },
+        unit: "Block(s)",
+      },
+      [Key.expirationPeriod]: {
+        label: "Expiration Period (Optional)",
+        input: { placeholder: configPlaceholders[Key.expirationPeriod] },
+        unit: "Block(s)",
+      },
+      [Key.proposalDeposit]: {
+        label: "Proposal Deposit (Optional)",
+        input: { placeholder: configPlaceholders[Key.proposalDeposit] },
+        unit: MIR,
+      },
+
+      // Type.COMMUNITY_SPEND
+      [Key.recipient]: {
+        label: "Recipient",
+        input: { placeholder: "Terra address" },
+      },
+      [Key.amount]: {
+        label: "Amount",
+        input: { placeholder: placeholder(MIR) },
+        help: renderBalance(spend_limit, MIR),
+        unit: MIR,
       },
     }),
   }
 
-  const radio = Object.entries(Parameter).map(([key, value]) => ({
-    attrs: {
-      type: "radio",
-      id: key,
-      name: Key.parameter,
-      value,
-      checked: value === values[Key.parameter],
-      onChange: handleChange,
-      disabled: value !== Parameter.MINT,
-    },
-    label: value,
-  }))
-
-  const fieldKeys = getFieldKeys(values[Key.parameter])
-
   /* submit */
   const newContractMsg = useNewContractMsg()
   const token = asset
-  const { pair } = whitelist[token] ?? {}
-  const { mirrorToken, mint, gov, factory } = contracts
+  const { mirrorToken, mint, gov, factory, community } = contracts
 
-  /* whitelist */
+  /* Type.WHITELIST */
   const whitelistMessage = {
     name,
     symbol,
@@ -305,65 +449,75 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     },
   }
 
-  /* parameter:inflation */
-  const update_weight = {
-    asset_token: token,
-    weight: !weight ? undefined : div(weight, 100),
-  }
-
-  /* parameter:commission */
-  const commissionPassCommand = {
-    contract_addr: pair,
-    msg: toBase64({
-      update_config: {
-        lp_commission: !lpCommission ? undefined : div(lpCommission, 100),
-        owner_commission: !ownerCommission
-          ? undefined
-          : div(ownerCommission, 100),
-      },
-    }),
-  }
-
-  /* parameter:mint */
+  /* Type.MINT_UPDATE */
   const mintPassCommand = {
     contract_addr: mint,
     msg: toBase64({
       update_asset: {
         asset_token: token,
-        auction_discount: !auctionDiscount
-          ? undefined
-          : div(auctionDiscount, 100),
-        min_collateral_ratio: !minCollateralRatio
-          ? undefined
-          : div(minCollateralRatio, 100),
+        auction_discount: auctionDiscount
+          ? div(auctionDiscount, 100)
+          : undefined,
+        min_collateral_ratio: minCollateralRatio
+          ? div(minCollateralRatio, 100)
+          : undefined,
       },
     }),
   }
 
-  const message = {
-    [Type.WHITELIST]: { whitelist: whitelistMessage },
-    [Type.PARAMS]:
-      {
-        [Parameter.WEIGHT]: { update_weight },
-        [Parameter.COMMISSION]: { pass_command: commissionPassCommand },
-        [Parameter.MINT]: { pass_command: mintPassCommand },
-      }[values[Key.parameter] as Parameter] ?? {},
+  /* Type.GOV_UPDATE */
+  const govUpdateConfig = {
+    owner,
+    quorum: quorum ? div(quorum, 100) : undefined,
+    threshold: threshold ? div(threshold, 100) : undefined,
+    voting_period: votingPeriod ? Number(votingPeriod) : undefined,
+    effective_delay: effectiveDelay ? Number(effectiveDelay) : undefined,
+    expiration_period: expirationPeriod ? Number(expirationPeriod) : undefined,
+    proposal_deposit: proposalDeposit ? toAmount(proposalDeposit) : undefined,
+  }
+
+  /* Type.COMMUNITY_SPEND */
+  const communitySpend = {
+    recipient,
+    amount: toAmount(amount),
+  }
+
+  const execute_msg = {
+    [Type.TEXT]: undefined,
+    [Type.TEXT_WHITELIST]: undefined,
+    [Type.WHITELIST]: {
+      contract: factory,
+      msg: toBase64({ whitelist: whitelistMessage }),
+    },
+    [Type.MINT_UPDATE]: {
+      contract: factory,
+      msg: toBase64({ pass_command: mintPassCommand }),
+    },
+    [Type.GOV_UPDATE]: {
+      contract: gov,
+      msg: toBase64({ update_config: govUpdateConfig }),
+    },
+    [Type.COMMUNITY_SPEND]: {
+      contract: community,
+      msg: toBase64({ spend: communitySpend }),
+    },
   }[type]
 
-  const execute_msg = { contract: factory, msg: toBase64(message) }
   const msg = toBase64({
     create_poll: { title, description, link, execute_msg },
   })
 
   const data = [
-    newContractMsg(mirrorToken, { send: { amount, contract: gov, msg } }),
+    newContractMsg(mirrorToken, {
+      send: { amount: deposit, contract: gov, msg },
+    }),
   ]
 
   const loading =
     result[balanceKey].loading || governance.result[GovKey.CONFIG].loading
 
   const messages =
-    !loading && !gt(find(balanceKey, getToken(MIR)), amount)
+    !loading && !gt(find(balanceKey, getToken(MIR)), deposit)
       ? ["Insufficient balance"]
       : getLength(msg) > MAX_MSG_LENGTH
       ? ["Input is too long to be executed"]
@@ -372,20 +526,26 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const disabled = invalid || loading || !!messages?.length
 
   /* result */
+  const label = "Submit"
   const parseTx = useGovReceipt()
-
-  const container = { tab, attrs, contents: [], messages, disabled, data }
+  const fieldKeys = getFieldKeys()
+  const container = { attrs, contents: [], messages, label, disabled, data }
 
   return (
     <FormContainer {...container} parseTx={parseTx} gov>
-      {fieldKeys.map((key) =>
-        key === Key.parameter
-          ? radio.filter(({ attrs }) => !attrs.disabled).length > 1 && (
-              <FormCheck horizontal label="Parameter" list={radio} key={key} />
-            )
-          : !fields[key].input?.disabled && (
-              <FormGroup {...fields[key]} type={2} key={key} />
-            )
+      {fieldKeys.map(
+        (key) =>
+          !fields[key].input?.disabled && (
+            <Fragment key={key}>
+              <FormGroup {...fields[key]} type={2} />
+              {key === Key.description && (
+                <FormFeedback help>
+                  The current maximum description length is 64 bytes.
+                  Description length will be increased on January 1, 2021.
+                </FormFeedback>
+              )}
+            </Fragment>
+          )
       )}
 
       <FormGroup {...fields["deposit"]} type={2} />
@@ -394,3 +554,11 @@ const CreatePollForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 }
 
 export default CreatePollForm
+
+/* community pool */
+const useCommunityPool = () => {
+  const { contracts } = useContractsAddress()
+  const variables = { contract: contracts["community"], msg: { config: {} } }
+  const query = useContractQuery<{ spend_limit: string }>(variables)
+  return query
+}

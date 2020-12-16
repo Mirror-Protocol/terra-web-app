@@ -1,0 +1,29 @@
+@import "mixins";
+
+.link {
+  @include flex(space-between);
+  @include transition(background-color);
+
+  border-top: 1px solid fade-out($slate, 0.8);
+  padding: 20px;
+
+  i {
+    color: $battleship;
+  }
+
+  &:hover {
+    background-color: fade-out(white, 0.95);
+  }
+}
+
+.title {
+  color: white;
+  font-size: 16px;
+  font-weight: normal;
+  margin-bottom: 5px;
+}
+
+.desc {
+  color: $battleship;
+  font-size: 12px;
+}
