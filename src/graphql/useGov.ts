@@ -1,17 +1,21 @@
 import { useEffect } from "react"
 import { Dictionary } from "ramda"
 import { QueryResult } from "@apollo/client"
-import { number } from "../libs/math"
+
+import { MIR } from "../constants"
+import { isInteger, number } from "../libs/math"
+import { formatAsset } from "../libs/parse"
 import { fromBase64 } from "../libs/formHelpers"
+
 import { useContractsAddress } from "../hooks"
 import createContext from "../hooks/createContext"
+import { Type as PollType } from "../pages/Poll/CreatePoll"
 import { WASMQUERY } from "./gqldocs"
 import useContractQuery from "./useContractQuery"
 
 export enum GovKey {
   /** Config: Call it once for the first time */
   CONFIG = "config",
-  STATE = "state",
   BALANCE = "balance",
   POLLS = "polls",
 }
@@ -19,31 +23,29 @@ export enum GovKey {
 interface Gov {
   result: Record<GovKey, QueryResult>
   [GovKey.CONFIG]: GovConfig | undefined
-  [GovKey.STATE]: GovState | undefined
   [GovKey.BALANCE]: string | undefined
   [GovKey.POLLS]: { data: Dictionary<Poll>; list: number[]; height?: number }
 }
 
 export const [useGov, GovProvider] = createContext<Gov>("useGov")
+const govState = createContext<GovState>("useGovState")
+export const [useGovState, GovStateProvider] = govState
 
 /* state */
-export const useGovContext = (): Gov => {
+export const useGovContext = ({ poll_count }: GovState): Gov => {
   const config = useGovConfig()
-  const state = useGovState()
   const balance = useMirrorBalance()
-  const { result, polls } = usePolls()
+  const { result, polls } = usePolls(poll_count)
   const { height } = polls
 
   return {
     result: {
       [GovKey.CONFIG]: config.result,
-      [GovKey.STATE]: state.result,
       [GovKey.BALANCE]: balance.result,
       [GovKey.POLLS]: result,
     },
 
     [GovKey.CONFIG]: config.parsed,
-    [GovKey.STATE]: state.parsed,
     [GovKey.BALANCE]: balance.parsed?.balance,
     [GovKey.POLLS]: { ...polls, height: height ? number(height) : undefined },
   }
@@ -70,7 +72,7 @@ const useGovConfig = () => {
 }
 
 /* state */
-const useGovState = () => {
+export const useGovStateState = () => {
   const { contracts } = useContractsAddress()
   const variables = { contract: contracts["gov"], msg: { state: {} } }
   const query = useContractQuery<GovState>(variables)
@@ -90,13 +92,14 @@ const useMirrorBalance = () => {
 }
 
 /* polls */
-const usePolls = () => {
+const usePolls = (poll_count: number) => {
+  const LIMIT = 30
   const { contracts } = useContractsAddress()
 
   /* contract query */
   const variables = {
     contract: contracts["gov"],
-    msg: { polls: { limit: Math.pow(2, 32) - 1 } },
+    msg: { polls: { limit: LIMIT } },
   }
 
   const query = useContractQuery<PollsData>(variables)
@@ -125,23 +128,31 @@ export const useVoters = (id: number) => {
 }
 
 /* select */
-enum PollType {
-  WHITELIST = "whitelist",
-  PARAMETER = "parameter change",
-}
-
 const useSelect = (data?: PollsData) => {
   const { getSymbol } = useContractsAddress()
 
   const parseParams = (decoded: DecodedExecuteMsg, id: number) => {
     const type =
-      "whitelist" in decoded ? PollType.WHITELIST : PollType.PARAMETER
+      "whitelist" in decoded
+        ? PollType.WHITELIST
+        : "pass_command" in decoded
+        ? PollType.MINT_UPDATE
+        : "update_config" in decoded
+        ? PollType.GOV_UPDATE
+        : "spend" in decoded
+        ? PollType.COMMUNITY_SPEND
+        : PollType.TEXT
+
     const parsed =
       "whitelist" in decoded
         ? parseWhitelist(decoded.whitelist)
-        : "update_weight" in decoded
-        ? parseUpdateWeight(decoded.update_weight)
-        : parsePassCommand(decoded.pass_command)
+        : "pass_command" in decoded
+        ? parsePassCommand(decoded.pass_command)
+        : "update_config" in decoded
+        ? parseUpdateConfig(decoded.update_config)
+        : "spend" in decoded
+        ? parseSpend(decoded.spend)
+        : {}
 
     return { type, ...parsed }
   }
@@ -151,25 +162,39 @@ const useSelect = (data?: PollsData) => {
     params,
   })
 
-  const parseUpdateWeight = ({ asset_token, weight }: UpdateWeight) => ({
-    msg: { asset: getSymbol(asset_token) },
-    params: { weight },
-  })
-
-  const parsePassCommand = ({ contract_addr, msg }: PassCommand) => {
+  const parsePassCommand = ({ msg }: PassCommand) => {
     const decodedPassCommand = fromBase64<DecodedPassCommandMsg>(msg)
-
-    return "update_asset" in decodedPassCommand
-      ? parseUpdateAsset(decodedPassCommand.update_asset)
-      : {
-          msg: { asset: getSymbol(contract_addr) },
-          params: decodedPassCommand.update_config,
-        }
+    return parseUpdateAsset(decodedPassCommand.update_asset)
   }
 
   const parseUpdateAsset = ({ asset_token, ...params }: UpdateAsset) => ({
     msg: { asset: getSymbol(asset_token) },
     params,
+  })
+
+  const parseUpdateConfig = (config: Partial<GovConfig>) => {
+    const { voting_period, expiration_period, effective_delay } = config
+    const { quorum, threshold } = config
+    const { proposal_deposit, owner } = config
+
+    return {
+      msg: {
+        owner,
+        voting_period: getBlocks(voting_period),
+        expiration_period: getBlocks(expiration_period),
+        effective_delay: getBlocks(effective_delay),
+        proposal_deposit: proposal_deposit
+          ? formatAsset(proposal_deposit, MIR)
+          : undefined,
+      },
+      params: { quorum, threshold },
+    }
+  }
+
+  const getBlocks = (n?: number) => (isInteger(n) ? `${n} Blocks` : undefined)
+
+  const parseSpend = ({ recipient, amount }: Spend) => ({
+    msg: { recipient, amount: formatAsset(amount, MIR) },
   })
 
   return data?.polls.reduce((acc, poll) => {

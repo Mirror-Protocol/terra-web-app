@@ -2,19 +2,22 @@ import Tooltip from "../../lang/Tooltip.json"
 import { MIR } from "../../constants"
 import { div, minus, isFinite } from "../../libs/math"
 import { percent } from "../../libs/num"
-import { GovKey, useGov, useRefetchGov } from "../../graphql/useGov"
+import { GovKey } from "../../graphql/useGov"
+import { useGov, useGovState, useRefetchGov } from "../../graphql/useGov"
 import useDashboard from "../../statistics/useDashboard"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
 import Summary from "../../components/Summary"
 import { TooltipIcon } from "../../components/Tooltip"
+import Count from "../../components/Count"
 import CountWithResult from "../../containers/CountWithResult"
 import GovMIR from "./GovMIR"
 import styles from "./GovHomeHeader.module.scss"
 
 const GovHomeHeader = () => {
-  useRefetchGov([GovKey.BALANCE, GovKey.STATE])
-  const { result, balance, state } = useGov()
+  useRefetchGov([GovKey.BALANCE])
+  const state = useGovState()
+  const { balance } = useGov()
   const dashboard = useDashboard()
   const supply = dashboard.dashboard?.mirCirculatingSupply
 
@@ -38,9 +41,9 @@ const GovHomeHeader = () => {
                 </TooltipIcon>
               }
             >
-              <CountWithResult results={[result.state]} symbol={MIR} integer>
+              <Count symbol={MIR} integer>
                 {totalStaked}
-              </CountWithResult>
+              </Count>
             </Summary>
           </Card>
         </Grid>

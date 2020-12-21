@@ -1,6 +1,7 @@
 import { RouteProps, useRouteMatch } from "react-router-dom"
 import routes from "../routes"
 import { GovProvider, useGovContext } from "../graphql/useGov"
+import { GovStateProvider, useGovStateState } from "../graphql/useGov"
 import GovHome from "./Gov/GovHome"
 import GovStake from "./Gov/GovStake"
 import Poll from "./Poll/Poll"
@@ -23,10 +24,19 @@ export const menu: Record<MenuKey, RouteProps> = {
   [MenuKey.POLL]: { path: "/poll/:id", component: Poll },
 }
 
-const Gov = () => {
-  const value = useGovContext()
+const Gov = ({ state }: { state: GovState }) => {
+  const value = useGovContext(state)
   const { path } = useRouteMatch()
   return <GovProvider value={value}>{routes(menu, path)}</GovProvider>
 }
 
-export default Gov
+const GovContainer = () => {
+  const { parsed } = useGovStateState()
+  return !parsed ? null : (
+    <GovStateProvider value={parsed}>
+      <Gov state={parsed} />
+    </GovStateProvider>
+  )
+}
+
+export default GovContainer

@@ -42,11 +42,4 @@ const parseContents = (
         []
       )
 
-export const getTitle = (title: string) => {
-  const Title: Dict<string> = {
-    lp_commission: "LP Commission",
-    owner_commission: "MIR Staking Commission",
-  }
-
-  return Title[title] ?? title.replace(/_/g, " ")
-}
+export const getTitle = (title: string) => title.replace(/_/g, " ")

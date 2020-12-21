@@ -3,7 +3,7 @@ import { MIR } from "../../constants"
 import { div, gt, plus, times } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
 import { percent } from "../../libs/num"
-import { GovKey, useGov, useRefetchGov } from "../../graphql/useGov"
+import { useGov, useGovState } from "../../graphql/useGov"
 import Progress from "../../components/Progress"
 import styles from "./PollVotes.module.scss"
 
@@ -34,8 +34,8 @@ interface Props extends Poll {
 
 const PollVotes = ({ lg, ...props }: Props) => {
   const { yes_votes, no_votes, total_balance_at_end_poll } = props
-  const { config, state } = useGov()
-  useRefetchGov([GovKey.STATE])
+  const state = useGovState()
+  const { config } = useGov()
 
   const votes = {
     yes: yes_votes ?? "0",
