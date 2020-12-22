@@ -148,7 +148,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
       [Key.description]: { min: 4, max: 64 },
       [Key.link]: { min: 12, max: 128 },
       [Key.name]: { min: 3, max: 50 },
-      [Key.ticker]: { min: 2, max: 11 },
+      [Key.ticker]: { min: 1, max: 11 },
       [Key.symbol]: { min: 3, max: 12 },
     }
 
