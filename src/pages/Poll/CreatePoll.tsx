@@ -56,9 +56,12 @@ const CreatePoll = () => {
               <h1 className={styles.title}>{TITLE}</h1>
             </header>
 
-            {Object.entries(Buttons).map(([key, item]) => (
-              <CreatePollButton {...item} hash={key} key={key} />
-            ))}
+            {Object.entries(Buttons).map(
+              ([key, item]) =>
+                key !== Type.GOV_UPDATE && (
+                  <CreatePollButton {...item} hash={key} key={key} />
+                )
+            )}
           </Card>
         </Container>
       ) : (
