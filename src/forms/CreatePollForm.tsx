@@ -521,6 +521,8 @@ const CreatePollForm = ({ type }: { type: Type }) => {
       ? ["Insufficient balance"]
       : getLength(msg) > MAX_MSG_LENGTH
       ? ["Input is too long to be executed"]
+      : type === Type.GOV_UPDATE
+      ? ["Modifying governance parameters is currently under construction"]
       : undefined
 
   const disabled = invalid || loading || !!messages?.length
