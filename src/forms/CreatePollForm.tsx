@@ -2,7 +2,7 @@ import { Fragment } from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import Tooltip from "../lang/Tooltip.json"
 import { MAX_MSG_LENGTH, MIR } from "../constants"
-import { div, gt, times } from "../libs/math"
+import { div, gte, times } from "../libs/math"
 import { record, getLength } from "../libs/utils"
 import { lookup, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
@@ -517,7 +517,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
     result[balanceKey].loading || governance.result[GovKey.CONFIG].loading
 
   const messages =
-    !loading && !gt(find(balanceKey, getToken(MIR)), deposit)
+    !loading && !gte(find(balanceKey, getToken(MIR)), deposit)
       ? ["Insufficient balance"]
       : getLength(msg) > MAX_MSG_LENGTH
       ? ["Input is too long to be executed"]
