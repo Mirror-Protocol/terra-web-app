@@ -5,19 +5,19 @@ import { percent } from "../../libs/num"
 import { format } from "../../libs/parse"
 import { useContract, useContractsAddress } from "../../hooks"
 import { PriceKey } from "../../hooks/contractKeys"
-import useContractQuery from "../../graphql/useContractQuery"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
 import Dl from "../../components/Dl"
 import Summary from "../../components/Summary"
 import Count from "../../components/Count"
 import { TooltipIcon } from "../../components/Tooltip"
+import useCommunityBalance from "./useCommunityBalance"
 
 const DashboardHeader = (props: Partial<Dashboard>) => {
   const { getToken } = useContractsAddress()
   const { find } = useContract()
   const { latest24h, assetMarketCap, totalValueLocked, collateralRatio } = props
-  const { parsed: communityPool } = useCommunityBalance()
+  const communityBalance = useCommunityBalance()
 
   return (
     <>
@@ -105,7 +105,7 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
               </TooltipIcon>
             }
           >
-            <Count symbol={MIR}>{communityPool?.balance}</Count>
+            <Count symbol={MIR}>{communityBalance}</Count>
           </Summary>
         </Card>
       </Grid>
@@ -114,16 +114,3 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
 }
 
 export default DashboardHeader
-
-/* hook */
-const useCommunityBalance = () => {
-  const { contracts } = useContractsAddress()
-
-  const query = {
-    contract: contracts["mirrorToken"],
-    msg: { balance: { address: contracts["community"] } },
-  }
-
-  const result = useContractQuery<{ balance: string }>(query)
-  return result
-}
