@@ -4,7 +4,8 @@
     "Fee": "Total transaction fees paid within the last 24 hours",
     "MarketCap": "Total value of all minted assets",
     "TVL": "Total value of all assets and UST currently locked",
-    "CollateralRatio": "Ratio of the total collateral value to the total minted asset value"
+    "CollateralRatio": "Ratio of the total collateral value to the total minted asset value",
+    "CommunityPoolBalance": "Total number of MIR tokens currently in the community pool"
   },
   "Chart": {
     "Liquidity": "Total value of all mAssets and UST in liquidity pools",
