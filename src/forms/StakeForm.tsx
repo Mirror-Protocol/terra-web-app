@@ -1,6 +1,6 @@
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { LP, MIR } from "../constants"
-import { gt, minus, sum } from "../libs/math"
+import { gt, minus, max as findMax } from "../libs/math"
 import { formatAsset, lookup, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
 import { validate as v, placeholder, step } from "../libs/formHelpers"
@@ -44,10 +44,10 @@ const StakeForm = ({ type, token, tab, gov }: Props) => {
   useRefetch([balanceKey, !gov ? BalanceKey.LPSTAKED : BalanceKey.MIRGOVSTAKED])
 
   const getLocked = () =>
-    sum(
+    findMax(
       parsed[BalanceKey.MIRGOVSTAKED]?.locked_balance?.map(
         ([, { balance }]: LockedBalance) => balance
-      ) ?? []
+      ) ?? [0]
     )
 
   const getMax = () => {
