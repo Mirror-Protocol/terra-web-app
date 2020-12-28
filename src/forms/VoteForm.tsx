@@ -1,12 +1,14 @@
+import { useEffect } from "react"
 import { useRouteMatch } from "react-router-dom"
 import classNames from "classnames/bind"
 
 import MESSAGE from "../lang/MESSAGE.json"
 import { MIR } from "../constants"
 import { gt } from "../libs/math"
-import { lookup } from "../libs/parse"
+import { lookup, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
-import { validate as v } from "../libs/formHelpers"
+import { placeholder, step, validate as v } from "../libs/formHelpers"
+import { renderBalance } from "../libs/formHelpers"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
@@ -20,6 +22,7 @@ const cx = classNames.bind(styles)
 
 enum Key {
   answer = "answer",
+  value = "value",
 }
 
 enum AnswerKey {
@@ -29,6 +32,7 @@ enum AnswerKey {
 
 const VoteForm = ({ tab }: { tab: Tab }) => {
   const balanceKey = BalanceKey.MIRGOVSTAKED
+  const symbol = MIR
 
   /* context */
   const { getToken } = useContractsAddress()
@@ -38,24 +42,42 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
   useRefetch([balanceKey])
 
   /* form:validate */
-  const validate = ({ answer }: Values<Key>) => ({
+  const max = find(balanceKey, getToken(symbol))
+  const validate = ({ answer, value }: Values<Key>) => ({
     [Key.answer]: v.required(answer),
+    [Key.value]: v.amount(value, { symbol, max }),
   })
 
   /* form:hook */
-  const initial = { [Key.answer]: "" }
+  const initial = { [Key.answer]: "", [Key.value]: max }
   const form = useForm<Key>(initial, validate)
-  const { values, handleChange, attrs, invalid } = form
-  const amount = find(balanceKey, getToken(MIR))
-  const value = lookup(amount, MIR)
+  const { values, setValue, setValues, handleChange, getFields } = form
+  const { attrs, invalid } = form
+  const { value } = values
+  const amount = toAmount(value)
+
+  /* set amount to max */
+  useEffect(() => {
+    setValues((values) => ({ ...values, [Key.value]: lookup(max, symbol) }))
+  }, [max, setValues, symbol])
 
   /* render:form */
-  const fields = {
-    value: {
+  const fields = getFields({
+    [Key.value]: {
       label: "Amount",
-      value,
+      input: {
+        type: "number",
+        step: step(symbol),
+        placeholder: placeholder(symbol),
+        autoFocus: true,
+      },
+      unit: symbol,
+      help: renderBalance(max, symbol),
+      max: gt(max, 0)
+        ? () => setValue(Key.value, lookup(max, symbol))
+        : undefined,
     },
-  }
+  })
 
   /* confirm */
   const contents = values[Key.answer] ? [] : undefined
