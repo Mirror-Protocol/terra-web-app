@@ -17,6 +17,7 @@ export enum Type {
   "CLOSE" = "close",
   "DEPOSIT" = "deposit",
   "WITHDRAW" = "withdraw",
+  "CUSTOM" = "custom",
 }
 
 const Mint = () => {

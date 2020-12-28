@@ -9,6 +9,7 @@ import { findValue, splitTokenText } from "./receiptHelpers"
 export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
   const open = type === Type.OPEN
   const close = type === Type.CLOSE
+  const custom = type === Type.CUSTOM
   const priceKey = PriceKey.ORACLE
   useRefetch([priceKey])
 
@@ -22,10 +23,14 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
   const prevAsset = prev && parseToken(prev.asset)
 
   const collateral = splitTokenText(val("collateral_amount"))
-  const deposit = splitTokenText(val("deposit_amount"))
-  const withdraw = splitTokenText(val("withdraw_amount", Number(close)))
+  const deposit = splitTokenText(val("deposit_amount", Number(custom)))
+  const withdraw = splitTokenText(
+    val("withdraw_amount", Number(custom || close))
+  )
+
   const mint = splitTokenText(val("mint_amount"))
   const burn = splitTokenText(val("burn_amount"))
+  const protocolFee = splitTokenText(val("protocol_fee", Number(custom)))
 
   const nextCollateral = {
     [Type.OPEN]: {
@@ -37,16 +42,39 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
       token: prevCollateral?.token,
     },
     [Type.WITHDRAW]: {
-      amount: minus(prevCollateral?.amount, withdraw.amount),
+      amount: minus(
+        minus(prevCollateral?.amount, withdraw.amount),
+        protocolFee.amount
+      ),
       token: prevCollateral?.token,
     },
     [Type.CLOSE]: {
-      amount: prevCollateral?.amount,
+      amount: minus(prevCollateral?.amount, protocolFee.amount),
+      token: prevCollateral?.token,
+    },
+    [Type.CUSTOM]: {
+      amount: deposit.amount
+        ? plus(prevCollateral?.amount, deposit.amount)
+        : withdraw.amount
+        ? minus(
+            minus(prevCollateral?.amount, withdraw.amount),
+            protocolFee.amount
+          )
+        : prevCollateral?.amount,
       token: prevCollateral?.token,
     },
   }[type]
 
-  const nextAsset = open
+  const nextAsset = custom
+    ? {
+        amount: mint.amount
+          ? plus(prevAsset?.amount, mint.amount)
+          : burn.amount
+          ? minus(prevAsset?.amount, burn.amount)
+          : prevAsset?.amount,
+        token: prevAsset?.token,
+      }
+    : open
     ? { amount: mint.amount, token: mint.token }
     : { amount: prevAsset?.amount, token: prevAsset?.token }
 

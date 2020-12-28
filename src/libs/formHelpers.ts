@@ -1,5 +1,5 @@
 import { AccAddress } from "@terra-money/terra.js"
-import { div, gt, gte, isInteger, lte, pow } from "./math"
+import { div, gt, gte, isInteger, pow } from "./math"
 import { getLength, omitEmpty } from "./utils"
 import { dp, validateDp, lookup, format, toAmount } from "./parse"
 
@@ -72,13 +72,13 @@ export const validate = {
       ? ""
       : !value
       ? "Required"
-      : !gt(value, 0)
+      : !min && !gt(value, 0)
       ? `${label} must be greater than 0`
       : min && !gte(amount, min)
-      ? `${label} must be greater than ${min}`
+      ? `${label} must be greater than ${lookup(min, symbol)}`
       : !validateDp(value, symbol)
       ? `${label} must be within ${dp(symbol)} decimal points`
-      : max && gt(max, 0) && !(gt(amount, 0) && lte(amount, max))
+      : max && gt(max, 0) && gt(amount, max)
       ? `${label} must be between 0 and ${lookup(max, symbol)}`
       : symbol && max && !gt(max, 0)
       ? "Insufficient balance"

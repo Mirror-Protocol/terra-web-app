@@ -1,12 +1,14 @@
 import { useEffect, useRef } from "react"
+import { MsgExecuteContract } from "@terra-money/terra.js"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
 import { MIR, UUSD } from "../constants"
-import { plus, minus, times, div, floor, max } from "../libs/math"
+import { plus, minus, times, div, floor, max, abs } from "../libs/math"
 import { gt, gte, lt, isFinite } from "../libs/math"
 import { capitalize } from "../libs/utils"
+import { percent } from "../libs/num"
 import { format, formatAsset, lookup, lookupSymbol } from "../libs/parse"
 import { toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
@@ -60,26 +62,38 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
   const position = positions?.find((position) => position.idx === idx)
   const open = !position
   const close = type === Type.CLOSE
+  const custom = type === Type.CUSTOM
 
   /* form:validate */
   const getMax = (token: string) =>
     type === Type.WITHDRAW ? prevCollateral?.amount : find(balanceKey, token)
 
-  const validate = ({ token1, token2, value1, ratio }: Values<Key>) => {
+  const validate = ({ token1, token2, value1, value2, ratio }: Values<Key>) => {
     const symbol1 = getSymbol(token1)
+    const symbol2 = getSymbol(token2)
     const nextRatio = div(ratio, 100)
 
     return {
-      [Key.value1]: v.amount(value1, { symbol: symbol1, max: getMax(token1) }),
-      [Key.value2]: "",
+      [Key.value1]: v.amount(value1, {
+        symbol: symbol1,
+        min: custom ? times(prevCollateral?.amount, -1) : undefined,
+        max: getMax(token1),
+      }),
+      [Key.value2]: !custom
+        ? ""
+        : v.amount(value2, {
+            symbol: symbol2,
+            min: times(prevAsset?.amount, -1),
+          }),
       [Key.token1]: v.required(token1),
       [Key.token2]: open ? v.required(token2) : "",
-      [Key.ratio]:
-        prevRatio && !(type === Type.DEPOSIT ? gt : lt)(nextRatio, prevRatio)
-          ? MESSAGE.Form.Validate.CollateralRatio.Current
-          : !gte(nextRatio, find(AssetInfoKey.MINCOLLATERALRATIO, token2))
-          ? MESSAGE.Form.Validate.CollateralRatio.Minimum
-          : v.required(ratio),
+      [Key.ratio]: custom
+        ? ""
+        : prevRatio && !(type === Type.DEPOSIT ? gt : lt)(nextRatio, prevRatio)
+        ? MESSAGE.Form.Validate.CollateralRatio.Current
+        : !gte(nextRatio, find(AssetInfoKey.MINCOLLATERALRATIO, token2))
+        ? MESSAGE.Form.Validate.CollateralRatio.Minimum
+        : v.required(ratio),
     }
   }
 
@@ -115,6 +129,7 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
   const { touched, errors, attrs, invalid } = form
   const { token1, token2, value1, value2, ratio } = values
   const amount1 = toAmount(value1)
+  const amount2 = toAmount(value2)
   const symbol1 = getSymbol(token1)
   const symbol2 = getSymbol(token2)
   const uusd = token1 === UUSD ? amount1 : "0"
@@ -135,21 +150,40 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
   const price1 = find(priceKey, token1)
   const price2 = find(priceKey, token2)
   const reverse = form.changed !== Key.value1
+  const operate = type === Type.DEPOSIT || type === Type.CUSTOM ? plus : minus
   const nextCollateralAmount = max([
-    (type === Type.DEPOSIT ? plus : minus)(prevCollateral?.amount, amount1),
+    operate(prevCollateral?.amount, amount1),
     "0",
   ])
 
+  const nextAssetAmount = max([plus(prevAsset?.amount, amount2), "0"])
+
   const calculated = calc.mint({
     collateral: {
-      amount: reverse ? undefined : open ? amount1 : nextCollateralAmount,
+      amount: custom
+        ? nextCollateralAmount
+        : reverse
+        ? undefined
+        : open
+        ? amount1
+        : nextCollateralAmount,
       price: price1,
     },
     asset: {
-      amount: open ? toAmount(value2) : prevAsset?.amount,
+      amount: custom
+        ? nextAssetAmount
+        : open
+        ? toAmount(value2)
+        : prevAsset?.amount,
       price: price2,
     },
-    ratio: open ? div(ratio, 100) : !reverse ? undefined : div(ratio, 100),
+    ratio: custom
+      ? undefined
+      : open
+      ? div(ratio, 100)
+      : !reverse
+      ? undefined
+      : div(ratio, 100),
   })
 
   const simulated = open
@@ -169,8 +203,8 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
     const key = reverse ? Key.value1 : open ? Key.value2 : Key.ratio
     const next = gt(simulated, 0) && isFinite(simulated) ? simulated : ""
     // Safe to use as deps
-    !close && setValues((values) => ({ ...values, [key]: next }))
-  }, [type, simulated, reverse, setValues, open, close])
+    !custom && !close && setValues((values) => ({ ...values, [key]: next }))
+  }, [type, simulated, reverse, setValues, open, close, custom])
 
   /* render:form */
   const config1: Config = {
@@ -193,7 +227,7 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
   const fields = {
     ...getFields({
       [Key.value1]: {
-        label: open ? "Collateral" : capitalize(type),
+        label: open || custom ? "Collateral" : capitalize(type),
         input: {
           type: "number",
           step: step(symbol1),
@@ -218,7 +252,7 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
           step: step(symbol2),
           placeholder: placeholder(symbol2),
         },
-        unit: select2.button,
+        unit: !custom ? select2.button : prevAsset?.symbol,
         assets: select2.assets,
         help: renderBalance(getMax(token2), symbol2),
         focused: select2.isOpen,
@@ -230,7 +264,10 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
             Collateral Ratio
           </TooltipIcon>
         ),
-        input: { type: "number", step: step(), placeholder: "200" },
+        input: !custom
+          ? { type: "number", step: step(), placeholder: "200" }
+          : undefined,
+        value: custom ? percent(calculated.ratio) : undefined,
         unit: "%",
       },
     }),
@@ -347,16 +384,24 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
         ),
       },
     ],
+
+    [Type.CUSTOM]: [
+      ...collateralContents,
+      {
+        title: "Total asset",
+        content: <Count symbol={symbol2}>{nextAssetAmount}</Count>,
+      },
+    ],
   }[type]
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const collateral = toToken({ amount: amount1, token: token1 })
+  const collateral = toToken({ amount: abs(amount1), token: token1 })
+  const asset = toToken({ amount: abs(amount2), token: token2 })
   const isCollateralUST = token1 === UUSD
 
-  const { mint } = contracts
   const createSend = (msg: object, amount?: string) => ({
-    send: { amount, contract: mint, msg: toBase64(msg) },
+    send: { amount, contract: contracts["mint"], msg: toBase64(msg) },
   })
 
   const openPosition = {
@@ -375,6 +420,10 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
     withdraw: { position_idx: position?.idx, collateral },
   }
 
+  const mint = {
+    mint: { position_idx: position?.idx, asset },
+  }
+
   const burn = {
     burn: { position_idx: position?.idx },
   }
@@ -382,19 +431,42 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
   const data = {
     [Type.OPEN]: [
       isCollateralUST
-        ? newContractMsg(mint, openPosition, { amount: amount1, denom: UUSD })
+        ? newContractMsg(contracts["mint"], openPosition, {
+            amount: amount1,
+            denom: UUSD,
+          })
         : newContractMsg(token1, createSend(openPosition, amount1)),
     ],
     [Type.CLOSE]: [
       newContractMsg(token2, createSend(burn, prevAsset?.amount)),
-      newContractMsg(mint, withdraw),
+      newContractMsg(contracts["mint"], withdraw),
     ],
     [Type.DEPOSIT]: [
       isCollateralUST
-        ? newContractMsg(mint, deposit, { amount: amount1, denom: UUSD })
+        ? newContractMsg(contracts["mint"], deposit, {
+            amount: amount1,
+            denom: UUSD,
+          })
         : newContractMsg(token1, createSend(deposit, amount1)),
     ],
-    [Type.WITHDRAW]: [newContractMsg(mint, withdraw)],
+    [Type.WITHDRAW]: [newContractMsg(contracts["mint"], withdraw)],
+    [Type.CUSTOM]: [
+      lt(amount2, 0)
+        ? newContractMsg(token2, createSend(burn, abs(amount2)))
+        : gt(amount2, 0)
+        ? newContractMsg(contracts["mint"], mint)
+        : undefined,
+      lt(amount1, 0)
+        ? newContractMsg(contracts["mint"], withdraw)
+        : gt(amount1, 0)
+        ? isCollateralUST
+          ? newContractMsg(contracts["mint"], deposit, {
+              amount: amount1,
+              denom: UUSD,
+            })
+          : newContractMsg(token1, createSend(deposit, amount1))
+        : undefined,
+    ].filter(Boolean) as MsgExecuteContract[],
   }[type]
 
   const ratioMessages = errors[Key.ratio]
@@ -425,7 +497,7 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
   const parseTx = useMintReceipt(type, position)
 
   const container = { tab, attrs, contents, messages, label, disabled, data }
-  const deduct = type === Type.WITHDRAW || type === Type.CLOSE
+  const deduct = type === Type.WITHDRAW || close || (custom && lt(amount1, 0))
   const tax = { pretax: uusd, deduct }
 
   return type === Type.CLOSE ? (
@@ -438,9 +510,9 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
 
       <FormGroup {...fields[Key.value1]} />
       {open && <FormIcon name="arrow_downward" />}
-      {open && <FormGroup {...fields[Key.value2]} />}
+      {(open || custom) && <FormGroup {...fields[Key.value2]} />}
       <FormGroup {...fields[Key.ratio]} skipFeedback />
-      <CollateralRatio {...ratioProps} />
+      {!custom && <CollateralRatio {...ratioProps} />}
     </FormContainer>
   )
 }
