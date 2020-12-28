@@ -16,8 +16,8 @@ export default () => (logs: TxLog[], { Tx }: TxInfo) => {
 
   const recipient = transfer?.recipient ?? address
   const $memo = Tx.Memo
-  const to = recipient === shuttle ? $memo : recipient
-  const memo = recipient === shuttle ? "" : $memo
+  const to = Object.values(shuttle).includes(recipient) ? $memo : recipient
+  const memo = Object.values(shuttle).includes(recipient) ? "" : $memo
 
   /* contents */
   return [

@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import { useLocation } from "react-router-dom"
 import { AccAddress, MsgSend } from "@terra-money/terra.js"
 import { ethers } from "ethers"
@@ -24,6 +24,7 @@ enum Key {
   value = "value",
   token = "token",
   memo = "memo",
+  network = "network",
 }
 
 const SendForm = ({ tab }: { tab: Tab }) => {
@@ -39,7 +40,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
   useRefetch([priceKey, balanceKey])
 
   /* form:validate */
-  const validate = ({ to, token, value, memo }: Values<Key>) => {
+  const validate = ({ to, token, value, memo, network }: Values<Key>) => {
     const max = find(balanceKey, token)
     const symbol = getSymbol(token)
 
@@ -50,6 +51,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
       [Key.memo]: ["<", ">"].some((char) => memo.includes(char))
         ? "Memo includes invalid bracket"
         : v.length(memo, { max: 256 }, "Memo"),
+      [Key.network]: !ethers.utils.isAddress(to) ? "" : v.required(network),
     }
   }
 
@@ -59,15 +61,27 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     [Key.value]: "",
     [Key.token]: state?.token ?? "",
     [Key.memo]: "",
+    [Key.network]: "",
   }
 
   const form = useForm<Key>(initial, validate)
-  const { values, setValue, getFields, attrs, invalid } = form
-  const { to, value, token, memo: $memo } = values
+  const { values, setValue, setValues, getFields, attrs, invalid } = form
+  const { to, value, token, memo: $memo, network } = values
   const amount = toAmount(value)
   const symbol = getSymbol(token)
   const uusd = token === UUSD ? amount : undefined
   const isEthereum = ethers.utils.isAddress(to)
+  const isTerra = AccAddress.validate(to)
+
+  useEffect(() => {
+    isEthereum &&
+      !network &&
+      setValues((values) => ({ ...values, [Key.network]: "ethereum" }))
+
+    isTerra &&
+      network &&
+      setValues((values) => ({ ...values, [Key.network]: "" }))
+  }, [isEthereum, isTerra, network, setValues])
 
   /* form:focus input on select asset */
   const valueRef = useRef<HTMLInputElement>(null!)
@@ -87,13 +101,35 @@ const SendForm = ({ tab }: { tab: Tab }) => {
   const select = useSelectAsset(config)
   const fields = {
     ...getFields({
+      [Key.network]: {
+        label: "Network",
+        select: (
+          <select
+            value={network}
+            onChange={(e) => setValue(Key.network, e.target.value)}
+            style={{ width: "100%" }}
+          >
+            <option value="" disabled={isEthereum}>
+              Terra
+            </option>
+
+            <option value="ethereum" disabled={isTerra}>
+              Ethereum
+            </option>
+
+            <option value="bsc" disabled={isTerra}>
+              Binance Smart Chain
+            </option>
+          </select>
+        ),
+      },
+
       [Key.to]: {
         label: "Send to",
         input: {
           placeholder: "Terra address or Ethereum address",
           autoFocus: true,
         },
-        unit: isEthereum && "Ethereum",
       },
 
       [Key.value]: {
@@ -121,7 +157,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
   const contents = value ? [] : undefined
 
   /* submit */
-  const recipient = !isEthereum ? to : shuttle
+  const recipient = !isEthereum ? to : shuttle[network as ShuttleNetwork]
   const memo = !isEthereum ? $memo : to
 
   const newContractMsg = useNewContractMsg()
@@ -143,9 +179,10 @@ const SendForm = ({ tab }: { tab: Tab }) => {
 
   return (
     <FormContainer {...container} label="send" pretax={uusd} parseTx={parseTx}>
+      <FormGroup {...fields[Key.network]} />
       <FormGroup {...fields[Key.to]} />
       <FormGroup {...fields[Key.value]} />
-      {!isEthereum && <FormGroup {...fields[Key.memo]} />}
+      {isTerra && <FormGroup {...fields[Key.memo]} />}
     </FormContainer>
   )
 }

@@ -15,10 +15,12 @@ interface LocalNetworkConfig {
   mantle: string
   stats: string
   /** Ethereum */
-  shuttle: string
+  shuttle: Record<ShuttleNetwork, string>
   /** Fixed fee */
   fee: { gasPrice: number; amount: number }
 }
+
+type ShuttleNetwork = "ethereum" | "bsc"
 
 interface ExtNetworkConfig {
   name: string
