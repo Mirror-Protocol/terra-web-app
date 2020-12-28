@@ -4,6 +4,7 @@ import { GovKey, useGov, useRefetchGov } from "../../graphql/useGov"
 import Card from "../../components/Card"
 import Grid from "../../components/Grid"
 import LoadingTitle from "../../components/LoadingTitle"
+import Button from "../../components/Button"
 import { TooltipIcon } from "../../components/Tooltip"
 import PollItem from "./PollItem"
 import styles from "./Polls.module.scss"
@@ -11,7 +12,7 @@ import styles from "./Polls.module.scss"
 const Polls = ({ title }: { title: string }) => {
   const { url } = useRouteMatch()
   const { polls, result } = useGov()
-  const { list } = polls
+  const { list, more, offset } = polls
   const { loading } = result[GovKey.POLLS]
   useRefetchGov([GovKey.POLLS])
 
@@ -35,6 +36,12 @@ const Polls = ({ title }: { title: string }) => {
             </Card>
           ))}
         </Grid>
+      )}
+
+      {!!offset && (
+        <Button onClick={more} block outline submit>
+          More
+        </Button>
       )}
     </article>
   )
