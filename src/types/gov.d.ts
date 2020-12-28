@@ -68,8 +68,9 @@ interface Spend {
 }
 
 /* votes */
+type VoteAnswer = "yes" | "no"
 interface Voter {
-  vote: "yes" | "no"
+  vote: VoteAnswer
   voter: string
 }
 

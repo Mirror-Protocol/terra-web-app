@@ -1,6 +1,6 @@
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { LP, MIR } from "../constants"
-import { gt } from "../libs/math"
+import { gt, minus, sum } from "../libs/math"
 import { formatAsset, lookup, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
 import { validate as v, placeholder, step } from "../libs/formHelpers"
@@ -43,11 +43,26 @@ const StakeForm = ({ type, token, tab, gov }: Props) => {
   const { find, parsed } = useContract()
   useRefetch([balanceKey, !gov ? BalanceKey.LPSTAKED : BalanceKey.MIRGOVSTAKED])
 
+  const getLocked = () =>
+    sum(
+      parsed[BalanceKey.MIRGOVSTAKED]?.locked_balance?.map(
+        ([, { balance }]: LockedBalance) => balance
+      ) ?? []
+    )
+
+  const getMax = () => {
+    const balance = find(balanceKey, token)
+    const locked = getLocked()
+
+    return gov && type === Type.UNSTAKE && gt(locked, 0)
+      ? minus(balance, locked)
+      : balance
+  }
+
   /* form:validate */
   const validate = ({ value }: Values<Key>) => {
-    const max = find(balanceKey, token)
     const symbol = getSymbol(token)
-    return { [Key.value]: v.amount(value, { symbol, max }) }
+    return { [Key.value]: v.amount(value, { symbol, max: getMax() }) }
   }
 
   /* form:hook */
@@ -59,6 +74,8 @@ const StakeForm = ({ type, token, tab, gov }: Props) => {
   const symbol = getSymbol(token)
 
   /* render:form */
+  const max = getMax()
+  const locked = getLocked()
   const fields = getFields({
     [Key.value]: {
       label: "Amount",
@@ -68,10 +85,10 @@ const StakeForm = ({ type, token, tab, gov }: Props) => {
         placeholder: placeholder(symbol),
         autoFocus: true,
       },
-      help: renderBalance(find(balanceKey, token), symbol),
+      help: renderBalance(max, symbol),
       unit: gov ? MIR : LP,
-      max: gt(find(balanceKey, token), 0)
-        ? () => setValue(Key.value, lookup(find(balanceKey, token), symbol))
+      max: gt(max, 0)
+        ? () => setValue(Key.value, lookup(max, symbol))
         : undefined,
     },
   })
@@ -126,13 +143,12 @@ const StakeForm = ({ type, token, tab, gov }: Props) => {
     ],
   }[type as Type]
 
-  const locked = parsed[BalanceKey.MIRGOVSTAKED]?.locked_balance.length
   const messages =
-    gov && type === Type.UNSTAKE && locked
-      ? ["MIR are voted in polls"]
+    gov && type === Type.UNSTAKE && gt(locked, 0)
+      ? [`${formatAsset(locked, MIR)} are voted in polls`]
       : undefined
 
-  const disabled = invalid || !!messages?.length
+  const disabled = invalid
 
   /* result */
   const parseTx = useStakeReceipt(!!gov)

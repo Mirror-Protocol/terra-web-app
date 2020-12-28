@@ -42,6 +42,12 @@ interface RewardInfo {
   pending_reward: string
 }
 
+interface GovStaker extends Balance {
+  locked_balance: LockedBalance[]
+}
+
+type LockedBalance = [number, { balance: string; vote: VoteAnswer }]
+
 /* Account Info */
 interface BankBalance {
   BankBalancesAddress?: { Result: { Amount: string; Denom: string }[] }
