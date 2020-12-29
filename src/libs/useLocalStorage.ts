@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 
 export type LocalStorage<T> = [T, (value: T | ((val: T) => T)) => void]
 
@@ -13,15 +13,18 @@ const useLocalStorage = <T>(key: string, initial?: T): LocalStorage<T> => {
     }
   })
 
-  const setValue = (value: T | ((val: T) => T)) => {
-    try {
-      const next = value instanceof Function ? value(stored) : value
-      setStored(next)
-      window.localStorage.setItem(key, JSON.stringify(next))
-    } catch (error) {
-      console.error(error)
-    }
-  }
+  const setValue = useCallback(
+    (value: T | ((val: T) => T)) => {
+      try {
+        const next = value instanceof Function ? value(stored) : value
+        setStored(next)
+        window.localStorage.setItem(key, JSON.stringify(next))
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    [key, stored]
+  )
 
   return [stored, setValue]
 }
