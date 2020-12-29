@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useCallback, useEffect } from "react"
 import { useMutation } from "@apollo/client"
 import useLocalStorage from "../libs/useLocalStorage"
 import extension from "../terra/extension"
@@ -35,14 +35,20 @@ export const useWalletState = (): Wallet => {
 
   const glance = setAddress
 
-  const connect = async () => {
+  const connect = useCallback(async () => {
     const response = await extension.connect()
     setAddress(response?.address ?? "")
-  }
+  }, [setAddress])
 
   const disconnect = () => setAddress("")
 
   useConnectGraph(address)
+
+  // Log in as the address of the extension when user enters the app
+  // even if there is an address on the local storage.
+  useEffect(() => {
+    address && connect()
+  }, [address, connect])
 
   return { address, installed, install, glance, connect, disconnect }
 }
