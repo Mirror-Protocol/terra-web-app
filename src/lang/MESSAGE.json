@@ -26,7 +26,7 @@
       "Confirm": "Confirm Transaction"
     },
     "Warning": {
-      "Vote": "Vote cannot be changed after submission."
+      "Vote": "Vote cannot be changed after submission. Staked MIR used to vote in polls are locked and cannot be withdrawn until the poll finishes."
     }
   },
   "Result": {
