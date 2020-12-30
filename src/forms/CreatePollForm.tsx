@@ -442,7 +442,11 @@ const CreatePollForm = ({ type }: { type: Type }) => {
         unit: "Block(s)",
       },
       [Key.proposalDeposit]: {
-        label: "Proposal Deposit (Optional)",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.ProposalDeposit}>
+            Proposal Deposit (Optional)
+          </TooltipIcon>
+        ),
         input: { placeholder: configPlaceholders[Key.proposalDeposit] },
         unit: MIR,
       },

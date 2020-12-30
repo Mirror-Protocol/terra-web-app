@@ -117,6 +117,7 @@
     "VotingPeriod": "Length of poll (in units of blocks)",
     "EffectiveDelay": "Length of delay before protocol integration for a passed poll (in units of blocks)",
     "ExpirationPeriod": "Length of expiration period when for a failed poll (in units of blocks)",
+    "ProposalDeposit": "Minimum deposit to start a poll (in units of MIR)",
 
     "Recipient": "Grant recipient address",
     "Amount": "Grant amount (in units of MIR)"
