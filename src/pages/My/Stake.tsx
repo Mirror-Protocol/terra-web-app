@@ -1,3 +1,5 @@
+import classNames from "classnames"
+
 import { LP, MIR, UST, UUSD } from "../../constants"
 import MESSAGE from "../../lang/MESSAGE.json"
 import Tooltip from "../../lang/Tooltip.json"
@@ -103,7 +105,11 @@ const Stake = ({ loading, dataSource, ...props }: Props) => {
             },
             {
               key: "stakable",
-              render: (value, { gov }) => formatAsset(value, !gov ? LP : MIR),
+              render: (value, { gov }) => (
+                <span className={classNames({ red: !gov && gt(value, 0) })}>
+                  {formatAsset(value, !gov ? LP : MIR)}
+                </span>
+              ),
               align: "right",
             },
             {
