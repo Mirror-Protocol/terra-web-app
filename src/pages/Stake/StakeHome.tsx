@@ -24,6 +24,7 @@ const StakeHome = () => {
     <Page
       title={MenuKey.INDEX}
       description={<StakeHomeHeader />}
+      doc="/user-guide/getting-started/stake"
       action={<LinkButton {...link} />}
     >
       <StakeList />

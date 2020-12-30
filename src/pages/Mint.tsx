@@ -54,7 +54,7 @@ const Mint = () => {
   const props = { type, tab, message }
 
   return (
-    <Page title={MenuKey.MINT}>
+    <Page title={MenuKey.MINT} doc="/user-guide/getting-started/mint-and-burn">
       {(!idx || keys.every((key) => result[key].data)) && (
         <MintForm idx={idx} {...props} key={type} />
       )}

@@ -2,6 +2,7 @@
 export const FINDER = "https://finder.terra.money"
 export const EXTENSION = "https://terra.money/extension"
 export const CHROME = "https://google.com/chrome"
+export const DOCS = "https://docs.mirror.finance"
 
 /* terra:configs */
 export const BLOCK_TIME = 6650 // 6.65s

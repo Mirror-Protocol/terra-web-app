@@ -18,7 +18,7 @@ const Pool = () => {
   }
 
   return (
-    <Page title={MenuKey.POOL}>
+    <Page title={MenuKey.POOL} doc="/user-guide/getting-started/pool">
       {type && <PoolForm type={type} tab={tab} key={type} />}
     </Page>
   )

@@ -9,10 +9,33 @@
   margin-bottom: 20px;
 }
 
+.heading {
+  @include flex(flex-start);
+}
+
 .title {
   color: white;
   font-size: 24px;
   font-weight: 500;
+}
+
+.doc {
+  @include flex(flex-start);
+  @include link($slate, white);
+  border-left: $border;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 20px;
+  padding-left: 15px;
+  text-transform: uppercase;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.icon {
+  margin-right: 4px;
 }
 
 .action {

@@ -18,7 +18,7 @@ const Trade = () => {
   }
 
   return (
-    <Page title={MenuKey.TRADE}>
+    <Page title={MenuKey.TRADE} doc="/user-guide/getting-started/trade">
       <TradeForm type={type} tab={tab} key={type} />
     </Page>
   )

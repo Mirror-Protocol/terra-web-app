@@ -10,7 +10,7 @@ const Dashboard = () => {
   const { dashboard } = useDashboard()
 
   return (
-    <Page title={MenuKey.DASHBOARD}>
+    <Page title={MenuKey.DASHBOARD} doc={"/user-guide/getting-started"}>
       <DashboardHeader {...dashboard} />
       <DashboardCharts {...dashboard} />
 

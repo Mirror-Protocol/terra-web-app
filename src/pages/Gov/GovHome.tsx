@@ -15,7 +15,12 @@ const GovHome = () => {
   }
 
   return (
-    <Page title={MenuKey.GOV} action={<LinkButton {...link} />} noBreak>
+    <Page
+      title={MenuKey.GOV}
+      doc="/user-guide/getting-started/governance"
+      action={<LinkButton {...link} />}
+      noBreak
+    >
       <GovHomeHeader />
       <Polls title="Polls" />
     </Page>

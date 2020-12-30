@@ -9,7 +9,7 @@ interface Props {
 const Icon = ({ name, size, className }: Props) => (
   <i
     className={classNames("material-icons", className)}
-    style={{ fontSize: size }}
+    style={{ fontSize: size, width: size }}
   >
     {name}
   </i>
