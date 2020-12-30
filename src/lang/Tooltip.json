@@ -101,11 +101,24 @@
 
     "Polls": "Staked MIR can be used as voting power in polls that are currently in progress",
 
+    "Ticker": "Ticker of asset to be whitelisted",
+    "ListedExchange": "Exchange that the underlying asset trades on",
+    "SuggestedOracle": "Oracle provider or address",
+
     "Weight": "Weight which MIR is distributed",
     "LPcommission": "Percentage of the receiving amount from the trade sent to the liquidity pool",
     "OwnerCommission": "Percentage of the receiving amont from the trade distributed to MIR holders",
     "AuctionDiscount": "Discount rate applied to collateral sold in liquidation auction",
     "MinimumCollateralRatio": "Lowest collateral ratio which users can set to mint new assets. Position will be liquidated below this ratio",
-    "Deposit": "Passing the quorum will return the deposit to the creator. Failure to pass quorum will distribute the deposit to all MIR stakers."
+    "Deposit": "Passing the quorum will return the deposit to the creator. Failure to pass quorum will distribute the deposit to all MIR stakers.",
+
+    "Quorum": "Minimum quorum required for accepting a poll (in percentage)",
+    "Threshold": "Minimum percentage of YES votes to pass a poll (in percentage)",
+    "VotingPeriod": "Length of poll (in units of blocks)",
+    "EffectiveDelay": "Length of delay before protocol integration for a passed poll (in units of blocks)",
+    "ExpirationPeriod": "Length of expiration period when for a failed poll (in units of blocks)",
+
+    "Recipient": "Grant recipient address",
+    "Amount": "Grant amount (in units of MIR)"
   }
 }

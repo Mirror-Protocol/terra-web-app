@@ -315,15 +315,23 @@ const CreatePollForm = ({ type }: { type: Type }) => {
         },
       },
       [Key.ticker]: {
-        label: "Ticker",
+        label: <TooltipIcon content={Tooltip.Gov.Ticker}>Ticker</TooltipIcon>,
         input: { placeholder: "AAPL" },
       },
       [Key.listed]: {
-        label: "Listed Exchange",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.ListedExchange}>
+            Listed Exchange
+          </TooltipIcon>
+        ),
         input: { placeholder: "NASDAQ" },
       },
       [Key.suggestedOracle]: {
-        label: "Suggested Oracle (Optional)",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.SuggestedOracle}>
+            Suggested Oracle (Optional)
+          </TooltipIcon>
+        ),
         input: { placeholder: "Band Protocol" },
       },
 
@@ -381,7 +389,11 @@ const CreatePollForm = ({ type }: { type: Type }) => {
         input: { placeholder: configPlaceholders[Key.owner] },
       },
       [Key.quorum]: {
-        label: "Quorum (Optional)",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.Quorum}>
+            Quorum (Optional)
+          </TooltipIcon>
+        ),
         input: {
           type: "number",
           step: step(),
@@ -390,7 +402,11 @@ const CreatePollForm = ({ type }: { type: Type }) => {
         unit: "%",
       },
       [Key.threshold]: {
-        label: "Threshold (Optional)",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.Threshold}>
+            Threshold (Optional)
+          </TooltipIcon>
+        ),
         input: {
           type: "number",
           step: step(),
@@ -399,17 +415,29 @@ const CreatePollForm = ({ type }: { type: Type }) => {
         unit: "%",
       },
       [Key.votingPeriod]: {
-        label: "Voting Period (Optional)",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.VotingPeriod}>
+            Voting Period (Optional)
+          </TooltipIcon>
+        ),
         input: { placeholder: configPlaceholders[Key.votingPeriod] },
         unit: "Block(s)",
       },
       [Key.effectiveDelay]: {
-        label: "Effective Delay (Optional)",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.EffectiveDelay}>
+            Effective Delay (Optional)
+          </TooltipIcon>
+        ),
         input: { placeholder: configPlaceholders[Key.effectiveDelay] },
         unit: "Block(s)",
       },
       [Key.expirationPeriod]: {
-        label: "Expiration Period (Optional)",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.ExpirationPeriod}>
+            Expiration Period (Optional)
+          </TooltipIcon>
+        ),
         input: { placeholder: configPlaceholders[Key.expirationPeriod] },
         unit: "Block(s)",
       },
@@ -421,11 +449,13 @@ const CreatePollForm = ({ type }: { type: Type }) => {
 
       // Type.COMMUNITY_SPEND
       [Key.recipient]: {
-        label: "Recipient",
+        label: (
+          <TooltipIcon content={Tooltip.Gov.Recipient}>Recipient</TooltipIcon>
+        ),
         input: { placeholder: "Terra address" },
       },
       [Key.amount]: {
-        label: "Amount",
+        label: <TooltipIcon content={Tooltip.Gov.Amount}>Amount</TooltipIcon>,
         input: { placeholder: placeholder(MIR) },
         help: renderBalance(spend_limit, MIR),
         unit: MIR,
