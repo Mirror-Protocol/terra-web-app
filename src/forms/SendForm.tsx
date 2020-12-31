@@ -132,9 +132,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     ? [new MsgSend(address, recipient, amount + symbol)]
     : [newContractMsg(token, { transfer: { recipient, amount } })]
 
-  const messages = [
-    "Please double check if the above transaction requires a memo",
-  ]
+  const messages = ["Double check if the above transaction requires a memo"]
 
   const disabled = invalid
 
