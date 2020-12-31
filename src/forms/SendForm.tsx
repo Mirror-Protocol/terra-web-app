@@ -132,15 +132,19 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     ? [new MsgSend(address, recipient, amount + symbol)]
     : [newContractMsg(token, { transfer: { recipient, amount } })]
 
+  const messages = [
+    "Please double check if the above transaction requires a memo",
+  ]
+
   const disabled = invalid
 
   /* result */
   const parseTx = useSendReceipt()
 
-  const container = { tab, attrs, contents, disabled, data, memo, parseTx }
+  const container = { tab, attrs, contents, messages, disabled, data, memo }
 
   return (
-    <FormContainer {...container} pretax={uusd} label="send">
+    <FormContainer {...container} label="send" pretax={uusd} parseTx={parseTx}>
       <FormGroup {...fields[Key.to]} />
       <FormGroup {...fields[Key.value]} />
       {!isEthereum && <FormGroup {...fields[Key.memo]} />}
