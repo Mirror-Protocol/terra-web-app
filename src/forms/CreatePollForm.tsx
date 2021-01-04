@@ -1,4 +1,3 @@
-import { Fragment } from "react"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import Tooltip from "../lang/Tooltip.json"
 import { MAX_MSG_LENGTH, MIR } from "../constants"
@@ -14,7 +13,6 @@ import { GovKey, useGov } from "../graphql/useGov"
 import useContractQuery from "../graphql/useContractQuery"
 import { TooltipIcon } from "../components/Tooltip"
 import FormGroup from "../components/FormGroup"
-import FormFeedback from "../components/FormFeedback"
 import { Type } from "../pages/Poll/CreatePoll"
 import useGovReceipt from "./receipts/useGovReceipt"
 import useSelectAsset, { Config } from "./useSelectAsset"
@@ -145,7 +143,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
 
     const textRanges = {
       [Key.title]: { min: 4, max: 64 },
-      [Key.description]: { min: 4, max: 64 },
+      [Key.description]: { min: 4, max: 256 },
       [Key.link]: { min: 12, max: 128 },
       [Key.name]: { min: 3, max: 50 },
       [Key.ticker]: { min: 1, max: 11 },
@@ -573,15 +571,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
       {fieldKeys.map(
         (key) =>
           !fields[key].input?.disabled && (
-            <Fragment key={key}>
-              <FormGroup {...fields[key]} type={2} />
-              {key === Key.description && (
-                <FormFeedback help>
-                  The current maximum description length is 64 bytes.
-                  Description length will be increased on January 1, 2021.
-                </FormFeedback>
-              )}
-            </Fragment>
+            <FormGroup {...fields[key]} type={2} key={key} />
           )
       )}
 

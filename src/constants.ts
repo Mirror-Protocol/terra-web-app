@@ -17,7 +17,7 @@ export const LP = "LP"
 /* mirror:configs */
 export const GENESIS = 1607022000000
 export const MAX_SPREAD = 0.01
-export const MAX_MSG_LENGTH = 1024
+export const MAX_MSG_LENGTH = 4096
 export const COMMISSION = 0.003
 
 /* network:settings */
