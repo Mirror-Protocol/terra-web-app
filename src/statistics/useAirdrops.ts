@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery } from "@apollo/client"
-import { sum } from "../libs/math"
+import { gt, sum } from "../libs/math"
 import { useWallet } from "../hooks/useWallet"
 import AIRDROP from "../airdrop/gqldocs"
 import useStatsClient from "./useStatsClient"
@@ -14,7 +14,8 @@ export default () => {
   const { loading } = useQuery<{ airdrop: Airdrop[] }>(AIRDROP, {
     variables: { address },
     client,
-    onCompleted: ({ airdrop }) => setAirdrop(airdrop),
+    onCompleted: ({ airdrop }) =>
+      setAirdrop(airdrop.filter(({ amount }) => gt(amount, 0))),
   })
 
   return { airdrop, loading, amount }
