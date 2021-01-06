@@ -17,7 +17,7 @@ import { renderBalance } from "../libs/formHelpers"
 import calc from "../helpers/calc"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
-import { BalanceKey, AccountInfoKey } from "../hooks/contractKeys"
+import { BalanceKey } from "../hooks/contractKeys"
 import { MenuKey } from "../routes"
 
 import FormGroup from "../components/FormGroup"
@@ -41,13 +41,13 @@ enum Key {
 }
 
 interface Props {
-  idx?: string
+  position?: MintPosition
   type: Type
   tab?: Tab
   message?: string
 }
 
-const MintForm = ({ idx, type, tab, message }: Props) => {
+const MintForm = ({ position, type, tab, message }: Props) => {
   const priceKey = PriceKey.ORACLE
   const balanceKey = BalanceKey.TOKEN
 
@@ -58,8 +58,6 @@ const MintForm = ({ idx, type, tab, message }: Props) => {
   const { loading } = useRefetch([priceKey, balanceKey])
 
   /* context:position */
-  const { [AccountInfoKey.MINTPOSITIONS]: positions } = useContract()
-  const position = positions?.find((position) => position.idx === idx)
   const open = !position
   const close = type === Type.CLOSE
   const custom = type === Type.CUSTOM

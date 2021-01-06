@@ -3,12 +3,10 @@ import { useLocation } from "react-router-dom"
 import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
 import { MenuKey } from "../routes"
-import { insertIf } from "../libs/utils"
 import useHash from "../libs/useHash"
-import { useRefetch } from "../hooks"
-import { useContract } from "../hooks/useContract"
+import { useContractsAddress, useRefetch } from "../hooks"
 import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
-import { AccountInfoKey } from "../hooks/contractKeys"
+import { useLazyContractQuery } from "../graphql/useContractQuery"
 import Page from "../components/Page"
 import MintForm from "../forms/MintForm"
 
@@ -21,6 +19,10 @@ export enum Type {
 }
 
 const Mint = () => {
+  const keys = [PriceKey.ORACLE, AssetInfoKey.MINCOLLATERALRATIO]
+  useRefetch(keys)
+
+  const { contracts } = useContractsAddress()
   const { isClosed } = useLatest()
 
   /* type */
@@ -36,16 +38,15 @@ const Mint = () => {
   /* idx */
   const { search } = useLocation()
   const idx = new URLSearchParams(search).get("idx") || undefined
+  const { result, parsed } = useLazyContractQuery<MintPosition>({
+    contract: contracts["mint"],
+    msg: { position: { position_idx: idx } },
+  })
 
-  // If idx exists, positions and prices are needed to initialize the ratio in form.
-  const keys = [
-    ...insertIf(idx, AccountInfoKey.MINTPOSITIONS),
-    PriceKey.ORACLE,
-    AssetInfoKey.MINCOLLATERALRATIO,
-  ]
-
-  useRefetch(keys)
-  const { result } = useContract()
+  const { load } = result
+  useEffect(() => {
+    idx && load()
+  }, [idx, load])
 
   /* latest price */
   const message = isClosed
@@ -56,9 +57,7 @@ const Mint = () => {
 
   return (
     <Page title={MenuKey.MINT} doc="/user-guide/getting-started/mint-and-burn">
-      {(!idx || keys.every((key) => result[key].data)) && (
-        <MintForm idx={idx} {...props} key={type} />
-      )}
+      {(!idx || parsed) && <MintForm position={parsed} {...props} key={type} />}
     </Page>
   )
 }
