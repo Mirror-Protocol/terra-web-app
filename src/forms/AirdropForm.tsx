@@ -2,13 +2,16 @@ import { gt } from "../libs/math"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { MIR } from "../constants"
 import { formatAsset } from "../libs/parse"
+import useHash from "../libs/useHash"
 import { useContractsAddress } from "../hooks"
 import useAirdrops from "../statistics/useAirdrops"
 import FormContainer from "./FormContainer"
 
 const AirdropForm = () => {
+  const { hash } = useHash()
+
   /* context */
-  const { airdrop, loading, amount } = useAirdrops()
+  const { airdrop, loading, amount } = useAirdrops(hash === "sequence")
   const { contracts } = useContractsAddress()
 
   /* confirm */

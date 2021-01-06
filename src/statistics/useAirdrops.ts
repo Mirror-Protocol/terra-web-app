@@ -5,18 +5,20 @@ import { useWallet } from "../hooks/useWallet"
 import AIRDROP from "../airdrop/gqldocs"
 import useStatsClient from "./useStatsClient"
 
-export default () => {
-  const [airdrop, setAirdrop] = useState<Airdrop[]>()
+export default (sequence?: boolean) => {
+  const [airdropList, setAirdropList] = useState<Airdrop[]>()
   const { address } = useWallet()
   const client = useStatsClient()
-  const amount = sum(airdrop?.map(({ amount }) => amount) ?? [])
 
   const { loading } = useQuery<{ airdrop: Airdrop[] }>(AIRDROP, {
     variables: { address },
     client,
     onCompleted: ({ airdrop }) =>
-      setAirdrop(airdrop.filter(({ amount }) => gt(amount, 0))),
+      setAirdropList(airdrop.filter(({ amount }) => gt(amount, 0))),
   })
+
+  const airdrop = airdropList?.slice(0, sequence ? 1 : undefined)
+  const amount = sum(airdrop?.map(({ amount }) => amount) ?? [])
 
   return { airdrop, loading, amount }
 }
