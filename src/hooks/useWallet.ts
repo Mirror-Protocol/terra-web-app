@@ -37,7 +37,7 @@ export const useWalletState = (): Wallet => {
 
   const connect = useCallback(async () => {
     const response = await extension.connect()
-    setAddress(response?.address ?? "")
+    response?.address && setAddress(response.address)
   }, [setAddress])
 
   const disconnect = () => setAddress("")
