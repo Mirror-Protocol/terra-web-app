@@ -43,10 +43,10 @@ const Mint = () => {
     msg: { position: { position_idx: idx } },
   })
 
-  const { load } = result
+  const { load, refetch } = result
   useEffect(() => {
-    idx && load()
-  }, [idx, load])
+    idx && (refetch?.() ?? load())
+  }, [idx, load, refetch])
 
   /* latest price */
   const message = isClosed
