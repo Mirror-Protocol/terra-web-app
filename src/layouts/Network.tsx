@@ -5,7 +5,7 @@ import { NetworkProvider, useNetworkState } from "../hooks/useNetwork"
 
 export const DefaultApolloClientOptions: DefaultOptions = {
   watchQuery: { notifyOnNetworkStatusChange: true },
-  query: { errorPolicy: "all" },
+  query: { errorPolicy: "all", fetchPolicy: "network-only" },
 }
 
 const Network: FC = ({ children }) => {
