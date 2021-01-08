@@ -3,14 +3,13 @@ interface Dashboard {
   totalValueLocked: string
   collateralRatio: string
   mirCirculatingSupply: string
+  govAPR: string
 
-  latest24h: {
+  today: {
     transactions: string
     volume: string
-    volumeChanged: string
     feeVolume: string
     mirVolume: string
-    govAPR: string
   }
 
   liquidityHistory: ChartItem[]
@@ -26,12 +25,14 @@ interface ChartItem {
 interface AssetStatsData {
   token: string
   statistic: {
-    volume24h: string
+    liquidity: string
+    volume: string
     apr: string
   }
 }
 
 interface AssetStats {
+  liquidity: Dict<string | undefined>
   volume: Dict<string | undefined>
   apr: Dict<string | undefined>
 }

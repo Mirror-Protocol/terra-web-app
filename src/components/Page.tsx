@@ -9,13 +9,14 @@ interface Props {
   title?: ReactNode
   description?: ReactNode
   action?: ReactNode
+  select?: ReactNode
   doc?: string
   sm?: boolean
   noBreak?: boolean
 }
 
 const Page: FC<Props> = ({ title, description, children, ...props }) => {
-  const { doc, action, sm, noBreak } = props
+  const { doc, action, select, sm, noBreak } = props
 
   return (
     <article className={styles.article}>
@@ -23,6 +24,14 @@ const Page: FC<Props> = ({ title, description, children, ...props }) => {
         <header className={styles.header}>
           <section className={styles.heading}>
             <h1 className={styles.title}>{title}</h1>
+
+            {select && (
+              <div className={styles.select}>
+                {select}
+                <Icon name="arrow_drop_down" size={18} />
+              </div>
+            )}
+
             {doc && (
               <ExtLink href={DOCS + doc} className={styles.doc}>
                 <Icon name="article" size={12} className={styles.icon} />

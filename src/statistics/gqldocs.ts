@@ -9,20 +9,19 @@ export const CONNECT = gql`
 `
 
 export const STATISTICS = gql`
-  query statistic($from: Float!, $to: Float!) {
-    statistic {
+  query statistic($from: Float!, $to: Float!, $network: Network) {
+    statistic(network: $network) {
       assetMarketCap
       totalValueLocked
       collateralRatio
       mirCirculatingSupply
+      govAPR
 
-      latest24h {
+      today {
         transactions
         volume
-        volumeChanged
         feeVolume
         mirVolume
-        govAPR
       }
 
       liquidityHistory(from: $from, to: $to) {
@@ -39,11 +38,12 @@ export const STATISTICS = gql`
 `
 
 export const ASSETSTATS = gql`
-  query {
+  query assets($network: Network) {
     assets {
       token
       statistic {
-        volume24h
+        liquidity(network: $network)
+        volume(network: $network)
         apr
       }
     }

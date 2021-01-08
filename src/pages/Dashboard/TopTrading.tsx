@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom"
 import { UST, UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"
-import { times, lt, gt } from "../../libs/math"
+import { lt, gt } from "../../libs/math"
 import { format, formatAsset } from "../../libs/parse"
 import { useContractsAddress, useContract, useRefetch } from "../../hooks"
 import { AssetInfoKey, PriceKey } from "../../hooks/contractKeys"
+import { StatsNetwork } from "../../statistics/useDashboard"
 import useAssetStats from "../../statistics/useAssetStats"
 import useYesterday, { calcChange } from "../../statistics/useYesterday"
 import { getPath, MenuKey } from "../../routes"
@@ -15,14 +16,14 @@ import { TooltipIcon } from "../../components/Tooltip"
 import { Type } from "../Trade"
 import styles from "./TopTrading.module.scss"
 
-const TopTrading = () => {
+const TopTrading = ({ network }: { network: StatsNetwork }) => {
   const infoKey = AssetInfoKey.LIQUIDITY
   const keys = [PriceKey.PAIR, PriceKey.ORACLE, infoKey]
 
   const { listed } = useContractsAddress()
   const { find } = useContract()
   const yesterday = useYesterday()
-  const { volume } = useAssetStats()
+  const { volume, liquidity } = useAssetStats(network)
   const { loading, data } = useRefetch(keys)
 
   const dataSource = listed
@@ -30,11 +31,9 @@ const TopTrading = () => {
       const { token } = item
       const pair = find(PriceKey.PAIR, token)
       const oracle = find(PriceKey.ORACLE, token)
-      const liquidity = find(infoKey, token)
 
       return {
         ...item,
-        liquidity: times(liquidity, pair),
         pair: {
           price: pair,
           change: calcChange({
@@ -49,6 +48,7 @@ const TopTrading = () => {
             yesterday: yesterday[PriceKey.ORACLE][token],
           }),
         },
+        liquidity: liquidity[token] ?? "0",
         volume: volume[token] ?? "0",
       }
     })
@@ -85,7 +85,7 @@ const TopTrading = () => {
               key: "volume",
               title: (
                 <TooltipIcon content={Tooltip.TopTrading.Volume}>
-                  Volume (24hrs)
+                  Volume
                 </TooltipIcon>
               ),
               render: (value) => formatAsset(value, UUSD, { integer: true }),

@@ -31,7 +31,7 @@ const GovMIR = () => {
 
       <section>
         <span className={styles.apr}>
-          <Count format={percent}>{dashboard?.latest24h.govAPR}</Count>
+          <Count format={percent}>{dashboard?.govAPR}</Count>
         </span>
 
         <section className={styles.desc}>

@@ -19,6 +19,28 @@
   font-weight: 500;
 }
 
+.select {
+  position: relative;
+
+  select {
+    appearance: none;
+    border: solid 1px fade-out($slate, 0.5);
+    border-radius: 3px;
+    font-size: 12px;
+    margin-left: 10px;
+    padding: 5px 10px;
+    padding-right: 30px;
+  }
+
+  i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translate(0, -50%);
+    pointer-events: none;
+  }
+}
+
 .doc {
   @include flex(flex-start);
   @include link($slate, white);

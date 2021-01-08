@@ -12,7 +12,7 @@ import ChartContainer from "../../containers/ChartContainer"
 import { TooltipIcon } from "../../components/Tooltip"
 
 const DashboardCharts = (props: Partial<Dashboard>) => {
-  const { latest24h, liquidityHistory, tradingVolumeHistory } = props
+  const { today, liquidityHistory, tradingVolumeHistory } = props
 
   return (
     <Grid wrap={2}>
@@ -55,10 +55,9 @@ const DashboardCharts = (props: Partial<Dashboard>) => {
           <ChartContainer
             value={
               <Count symbol={UUSD} integer>
-                {latest24h?.volume}
+                {today?.volume}
               </Count>
             }
-            change={latest24h && div(latest24h.volumeChanged, 100)}
             datasets={
               tradingVolumeHistory ? toDatasets(tradingVolumeHistory, UUSD) : []
             }

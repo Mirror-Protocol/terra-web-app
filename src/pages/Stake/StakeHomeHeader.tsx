@@ -30,12 +30,12 @@ const StakeHomeHeader = () => {
     {
       title: (
         <TooltipIcon content={Tooltip.Stake.MIRvolume}>
-          {MIR} Volume (24hrs)
+          {MIR} Volume
         </TooltipIcon>
       ),
       content: (
         <CountWithResult results={[result]} symbol={UUSD} integer>
-          {dashboard?.latest24h?.mirVolume}
+          {dashboard?.today?.mirVolume}
         </CountWithResult>
       ),
     },
