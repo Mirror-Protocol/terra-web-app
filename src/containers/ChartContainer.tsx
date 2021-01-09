@@ -70,9 +70,12 @@ const ChartContainer = ({ value, change, datasets, ...props }: Props) => {
                   {
                     type: "time",
                     display: !compact,
-                    ticks: compact
-                      ? { source: "auto", autoSkip: true }
-                      : { source: "data" },
+                    ticks: {
+                      source: "data",
+                      autoSkip: true,
+                      autoSkipPadding: 15,
+                      maxRotation: 0,
+                    },
                     gridLines: { display: false },
                   },
                 ],
