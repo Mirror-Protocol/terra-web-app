@@ -1,7 +1,6 @@
 import { last } from "ramda"
 import { UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"
-import { div } from "../../libs/math"
 import { lookup } from "../../libs/parse"
 import { calcChange } from "../../statistics/useYesterday"
 import Grid from "../../components/Grid"
