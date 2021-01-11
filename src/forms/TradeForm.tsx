@@ -5,7 +5,7 @@ import { isNil } from "ramda"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { COMMISSION, MAX_SPREAD, MIR, UUSD } from "../constants"
 import Tooltip from "../lang/Tooltip.json"
-import { div } from "../libs/math"
+import { div, gt } from "../libs/math"
 import { useRefetch } from "../hooks"
 import { format, lookup, lookupSymbol } from "../libs/parse"
 import { decimal } from "../libs/parse"
@@ -107,6 +107,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   }, [simulated, reverse, setValues, symbol1, symbol2, error])
 
   /* render:form */
+  const balance = find(balanceKey, token1)
   const config = { token, onSelect, priceKey, balanceKey }
   const select = useSelectAsset(config)
   const delisted = whitelist[token1]?.["status"] === "DELISTED"
@@ -126,6 +127,10 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         [Type.BUY]: lookupSymbol(symbol1),
         [Type.SELL]: delisted ? symbol1 : select.button,
       }[type],
+      max:
+        type === Type.SELL && gt(balance, 0)
+          ? () => setValue(Key.value1, lookup(balance, symbol))
+          : undefined,
       assets: type === Type.SELL && select.assets,
       help: renderBalance(find(balanceKey, token1), symbol1),
       focused: type === Type.SELL && select.isOpen,

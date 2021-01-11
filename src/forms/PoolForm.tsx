@@ -140,8 +140,8 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
           ref: valueRef,
         },
         unit: delisted ? symbol : select.button,
-        max: gt(find(balanceKey, token), 0)
-          ? () => setValue(Key.value, lookup(find(balanceKey, token), symbol))
+        max: gt(balance, 0)
+          ? () => setValue(Key.value, lookup(balance, symbol))
           : undefined,
         assets: select.assets,
         help: renderBalance(balance, symbol),
