@@ -24,6 +24,7 @@ interface ChartItem {
 /* asset */
 interface AssetStatsData {
   token: string
+  description?: string
   statistic: {
     liquidity: string
     volume: string
@@ -32,6 +33,7 @@ interface AssetStatsData {
 }
 
 interface AssetStats {
+  description: Dict<string | undefined>
   liquidity: Dict<string | undefined>
   volume: Dict<string | undefined>
   apr: Dict<string | undefined>

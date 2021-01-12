@@ -19,6 +19,9 @@ export default (network = StatsNetwork.TERRA) => {
 
 /* parse */
 const parse = (assets: AssetStatsData[]) => ({
+  description: assets.reduce((acc, { token, description }) => {
+    return { ...acc, [token]: description }
+  }, {}),
   liquidity: assets.reduce((acc, { token, statistic }) => {
     return { ...acc, [token]: statistic.liquidity }
   }, {}),

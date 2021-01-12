@@ -17,6 +17,7 @@ $orange: #dd794a !default;
 $text: $gray;
 $button: white !default;
 $header: $darkblue !default;
+$saturated-blue: saturate(darken($darkblue, 2%), 6%);
 
 $colors: (
   bg: $bg,

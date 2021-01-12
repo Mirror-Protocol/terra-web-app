@@ -2,7 +2,7 @@
 @import "variables";
 
 .list {
-  background: saturate(darken($darkblue, 2%), 6%);
+  background: $saturated-blue;
   border-radius: $border-radius;
   font-size: 12px;
   padding: 20px;

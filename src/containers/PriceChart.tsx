@@ -10,7 +10,9 @@ import { UST } from "../constants"
 import { PRICEHISTORY } from "../statistics/gqldocs"
 import useStatsClient from "../statistics/useStatsClient"
 import { calcChange } from "../statistics/useYesterday"
+import useAssetStats from "../statistics/useAssetStats"
 import ChartContainer from "./ChartContainer"
+import PriceChartDescription from "./PriceChartDescription"
 import styles from "./PriceChart.module.scss"
 
 const cx = classNames.bind(styles)
@@ -33,6 +35,7 @@ interface Response {
 const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
   const now = startOfMinute(new Date())
   const yesterday = subDays(now, 1).getTime()
+  const { description } = useAssetStats()
 
   const ranges = [
     {
@@ -115,6 +118,12 @@ const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
           compact
         />
       </div>
+
+      <section className={styles.description}>
+        <PriceChartDescription key={token}>
+          {description[token]}
+        </PriceChartDescription>
+      </section>
     </div>
   )
 }

@@ -1,0 +1,31 @@
+@import "mixins";
+
+$font-size: 12px;
+
+.component {
+  color: $brown;
+  font-size: $font-size;
+  text-align: left;
+  position: relative;
+}
+
+.collapsed {
+  height: ($font-size * $line-height * 2);
+  overflow: hidden;
+}
+
+.button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+  // background-color: $saturated-blue;
+  background-image: linear-gradient(
+    to left,
+    $saturated-blue,
+    $saturated-blue,
+    transparent
+  );
+  color: white;
+  padding-left: 60px;
+}

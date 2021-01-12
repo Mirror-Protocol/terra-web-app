@@ -41,6 +41,7 @@ export const ASSETSTATS = gql`
   query assets($network: Network) {
     assets {
       token
+      description
       statistic {
         liquidity(network: $network)
         volume(network: $network)
