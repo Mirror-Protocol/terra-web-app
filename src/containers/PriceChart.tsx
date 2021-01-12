@@ -65,7 +65,7 @@ const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
   ]
 
   /* request */
-  const [range, setRange] = useState(ranges[0])
+  const [range, setRange] = useState(ranges[2])
   const [data, setDate] = useState<Data>()
   const params = { token, ...range, to: now.getTime(), yesterday }
 
