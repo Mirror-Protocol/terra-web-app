@@ -2,6 +2,7 @@ import { last } from "ramda"
 import { UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"
 import { lookup } from "../../libs/parse"
+import { getUTCDate } from "../../libs/date"
 import { calcChange } from "../../statistics/useYesterday"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
@@ -48,7 +49,9 @@ const DashboardCharts = (props: Partial<Dashboard>) => {
       <Card>
         <Summary
           title={
-            <TooltipIcon content={Tooltip.Chart.Volume}>Volume</TooltipIcon>
+            <TooltipIcon content={Tooltip.Chart.Volume}>
+              Volume({getUTCDate()})
+            </TooltipIcon>
           }
         >
           <ChartContainer
