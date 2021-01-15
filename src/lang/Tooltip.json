@@ -1,7 +1,7 @@
 {
   "Dashboard": {
     "Transactions": "Total transactions (Reset daily at 00:00 UTC)",
-    "Fee": "Total transaction fees paid (Reset daily at 00:00 UTC)",
+    "Fee": "Total trading fee paid (Reset daily at 00:00 UTC)",
     "MarketCap": "Total value of all minted assets",
     "TVL": "Total UST collateralizing all mAssets",
     "CollateralRatio": "Ratio of the total collateral value to the total minted asset value",
