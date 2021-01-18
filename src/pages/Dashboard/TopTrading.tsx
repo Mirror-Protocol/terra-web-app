@@ -3,7 +3,6 @@ import { UST, UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"
 import { lt, gt } from "../../libs/math"
 import { format, formatAsset } from "../../libs/parse"
-import { getUTCDate } from "../../libs/date"
 import { useContractsAddress, useContract, useRefetch } from "../../hooks"
 import { AssetInfoKey, PriceKey } from "../../hooks/contractKeys"
 import { StatsNetwork } from "../../statistics/useDashboard"
@@ -86,7 +85,7 @@ const TopTrading = ({ network }: { network: StatsNetwork }) => {
               key: "volume",
               title: (
                 <TooltipIcon content={Tooltip.TopTrading.Volume}>
-                  Volume({getUTCDate()})
+                  Volume
                 </TooltipIcon>
               ),
               render: (value) => formatAsset(value, UUSD, { integer: true }),

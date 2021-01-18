@@ -2,7 +2,6 @@ import { last } from "ramda"
 import { UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"
 import { lookup } from "../../libs/parse"
-import { getUTCDate } from "../../libs/date"
 import { calcChange } from "../../statistics/useYesterday"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
@@ -12,7 +11,7 @@ import ChartContainer from "../../containers/ChartContainer"
 import { TooltipIcon } from "../../components/Tooltip"
 
 const DashboardCharts = (props: Partial<Dashboard>) => {
-  const { today, liquidityHistory, tradingVolumeHistory } = props
+  const { latest24h, liquidityHistory, tradingVolumeHistory } = props
 
   return (
     <Grid wrap={2}>
@@ -49,15 +48,13 @@ const DashboardCharts = (props: Partial<Dashboard>) => {
       <Card>
         <Summary
           title={
-            <TooltipIcon content={Tooltip.Chart.Volume}>
-              Volume({getUTCDate()})
-            </TooltipIcon>
+            <TooltipIcon content={Tooltip.Chart.Volume}>Volume</TooltipIcon>
           }
         >
           <ChartContainer
             value={
               <Count symbol={UUSD} integer>
-                {today?.volume}
+                {latest24h?.volume}
               </Count>
             }
             datasets={

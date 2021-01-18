@@ -1,7 +1,7 @@
 {
   "Dashboard": {
-    "Transactions": "Total number of trades (Reset daily at 00:00 UTC)",
-    "Fee": "Total trading fee paid (Reset daily at 00:00 UTC)",
+    "Transactions": "Number of transactions occurred in the last 24 hours",
+    "Fee": "Value of transaction fee paid in the last 24 hours",
     "MarketCap": "Total value of all minted assets",
     "TVL": "Total UST collateralizing all mAssets",
     "CollateralRatio": "Ratio of the total collateral value to the total minted asset value",
@@ -9,11 +9,11 @@
   },
   "Chart": {
     "Liquidity": "Total value of all mAssets and UST in liquidity pools",
-    "Volume": "Total value of assets traded (Reset daily at 00:00 UTC)"
+    "Volume": "Total value of all assets that were traded in the last 24 hours. The chart data is accumulated on daily basis"
   },
   "TopTrading": {
     "Liquidity": "Current liquidity value of the mAsset and UST in the pool",
-    "Volume": "Total value of the corresponding asset traded (Reset daily at 00:00 UTC)",
+    "Volume": "Value of assets traded in the last 24 hours",
     "Oracle": "The oracle price changes only during market hours. During non-market hours, the price shown is the last voted price."
   },
 
@@ -89,7 +89,7 @@
   },
   "Stake": {
     "MIRprice": "Terraswap price of MIR that is determined by the current pool ratio",
-    "MIRvolume": "Total value of MIR traded (Reset daily at 00:00 UTC)",
+    "MIRvolume": "Total value of MIR traded in the last 24 hours",
     "Title": "LP tokens can be staked to earn MIR as rewards. LP tokens are obtained by providing asset liquidity.",
     "APR": "Annualized LP staking return based on the MIR distribution, LP staking ratio, and pool value",
     "TotalStaked": "Quantity of LP tokens staked for the corresponding asset liquidity pool"

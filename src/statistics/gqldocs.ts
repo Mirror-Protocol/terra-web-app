@@ -17,7 +17,7 @@ export const STATISTICS = gql`
       mirCirculatingSupply
       govAPR
 
-      today {
+      latest24h {
         transactions
         volume
         feeVolume

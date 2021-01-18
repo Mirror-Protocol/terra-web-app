@@ -35,7 +35,7 @@ const StakeHomeHeader = () => {
       ),
       content: (
         <CountWithResult results={[result]} symbol={UUSD} integer>
-          {dashboard?.today?.mirVolume}
+          {dashboard?.latest24h?.mirVolume}
         </CountWithResult>
       ),
     },

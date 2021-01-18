@@ -5,7 +5,7 @@ interface Dashboard {
   mirCirculatingSupply: string
   govAPR: string
 
-  today: {
+  latest24h: {
     transactions: string
     volume: string
     feeVolume: string

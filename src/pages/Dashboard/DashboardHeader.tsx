@@ -16,7 +16,7 @@ import useCommunityBalance from "./useCommunityBalance"
 const DashboardHeader = (props: Partial<Dashboard>) => {
   const { getToken } = useContractsAddress()
   const { find } = useContract()
-  const { today, assetMarketCap, totalValueLocked, collateralRatio } = props
+  const { latest24h, assetMarketCap, totalValueLocked, collateralRatio } = props
   const communityBalance = useCommunityBalance()
 
   return (
@@ -36,7 +36,7 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
               title: "Transactions",
               content: (
                 <TooltipIcon content={Tooltip.Dashboard.Transactions}>
-                  <Count integer>{today?.transactions}</Count>
+                  <Count integer>{latest24h?.transactions}</Count>
                 </TooltipIcon>
               ),
             },
@@ -45,7 +45,7 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
               content: (
                 <TooltipIcon content={Tooltip.Dashboard.Fee}>
                   <Count symbol={UUSD} integer>
-                    {today?.feeVolume}
+                    {latest24h?.feeVolume}
                   </Count>
                 </TooltipIcon>
               ),
