@@ -1,6 +1,5 @@
 import { MIR, UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"
-import { div } from "../../libs/math"
 import { percent } from "../../libs/num"
 import { format } from "../../libs/parse"
 import { useContract, useContractsAddress } from "../../hooks"
@@ -92,7 +91,7 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
             }
           >
             <Count format={(value) => percent(value, 0)}>
-              {div(collateralRatio, 100)}
+              {collateralRatio}
             </Count>
           </Summary>
         </Card>
