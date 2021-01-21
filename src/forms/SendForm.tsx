@@ -5,8 +5,9 @@ import { ethers } from "ethers"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { UUSD } from "../constants"
-import { gt } from "../libs/math"
-import { toAmount } from "../libs/parse"
+import Tooltip from "../lang/Tooltip.json"
+import { div, gt, max, minus, times } from "../libs/math"
+import { formatAsset, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
 import { validate as v, placeholder, step } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
@@ -15,6 +16,7 @@ import { useWallet, useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 
 import FormGroup from "../components/FormGroup"
+import { TooltipIcon } from "../components/Tooltip"
 import useSendReceipt from "./receipts/useSendReceipt"
 import FormContainer from "./FormContainer"
 import useSelectAsset, { Config } from "./useSelectAsset"
@@ -28,7 +30,7 @@ enum Key {
 }
 
 const SendForm = ({ tab }: { tab: Tab }) => {
-  const priceKey = PriceKey.ORACLE
+  const priceKey = PriceKey.PAIR
   const balanceKey = BalanceKey.TOKEN
 
   /* context */
@@ -154,7 +156,27 @@ const SendForm = ({ tab }: { tab: Tab }) => {
   }
 
   /* confirm */
-  const contents = value ? [] : undefined
+  const price = find(priceKey, token)
+  const shuttleFee = max([times(amount, 0.001), div(1e6, price)])
+  const amountAfterShuttleFee = max([minus(amount, shuttleFee), String(0)])
+  const contents = !value
+    ? undefined
+    : isEthereum
+    ? [
+        {
+          title: (
+            <TooltipIcon content={Tooltip.Send.ShuttleFee}>
+              Shuttle fee (estimated)
+            </TooltipIcon>
+          ),
+          content: formatAsset(shuttleFee, symbol),
+        },
+        {
+          title: "Amount after Shuttle fee (estimated)",
+          content: formatAsset(amountAfterShuttleFee, symbol),
+        },
+      ]
+    : []
 
   /* submit */
   const recipient = !isEthereum ? to : shuttle[network as ShuttleNetwork]

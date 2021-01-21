@@ -55,6 +55,9 @@
     "TxFee": "Fee paid to execute this transaction"
   },
 
+  "Send": {
+    "ShuttleFee": "A fee of 1 UST or 0.1% of the transfer amount (whichever is greater) will be charged for transferring assets from Terra to Ethereum through Shuttle"
+  },
   "Trade": {
     "General": "The amount of asset traded is automatically calculated based on the current price, spread, and commission",
     "Price": "Price is based on the pool ratio. The effective price changes dynamically depending on the trade size.\n\n• Spread: Fee paid due to the difference between market price and estimated price.\n• Commission: Fee charged by the protocol that is automatically deducted from the assets that user receives.",
