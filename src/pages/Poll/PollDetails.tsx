@@ -1,6 +1,5 @@
 import { useRouteMatch } from "react-router-dom"
 import { gt, plus } from "../../libs/math"
-import { useGov } from "../../graphql/useGov"
 import Card from "../../components/Card"
 import Grid from "../../components/Grid"
 import PollHeader from "./PollHeader"
@@ -10,13 +9,9 @@ import PollVotes from "./PollVotes"
 import PollVoters from "./PollVoters"
 import styles from "./PollDetails.module.scss"
 
-const PollDetails = () => {
+const PollDetails = ({ poll }: { poll: Poll }) => {
   const { params } = useRouteMatch<{ id: string }>()
   const id = Number(params.id)
-
-  /* data */
-  const { polls } = useGov()
-  const poll = polls.data[id]
 
   return !poll ? null : (
     <>

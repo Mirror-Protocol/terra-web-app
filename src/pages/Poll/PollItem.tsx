@@ -7,7 +7,7 @@ import styles from "./PollItem.module.scss"
 const PollItem = ({ id }: { id: number }) => {
   const { polls } = useGov()
   const poll = polls.data[id]
-  const estimatedTime = useEstimateTime(id)
+  const estimatedTime = useEstimateTime(poll)
 
   return !poll ? null : (
     <article className={styles.component}>

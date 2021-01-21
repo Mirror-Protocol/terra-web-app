@@ -1,4 +1,3 @@
-import { useRouteMatch } from "react-router-dom"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { useContractsAddress } from "../hooks"
 import { useGov } from "../graphql/useGov"
@@ -10,16 +9,14 @@ import FormContainer from "./FormContainer"
 interface Props {
   type: Type
   tab: Tab
+  poll: Poll
 }
 
-const PollForm = ({ type, tab }: Props) => {
-  const { params } = useRouteMatch<{ id: string }>()
-  const id = Number(params.id)
-
+const PollForm = ({ type, tab, poll }: Props) => {
   /* poll */
-  const estimatedTime = useEstimateTime(id)
+  const estimatedTime = useEstimateTime(poll)
   const { polls, config } = useGov()
-  const poll = polls.data[id]
+  const { id } = poll
 
   /* context */
   const { contracts } = useContractsAddress()

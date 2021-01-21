@@ -135,6 +135,23 @@ const usePolls = (poll_count: number) => {
   return { ...query, polls: { data, list, height, more, offset } }
 }
 
+export const usePoll = (id: number) => {
+  const { contracts } = useContractsAddress()
+
+  /* contract query */
+  const variables = {
+    contract: contracts["gov"],
+    msg: { poll: { poll_id: id } },
+  }
+
+  const query = useContractQuery<PollData>(variables)
+  const { parsed } = query
+
+  const parsePoll = useParsePoll()
+
+  return { ...query, poll: parsed && parsePoll(parsed) }
+}
+
 /* voters */
 export const useVoters = (id: number) => {
   const { contracts } = useContractsAddress()
@@ -149,82 +166,91 @@ export const useVoters = (id: number) => {
 
 /* select */
 const useSelect = () => {
-  const { getSymbol } = useContractsAddress()
+  const parsePoll = useParsePoll()
   return (data?: PollsData) => {
-    const parseParams = (decoded: DecodedExecuteMsg, id: number) => {
-      const type =
-        "whitelist" in decoded
-          ? PollType.WHITELIST
-          : "pass_command" in decoded
-          ? PollType.MINT_UPDATE
-          : "update_config" in decoded
-          ? PollType.GOV_UPDATE
-          : "spend" in decoded
-          ? PollType.COMMUNITY_SPEND
-          : PollType.TEXT
+    return data?.polls.reduce(
+      (acc, poll) => ({ ...acc, [poll.id]: parsePoll(poll) }),
+      {}
+    )
+  }
+}
 
-      const parsed =
-        "whitelist" in decoded
-          ? parseWhitelist(decoded.whitelist)
-          : "pass_command" in decoded
-          ? parsePassCommand(decoded.pass_command)
-          : "update_config" in decoded
-          ? parseUpdateConfig(decoded.update_config)
-          : "spend" in decoded
-          ? parseSpend(decoded.spend)
-          : {}
+const useParsePoll = () => {
+  const { getSymbol } = useContractsAddress()
 
-      return { type, ...parsed }
+  const parseParams = (decoded: DecodedExecuteMsg, id: number) => {
+    const type =
+      "whitelist" in decoded
+        ? PollType.WHITELIST
+        : "pass_command" in decoded
+        ? PollType.MINT_UPDATE
+        : "update_config" in decoded
+        ? PollType.GOV_UPDATE
+        : "spend" in decoded
+        ? PollType.COMMUNITY_SPEND
+        : PollType.TEXT
+
+    const parsed =
+      "whitelist" in decoded
+        ? parseWhitelist(decoded.whitelist)
+        : "pass_command" in decoded
+        ? parsePassCommand(decoded.pass_command)
+        : "update_config" in decoded
+        ? parseUpdateConfig(decoded.update_config)
+        : "spend" in decoded
+        ? parseSpend(decoded.spend)
+        : {}
+
+    return { type, ...parsed }
+  }
+
+  const parseWhitelist = ({ params, ...whitelist }: Whitelist) => ({
+    msg: whitelist,
+    params,
+  })
+
+  const parsePassCommand = ({ msg }: PassCommand) => {
+    const decodedPassCommand = fromBase64<DecodedPassCommandMsg>(msg)
+    return parseUpdateAsset(decodedPassCommand.update_asset)
+  }
+
+  const parseUpdateAsset = ({ asset_token, ...params }: UpdateAsset) => ({
+    msg: { asset: getSymbol(asset_token) },
+    params,
+  })
+
+  const parseUpdateConfig = (config: Partial<GovConfig>) => {
+    const { voting_period, expiration_period, effective_delay } = config
+    const { quorum, threshold } = config
+    const { proposal_deposit, owner } = config
+
+    return {
+      msg: {
+        owner,
+        voting_period: getBlocks(voting_period),
+        expiration_period: getBlocks(expiration_period),
+        effective_delay: getBlocks(effective_delay),
+        proposal_deposit: proposal_deposit
+          ? formatAsset(proposal_deposit, MIR)
+          : undefined,
+      },
+      params: { quorum, threshold },
     }
+  }
 
-    const parseWhitelist = ({ params, ...whitelist }: Whitelist) => ({
-      msg: whitelist,
-      params,
-    })
+  const getBlocks = (n?: number) => (isInteger(n) ? `${n} Blocks` : undefined)
 
-    const parsePassCommand = ({ msg }: PassCommand) => {
-      const decodedPassCommand = fromBase64<DecodedPassCommandMsg>(msg)
-      return parseUpdateAsset(decodedPassCommand.update_asset)
+  const parseSpend = ({ recipient, amount }: Spend) => ({
+    msg: { recipient, amount: formatAsset(amount, MIR) },
+  })
+
+  return (poll: PollData): Poll => {
+    try {
+      const decoded = fromBase64<DecodedExecuteMsg>(poll.execute_data.msg)
+      const parsed = parseParams(decoded, poll.id)
+      return { ...poll, ...parsed }
+    } catch (error) {
+      return poll
     }
-
-    const parseUpdateAsset = ({ asset_token, ...params }: UpdateAsset) => ({
-      msg: { asset: getSymbol(asset_token) },
-      params,
-    })
-
-    const parseUpdateConfig = (config: Partial<GovConfig>) => {
-      const { voting_period, expiration_period, effective_delay } = config
-      const { quorum, threshold } = config
-      const { proposal_deposit, owner } = config
-
-      return {
-        msg: {
-          owner,
-          voting_period: getBlocks(voting_period),
-          expiration_period: getBlocks(expiration_period),
-          effective_delay: getBlocks(effective_delay),
-          proposal_deposit: proposal_deposit
-            ? formatAsset(proposal_deposit, MIR)
-            : undefined,
-        },
-        params: { quorum, threshold },
-      }
-    }
-
-    const getBlocks = (n?: number) => (isInteger(n) ? `${n} Blocks` : undefined)
-
-    const parseSpend = ({ recipient, amount }: Spend) => ({
-      msg: { recipient, amount: formatAsset(amount, MIR) },
-    })
-
-    return data?.polls.reduce((acc, poll) => {
-      try {
-        const decoded = fromBase64<DecodedExecuteMsg>(poll.execute_data.msg)
-        const parsed = parseParams(decoded, poll.id)
-        return { ...acc, [poll.id]: { ...poll, ...parsed } }
-      } catch (error) {
-        return { ...acc, [poll.id]: poll }
-      }
-    }, {})
   }
 }

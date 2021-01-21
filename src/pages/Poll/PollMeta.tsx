@@ -5,9 +5,10 @@ import ExtLink from "../../components/ExtLink"
 import useEstimateTime from "./useEstimateTime"
 import styles from "./PollMeta.module.scss"
 
-const PollMeta = ({ id, creator, end_height }: Poll) => {
+const PollMeta = (poll: Poll) => {
   const { finder } = useNetwork()
-  const estimatedTime = useEstimateTime(id)
+  const estimatedTime = useEstimateTime(poll)
+  const { creator } = poll
 
   return (
     <>

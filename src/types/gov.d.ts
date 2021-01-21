@@ -28,9 +28,9 @@ type EncodedExecuteMsg = string
 type EncodedPassCommandMsg = string
 
 interface Poll extends PollData {
-  type: string
-  msg: object
-  params: object
+  type?: string
+  msg?: object
+  params?: object
 }
 
 type DecodedExecuteMsg =
