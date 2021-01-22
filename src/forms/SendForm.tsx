@@ -29,6 +29,15 @@ enum Key {
   network = "network",
 }
 
+const getNetworkName = (value: string) => {
+  const NetworkName: Record<ShuttleNetwork, string> = {
+    ethereum: "Ethereum",
+    bsc: "Binance Smart Chain",
+  }
+
+  return value ? NetworkName[value as ShuttleNetwork] : "Terra"
+}
+
 const SendForm = ({ tab }: { tab: Tab }) => {
   const priceKey = PriceKey.PAIR
   const balanceKey = BalanceKey.TOKEN
@@ -111,17 +120,15 @@ const SendForm = ({ tab }: { tab: Tab }) => {
             onChange={(e) => setValue(Key.network, e.target.value)}
             style={{ width: "100%" }}
           >
-            <option value="" disabled={isEthereum}>
-              Terra
-            </option>
-
-            <option value="ethereum" disabled={isTerra}>
-              Ethereum
-            </option>
-
-            <option value="bsc" disabled={isTerra}>
-              Binance Smart Chain
-            </option>
+            {["", "ethereum", "bsc"].map((value) => (
+              <option
+                value={value}
+                disabled={value ? isTerra : isEthereum}
+                key={value}
+              >
+                {getNetworkName(value)}
+              </option>
+            ))}
           </select>
         ),
       },
@@ -129,7 +136,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
       [Key.to]: {
         label: "Send to",
         input: {
-          placeholder: "Terra address or Ethereum address",
+          placeholder: `${getNetworkName(network)} address`,
           autoFocus: true,
         },
       },
