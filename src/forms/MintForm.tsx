@@ -311,6 +311,12 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     },
   }
 
+  /* Init the collateral ratio based on the minimum collateral ratio */
+  useEffect(() => {
+    const ratio = times(plus(minRatio, 0.5), 100)
+    setValues((values) => ({ ...values, [Key.ratio]: ratio }))
+  }, [minRatio, setValues])
+
   /* confirm */
   const price = div(find(priceKey, token2), find(priceKey, token1))
 
