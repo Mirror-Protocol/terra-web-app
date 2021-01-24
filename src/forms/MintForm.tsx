@@ -28,6 +28,7 @@ import { Type } from "../pages/Mint"
 import useMintReceipt from "./receipts/useMintReceipt"
 import FormContainer from "./FormContainer"
 import useSelectAsset, { Config } from "./useSelectAsset"
+import useLatest from "./useLatest"
 import FormIcon from "./FormIcon"
 import CollateralRatio from "./CollateralRatio"
 import styles from "./MintForm.module.scss"
@@ -480,13 +481,18 @@ const MintForm = ({ position, type, tab, message }: Props) => {
       ? [MESSAGE.Form.Validate.InsufficientBalance]
       : undefined
 
-  const messages = message
-    ? [message]
-    : touched[Key.ratio]
-    ? ratioMessages
-    : close
-    ? error
-    : undefined
+  /* latest price */
+  const { isClosed: isClosed1 } = useLatest(symbol1)
+  const { isClosed: isClosed2 } = useLatest(symbol2)
+
+  const messages =
+    isClosed1 || isClosed2
+      ? [MESSAGE.Form.Validate.LastestPrice.Closed]
+      : touched[Key.ratio]
+      ? ratioMessages
+      : close
+      ? error
+      : undefined
 
   const disabled = !!message || (!close ? invalid : !!error)
   const label = open ? MenuKey.MINT : type

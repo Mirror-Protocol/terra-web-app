@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useLocation } from "react-router-dom"
-import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
 import { MenuKey } from "../routes"
 import useHash from "../libs/useHash"
@@ -23,7 +22,6 @@ const Mint = () => {
   useRefetch(keys)
 
   const { contracts } = useContractsAddress()
-  const { isClosed } = useLatest()
 
   /* type */
   const { hash: type } = useHash<Type>(Type.OPEN)
@@ -48,12 +46,7 @@ const Mint = () => {
     idx && (refetch?.() ?? load())
   }, [idx, load, refetch])
 
-  /* latest price */
-  const message = isClosed
-    ? MESSAGE.Form.Validate.LastestPrice.Closed
-    : undefined
-
-  const props = { type, tab, message }
+  const props = { type, tab }
 
   return (
     <Page title={MenuKey.MINT} doc="/user-guide/getting-started/mint-and-burn">
@@ -63,26 +56,3 @@ const Mint = () => {
 }
 
 export default Mint
-
-/* hook */
-const useLatest = () => {
-  const [isClosed, setClosed] = useState<boolean>(false)
-  const [error, setError] = useState<Error>()
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const url = "https://price.mirror.finance/latest"
-        const response = await fetch(url)
-        const json: { marketStatus: "OPEN" | "CLOSED" } = await response.json()
-        setClosed(json.marketStatus === "CLOSED")
-      } catch (error) {
-        setError(error)
-      }
-    }
-
-    load()
-  }, [])
-
-  return { isClosed, error }
-}
