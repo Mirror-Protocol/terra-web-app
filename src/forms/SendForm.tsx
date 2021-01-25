@@ -168,7 +168,7 @@ const SendForm = ({ tab }: { tab: Tab }) => {
   const amountAfterShuttleFee = max([minus(amount, shuttleFee), String(0)])
   const contents = !value
     ? undefined
-    : isEthereum
+    : network === "ethereum"
     ? [
         {
           title: (
