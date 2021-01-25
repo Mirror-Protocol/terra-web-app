@@ -2,7 +2,6 @@ import { useRouteMatch } from "react-router-dom"
 
 import { LP, MIR } from "../../constants"
 import { minus, gt, number } from "../../libs/math"
-import { percent } from "../../libs/num"
 import { useRefetch } from "../../hooks"
 import { useContract, useContractsAddress } from "../../hooks"
 import { BalanceKey, AssetInfoKey } from "../../hooks/contractKeys"
@@ -11,7 +10,6 @@ import useAssetStats from "../../statistics/useAssetStats"
 import Grid from "../../components/Grid"
 import StakeItemCard from "../../components/StakeItemCard"
 import LoadingTitle from "../../components/LoadingTitle"
-import Count from "../../components/Count"
 import CountWithResult from "../../containers/CountWithResult"
 
 import StakeListTitle from "./StakeListTitle"
@@ -26,9 +24,10 @@ const StakeList = () => {
   const { listed, getSymbol } = useContractsAddress()
   const { find } = useContract()
   const stats = useAssetStats()
-  const { apr } = stats
+  const { apy } = stats
 
   const getItem = ({ token }: ListedItem) => {
+    const apy = stats["apy"][token] ?? "0"
     const apr = stats["apr"][token] ?? "0"
     const symbol = getSymbol(token)
 
@@ -37,7 +36,8 @@ const StakeList = () => {
       symbol,
       staked: gt(find(BalanceKey.LPSTAKED, token), 0),
       stakable: gt(find(BalanceKey.LPSTAKABLE, token), 0),
-      apr: <Count format={percent}>{apr}</Count>,
+      apr,
+      apy,
       totalStaked: (
         <CountWithResult
           keys={[AssetInfoKey.LPTOTALSTAKED]}
@@ -61,7 +61,7 @@ const StakeList = () => {
       <Grid wrap={3}>
         {listed
           .map(getItem)
-          .sort(({ token: a }, { token: b }) => number(minus(apr[b], apr[a])))
+          .sort(({ token: a }, { token: b }) => number(minus(apy[b], apy[a])))
           .sort(
             ({ symbol: a }, { symbol: b }) =>
               Number(b === "MIR") - Number(a === "MIR")

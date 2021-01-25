@@ -4,6 +4,7 @@ interface Dashboard {
   collateralRatio: string
   mirCirculatingSupply: string
   govAPR: string
+  govAPY: string
 
   latest24h: {
     transactions: string
@@ -29,6 +30,7 @@ interface AssetStatsData {
     liquidity: string
     volume: string
     apr: string
+    apy: string
   }
 }
 
@@ -37,6 +39,7 @@ interface AssetStats {
   liquidity: Dict<string | undefined>
   volume: Dict<string | undefined>
   apr: Dict<string | undefined>
+  apy: Dict<string | undefined>
 }
 
 /* price */

@@ -1,11 +1,14 @@
 import { FC, ReactNode } from "react"
 import classNames from "classnames/bind"
 import { insertIf } from "../libs/utils"
+import { percent } from "../libs/num"
 import getLpName from "../libs/getLpName"
 import Card from "./Card"
 import Icon from "./Icon"
+import Count from "./Count"
 import TokenPair from "./TokenPair"
 import { DlFooter } from "./Dl"
+import { TooltipIcon } from "./Tooltip"
 import styles from "./StakeItemCard.module.scss"
 
 const cx = classNames.bind(styles)
@@ -18,7 +21,8 @@ export interface Props {
   staked: boolean
   stakable: boolean
 
-  apr: ReactNode
+  apr: string
+  apy: string
   totalStaked: ReactNode
   price?: ReactNode
 
@@ -29,15 +33,19 @@ export interface Props {
 
 const StakeItemCard: FC<Props> = ({ token, symbol, name, to, ...item }) => {
   const { staked, stakable } = item
-  const { price, apr, totalStaked, action, emphasize, children } = item
+  const { price, apr, apy, totalStaked, action, emphasize, children } = item
 
   const badges = [
     ...insertIf(staked, { label: "Staked", color: "blue" }),
     ...insertIf(stakable, { label: "Stakable", color: "slate" }),
   ]
 
+  const APYTitle = (
+    <TooltipIcon content={`APR: ${percent(apr)}`}>APY</TooltipIcon>
+  )
+
   const stats = [
-    { title: "APR", content: apr },
+    { title: APYTitle, content: <Count format={percent}>{apy}</Count> },
     { title: "Total Staked", content: totalStaked },
     { title: "Price", content: price },
   ].filter(({ content }) => content)
@@ -57,8 +65,8 @@ const StakeItemCard: FC<Props> = ({ token, symbol, name, to, ...item }) => {
 
           {price ? (
             <section className={styles.vertical}>
-              {stats.map(({ title, content }) => (
-                <article className={styles.item} key={title}>
+              {stats.map(({ title, content }, index) => (
+                <article className={styles.item} key={index}>
                   <h1 className={styles.title}>{title}</h1>
                   <div className={styles.content}>{content}</div>
                 </article>

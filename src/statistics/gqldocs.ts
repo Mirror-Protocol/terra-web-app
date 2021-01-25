@@ -16,6 +16,7 @@ export const STATISTICS = gql`
       collateralRatio
       mirCirculatingSupply
       govAPR
+      govAPY
 
       latest24h {
         transactions
@@ -46,6 +47,7 @@ export const ASSETSTATS = gql`
         liquidity(network: $network)
         volume(network: $network)
         apr
+        apy
       }
     }
   }

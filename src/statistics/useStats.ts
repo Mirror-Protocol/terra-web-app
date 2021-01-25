@@ -17,7 +17,14 @@ export const [useStats, StatsProvider] = stats
 
 /* state */
 export const useStatsState = (): Stats => {
-  const initialAssets = { description: {}, liquidity: {}, volume: {}, apr: {} }
+  const initialAssets = {
+    description: {},
+    liquidity: {},
+    volume: {},
+    apr: {},
+    apy: {},
+  }
+
   const initialYesterday = { pair: {}, oracle: {} }
   const [dashboard, setDashboard] = useState<Dashboard>()
   const [assets, setAssets] = useState<AssetStats>(initialAssets)

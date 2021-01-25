@@ -9,8 +9,8 @@ const StakeListTitle = () => {
       </article>
 
       <article>
-        <h1>APR</h1>
-        <p>{Tooltip.Stake.APR}</p>
+        <h1>APY</h1>
+        <p>{Tooltip.Stake.APY}</p>
       </article>
 
       <article>

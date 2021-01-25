@@ -25,7 +25,7 @@ const useMyStake = () => {
   const { listedAll, whitelist, getToken } = useContractsAddress()
   const { find, rewards } = useContract()
 
-  const { apr } = useAssetStats()
+  const { apy } = useAssetStats()
   const { dashboard } = useDashboard()
 
   const mir = getToken(MIR)
@@ -35,7 +35,7 @@ const useMyStake = () => {
 
     return {
       ...item,
-      apr: !gov ? apr[token] : dashboard?.govAPR,
+      apy: !gov ? apy[token] : dashboard?.govAPY,
       staked: find(!gov ? BalanceKey.LPSTAKED : BalanceKey.MIRGOVSTAKED, token),
       stakable: find(!gov ? BalanceKey.LPSTAKABLE : BalanceKey.TOKEN, token),
       reward: !gov ? find(BalanceKey.REWARD, token) : undefined,

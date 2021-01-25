@@ -20,7 +20,7 @@ import { menu as stakeMenu, MenuKey as StakeMenuKey, Type } from "../Stake"
 import NoAssets from "./NoAssets"
 
 interface Data extends ListedItem {
-  apr?: string
+  apy?: string
   staked: string
   stakable: string
   reward?: string
@@ -90,8 +90,8 @@ const Stake = ({ loading, dataSource, ...props }: Props) => {
               bold: true,
             },
             {
-              key: "apr",
-              title: <TooltipIcon content={Tooltip.My.APR}>APR</TooltipIcon>,
+              key: "apy",
+              title: <TooltipIcon content={Tooltip.My.APY}>APY</TooltipIcon>,
               render: (value) => percent(value),
               align: "right",
             },
