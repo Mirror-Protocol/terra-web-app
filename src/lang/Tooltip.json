@@ -45,7 +45,7 @@
     "Withdrawable": "Quantity of withdrawable assets from the corresponding asset liquidity pool",
     "PoolShare": "Ratio of the liquidity provided to the total liquidity provided",
 
-    "APY": "Annualized staking return",
+    "APR": "Annualized staking return",
     "Staked": "Quantity of staked LP tokens for the corresponding asset liquidity pool",
     "Reward": "Quantity of claimable rewards for the corresponding staking position",
     "GovReward": "Protocol fee paid from withdrawing collateral is distributed to MIR stakers and increases staked MIR"
@@ -94,13 +94,13 @@
     "MIRprice": "Terraswap price of MIR that is determined by the current pool ratio",
     "MIRvolume": "Total value of MIR traded in the last 24 hours",
     "Title": "LP tokens can be staked to earn MIR as rewards. LP tokens are obtained by providing asset liquidity.",
-    "APY": "Annualized LP staking return based on MIR distribution, LP staking ratio and pool value (compounded daily)",
+    "APR": "Annualized LP staking return based on the MIR distribution, LP staking ratio, and pool value",
     "TotalStaked": "Quantity of LP tokens staked for the corresponding asset liquidity pool"
   },
   "Gov": {
     "TotalStaked": "Total quantity of MIR tokens staked",
     "StakingRatio": "Ratio of the quantity of staked MIR tokens to the total quantity of MIR",
-    "APY": "Annualized MIR staking return based on MIR distribution and staking ratio (compounded daily)",
+    "APR": "Annualized MIR staking return based on the MIR distribution and staking ratio",
 
     "Polls": "Staked MIR can be used as voting power in polls that are currently in progress",
 

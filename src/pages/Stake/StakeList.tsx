@@ -24,7 +24,7 @@ const StakeList = () => {
   const { listed, getSymbol } = useContractsAddress()
   const { find } = useContract()
   const stats = useAssetStats()
-  const { apy } = stats
+  const { apr } = stats
 
   const getItem = ({ token }: ListedItem) => {
     const apy = stats["apy"][token] ?? "0"
@@ -61,7 +61,7 @@ const StakeList = () => {
       <Grid wrap={3}>
         {listed
           .map(getItem)
-          .sort(({ token: a }, { token: b }) => number(minus(apy[b], apy[a])))
+          .sort(({ token: a }, { token: b }) => number(minus(apr[b], apr[a])))
           .sort(
             ({ symbol: a }, { symbol: b }) =>
               Number(b === "MIR") - Number(a === "MIR")

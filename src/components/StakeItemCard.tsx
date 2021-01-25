@@ -40,12 +40,14 @@ const StakeItemCard: FC<Props> = ({ token, symbol, name, to, ...item }) => {
     ...insertIf(stakable, { label: "Stakable", color: "slate" }),
   ]
 
-  const APYTitle = (
-    <TooltipIcon content={`APR: ${percent(apr)}`}>APY</TooltipIcon>
+  const APRTitle = (
+    <TooltipIcon content={`APY: ${percent(apy)} (if compounded daily)`}>
+      APR
+    </TooltipIcon>
   )
 
   const stats = [
-    { title: APYTitle, content: <Count format={percent}>{apy}</Count> },
+    { title: APRTitle, content: <Count format={percent}>{apr}</Count> },
     { title: "Total Staked", content: totalStaked },
     { title: "Price", content: price },
   ].filter(({ content }) => content)

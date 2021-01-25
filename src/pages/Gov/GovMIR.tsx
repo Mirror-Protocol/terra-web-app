@@ -31,12 +31,12 @@ const GovMIR = () => {
 
       <section>
         <span className={styles.apr}>
-          <Count format={percent}>{dashboard?.govAPY}</Count>
+          <Count format={percent}>{dashboard?.govAPR}</Count>
         </span>
 
         <section className={styles.desc}>
-          <TooltipIcon content={Tooltip.Gov.APY}>
-            Annual percentage yield (APY)
+          <TooltipIcon content={Tooltip.Gov.APR}>
+            Annual percentage rate (APR)
           </TooltipIcon>
         </section>
       </section>
