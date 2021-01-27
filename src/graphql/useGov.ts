@@ -246,9 +246,13 @@ const useParsePoll = () => {
 
   return (poll: PollData): Poll => {
     try {
-      const decoded = fromBase64<DecodedExecuteMsg>(poll.execute_data.msg)
-      const parsed = parseParams(decoded, poll.id)
-      return { ...poll, ...parsed }
+      if (poll.execute_data) {
+        const decoded = fromBase64<DecodedExecuteMsg>(poll.execute_data.msg)
+        const parsed = parseParams(decoded, poll.id)
+        return { ...poll, ...parsed }
+      } else {
+        return { ...poll, type: PollType.TEXT }
+      }
     } catch (error) {
       return poll
     }
