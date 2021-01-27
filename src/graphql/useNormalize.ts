@@ -84,7 +84,7 @@ const calcPairPrice = (param: PairPool) => {
 export const parsePairPool = ({ assets, total_share }: PairPool) => ({
   uusd: assets.find(({ info }) => "native_token" in info)?.amount ?? "0",
   asset: assets.find(({ info }) => "token" in info)?.amount ?? "0",
-  total: total_share,
+  total: total_share ?? "0",
 })
 
 interface LPParams {

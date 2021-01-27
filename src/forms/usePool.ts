@@ -10,14 +10,16 @@ export default () => {
   const priceKey = PriceKey.PAIR
   const { getSymbol } = useContractsAddress()
   const { parsed, find } = useContract()
-  useRefetch([priceKey])
+  useRefetch([priceKey, PriceKey.ORACLE])
 
   /**
    * @param amount - Amount to provide(asset)/withdraw(lp)
    * @param token - Token of the asset to provide/withdraw
    */
   return ({ amount, token }: Asset) => {
-    const price = find(priceKey, token)
+    const pair = find(priceKey, token)
+    const oracle = find(PriceKey.ORACLE, token)
+    const price = gt(pair, 0) ? pair : oracle
 
     /* pair pool */
     const pairPool = parsePairPool(parsed[PriceKey.PAIR][token])
