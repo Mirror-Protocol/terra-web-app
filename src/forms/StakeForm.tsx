@@ -1,3 +1,4 @@
+import Tooltip from "../lang/Tooltip.json"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { LP, MIR } from "../constants"
 import { gt, minus, max as findMax } from "../libs/math"
@@ -144,7 +145,9 @@ const StakeForm = ({ type, token, tab, gov }: Props) => {
   }[type as Type]
 
   const messages =
-    gov && type === Type.UNSTAKE && gt(locked, 0)
+    gov && type === Type.STAKE
+      ? [Tooltip.My.GovReward]
+      : gov && type === Type.UNSTAKE && gt(locked, 0)
       ? [`${formatAsset(locked, MIR)} are voted in polls`]
       : undefined
 

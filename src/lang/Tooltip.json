@@ -1,7 +1,7 @@
 {
   "Dashboard": {
     "Transactions": "Number of transactions occurred in the last 24 hours",
-    "Fee": "Value of transaction fee paid in the last 24 hours",
+    "Fee": "Value of trading fee paid in the last 24 hours",
     "MarketCap": "Total value of all minted assets",
     "TVL": "Total value of collateral, liquidity and staked MIR",
     "CollateralRatio": "Ratio of the total collateral value to the total minted asset value",

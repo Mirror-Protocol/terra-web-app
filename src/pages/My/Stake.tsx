@@ -121,7 +121,9 @@ const Stake = ({ loading, dataSource, ...props }: Props) => {
                 !gov ? (
                   formatAsset(value, MIR)
                 ) : (
-                  <TooltipIcon content={Tooltip.My.GovReward}>-</TooltipIcon>
+                  <TooltipIcon content={Tooltip.My.GovReward}>
+                    Automatically re-staked
+                  </TooltipIcon>
                 ),
               align: "right",
             },
