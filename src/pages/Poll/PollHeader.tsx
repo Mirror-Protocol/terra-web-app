@@ -1,5 +1,7 @@
 import { useParams, useRouteMatch } from "react-router-dom"
 import classNames from "classnames"
+import { useContract, useRefetch } from "../../hooks"
+import { BalanceKey } from "../../hooks/contractKeys"
 import LinkButton from "../../components/LinkButton"
 import { useGov } from "../../graphql/useGov"
 import { PollStatus } from "./Poll"
@@ -13,9 +15,16 @@ const PollHeader = ({ titleClassName, ...props }: Props) => {
   const { id, type, title, status, end_height } = props
   const { url } = useRouteMatch()
   const params = useParams<{ id: string }>()
+  const { parsed } = useContract()
   const { polls } = useGov()
   const { height } = polls
   const end = height && height > end_height
+
+  useRefetch([BalanceKey.MIRGOVSTAKED])
+
+  const alreadyVoted = parsed[BalanceKey.MIRGOVSTAKED]?.locked_balance.some(
+    ([lockedId]: LockedBalance) => id === lockedId
+  )
 
   return (
     <header className={styles.header}>
@@ -26,8 +35,12 @@ const PollHeader = ({ titleClassName, ...props }: Props) => {
         </section>
 
         {params.id && !end && (
-          <LinkButton to={url + "/vote"} className="desktop">
-            Vote
+          <LinkButton
+            to={url + "/vote"}
+            className="desktop"
+            disabled={alreadyVoted}
+          >
+            {alreadyVoted ? "Voted" : "Vote"}
           </LinkButton>
         )}
       </section>
