@@ -7,7 +7,7 @@ import useNewContractMsg from "../terra/useNewContractMsg"
 import { UUSD } from "../constants"
 import Tooltip from "../lang/Tooltip.json"
 import { div, gt, max, minus, times } from "../libs/math"
-import { formatAsset, toAmount } from "../libs/parse"
+import { formatAsset, lookup, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
 import { validate as v, placeholder, step } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
@@ -110,6 +110,8 @@ const SendForm = ({ tab }: { tab: Tab }) => {
   }
 
   const select = useSelectAsset(config)
+  const balance = find(balanceKey, token)
+
   const fields = {
     ...getFields({
       [Key.network]: {
@@ -150,8 +152,12 @@ const SendForm = ({ tab }: { tab: Tab }) => {
           ref: valueRef,
         },
         unit: select.button,
+        max:
+          symbol === UUSD
+            ? undefined
+            : () => setValue(Key.value, lookup(balance, symbol)),
         assets: select.assets,
-        help: renderBalance(find(balanceKey, token), symbol),
+        help: renderBalance(balance, symbol),
         focused: select.isOpen,
       },
 
