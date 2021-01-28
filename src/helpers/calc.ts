@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js"
+import { gt } from "../libs/math"
 
 interface Value {
   amount?: string
@@ -69,11 +70,16 @@ export default {
    * @param totalShare - pair, {pool:{}}
    */
   toLP: (deposits: { amount: string; pair: string }[], totalShare: string) =>
-    BigNumber.minimum(
-      ...deposits.map(({ amount, pair }) =>
-        new BigNumber(amount).times(totalShare).div(pair)
-      )
-    ).toString(),
+    gt(totalShare, 0)
+      ? BigNumber.minimum(
+          ...deposits.map(({ amount, pair }) =>
+            new BigNumber(amount).times(totalShare).div(pair)
+          )
+        ).toString()
+      : new BigNumber(deposits[0].amount)
+          .times(deposits[1].amount)
+          .sqrt()
+          .toString(),
 
   /**
    * from LP
