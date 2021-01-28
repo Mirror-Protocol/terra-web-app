@@ -2,26 +2,31 @@ import { useEffect, useState } from "react"
 import { Dictionary } from "ramda"
 import { UUSD } from "../constants"
 
-const useLatest = (symbol: string) => {
-  const [isClosed, setClosed] = useState<boolean>(false)
+type State = "OPEN" | "CLOSED"
+
+const useLatest = () => {
+  const [closed, setClosed] = useState<Dictionary<State>>({})
   const [error, setError] = useState<Error>()
 
   useEffect(() => {
     const load = async () => {
       try {
-        type State = "OPEN" | "CLOSED"
         const url = "https://price.mirror.finance/latest"
         const response = await fetch(url)
         const json: { states: Dictionary<State> } = await response.json()
-        const ticker = symbol.slice(1)
-        setClosed(json.states[ticker] === "CLOSED")
+        setClosed(json.states)
       } catch (error) {
         setError(error)
       }
     }
 
-    symbol && (symbol !== UUSD ? load() : setClosed(false))
-  }, [symbol])
+    load()
+  }, [])
+
+  const isClosed = (symbol: string) => {
+    const ticker = symbol.slice(1)
+    return symbol !== UUSD && closed[ticker] === "CLOSED"
+  }
 
   return { isClosed, error }
 }

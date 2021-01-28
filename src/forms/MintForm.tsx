@@ -488,8 +488,9 @@ const MintForm = ({ position, type, tab, message }: Props) => {
       : undefined
 
   /* latest price */
-  const { isClosed: isClosed1 } = useLatest(symbol1)
-  const { isClosed: isClosed2 } = useLatest(symbol2)
+  const { isClosed } = useLatest()
+  const isClosed1 = isClosed(symbol1)
+  const isClosed2 = isClosed(symbol2)
 
   const messages =
     isClosed1 || isClosed2
