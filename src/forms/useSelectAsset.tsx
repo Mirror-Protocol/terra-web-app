@@ -19,6 +19,8 @@ export interface Config {
   skip?: string[]
   /** Modify token name */
   formatTokenName?: (symbol: string) => string
+  /** Condition to be dimmed */
+  dim?: (token: string) => boolean
 }
 
 export default (config: Config) => {

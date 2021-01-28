@@ -211,6 +211,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     onSelect: onSelect(Key.token1),
     useUST: true,
     skip: [MIR],
+    dim: (token) => isClosed(getSymbol(token)),
   }
 
   const config2: Config = {
@@ -218,6 +219,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     onSelect: onSelect(Key.token2),
     useUST: false,
     skip: [MIR],
+    dim: (token) => isClosed(getSymbol(token)),
   }
 
   const select1 = useSelectAsset({ priceKey, balanceKey, ...config1 })

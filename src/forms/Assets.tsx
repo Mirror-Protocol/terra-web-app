@@ -18,7 +18,7 @@ interface Props extends Config {
 
 const Assets = ({ selected, onSelect, ...props }: Props) => {
   const { priceKey, balanceKey } = props
-  const { useUST, skip, formatTokenName } = props
+  const { useUST, skip, dim, formatTokenName } = props
 
   const { listed } = useContractsAddress()
   const { uusd, find } = useContract()
@@ -77,12 +77,16 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
           .map((item) => {
             const { token, price } = item
             const isSelected = token === selected
+            const isDimmed = dim?.(token)
 
             return (
               <li key={token}>
                 <button
                   type="button"
-                  className={cx(styles.button, { selected: isSelected })}
+                  className={cx(styles.button, {
+                    selected: isSelected,
+                    dim: isDimmed,
+                  })}
                   onClick={() => onSelect(token)}
                   disabled={priceKey && (!price || !gt(price, 0))}
                 >
