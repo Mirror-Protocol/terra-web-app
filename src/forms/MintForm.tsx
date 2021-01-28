@@ -480,11 +480,11 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     ? [MESSAGE.Form.Validate.CollateralRatio.Safe]
     : undefined
 
-  const error =
+  const closeMessages =
     !loading &&
     prevAsset &&
     !gte(find(balanceKey, prevAsset?.token), prevAsset.amount)
-      ? [MESSAGE.Form.Validate.InsufficientBalance]
+      ? [`Insufficient ${prevAsset.symbol} balance`]
       : undefined
 
   /* latest price */
@@ -497,10 +497,10 @@ const MintForm = ({ position, type, tab, message }: Props) => {
       : touched[Key.ratio]
       ? ratioMessages
       : close
-      ? error
+      ? closeMessages
       : undefined
 
-  const disabled = !!message || (!close ? invalid : !!error)
+  const disabled = !!message || (!close ? invalid : !!closeMessages)
   const label = open ? MenuKey.MINT : type
 
   /* result */
