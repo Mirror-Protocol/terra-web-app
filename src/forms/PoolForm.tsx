@@ -45,6 +45,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   // Refetch the balance of stakable LP even on stake
   useRefetch([
     priceKey,
+    PriceKey.ORACLE,
     BalanceKey.TOKEN,
     BalanceKey.LPTOTAL,
     BalanceKey.LPSTAKED,
@@ -68,7 +69,9 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const { value, token } = values
   const amount = toAmount(value)
   const symbol = getSymbol(token)
-  const price = find(priceKey, token)
+  const pairPrice = find(priceKey, token)
+  const oraclePrice = find(PriceKey.ORACLE, token)
+  const price = gt(pairPrice, 0) ? pairPrice : oraclePrice
 
   /* form:focus input on select asset */
   const valueRef = useRef<HTMLInputElement>(null!)
@@ -178,7 +181,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         {
           title: (
             <TooltipIcon content={Tooltip.Pool.PoolPrice}>
-              Terraswap Price
+              {gt(pairPrice, 0) ? "Terraswap" : "Oracle"} Price
             </TooltipIcon>
           ),
           content: (

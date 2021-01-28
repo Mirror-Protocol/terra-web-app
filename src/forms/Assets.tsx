@@ -88,7 +88,6 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
                     dim: isDimmed,
                   })}
                   onClick={() => onSelect(token)}
-                  disabled={priceKey && (!price || !gt(price, 0))}
                 >
                   <Asset {...item} formatTokenName={formatTokenName} />
                 </button>
