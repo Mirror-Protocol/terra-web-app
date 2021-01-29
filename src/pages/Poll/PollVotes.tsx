@@ -25,9 +25,9 @@ interface VotesProps {
 }
 
 const Votes = ({ list, lg, help }: VotesProps) => (
-  <div className={styles.wrapper}>
-    {help}
-    <section className={cx(styles.votes, { lg, sm: !lg })}>
+  <div className={cx(styles.wrapper, { lg, sm: !lg })}>
+    {!lg && help}
+    <section className={styles.votes}>
       {list.map(({ label, value, amount, color }) => (
         <span className={classNames(styles.label, color)} key={label}>
           <strong>{label}</strong>

@@ -1,6 +1,6 @@
 @import "mixins";
 
-.wrapper {
+.sm {
   @include flex(space-between);
   margin-top: 5px;
 }
