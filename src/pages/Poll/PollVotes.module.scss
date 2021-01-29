@@ -1,8 +1,12 @@
 @import "mixins";
 
+.wrapper {
+  @include flex(space-between);
+  margin-top: 5px;
+}
+
 .votes {
   @include flex(flex-end);
-  margin-top: 5px;
 }
 
 .label {
@@ -34,4 +38,16 @@
   &:not(:first-child) {
     border-left: $border;
   }
+}
+
+.help {
+  @include flex;
+  font-size: 12px;
+  > * {
+    margin-right: 5px;
+  }
+}
+
+.danger {
+  color: $red;
 }
