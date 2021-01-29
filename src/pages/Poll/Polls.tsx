@@ -13,7 +13,7 @@ import PollItem from "./PollItem"
 import styles from "./Polls.module.scss"
 
 const Polls = ({ title }: { title: string }) => {
-  const [filter, setFilter] = useState<PollStatus | "">()
+  const [filter, setFilter] = useState<PollStatus | "">(PollStatus.InProgress)
 
   const { url } = useRouteMatch()
   const { polls, result } = useGov()
