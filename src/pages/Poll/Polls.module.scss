@@ -1,9 +1,37 @@
+@import "mixins";
+
 .component {
   margin-top: 30px;
+}
+
+.header {
+  @include flex(space-between);
+  margin-bottom: 20px;
 }
 
 .title {
   color: white;
   font-size: 16px;
-  margin-bottom: 20px;
+}
+
+.wrapper {
+  position: relative;
+
+  i {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translate(0, -50%);
+    pointer-events: none;
+  }
+}
+
+.select {
+  appearance: none;
+  border: 1px solid $slate;
+  border-radius: 3px;
+  font-size: 12px;
+  padding: 6px 10px;
+  padding-right: (6px + 16px + 6px);
+  text-transform: capitalize;
 }
