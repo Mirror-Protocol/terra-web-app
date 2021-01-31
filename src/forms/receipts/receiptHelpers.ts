@@ -41,5 +41,5 @@ export const splitTokenText = (string = "") => {
   return { amount, token }
 }
 
-export const parseTokenText = (string: string) =>
-  string.split(", ").map(splitTokenText)
+export const parseTokenText = (string?: string) =>
+  string?.split(", ").map(splitTokenText) ?? []

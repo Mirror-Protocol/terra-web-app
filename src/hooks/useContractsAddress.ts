@@ -63,7 +63,11 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
         : listed.find((item) => item.symbol === symbol)?.["token"] ?? ""
 
     const getSymbol = (token?: string) =>
-      !token ? "" : token === UUSD ? token : whitelist[token]?.["symbol"] ?? ""
+      !token
+        ? ""
+        : token.startsWith("u")
+        ? token
+        : whitelist[token]?.["symbol"] ?? ""
 
     const toAssetInfo = (token: string) =>
       token === UUSD

@@ -14,6 +14,7 @@ import Holdings from "./My/Holdings"
 import Mint from "./My/Mint"
 import Pool from "./My/Pool"
 import Stake from "./My/Stake"
+import HistoryList from "./My/HistoryList"
 
 const My = () => {
   const { address, disconnect } = useWallet()
@@ -67,6 +68,10 @@ const My = () => {
                 <Grid key={key}>{component}</Grid>
               )
           )}
+
+          <Grid>
+            <HistoryList />
+          </Grid>
 
           {disconnect && (
             <Button

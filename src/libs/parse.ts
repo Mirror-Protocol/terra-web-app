@@ -34,7 +34,7 @@ export const lookup: Formatter = (amount = "0", symbol, config) => {
 }
 
 export const lookupSymbol = (symbol?: string) =>
-  symbol === "uusd" ? "UST" : symbol
+  symbol?.startsWith("u") ? symbol.slice(1, 3).toUpperCase() + "T" : symbol
 
 export const format: Formatter = (amount, symbol, config) => {
   const value = new BigNumber(lookup(amount, symbol, config))

@@ -1,34 +1,62 @@
 @import "mixins";
-@import "variables";
 
-.header {
-  margin-bottom: 20px;
-}
+.component {
+  @include flex(space-between);
 
-.hash {
-  @include flex(flex-start);
-  display: inline-flex;
-  color: $slate;
-  font-size: 12px;
-  font-weight: 500;
+  line-height: 1;
+  padding: 20px 0;
 
-  i {
-    margin-left: 5px;
-  }
-
+  &,
   &:hover {
     text-decoration: none;
+  }
+
+  i {
+    @include transition(color);
+  }
+
+  &:hover .main i {
+    color: $blue;
   }
 }
 
 .main {
   @include flex(flex-start);
+  @include link(white, white);
+  white-space: pre;
 }
 
 .badge {
-  margin-right: 15px;
+  margin-right: 10px;
+
+  @include mobile {
+    display: none;
+  }
 }
 
-.message {
-  font-size: 16px;
+.muted {
+  color: $brown;
+}
+
+.hash {
+  @include flex;
+  color: $slate;
+  margin-left: 5px;
+}
+
+.footer {
+  @include flex(flex-end);
+
+  color: $slate;
+  flex: none;
+  font-size: 12px;
+  font-weight: 500;
+
+  i {
+    margin-right: 5px;
+  }
+
+  @include mobile {
+    display: none;
+  }
 }
