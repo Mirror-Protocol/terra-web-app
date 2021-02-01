@@ -60,6 +60,7 @@ const DashboardCharts = (props: Partial<Dashboard>) => {
             datasets={
               tradingVolumeHistory ? toDatasets(tradingVolumeHistory, UUSD) : []
             }
+            bar
           />
         </Summary>
       </Card>

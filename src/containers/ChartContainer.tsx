@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
-import { helpers, ChartPoint } from "chart.js"
-import { Line, defaults } from "react-chartjs-2"
+import { helpers, ChartData, ChartPoint, ChartOptions } from "chart.js"
+import { Line, defaults, Bar } from "react-chartjs-2"
 import { format as formatDate } from "date-fns"
 import { gt, lt } from "../libs/math"
 import { format } from "../libs/parse"
@@ -25,13 +25,94 @@ interface Props {
   datasets: ChartPoint[]
   fmt?: { t: string }
   compact?: boolean
+  bar?: boolean
 }
 
 const ChartContainer = ({ value, change, datasets, ...props }: Props) => {
-  const { fmt, compact } = props
+  const { fmt, compact, bar } = props
 
   const borderColor =
     (change && (gt(change, 0) ? $aqua : lt(change, 0) && $red)) || $text
+
+  const height = compact ? 120 : 240
+
+  const data: ChartData = {
+    datasets: [
+      {
+        fill: false,
+        borderColor,
+        borderCapStyle: "round",
+        borderWidth: compact ? 2 : 6,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        data: datasets,
+      },
+    ],
+  }
+
+  const options: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 0 },
+    legend: { display: false },
+    layout: compact ? { padding: 20 } : undefined,
+    scales: {
+      xAxes: [
+        {
+          offset: true,
+          type: "time",
+          display: !compact,
+          ticks: {
+            source: "data",
+            autoSkip: true,
+            autoSkipPadding: 15,
+            maxRotation: 0,
+          },
+          gridLines: { display: false },
+        },
+      ],
+      yAxes: [
+        {
+          display: !compact,
+          position: "right",
+          gridLines: {
+            drawBorder: false,
+            color: $line,
+            zeroLineColor: $line,
+          },
+          ticks: {
+            callback: (value) => format(value as string),
+            padding: 20,
+          },
+        },
+      ],
+    },
+    tooltips: {
+      mode: "index",
+      intersect: false,
+      displayColors: false,
+      backgroundColor: "white",
+      cornerRadius: 5,
+      titleFontColor: $darkblue,
+      titleFontSize: 16,
+      titleFontStyle: "600",
+      bodyFontColor: $darkblue,
+      bodyFontSize: 12,
+      xPadding: 10,
+      yPadding: 8,
+      callbacks: {
+        title: ([{ value }]) => (value ? format(value) : ""),
+        label: ({ label }) =>
+          label
+            ? fmt
+              ? formatDate(new Date(label), fmt.t)
+              : new Date(label).toDateString()
+            : "",
+      },
+    },
+  }
+
+  const chartProps = { height, data, options }
 
   return (
     <article>
@@ -44,82 +125,7 @@ const ChartContainer = ({ value, change, datasets, ...props }: Props) => {
 
       {datasets.length > 1 && (
         <section className={styles.chart}>
-          <Line
-            height={compact ? 120 : 240}
-            data={{
-              datasets: [
-                {
-                  fill: false,
-                  borderColor,
-                  borderCapStyle: "round",
-                  borderWidth: compact ? 2 : 6,
-                  pointRadius: 0,
-                  pointHoverRadius: 0,
-                  data: datasets,
-                },
-              ],
-            }}
-            options={{
-              responsive: true,
-              maintainAspectRatio: false,
-              animation: { duration: 0 },
-              legend: { display: false },
-              layout: compact ? { padding: 20 } : undefined,
-              scales: {
-                xAxes: [
-                  {
-                    type: "time",
-                    display: !compact,
-                    ticks: {
-                      source: "data",
-                      autoSkip: true,
-                      autoSkipPadding: 15,
-                      maxRotation: 0,
-                    },
-                    gridLines: { display: false },
-                  },
-                ],
-                yAxes: [
-                  {
-                    display: !compact,
-                    position: "right",
-                    gridLines: {
-                      drawBorder: false,
-                      color: $line,
-                      zeroLineColor: $line,
-                    },
-                    ticks: {
-                      callback: (value) => format(value as string),
-                      padding: 20,
-                    },
-                  },
-                ],
-              },
-              tooltips: {
-                mode: "index",
-                intersect: false,
-                displayColors: false,
-                backgroundColor: "white",
-                cornerRadius: 5,
-                titleFontColor: $darkblue,
-                titleFontSize: 16,
-                titleFontStyle: "600",
-                bodyFontColor: $darkblue,
-                bodyFontSize: 12,
-                xPadding: 10,
-                yPadding: 8,
-                callbacks: {
-                  title: ([{ value }]) => (value ? format(value) : ""),
-                  label: ({ label }) =>
-                    label
-                      ? fmt
-                        ? formatDate(new Date(label), fmt.t)
-                        : new Date(label).toDateString()
-                      : "",
-                },
-              },
-            }}
-          />
+          {bar ? <Bar {...chartProps} /> : <Line {...chartProps} />}
         </section>
       )}
     </article>
