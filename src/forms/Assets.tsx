@@ -75,7 +75,7 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
             return hasB - hasA
           })
           .map((item) => {
-            const { token, price } = item
+            const { token } = item
             const isSelected = token === selected
             const isDimmed = dim?.(token)
 
