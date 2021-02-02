@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useRouteMatch } from "react-router-dom"
+import classNames from "classnames/bind"
 import Tooltip from "../../lang/Tooltip.json"
 import { GovKey, useGov, useRefetchGov } from "../../graphql/useGov"
 import Card from "../../components/Card"
@@ -11,6 +12,8 @@ import { TooltipIcon } from "../../components/Tooltip"
 import { PollStatus } from "./Poll"
 import PollItem from "./PollItem"
 import styles from "./Polls.module.scss"
+
+const cx = classNames.bind(styles)
 
 const Polls = ({ title }: { title: string }) => {
   const [filter, setFilter] = useState<PollStatus | "">("")
@@ -55,11 +58,16 @@ const Polls = ({ title }: { title: string }) => {
         <Grid wrap={2}>
           {list
             .filter((id) => !filter || polls.data[id].status === filter)
-            .map((id) => (
-              <Card to={`${url}/poll/${id}`} key={id}>
-                <PollItem id={id} />
-              </Card>
-            ))}
+            .map((id) => {
+              const dim =
+                !filter && polls.data[id].status !== PollStatus.InProgress
+
+              return (
+                <Card to={`${url}/poll/${id}`} className={cx({ dim })} key={id}>
+                  <PollItem id={id} />
+                </Card>
+              )
+            })}
         </Grid>
       )}
 
