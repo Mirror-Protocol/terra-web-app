@@ -1,10 +1,8 @@
 import { useLocation } from "react-router-dom"
-import { insertIf } from "../libs/utils"
 import { MenuKey } from "../routes"
-import { useContract, useRefetch } from "../hooks"
-import { AccountInfoKey } from "../hooks/contractKeys"
 import Page from "../components/Page"
 import AuctionForm from "../forms/AuctionForm"
+import useMintPosition from "../graphql/queries/useMintPosition"
 
 const Auction = () => {
   /* idx */
@@ -12,10 +10,7 @@ const Auction = () => {
   const idx = new URLSearchParams(search).get("idx") || undefined
 
   /* context */
-  const { [AccountInfoKey.MINTPOSITIONS]: positions } = useContract()
-  const keys = [...insertIf(idx, AccountInfoKey.MINTPOSITIONS)]
-  useRefetch(keys)
-  const position = positions?.find((position) => position.idx === idx)
+  const { parsed: position } = useMintPosition(idx)
 
   return (
     <Page title={MenuKey.MINT}>
