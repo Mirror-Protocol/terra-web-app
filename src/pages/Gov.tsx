@@ -24,8 +24,8 @@ export const menu: Record<MenuKey, RouteProps> = {
   [MenuKey.POLL]: { path: "/poll/:id", component: Poll },
 }
 
-const Gov = ({ state }: { state: GovState }) => {
-  const value = useGovContext(state)
+const Gov = () => {
+  const value = useGovContext()
   const { path } = useRouteMatch()
   return <GovProvider value={value}>{routes(menu, path)}</GovProvider>
 }
@@ -34,7 +34,7 @@ const GovContainer = () => {
   const { parsed } = useGovStateState()
   return !parsed ? null : (
     <GovStateProvider value={parsed}>
-      <Gov state={parsed} />
+      <Gov />
     </GovStateProvider>
   )
 }

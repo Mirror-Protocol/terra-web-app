@@ -56,10 +56,6 @@ export default () => {
   const accountInfo = {
     [AccountInfoKey.UUSD]: (bankBalance: BankBalance) =>
       findBalance(UUSD, bankBalance),
-    [AccountInfoKey.MINTPOSITIONS]: (mintPosition: MintPositions) =>
-      mintPosition.positions.filter(({ collateral, asset }) =>
-        [collateral, asset].some(({ amount }) => gt(amount, 0))
-      ),
   }
 
   return { price, contractInfo, balance, accountInfo }

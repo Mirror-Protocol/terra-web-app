@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useRouteMatch } from "react-router-dom"
 import classNames from "classnames/bind"
 import Tooltip from "../../lang/Tooltip.json"
-import { GovKey, useGov, useRefetchGov } from "../../graphql/useGov"
+import { GovKey, LIMIT, useGov, useRefetchGov } from "../../graphql/useGov"
 import Card from "../../components/Card"
 import Grid from "../../components/Grid"
 import LoadingTitle from "../../components/LoadingTitle"
@@ -71,7 +71,7 @@ const Polls = ({ title }: { title: string }) => {
         </Grid>
       )}
 
-      {!!offset && (
+      {(!offset || offset - 1 > LIMIT) && (
         <Button onClick={more} block outline submit>
           More
         </Button>

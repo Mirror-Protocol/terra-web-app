@@ -10,6 +10,7 @@ import Card from "../../components/Card"
 import Table from "../../components/Table"
 import Dl from "../../components/Dl"
 import Icon from "../../components/Icon"
+import Button from "../../components/Button"
 import Change from "../../components/Change"
 import Tooltip, { TooltipIcon } from "../../components/Tooltip"
 import Delisted from "../../components/Delisted"
@@ -40,10 +41,11 @@ interface Props {
   totalMintedValue: string
   totalCollateralValue: string
   dataSource: Data[]
+  more?: () => void
 }
 
 const Mint = ({ loading, dataSource, ...props }: Props) => {
-  const { totalMintedValue, totalCollateralValue } = props
+  const { totalMintedValue, totalCollateralValue, more } = props
 
   const renderTooltip = (value: string, tooltip: string) => (
     <TooltipIcon content={tooltip}>{formatAsset(value, UUSD)}</TooltipIcon>
@@ -219,6 +221,12 @@ const Mint = ({ loading, dataSource, ...props }: Props) => {
             link={MenuKey.MINT}
           />
         )
+      )}
+
+      {more && (
+        <Button onClick={more} block outline submit>
+          More
+        </Button>
       )}
     </Card>
   )

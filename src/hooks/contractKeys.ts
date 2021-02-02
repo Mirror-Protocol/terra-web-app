@@ -23,7 +23,6 @@ export enum BalanceKey {
 }
 
 export enum AccountInfoKey {
-  // string | MintPosition[]
+  // string
   UUSD = "uusd",
-  MINTPOSITIONS = "mintPositions",
 }

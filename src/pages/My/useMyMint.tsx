@@ -1,27 +1,24 @@
 import { UUSD } from "../../constants"
 import { lt, lte, minus, sum, times } from "../../libs/math"
 import { useContractsAddress, useContract, useCombineKeys } from "../../hooks"
-import { AccountInfoKey, AssetInfoKey } from "../../hooks/contractKeys"
+import { AssetInfoKey } from "../../hooks/contractKeys"
 import { PriceKey } from "../../hooks/contractKeys"
 import calc from "../../helpers/calc"
 import useYesterday, { calcChange } from "../../statistics/useYesterday"
+import useMintPositions from "../../graphql/queries/useMintPositions"
 
 const WARNING = 0.3
 const DANGER = 0
 
 const useMyMint = () => {
   const priceKey = PriceKey.ORACLE
-  const keys = [
-    priceKey,
-    AccountInfoKey.MINTPOSITIONS,
-    AssetInfoKey.MINCOLLATERALRATIO,
-  ]
+  const keys = [priceKey, AssetInfoKey.MINCOLLATERALRATIO]
 
   const { loading, data } = useCombineKeys(keys)
   const { whitelist, parseToken } = useContractsAddress()
-  const { result, find, ...contract } = useContract()
+  const { find } = useContract()
   const { [priceKey]: yesterday } = useYesterday()
-  const { [AccountInfoKey.MINTPOSITIONS]: positions } = contract
+  const { positions, more } = useMintPositions()
 
   const dataSource =
     !data || !positions
@@ -87,7 +84,14 @@ const useMyMint = () => {
 
   const totalMintedValue = sum(dataSource.map(({ asset }) => asset.value))
 
-  return { keys, loading, dataSource, totalCollateralValue, totalMintedValue }
+  return {
+    keys,
+    loading,
+    dataSource,
+    totalCollateralValue,
+    totalMintedValue,
+    more,
+  }
 }
 
 export default useMyMint

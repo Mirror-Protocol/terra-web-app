@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Dictionary } from "ramda"
+import { Dictionary, last } from "ramda"
 import { QueryResult } from "@apollo/client"
 
 import { MIR } from "../constants"
@@ -24,7 +24,7 @@ interface PollsUI {
   data: Dictionary<Poll>
   list: number[]
   height?: number
-  offset: number
+  offset?: number
   more: () => void
 }
 
@@ -40,10 +40,10 @@ const govState = createContext<GovState>("useGovState")
 export const [useGovState, GovStateProvider] = govState
 
 /* state */
-export const useGovContext = ({ poll_count }: GovState): Gov => {
+export const useGovContext = (): Gov => {
   const config = useGovConfig()
   const balance = useMirrorBalance()
-  const { result, polls } = usePolls(poll_count)
+  const { result, polls } = usePolls()
   const { height } = polls
 
   return {
@@ -100,9 +100,9 @@ const useMirrorBalance = () => {
 }
 
 /* polls */
-const usePolls = (poll_count: number) => {
-  const LIMIT = 30
-  const [offset, setOffset] = useState(poll_count - LIMIT)
+export const LIMIT = 30
+const usePolls = () => {
+  const [offset, setOffset] = useState<number>()
   const { contracts } = useContractsAddress()
 
   /* contract query */
@@ -130,7 +130,7 @@ const usePolls = (poll_count: number) => {
     .map(Number)
     .sort((a, b) => b - a)
 
-  const more = () => setOffset((offset) => Math.max(offset - LIMIT, 0))
+  const more = () => setOffset(last(list))
 
   return { ...query, polls: { data, list, height, more, offset } }
 }

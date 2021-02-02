@@ -12,7 +12,6 @@ import useMintInfo from "../graphql/queries/useMintInfo"
 import useLpTokenInfo from "../graphql/queries/useLpTokenInfo"
 
 import useBankBalances from "../graphql/queries/useBankBalances"
-import useMintPositions from "../graphql/queries/useMintPositions"
 
 import useTokenBalance from "../graphql/queries/useTokenBalance"
 import useLpTokenBalance from "../graphql/queries/useLpTokenBalance"
@@ -35,7 +34,6 @@ export type QueryResult = LazyQueryResult<any, any> & {
 
 interface Data extends Record<DictionaryKey, Dictionary<string> | undefined> {
   [AccountInfoKey.UUSD]: string
-  [AccountInfoKey.MINTPOSITIONS]?: MintPosition[]
 }
 
 interface Helpers {
@@ -75,7 +73,6 @@ export const useContractState = (address: string): Contract => {
 
   /* account info */
   const bankBalance = useBankBalances(address)
-  const mintPositions = useMintPositions(address)
 
   /* result */
   const result: Result = {
@@ -95,7 +92,6 @@ export const useContractState = (address: string): Contract => {
     [BalanceKey.REWARD]: stakingPool.result, // with LPSTAKE
 
     [AccountInfoKey.UUSD]: bankBalance,
-    [AccountInfoKey.MINTPOSITIONS]: mintPositions.result,
   }
 
   /* parsed */
@@ -154,9 +150,6 @@ export const useContractState = (address: string): Contract => {
     ...dictionary,
     [AccountInfoKey.UUSD]:
       bankBalance.data && accountInfo[AccountInfoKey.UUSD](bankBalance.data),
-    [AccountInfoKey.MINTPOSITIONS]:
-      mintPositions.parsed &&
-      accountInfo[AccountInfoKey.MINTPOSITIONS](mintPositions.parsed),
   }
 
   /* utils */
