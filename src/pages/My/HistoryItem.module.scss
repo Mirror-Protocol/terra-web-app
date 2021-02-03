@@ -28,6 +28,7 @@
 
 .badge {
   margin-right: 10px;
+  text-transform: capitalize;
 
   @include mobile {
     display: none;
