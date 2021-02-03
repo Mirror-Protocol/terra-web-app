@@ -65,6 +65,7 @@
   },
   "Mint": {
     "Open": "New assets will be minted when collateral is deposited. Any price change of either the collateral or the minted assets may lead to liquidation.",
+    "Caution": "When the position drops below minimum collateral ratio, any user may immediately liquidate the position.",
 
     "Collateral": "Current amount of collateral",
     "Asset": "Current amount of minted asset",

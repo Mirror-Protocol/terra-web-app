@@ -24,6 +24,7 @@ import FormGroup from "../components/FormGroup"
 import Dl from "../components/Dl"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
+import Caution from "../components/Caution"
 import { Type } from "../pages/Mint"
 import useMintReceipt from "./receipts/useMintReceipt"
 import FormContainer from "./FormContainer"
@@ -526,6 +527,12 @@ const MintForm = ({ position, type, tab, message }: Props) => {
       {(open || custom) && <FormGroup {...fields[Key.value2]} />}
       <FormGroup {...fields[Key.ratio]} skipFeedback />
       {!custom && <CollateralRatio {...ratioProps} />}
+
+      {open && (
+        <Caution className={styles.caution}>
+          <strong>Caution</strong>: {Tooltip.Mint.Caution}
+        </Caution>
+      )}
     </FormContainer>
   )
 }
