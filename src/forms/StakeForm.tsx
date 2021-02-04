@@ -52,6 +52,10 @@ const StakeForm = ({ type, token, tab, gov }: Props) => {
       ) ?? [0]
     )
 
+  const lockedIds = parsed[BalanceKey.MIRGOVSTAKED]?.locked_balance
+    ?.map(([id]: LockedBalance) => id)
+    .join(", ")
+
   const getMax = () => {
     const balance = find(balanceKey, token)
     const locked = getLocked()
@@ -147,7 +151,7 @@ const StakeForm = ({ type, token, tab, gov }: Props) => {
 
   const messages =
     gov && type === Type.UNSTAKE && gt(locked, 0)
-      ? [`${formatAsset(locked, MIR)} are voted in polls`]
+      ? [`${formatAsset(locked, MIR)} are voted in poll ${lockedIds}`]
       : undefined
 
   const disabled = invalid
