@@ -1,11 +1,10 @@
-import { formatDistanceToNow, addMilliseconds } from "date-fns"
+import { format, addMilliseconds } from "date-fns"
 import { BLOCK_TIME } from "../../constants"
-import { capitalize } from "../../libs/utils"
 
 /* end */
 export const estimateTime = (current: number, next: number) => {
   const estimated = addMilliseconds(new Date(), (next - current) * BLOCK_TIME)
-  return capitalize(formatDistanceToNow(estimated, { addSuffix: true }))
+  return format(estimated, "EEE, LLL dd, HH:mm aa")
 }
 
 /* link */

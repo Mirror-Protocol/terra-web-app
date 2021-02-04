@@ -22,7 +22,7 @@ const PollMeta = (poll: Poll) => {
           },
           {
             title: estimatedTime.label,
-            content: estimatedTime.end,
+            content: estimatedTime.text,
           },
         ]}
         className={styles.dl}
