@@ -492,19 +492,21 @@ const MintForm = ({ position, type, tab, message }: Props) => {
 
   /* latest price */
   const { isClosed } = useLatest()
-  const isClosed1 = isClosed(symbol1)
-  const isClosed2 = isClosed(symbol2)
+  const isMarketClosed1 = isClosed(symbol1)
+  const isMarketClosed2 = isClosed(symbol2)
+  const isMarketClosed = isMarketClosed1 || isMarketClosed2
 
-  const messages =
-    isClosed1 || isClosed2
-      ? [MESSAGE.Form.Validate.LastestPrice.Closed]
-      : touched[Key.ratio]
-      ? ratioMessages
-      : close
-      ? closeMessages
-      : undefined
+  const messages = isMarketClosed
+    ? [MESSAGE.Form.Validate.LastestPrice.Closed]
+    : touched[Key.ratio]
+    ? ratioMessages
+    : close
+    ? closeMessages
+    : undefined
 
-  const disabled = !!message || (!close ? invalid : !!closeMessages)
+  const disabled =
+    !!message || isMarketClosed || (!close ? invalid : !!closeMessages)
+
   const label = open ? MenuKey.MINT : type
 
   /* result */
