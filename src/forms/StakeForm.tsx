@@ -11,6 +11,7 @@ import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { BalanceKey } from "../hooks/contractKeys"
 
 import FormGroup from "../components/FormGroup"
+import FormFeedback from "../components/FormFeedback"
 import { Type } from "../pages/Stake"
 import useStakeReceipt from "./receipts/useStakeReceipt"
 import { toBase64 } from "../libs/formHelpers"
@@ -145,9 +146,7 @@ const StakeForm = ({ type, token, tab, gov }: Props) => {
   }[type as Type]
 
   const messages =
-    gov && type === Type.STAKE
-      ? [Tooltip.My.GovReward]
-      : gov && type === Type.UNSTAKE && gt(locked, 0)
+    gov && type === Type.UNSTAKE && gt(locked, 0)
       ? [`${formatAsset(locked, MIR)} are voted in polls`]
       : undefined
 
@@ -161,6 +160,10 @@ const StakeForm = ({ type, token, tab, gov }: Props) => {
   return (
     <FormContainer {...container}>
       <FormGroup {...fields[Key.value]} />
+
+      {gov && type === Type.STAKE && (
+        <FormFeedback help>{Tooltip.My.GovReward}</FormFeedback>
+      )}
     </FormContainer>
   )
 }
