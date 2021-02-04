@@ -4,6 +4,7 @@ import Container from "../../components/Container"
 import Card from "../../components/Card"
 import CreatePollForm from "../../forms/CreatePollForm"
 import { MenuKey } from "../Gov"
+import ForumLink from "./ForumLink"
 import CreatePollButton from "./CreatePollButton"
 import styles from "./CreatePoll.module.scss"
 
@@ -51,6 +52,8 @@ const CreatePoll = () => {
     <Page title={!type ? MenuKey.CREATE : Buttons[type].title}>
       {!type ? (
         <Container sm>
+          <ForumLink />
+
           <Card lg>
             <header className={styles.header}>
               <h1 className={styles.title}>{TITLE}</h1>

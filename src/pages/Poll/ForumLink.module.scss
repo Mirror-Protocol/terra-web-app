@@ -1,0 +1,30 @@
+@import "mixins";
+
+.link {
+  @include flex(space-between);
+  @include transition(background-color);
+
+  background-color: rgba($blue, 0.08);
+  border-radius: 10px;
+  margin-bottom: 30px;
+  padding: 20px 25px;
+
+  &:hover {
+    background-color: rgba($blue, 0.05);
+    text-decoration: none;
+  }
+}
+
+.main {
+  @include flex(flex-start);
+  color: $blue;
+  font-size: 14px;
+
+  i {
+    margin-right: 10px;
+  }
+}
+
+.caret {
+  opacity: 0.3;
+}
