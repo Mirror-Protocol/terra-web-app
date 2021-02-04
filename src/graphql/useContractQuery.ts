@@ -2,6 +2,8 @@ import { useQuery, useLazyQuery } from "@apollo/client"
 import { CONTRACT, WASMQUERY } from "./gqldocs"
 import { parseResult } from "./response"
 
+const fetchPolicy = "network-only"
+
 export const useLazyContractQuery = <Parsed>(params: ContractVariables) => {
   const variables = generateVariables(params)
   const [load, result] = useLazyQuery<ContractsData>(CONTRACT, { variables })
@@ -10,7 +12,7 @@ export const useLazyContractQuery = <Parsed>(params: ContractVariables) => {
 
 export default <Parsed>(params: ContractVariables) => {
   const variables = generateVariables(params)
-  const result = useQuery<ContractsData>(CONTRACT, { variables })
+  const result = useQuery<ContractsData>(CONTRACT, { variables, fetchPolicy })
   return { result, parsed: parse<Parsed>(result) }
 }
 
