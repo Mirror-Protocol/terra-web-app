@@ -22,7 +22,7 @@ export const getBadge = (type: string) => {
     ],
     Pool: ["PROVIDE_LIQUIDITY", "WITHDRAW_LIQUIDITY"],
     Stake: ["STAKE", "UNSTAKE", "WITHDRAW_REWARDS"],
-    Gov: ["GOV_STAKE", "GOV_UNSTAKE", "GOV_CREATE_POLL"],
+    Gov: ["GOV_STAKE", "GOV_UNSTAKE", "GOV_CREATE_POLL", "GOV_CAST_POLL"],
 
     Airdrop: ["CLAIM_AIRDROP"],
   }
@@ -34,7 +34,7 @@ export const getBadge = (type: string) => {
 const useParseTx = ({ type, data, token }: Tx) => {
   const { amount, denom, from, to } = data
   const { offerAsset, offerAmount, askAsset, returnAmount } = data
-  const { assetToken, positionIdx, pollId } = data
+  const { assetToken, positionIdx, pollId, voteOption } = data
 
   const { getSymbol } = useContractsAddress()
   const symbol = getSymbol(token)
@@ -140,6 +140,7 @@ const useParseTx = ({ type, data, token }: Tx) => {
     GOV_STAKE: ["Staked", formatAsset(amount, symbol)],
     GOV_UNSTAKE: ["Unstaked", formatAsset(amount, symbol)],
     GOV_CREATE_POLL: ["Created poll", pollId],
+    GOV_CAST_POLL: ["Voted", voteOption, "to poll", pollId],
 
     /* Airdrop */
     CLAIM_AIRDROP: ["Claimed airdrop", formatAsset(amount, symbol)],
