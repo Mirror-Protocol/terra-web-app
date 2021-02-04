@@ -5,7 +5,7 @@ export const CHROME = "https://google.com/chrome"
 export const DOCS = "https://docs.mirror.finance"
 
 /* terra:configs */
-export const BLOCK_TIME = 6650 // 6.65s
+export const BLOCK_TIME = 6500 // 6.5s
 
 /* mirror:unit */
 export const SMALLEST = 1e6
