@@ -1,10 +1,11 @@
-import { div } from "../../libs/math"
+import { div, minus } from "../../libs/math"
 import { format, formatAsset, lookupSymbol } from "../../libs/parse"
+import { percent } from "../../libs/num"
 import { useContractsAddress } from "../../hooks"
 import { Type } from "../../pages/Trade"
 import { findValue } from "./receiptHelpers"
 
-export default (type: Type) => (logs: TxLog[]) => {
+export default (type: Type, simulatedPrice?: string) => (logs: TxLog[]) => {
   const { getSymbol } = useContractsAddress()
   const val = findValue(logs)
 
@@ -23,15 +24,19 @@ export default (type: Type) => (logs: TxLog[]) => {
     [Type.SELL]: div(rtn, offer),
   }[type]
 
+  const slippage = minus(div(price, simulatedPrice), 1)
+
   /* contents */
   const priceContents = {
     [Type.BUY]: {
       title: `Price per ${lookupSymbol(rtnSymbol)}`,
       content: `${format(price)} ${lookupSymbol(offerSymbol)}`,
+      children: [{ title: "Slippage", content: percent(slippage) }],
     },
     [Type.SELL]: {
       title: `Price per ${lookupSymbol(offerSymbol)}`,
       content: `${format(price)} ${lookupSymbol(rtnSymbol)}`,
+      children: [{ title: "Slippage", content: percent(slippage) }],
     },
   }[type]
 

@@ -5,7 +5,7 @@ import { isNil } from "ramda"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import { COMMISSION, MAX_SPREAD, MIR, UUSD } from "../constants"
 import Tooltip from "../lang/Tooltip.json"
-import { div, gt } from "../libs/math"
+import { div, gt, isFinite } from "../libs/math"
 import { useRefetch } from "../hooks"
 import { format, lookup, lookupSymbol } from "../libs/parse"
 import { decimal } from "../libs/parse"
@@ -28,6 +28,8 @@ import useSimulate from "./useSimulate"
 import useSelectAsset from "./useSelectAsset"
 import FormContainer from "./FormContainer"
 import FormIcon from "./FormIcon"
+import SetSlippageTolerance from "./SetSlippageTolerance"
+import useLocalStorage from "../libs/useLocalStorage"
 
 enum Key {
   token = "token",
@@ -44,6 +46,13 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const { whitelist, getToken, getSymbol, toToken } = useContractsAddress()
   const { find } = useContract()
   useRefetch([priceKey, balanceKey])
+
+  /* form:slippage */
+  const slippageState = useLocalStorage("slippage", "1")
+  const [slippageValue] = slippageState
+  const slippage = isFinite(slippageValue)
+    ? div(slippageValue, 100)
+    : MAX_SPREAD
 
   /* form:validate */
   const validate = ({ value1, value2, token }: Values<Key>) => {
@@ -165,7 +174,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
     ? calc.minimumReceived({
         offer_amount: amount1,
         belief_price: belief,
-        max_spread: String(MAX_SPREAD),
+        max_spread: String(slippage),
         commission: String(COMMISSION),
       })
     : "0"
@@ -176,7 +185,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         {
           title: (
             <TooltipIcon content={Tooltip.Trade.Price}>
-              Terraswap Price
+              Expected Price
             </TooltipIcon>
           ),
           content: (
@@ -200,7 +209,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const asset = toToken({ token: token1, amount: amount1 })
   const swap = {
     belief_price: belief,
-    max_spread: String(MAX_SPREAD),
+    max_spread: String(slippage),
   }
 
   const data = {
@@ -227,13 +236,14 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const disabled = invalid || simulating || !!messages?.length
 
   /* result */
-  const parseTx = useTradeReceipt(type)
+  const parseTx = useTradeReceipt(type, simulated?.price)
 
   const container = { tab, attrs, contents, data, disabled, messages, parseTx }
   const tax = { pretax: uusd, deduct: type === Type.SELL }
 
   return (
     <FormContainer {...container} {...tax}>
+      <SetSlippageTolerance state={slippageState} />
       <FormGroup {...fields[Key.value1]} />
       <FormIcon name="arrow_downward" />
       <FormGroup {...fields[Key.value2]} />
