@@ -2,6 +2,7 @@ import Button from "../../components/Button"
 import Card from "../../components/Card"
 import { UUSD } from "../../constants"
 import useTxs from "../../statistics/useTxs"
+import DownloadCSV from "./DownloadCSV"
 import HistoryItem from "./HistoryItem"
 import styles from "./HistoryList.module.scss"
 
@@ -9,7 +10,11 @@ const HistoryList = () => {
   const { txs, loading, more } = useTxs()
 
   return !txs.length ? null : (
-    <Card title="Transaction History" loading={loading}>
+    <Card
+      title="Transaction History"
+      loading={loading}
+      action={<DownloadCSV txs={txs} />}
+    >
       <ul className={styles.list}>
         {txs
           .filter(({ txHash }) => txHash)
