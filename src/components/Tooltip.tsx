@@ -14,6 +14,12 @@ export const DefaultTippyProps: TippyProps = {
   appendTo: document.body,
 }
 
+export const DropdownTippyProps: TippyProps = {
+  ...DefaultTippyProps,
+  placement: "bottom-end",
+  trigger: "click",
+}
+
 const TooltipTippyProps: TippyProps = {
   ...DefaultTippyProps,
   placement: "top",
