@@ -17,7 +17,7 @@ const HistoryItem = (tx: Tx) => {
   return (
     <ExtLink href={finder(txHash, "tx")} className={styles.component}>
       <section className={styles.main}>
-        <Badge className={styles.badge}>{getBadge(type)}</Badge>
+        <Badge className={styles.badge}>{getBadge(type).toLowerCase()}</Badge>
 
         {!!parsedTx.length &&
           parsedTx.map((word, index) => (
