@@ -38,7 +38,7 @@ export const lookupSymbol = (symbol?: string) =>
     ? "Luna"
     : symbol?.startsWith("u")
     ? symbol.slice(1, 3).toUpperCase() + "T"
-    : symbol
+    : symbol ?? ""
 
 export const format: Formatter = (amount, symbol, config) => {
   const value = new BigNumber(lookup(amount, symbol, config))
