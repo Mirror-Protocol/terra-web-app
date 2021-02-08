@@ -14,12 +14,18 @@ A detailed manual on how to perform various operations through the Mirror Web Ap
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-In the project directory, you can run:
+### Add `local.mirror.finance` to `/etc/hosts`
+​
+Add the following entry to your `/etc/hosts` file:
+​
+```
+127.0.0.1 local.mirror.finance
+```
 
 ### `yarn start`
 
 Runs the app in the development mode.<br>
-Open [https://localhost:3000](https://localhost:3000) to view it in the browser.
+Open [https://local.mirror.finance:3000](https://local.mirror.finance:3000) to view it in the browser.
 
 ## License
 
