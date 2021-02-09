@@ -59,8 +59,12 @@ const Polls = ({ title }: { title: string }) => {
           {list
             .filter((id) => !filter || polls.data[id].status === filter)
             .map((id) => {
-              const dim =
-                !filter && polls.data[id].status !== PollStatus.InProgress
+              const { status, type } = polls.data[id]
+              const emphasize =
+                status === PollStatus.InProgress ||
+                (status === PollStatus.Passed && type !== "TEXT")
+
+              const dim = !filter && !emphasize
 
               return (
                 <Card to={`${url}/poll/${id}`} className={cx({ dim })} key={id}>
