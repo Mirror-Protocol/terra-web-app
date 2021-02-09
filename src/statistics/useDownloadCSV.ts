@@ -18,7 +18,7 @@ const useDownloadCSV = (txs: Tx[]) => {
 
   const splitLookup = (value: string) => {
     const split = splitTokenText(value)
-    return lookup(split.amount, getSymbol(split.token))
+    return value ? lookup(split.amount, getSymbol(split.token)) : ""
   }
 
   const parseLookup = (value: string) =>
@@ -28,6 +28,11 @@ const useDownloadCSV = (txs: Tx[]) => {
         return [lookup(amount, symbol), lookupSymbol(symbol)].join(" ")
       })
       .join(" + ")
+
+  const renderAmount = (value: string, { data, token }: Tx) => {
+    const symbol = lookupSymbol(data.denom ?? data.askAsset) || getSymbol(token)
+    return value ? lookup(value, symbol) : ""
+  }
 
   const defaultColumns: Column[] = [
     {
@@ -48,13 +53,12 @@ const useDownloadCSV = (txs: Tx[]) => {
 
   const data: Dictionary<{ type: string[]; columns: Column[] }> = {
     terra: {
-      type: ["TERRA_SEND", "TERRA_RECEIVE", "SEND", "RECEIVE"],
+      type: ["TERRA_SWAP", "TERRA_SEND", "TERRA_RECEIVE", "SEND", "RECEIVE"],
       columns: [
         {
           dataIndex: ["data", "amount"],
           title: "amount",
-          render: (value, { data, token }) =>
-            lookup(value, data.denom || getSymbol(token)),
+          render: renderAmount,
         },
         {
           dataIndex: ["data", "from"],
@@ -64,6 +68,16 @@ const useDownloadCSV = (txs: Tx[]) => {
           dataIndex: ["data", "to"],
           title: "to",
         },
+        {
+          dataIndex: ["data", "offer"],
+          title: "offer",
+          render: parseLookup,
+        },
+        {
+          dataIndex: ["data", "swapCoin"],
+          title: "return",
+          render: parseLookup,
+        },
       ],
     },
     trade: {
@@ -72,7 +86,7 @@ const useDownloadCSV = (txs: Tx[]) => {
         {
           dataIndex: ["data", "recvAmount"],
           title: "amount",
-          render: (value, { data }) => lookup(value, getSymbol(data.askAsset)),
+          render: renderAmount,
         },
         {
           dataIndex: ["data", "price"],
@@ -81,7 +95,7 @@ const useDownloadCSV = (txs: Tx[]) => {
         {
           dataIndex: ["data", "commissionAmount"],
           title: "commission",
-          render: (value, { data }) => lookup(value, getSymbol(data.askAsset)),
+          render: renderAmount,
         },
       ],
     },
@@ -142,7 +156,7 @@ const useDownloadCSV = (txs: Tx[]) => {
         {
           dataIndex: ["data", "amount"],
           title: "amount",
-          render: (value, { token }) => lookup(value, getSymbol(token)),
+          render: renderAmount,
         },
       ],
     },
@@ -152,7 +166,7 @@ const useDownloadCSV = (txs: Tx[]) => {
         {
           dataIndex: ["data", "amount"],
           title: "amount",
-          render: (value, { token }) => lookup(value, getSymbol(token)),
+          render: renderAmount,
         },
       ],
     },
@@ -162,7 +176,7 @@ const useDownloadCSV = (txs: Tx[]) => {
         {
           dataIndex: ["data", "amount"],
           title: "amount",
-          render: (value, { token }) => lookup(value, getSymbol(token)),
+          render: renderAmount,
         },
       ],
     },
@@ -185,10 +199,33 @@ const useDownloadCSV = (txs: Tx[]) => {
     return { href: encodeURI(csv), count: rows.length }
   }
 
-  return Object.entries(data).map(([key, { type, columns }]) => ({
+  const allTypes = Object.values(data).reduce<string[]>(
+    (acc, { type }) => [...acc, ...type],
+    []
+  )
+
+  const allColumns = Object.values(data).reduce<Column[]>(
+    (acc, { columns }) => {
+      const filtered = columns.filter(
+        (column) => !acc.some(({ title }) => title === column.title)
+      )
+
+      return [...acc, ...filtered]
+    },
+    []
+  )
+
+  const all = {
+    children: "All",
+    ...createCSV([...defaultColumns, ...allColumns], allTypes),
+  }
+
+  const categorized = Object.entries(data).map(([key, { type, columns }]) => ({
     children: key,
     ...createCSV([...defaultColumns, ...columns], type),
   }))
+
+  return [all, ...categorized]
 }
 
 export default useDownloadCSV
