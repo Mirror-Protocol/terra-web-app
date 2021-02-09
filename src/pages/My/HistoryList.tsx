@@ -1,6 +1,5 @@
 import Button from "../../components/Button"
 import Card from "../../components/Card"
-import { UUSD } from "../../constants"
 import useTxs from "../../statistics/useTxs"
 import DownloadCSV from "./DownloadCSV"
 import HistoryItem from "./HistoryItem"
