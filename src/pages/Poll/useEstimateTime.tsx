@@ -7,24 +7,24 @@ export default (poll?: Poll) => {
   const { height } = polls
 
   return !(height && poll && config)
-    ? { label: "", text: "" }
+    ? { label: "", text: "", toNow: "" }
     : poll.status === PollStatus.Executed
     ? {
         label: "Executed",
-        text: estimateTime(height, poll.end_height + config.effective_delay),
+        ...estimateTime(height, poll.end_height + config.effective_delay),
       }
     : poll.status === PollStatus.Passed && poll.type !== "TEXT"
     ? {
         label: "Estimated execution time",
-        text: estimateTime(height, poll.end_height + config.effective_delay),
+        ...estimateTime(height, poll.end_height + config.effective_delay),
       }
     : poll.status === PollStatus.InProgress
     ? {
         label: "Estimated end time",
-        text: estimateTime(height, poll.end_height),
+        ...estimateTime(height, poll.end_height),
       }
     : {
         label: "Ended",
-        text: estimateTime(height, poll.end_height),
+        ...estimateTime(height, poll.end_height),
       }
 }

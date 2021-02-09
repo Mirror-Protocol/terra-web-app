@@ -9,6 +9,7 @@ import LoadingTitle from "../../components/LoadingTitle"
 import Button from "../../components/Button"
 import Icon from "../../components/Icon"
 import { TooltipIcon } from "../../components/Tooltip"
+import { isEmphasizedPoll } from "./pollHelpers"
 import { PollStatus } from "./Poll"
 import PollItem from "./PollItem"
 import styles from "./Polls.module.scss"
@@ -59,12 +60,7 @@ const Polls = ({ title }: { title: string }) => {
           {list
             .filter((id) => !filter || polls.data[id].status === filter)
             .map((id) => {
-              const { status, type } = polls.data[id]
-              const emphasize =
-                status === PollStatus.InProgress ||
-                (status === PollStatus.Passed && type !== "TEXT")
-
-              const dim = !filter && !emphasize
+              const dim = !filter && !isEmphasizedPoll(polls.data[id])
 
               return (
                 <Card to={`${url}/poll/${id}`} className={cx({ dim })} key={id}>
