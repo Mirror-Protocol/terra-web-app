@@ -16,25 +16,11 @@ const HistoryList = () => {
       action={<DownloadCSV txs={txs} />}
     >
       <ul className={styles.list}>
-        {txs
-          .filter(({ txHash }) => txHash)
-          .filter(
-            ({ type, data }) =>
-              !["TERRA_SEND", "TERRA_RECEIVE"].includes(type) ||
-              data.denom === UUSD
-          )
-          .filter(
-            ({ type, data }) =>
-              type !== "TERRA_SWAP" ||
-              [data.offer, data.swapCoin].some((string) =>
-                string.endsWith(UUSD)
-              )
-          )
-          .map((item, index) => (
-            <li className={styles.item} key={index}>
-              <HistoryItem {...item} />
-            </li>
-          ))}
+        {txs.map((item, index) => (
+          <li className={styles.item} key={index}>
+            <HistoryItem {...item} />
+          </li>
+        ))}
       </ul>
 
       {more && (

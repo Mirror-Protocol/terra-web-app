@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { gql, useQuery } from "@apollo/client"
+import { UUSD } from "../constants"
 import { useWallet } from "../hooks"
 import useStatsClient from "./useStatsClient"
 
@@ -35,7 +36,20 @@ const useTxs = () => {
     client,
     variables: { account: address, offset, limit: LIMIT },
     onCompleted: ({ txs }) => {
-      setTxs((prev) => [...prev, ...txs])
+      const next = txs
+        .filter(({ txHash }) => txHash)
+        .filter(
+          ({ type, data }) =>
+            !["TERRA_SEND", "TERRA_RECEIVE"].includes(type) ||
+            data.denom === UUSD
+        )
+        .filter(
+          ({ type, data }) =>
+            type !== "TERRA_SWAP" ||
+            [data.offer, data.swapCoin].some((string) => string.endsWith(UUSD))
+        )
+
+      setTxs((prev) => [...prev, ...next])
       setDone(txs.length < LIMIT)
     },
   })
