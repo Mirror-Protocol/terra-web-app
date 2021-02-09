@@ -3,6 +3,7 @@ import classNames from "classnames"
 import { useContract, useRefetch } from "../../hooks"
 import { BalanceKey } from "../../hooks/contractKeys"
 import LinkButton from "../../components/LinkButton"
+import Icon from "../../components/Icon"
 import { useGov } from "../../graphql/useGov"
 import { PollStatus } from "./Poll"
 import styles from "./PollHeader.module.scss"
@@ -13,6 +14,14 @@ interface Props extends Poll {
 
 const PollHeader = ({ titleClassName, ...props }: Props) => {
   const { id, type, title, status, end_height } = props
+
+  const icons: Record<PollStatus, string> = {
+    [PollStatus.InProgress]: "how_to_vote",
+    [PollStatus.Passed]: "check_circle",
+    [PollStatus.Rejected]: "cancel",
+    [PollStatus.Executed]: "verified",
+  }
+
   const { url } = useRouteMatch()
   const params = useParams<{ id: string }>()
   const { parsed } = useContract()
@@ -52,6 +61,7 @@ const PollHeader = ({ titleClassName, ...props }: Props) => {
           strike: status === PollStatus.InProgress && end,
         })}
       >
+        <Icon name={icons[status as PollStatus]} size={20} />
         {status.replace("_", " ")}
       </section>
 
