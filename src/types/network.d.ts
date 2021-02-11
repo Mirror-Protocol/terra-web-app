@@ -8,6 +8,12 @@ interface Network extends NetworkConfig {
 
 type NetworkConfig = ExtNetworkConfig & LocalNetworkConfig
 
+interface ExtNetworkConfig {
+  name: string
+  chainID: string
+  lcd: string
+}
+
 interface LocalNetworkConfig {
   /** Contract Addresses JSON URL */
   contract: string
@@ -21,9 +27,4 @@ interface LocalNetworkConfig {
 }
 
 type ShuttleNetwork = "ethereum" | "bsc"
-
-interface ExtNetworkConfig {
-  name: string
-  chainID: string
-  lcd: string
-}
+type ShuttleList = Record<ShuttleNetwork, Dictionary<string>>

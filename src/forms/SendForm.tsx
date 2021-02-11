@@ -7,7 +7,7 @@ import useNewContractMsg from "../terra/useNewContractMsg"
 import { UUSD } from "../constants"
 import Tooltip from "../lang/Tooltip.json"
 import { div, gt, max, minus, times } from "../libs/math"
-import { formatAsset, lookup, toAmount } from "../libs/parse"
+import { formatAsset, lookup, lookupSymbol, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
 import { validate as v, placeholder, step } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
@@ -38,7 +38,12 @@ const getNetworkName = (value: string) => {
   return value ? NetworkName[value as ShuttleNetwork] : "Terra"
 }
 
-const SendForm = ({ tab }: { tab: Tab }) => {
+interface Props {
+  tab: Tab
+  shuttleList: ShuttleList
+}
+
+const SendForm = ({ tab, shuttleList }: Props) => {
   const priceKey = PriceKey.PAIR
   const balanceKey = BalanceKey.TOKEN
 
@@ -51,6 +56,9 @@ const SendForm = ({ tab }: { tab: Tab }) => {
   useRefetch([priceKey, balanceKey])
 
   /* form:validate */
+  const getIsShuttleAvailable = (network: string, symbol: string) =>
+    !network || !!shuttleList[network as ShuttleNetwork]?.[lookupSymbol(symbol)]
+
   const validate = ({ to, token, value, memo, network }: Values<Key>) => {
     const max = find(balanceKey, token)
     const symbol = getSymbol(token)
@@ -203,9 +211,12 @@ const SendForm = ({ tab }: { tab: Tab }) => {
     ? [new MsgSend(address, recipient, amount + symbol)]
     : [newContractMsg(token, { transfer: { recipient, amount } })]
 
-  const messages = ["Double check if the above transaction requires a memo"]
+  const isShuttleAvailable = getIsShuttleAvailable(network, symbol)
+  const messages = !isShuttleAvailable
+    ? [`${lookupSymbol(symbol)} is not available on ${getNetworkName(network)}`]
+    : ["Double check if the above transaction requires a memo"]
 
-  const disabled = invalid
+  const disabled = invalid || !isShuttleAvailable
 
   /* result */
   const parseTx = useSendReceipt()

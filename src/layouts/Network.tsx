@@ -1,7 +1,10 @@
 import { FC } from "react"
+import { QueryClient, QueryClientProvider } from "react-query"
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 import { DefaultOptions } from "@apollo/client"
 import { NetworkProvider, useNetworkState } from "../hooks/useNetwork"
+
+const queryClient = new QueryClient()
 
 export const DefaultApolloClientOptions: DefaultOptions = {
   watchQuery: { notifyOnNetworkStatusChange: true },
@@ -19,7 +22,9 @@ const Network: FC = ({ children }) => {
 
   return (
     <NetworkProvider value={network} key={network.name}>
-      <ApolloProvider client={client}>{children}</ApolloProvider>
+      <QueryClientProvider client={queryClient}>
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      </QueryClientProvider>
     </NetworkProvider>
   )
 }
