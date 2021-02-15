@@ -13,7 +13,7 @@ interface Props {
   onClick: (ratio: string) => void
 }
 
-const MAX = 3 // 300%
+const MAX = 4 // 400%
 const getX = (ratio: string) => {
   const x = div(ratio, MAX)
   return lt(x, 0) ? "0" : gt(x, 1) ? "1" : x
