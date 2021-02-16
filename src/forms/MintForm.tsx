@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"
+import { reverse } from "ramda"
 import { MsgExecuteContract } from "@terra-money/terra.js"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
@@ -149,7 +150,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   /* simulation */
   const price1 = find(priceKey, token1)
   const price2 = find(priceKey, token2)
-  const reverse = form.changed !== Key.value1
+  const reversed = form.changed !== Key.value1
   const operate = type === Type.DEPOSIT || type === Type.CUSTOM ? plus : minus
   const nextCollateralAmount = max([
     operate(prevCollateral?.amount, amount1),
@@ -162,7 +163,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     collateral: {
       amount: custom
         ? nextCollateralAmount
-        : reverse
+        : reversed
         ? undefined
         : open
         ? amount1
@@ -181,16 +182,16 @@ const MintForm = ({ position, type, tab, message }: Props) => {
       ? undefined
       : open
       ? div(ratio, 100)
-      : !reverse
+      : !reversed
       ? undefined
       : div(ratio, 100),
   })
 
   const simulated = open
-    ? !reverse
+    ? !reversed
       ? lookup(calculated.asset.amount, symbol2)
       : lookup(calculated.collateral.amount, symbol1)
-    : !reverse
+    : !reversed
     ? lookup(times(calculated.ratio, 100))
     : lookup(
         type === Type.DEPOSIT
@@ -200,11 +201,11 @@ const MintForm = ({ position, type, tab, message }: Props) => {
       )
 
   useEffect(() => {
-    const key = reverse ? Key.value1 : open ? Key.value2 : Key.ratio
+    const key = reversed ? Key.value1 : open ? Key.value2 : Key.ratio
     const next = gt(simulated, 0) && isFinite(simulated) ? simulated : ""
     // Safe to use as deps
     !custom && !close && setValues((values) => ({ ...values, [key]: next }))
-  }, [type, simulated, reverse, setValues, open, close, custom])
+  }, [type, simulated, reversed, setValues, open, close, custom])
 
   /* render:form */
   const config1: Config = {
@@ -436,6 +437,24 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     burn: { position_idx: position?.idx },
   }
 
+  const customData = [
+    lt(amount2, 0)
+      ? newContractMsg(token2, createSend(burn, abs(amount2)))
+      : gt(amount2, 0)
+      ? newContractMsg(contracts["mint"], mint)
+      : undefined,
+    lt(amount1, 0)
+      ? newContractMsg(contracts["mint"], withdraw)
+      : gt(amount1, 0)
+      ? isCollateralUST
+        ? newContractMsg(contracts["mint"], deposit, {
+            amount: amount1,
+            denom: UUSD,
+          })
+        : newContractMsg(token1, createSend(deposit, amount1))
+      : undefined,
+  ].filter(Boolean) as MsgExecuteContract[]
+
   const data = {
     [Type.OPEN]: [
       isCollateralUST
@@ -458,23 +477,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
         : newContractMsg(token1, createSend(deposit, amount1)),
     ],
     [Type.WITHDRAW]: [newContractMsg(contracts["mint"], withdraw)],
-    [Type.CUSTOM]: [
-      lt(amount2, 0)
-        ? newContractMsg(token2, createSend(burn, abs(amount2)))
-        : gt(amount2, 0)
-        ? newContractMsg(contracts["mint"], mint)
-        : undefined,
-      lt(amount1, 0)
-        ? newContractMsg(contracts["mint"], withdraw)
-        : gt(amount1, 0)
-        ? isCollateralUST
-          ? newContractMsg(contracts["mint"], deposit, {
-              amount: amount1,
-              denom: UUSD,
-            })
-          : newContractMsg(token1, createSend(deposit, amount1))
-        : undefined,
-    ].filter(Boolean) as MsgExecuteContract[],
+    [Type.CUSTOM]: gt(amount1, 0) ? reverse(customData) : customData,
   }[type]
 
   const ratioMessages = errors[Key.ratio]
