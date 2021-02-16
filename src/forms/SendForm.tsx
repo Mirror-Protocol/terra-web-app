@@ -182,7 +182,7 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   const amountAfterShuttleFee = max([minus(amount, shuttleFee), String(0)])
   const contents = !value
     ? undefined
-    : network === "ethereum"
+    : network
     ? [
         {
           title: (
