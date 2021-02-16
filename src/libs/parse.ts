@@ -2,6 +2,8 @@ import BigNumber from "bignumber.js"
 import numeral from "numeral"
 import { SMALLEST } from "../constants"
 
+BigNumber.config({ EXPONENTIAL_AT: [-18, 20] })
+
 type Formatter = (
   amount?: string,
   symbol?: string,

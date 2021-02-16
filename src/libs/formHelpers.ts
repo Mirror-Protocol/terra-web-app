@@ -91,6 +91,9 @@ export const validate = {
   },
 }
 
+export const validateSlippage = (value: string) =>
+  !validateDp(value) ? `Slippage must be within ${dp()} decimal points` : ""
+
 /* data (utf-8) */
 export const toBase64 = (object: object) => {
   try {

@@ -11,21 +11,22 @@ import styles from "./SetSlippageTolerance.module.scss"
 
 const cx = classNames.bind(styles)
 
-const SlippageTolerance = ({ state }: { state: LocalStorage<string> }) => {
+const SlippageTolerance = ({ state, error }: Props) => {
   const [value, setValue] = state
   const [focused, setFocused] = useState(false)
   const list = ["0.1", "0.5", "1"]
 
-  const feedback =
-    gte(value, 50) || lte(value, 0) || !isFinite(value)
-      ? { status: "error", message: "Enter a valid slippage percentage" }
-      : gt(value, 5)
-      ? { status: "warning", message: "Your transaction may be frontrun" }
-      : lt(value, 0.5)
-      ? { status: "warning", message: "Your transaction may fail" }
-      : !list.includes(value)
-      ? { status: "success" }
-      : undefined
+  const feedback = error
+    ? { status: "error", message: error }
+    : gte(value, 50) || lte(value, 0) || !isFinite(value)
+    ? { status: "error", message: "Enter a valid slippage percentage" }
+    : gt(value, 5)
+    ? { status: "warning", message: "Your transaction may be frontrun" }
+    : lt(value, 0.5)
+    ? { status: "warning", message: "Your transaction may fail" }
+    : !list.includes(value)
+    ? { status: "success" }
+    : undefined
 
   return (
     <div className={styles.card}>
@@ -71,10 +72,15 @@ const SlippageTolerance = ({ state }: { state: LocalStorage<string> }) => {
   )
 }
 
-const SetSlippageTolerance = ({ state }: { state: LocalStorage<string> }) => {
+interface Props {
+  state: LocalStorage<string>
+  error?: string
+}
+
+const SetSlippageTolerance = (props: Props) => {
   const renderDropdown = () => (
     <Dropdown>
-      <SlippageTolerance state={state} />
+      <SlippageTolerance {...props} />
     </Dropdown>
   )
 

@@ -11,7 +11,8 @@ import { format, lookup, lookupSymbol } from "../libs/parse"
 import { decimal } from "../libs/parse"
 import { toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
-import { validate as v, placeholder, step } from "../libs/formHelpers"
+import { placeholder, step } from "../libs/formHelpers"
+import { validate as v, validateSlippage } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import calc from "../helpers/calc"
 import { useContractsAddress, useContract } from "../hooks"
@@ -50,9 +51,11 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   /* form:slippage */
   const slippageState = useLocalStorage("slippage", "1")
   const [slippageValue] = slippageState
-  const slippage = isFinite(slippageValue)
-    ? div(slippageValue, 100)
-    : MAX_SPREAD
+  const slippageError = validateSlippage(slippageValue)
+  const slippage =
+    isFinite(slippageValue) && !slippageError
+      ? div(slippageValue, 100)
+      : MAX_SPREAD
 
   /* form:validate */
   const validate = ({ value1, value2, token }: Values<Key>) => {
@@ -243,7 +246,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   return (
     <FormContainer {...container} {...tax}>
-      <SetSlippageTolerance state={slippageState} />
+      <SetSlippageTolerance state={slippageState} error={slippageError} />
       <FormGroup {...fields[Key.value1]} />
       <FormIcon name="arrow_downward" />
       <FormGroup {...fields[Key.value2]} />
