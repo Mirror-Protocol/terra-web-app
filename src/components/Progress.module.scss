@@ -24,6 +24,7 @@ $axis-height: 25px;
   font-weight: 500;
   height: $axis-height;
   transform: translate(-50%, 0);
+  white-space: nowrap;
 
   &:after {
     content: "";
