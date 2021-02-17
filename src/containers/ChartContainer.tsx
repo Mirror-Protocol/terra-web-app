@@ -43,6 +43,7 @@ const ChartContainer = ({ value, change, datasets, ...props }: Props) => {
         borderColor,
         borderCapStyle: "round",
         borderWidth: compact ? 2 : 6,
+        lineTension: compact ? 0.2 : 0.05,
         pointRadius: 0,
         pointHoverRadius: 0,
         data: datasets,
