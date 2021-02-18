@@ -163,7 +163,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         label: (
           <TooltipIcon content={Tooltip.Pool.Output}>Received</TooltipIcon>
         ),
-        value: fromLP?.text,
+        value: fromLP?.text ?? "-",
       },
     }[type],
   }
