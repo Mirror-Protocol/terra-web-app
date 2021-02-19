@@ -2,7 +2,7 @@ import { MIR, UUSD } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"
 import { percent } from "../../libs/num"
 import { format } from "../../libs/parse"
-import { useContract, useContractsAddress } from "../../hooks"
+import { useContract, useContractsAddress, useRefetch } from "../../hooks"
 import { PriceKey } from "../../hooks/contractKeys"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
@@ -17,6 +17,7 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
   const { find } = useContract()
   const { latest24h, assetMarketCap, totalValueLocked, collateralRatio } = props
   const communityBalance = useCommunityBalance()
+  useRefetch([PriceKey.PAIR])
 
   return (
     <>
