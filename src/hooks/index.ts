@@ -6,4 +6,5 @@ export { useContract, useResult } from "./useContract"
 
 export { default as useTerraAssets } from "./useTerraAssets"
 export { default as useRefetch } from "./useRefetch"
+export { default as usePolling } from "./usePolling"
 export { default as useCombineResult, useCombineKeys } from "./useCombineResult"

@@ -6,7 +6,7 @@ import useNewContractMsg from "../terra/useNewContractMsg"
 import { COMMISSION, MAX_SPREAD, MIR, UUSD } from "../constants"
 import Tooltip from "../lang/Tooltip.json"
 import { div, gt, isFinite } from "../libs/math"
-import { useRefetch } from "../hooks"
+import { usePolling, useRefetch } from "../hooks"
 import { format, lookup, lookupSymbol } from "../libs/parse"
 import { decimal } from "../libs/parse"
 import { toAmount } from "../libs/parse"
@@ -47,6 +47,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const { whitelist, getToken, getSymbol, toToken } = useContractsAddress()
   const { find } = useContract()
   useRefetch([priceKey, balanceKey])
+  usePolling()
 
   /* form:slippage */
   const slippageState = useLocalStorage("slippage", "1")
