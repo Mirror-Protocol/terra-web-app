@@ -34,7 +34,7 @@ interface Props {
   /** Exclude tax from the contract */
   deduct?: boolean
   /** Form feedback */
-  messages?: string[]
+  messages?: ReactNode[]
 
   /** Submit disabled */
   disabled?: boolean
@@ -153,8 +153,8 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
           />
         )}
 
-        {(invalid ?? messages)?.map((message) => (
-          <FormFeedback key={message}>{message}</FormFeedback>
+        {(invalid ?? messages)?.map((message, index) => (
+          <FormFeedback key={index}>{message}</FormFeedback>
         ))}
 
         <Button {...next} type="button" size="lg" submit />

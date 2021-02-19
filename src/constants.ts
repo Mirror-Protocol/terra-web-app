@@ -28,6 +28,10 @@ export const DEFAULT_EXT_NETWORK: ExtNetworkConfig = {
   lcd: "https://lcd.terra.dev",
 }
 
+/* outbound */
+export const TRADING_HOURS =
+  "https://www.nasdaq.com/stock-market-trading-hours-for-nasdaq"
+
 /* sentry */
 export const DSN =
   "https://b1532961e54e491fbb57e67805cb36a4@o247107.ingest.sentry.io/5540998"

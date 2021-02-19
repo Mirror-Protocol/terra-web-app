@@ -5,7 +5,7 @@ import { MsgExecuteContract } from "@terra-money/terra.js"
 import useNewContractMsg from "../terra/useNewContractMsg"
 import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
-import { MIR, UUSD } from "../constants"
+import { MIR, TRADING_HOURS, UUSD } from "../constants"
 import { plus, minus, times, div, floor, max, abs } from "../libs/math"
 import { gt, gte, lt, isFinite } from "../libs/math"
 import { capitalize } from "../libs/utils"
@@ -26,6 +26,8 @@ import Dl from "../components/Dl"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
 import Caution from "../components/Caution"
+import ExtLink from "../components/ExtLink"
+import Icon from "../components/Icon"
 import { Type } from "../pages/Mint"
 import useMintReceipt from "./receipts/useMintReceipt"
 import FormContainer from "./FormContainer"
@@ -493,6 +495,16 @@ const MintForm = ({ position, type, tab, message }: Props) => {
       ? [`Insufficient ${prevAsset.symbol} balance`]
       : undefined
 
+  const marketClosedMessage = (
+    <p className={styles.message}>
+      Only available during{" "}
+      <ExtLink href={TRADING_HOURS} className={styles.link}>
+        market hours
+      </ExtLink>
+      <Icon name="launch" size={14} />
+    </p>
+  )
+
   /* latest price */
   const { isClosed } = useLatest()
   const isMarketClosed1 = isClosed(symbol1)
@@ -500,7 +512,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   const isMarketClosed = isMarketClosed1 || isMarketClosed2
 
   const messages = isMarketClosed
-    ? [MESSAGE.Form.Validate.LastestPrice.Closed]
+    ? [marketClosedMessage]
     : touched[Key.ratio]
     ? ratioMessages
     : close

@@ -12,8 +12,7 @@
         "Safe": "Collateral ratio is lower than safe ratio"
       },
       "LastestPrice": {
-        "FailedToFetch": "Failed to fetch latest price",
-        "Closed": "Only available during market hours"
+        "FailedToFetch": "Failed to fetch latest price"
       }
     },
     "Button": {

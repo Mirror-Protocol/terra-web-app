@@ -1,7 +1,26 @@
+@import "mixins";
+
 .dl {
   margin-bottom: 30px;
 }
 
 .caution {
   margin-top: 30px;
+}
+
+.message {
+  @include flex(flex-start);
+  white-space: pre;
+
+  i {
+    margin-left: 3px;
+  }
+}
+
+.link {
+  &,
+  &:hover {
+    color: inherit;
+    text-decoration: underline;
+  }
 }
