@@ -16,7 +16,7 @@ const Dashboard = () => {
     >
       {Object.entries(StatsNetwork).map(([key, value]) => (
         <option value={value} key={key}>
-          {value === StatsNetwork.COMBINE ? "Terra + ETH" : value}
+          {value === StatsNetwork.COMBINE ? "Terra + ETH + BSC" : value}
         </option>
       ))}
     </select>

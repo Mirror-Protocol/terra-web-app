@@ -9,6 +9,7 @@ export enum StatsNetwork {
   COMBINE = "COMBINE",
   TERRA = "TERRA",
   ETH = "ETH",
+  BSC = "BSC",
 }
 
 export default (initial = StatsNetwork.TERRA) => {
