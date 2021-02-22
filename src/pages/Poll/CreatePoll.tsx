@@ -34,7 +34,7 @@ const Buttons = {
   },
   [Type.INFLATION]: {
     title: "Modify weight parameter",
-    desc: "Modify the weight of an mAsset",
+    desc: "Modify reward distribution parameter of an existing mAsset",
   },
   [Type.MINT_UPDATE]: {
     title: "Modify mint parameters",
