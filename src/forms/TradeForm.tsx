@@ -93,11 +93,11 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const uusd = { [Type.BUY]: amount1, [Type.SELL]: amount2 }[type]
 
   /* form:focus input on select asset */
-  const value1Ref = useRef<HTMLInputElement>(null!)
-  const value2Ref = useRef<HTMLInputElement>(null!)
+  const value1Ref = useRef<HTMLInputElement>()
+  const value2Ref = useRef<HTMLInputElement>()
   const onSelect = (token: string) => {
     setValue(Key.token, token)
-    !value1 && value1Ref.current.focus()
+    !value1 && value1Ref.current?.focus()
   }
 
   /* simulation */
