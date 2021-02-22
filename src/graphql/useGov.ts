@@ -184,6 +184,8 @@ const useParsePoll = () => {
         ? PollType.WHITELIST
         : "pass_command" in decoded
         ? PollType.MINT_UPDATE
+        : "update_weight" in decoded
+        ? PollType.INFLATION
         : "update_config" in decoded
         ? PollType.GOV_UPDATE
         : "spend" in decoded
@@ -195,6 +197,8 @@ const useParsePoll = () => {
         ? parseWhitelist(decoded.whitelist)
         : "pass_command" in decoded
         ? parsePassCommand(decoded.pass_command)
+        : "update_weight" in decoded
+        ? parseUpdateWeight(decoded.update_weight)
         : "update_config" in decoded
         ? parseUpdateConfig(decoded.update_config)
         : "spend" in decoded
@@ -217,6 +221,10 @@ const useParsePoll = () => {
   const parseUpdateAsset = ({ asset_token, ...params }: UpdateAsset) => ({
     msg: { asset: getSymbol(asset_token) },
     params,
+  })
+
+  const parseUpdateWeight = ({ asset_token, weight }: UpdateWeight) => ({
+    msg: { asset: getSymbol(asset_token), weight: weight + "%" },
   })
 
   const parseUpdateConfig = (config: Partial<GovConfig>) => {

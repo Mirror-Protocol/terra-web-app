@@ -1,7 +1,7 @@
 import useNewContractMsg from "../terra/useNewContractMsg"
 import Tooltip from "../lang/Tooltip.json"
 import { MAX_MSG_LENGTH, MIR } from "../constants"
-import { div, gte, times } from "../libs/math"
+import { div, gte, number, times } from "../libs/math"
 import { record, getLength } from "../libs/utils"
 import { lookup, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
@@ -33,6 +33,7 @@ enum Key {
   symbol = "symbol",
   reference = "reference",
   oracle = "oracle",
+  weight = "weight",
   auctionDiscount = "auctionDiscount",
   minCollateralRatio = "minCollateralRatio",
 
@@ -84,6 +85,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
         Key.auctionDiscount,
         Key.minCollateralRatio,
       ],
+      [Type.INFLATION]: [...defaultKeys, Key.asset, Key.weight],
       [Type.MINT_UPDATE]: [
         ...defaultKeys,
         Key.asset,
@@ -130,14 +132,16 @@ const CreatePollForm = ({ type }: { type: Type }) => {
   const validate = (values: Values<Key>) => {
     const { title, description, link } = values
     const { name, ticker, symbol, oracle, asset } = values
-    const { auctionDiscount, minCollateralRatio } = values
+    const { weight, auctionDiscount, minCollateralRatio } = values
     const { owner, quorum, threshold, votingPeriod } = values
     const { effectiveDelay, expirationPeriod, proposalDeposit } = values
     const { recipient, amount } = values
     const { listed, reference } = values
 
     const paramRange = {
-      optional: [Type.MINT_UPDATE, Type.GOV_UPDATE].includes(type),
+      optional: [Type.INFLATION, Type.MINT_UPDATE, Type.GOV_UPDATE].includes(
+        type
+      ),
       max: "100",
     }
 
@@ -187,6 +191,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
         // Type.MINT_UPDATE
         [Key.asset]: v.required(asset),
 
+        [Key.weight]: v.amount(weight, paramRange, "Weight"),
         [Key.auctionDiscount]: v.amount(
           auctionDiscount,
           paramRange,
@@ -237,7 +242,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
 
   const { link } = values
   const { name, symbol, oracle, asset } = values
-  const { auctionDiscount, minCollateralRatio } = values
+  const { weight, auctionDiscount, minCollateralRatio } = values
   const { owner, quorum, threshold, votingPeriod } = values
   const { effectiveDelay, expirationPeriod, proposalDeposit } = values
   const { recipient, amount } = values
@@ -258,10 +263,15 @@ const CreatePollForm = ({ type }: { type: Type }) => {
     [Type.TEXT]: "Description",
     [Type.TEXT_WHITELIST]: "Reason for listing",
     [Type.WHITELIST]: "Description",
+    [Type.INFLATION]: "Reason for modifying weight parameter",
     [Type.MINT_UPDATE]: "Reason for modifying mint parameter",
     [Type.GOV_UPDATE]: "Reason for modifying governance parameter",
     [Type.COMMUNITY_SPEND]: "Reason for community pool spending",
   }[type]
+
+  const weightPlaceholders = {
+    [Key.weight]: "100",
+  }
 
   const mintPlaceholders = {
     [Key.auctionDiscount]: "20",
@@ -345,6 +355,17 @@ const CreatePollForm = ({ type }: { type: Type }) => {
       [Key.reference]: {
         label: "Reference Poll ID (Optional)",
         input: { placeholder: "" },
+      },
+
+      // Type.INFLATION
+      [Key.weight]: {
+        label: <TooltipIcon content={Tooltip.Gov.Weight}>Weight</TooltipIcon>,
+        input: {
+          type: "number",
+          step: step(),
+          placeholder: weightPlaceholders[Key.weight],
+        },
+        unit: "%",
       },
 
       // Type.MINT_UPDATE
@@ -481,6 +502,12 @@ const CreatePollForm = ({ type }: { type: Type }) => {
     },
   }
 
+  /* Type.INFLATION */
+  const updateWeight = {
+    asset_token: token,
+    weight: !weight ? undefined : number(weight),
+  }
+
   /* Type.MINT_UPDATE */
   const mintPassCommand = {
     contract_addr: mint,
@@ -520,6 +547,10 @@ const CreatePollForm = ({ type }: { type: Type }) => {
     [Type.WHITELIST]: {
       contract: factory,
       msg: toBase64({ whitelist: whitelistMessage }),
+    },
+    [Type.INFLATION]: {
+      contract: factory,
+      msg: toBase64({ update_weight: updateWeight }),
     },
     [Type.MINT_UPDATE]: {
       contract: factory,
