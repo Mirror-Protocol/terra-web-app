@@ -1,6 +1,6 @@
 import { useRouteMatch } from "react-router-dom"
 
-import { LP, MIR } from "../../constants"
+import { MIR, UUSD } from "../../constants"
 import { minus, gt, number } from "../../libs/math"
 import { useRefetch } from "../../hooks"
 import { useContract, useContractsAddress } from "../../hooks"
@@ -11,6 +11,7 @@ import Grid from "../../components/Grid"
 import StakeItemCard from "../../components/StakeItemCard"
 import LoadingTitle from "../../components/LoadingTitle"
 import CountWithResult from "../../containers/CountWithResult"
+import usePool from "../../forms/usePool"
 
 import StakeListTitle from "./StakeListTitle"
 import styles from "./StakeList.module.scss"
@@ -25,11 +26,15 @@ const StakeList = () => {
   const { find } = useContract()
   const stats = useAssetStats()
   const { apr } = stats
+  const getPool = usePool()
 
   const getItem = ({ token }: ListedItem) => {
     const apy = stats["apy"][token] ?? "0"
     const apr = stats["apr"][token] ?? "0"
     const symbol = getSymbol(token)
+
+    const totalStakedLP = find(AssetInfoKey.LPTOTALSTAKED, token)
+    const { fromLP } = getPool({ amount: totalStakedLP, token })
 
     return {
       token,
@@ -41,10 +46,10 @@ const StakeList = () => {
       totalStaked: (
         <CountWithResult
           keys={[AssetInfoKey.LPTOTALSTAKED]}
-          symbol={LP}
+          symbol={UUSD}
           integer
         >
-          {find(AssetInfoKey.LPTOTALSTAKED, token)}
+          {fromLP.value}
         </CountWithResult>
       ),
       to: `${url}/${token}`,
