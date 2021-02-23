@@ -126,6 +126,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
   /* context */
   const { contracts, getToken } = useContractsAddress()
   const { result, find } = useContract()
+  const getWeight = useDistributionInfo()
   useRefetch([balanceKey])
 
   /* form:validate */
@@ -268,7 +269,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
   }[type]
 
   const weightPlaceholders = {
-    [Key.weight]: "1",
+    [Key.weight]: div(getWeight(asset), 100),
   }
 
   const mintPlaceholders = {
@@ -616,4 +617,17 @@ const useCommunityPool = () => {
   const variables = { contract: contracts["community"], msg: { config: {} } }
   const query = useContractQuery<{ spend_limit: string }>(variables)
   return query
+}
+
+const useDistributionInfo = () => {
+  const { contracts } = useContractsAddress()
+  const params = {
+    contract: contracts["factory"],
+    msg: { distribution_info: {} },
+  }
+
+  const { parsed } = useContractQuery<{ weights: [string, number][] }>(params)
+
+  return (token: string) =>
+    parsed?.weights.find(([addr]) => addr === token)?.[1]
 }
