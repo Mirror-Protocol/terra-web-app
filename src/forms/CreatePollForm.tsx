@@ -139,9 +139,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
     const { listed, reference } = values
 
     const paramRange = {
-      optional: [Type.INFLATION, Type.MINT_UPDATE, Type.GOV_UPDATE].includes(
-        type
-      ),
+      optional: [Type.MINT_UPDATE, Type.GOV_UPDATE].includes(type),
       max: "100",
     }
 
@@ -191,7 +189,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
         // Type.MINT_UPDATE
         [Key.asset]: v.required(asset),
 
-        [Key.weight]: v.amount(weight, paramRange, "Weight"),
+        [Key.weight]: v.amount(weight, {}, "Weight"),
         [Key.auctionDiscount]: v.amount(
           auctionDiscount,
           paramRange,
@@ -270,7 +268,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
   }[type]
 
   const weightPlaceholders = {
-    [Key.weight]: "100",
+    [Key.weight]: "1",
   }
 
   const mintPlaceholders = {
@@ -365,7 +363,6 @@ const CreatePollForm = ({ type }: { type: Type }) => {
           step: step(),
           placeholder: weightPlaceholders[Key.weight],
         },
-        unit: "%",
       },
 
       // Type.MINT_UPDATE
@@ -505,7 +502,7 @@ const CreatePollForm = ({ type }: { type: Type }) => {
   /* Type.INFLATION */
   const updateWeight = {
     asset_token: token,
-    weight: !weight ? undefined : number(weight),
+    weight: !weight ? undefined : number(times(weight, 100)),
   }
 
   /* Type.MINT_UPDATE */

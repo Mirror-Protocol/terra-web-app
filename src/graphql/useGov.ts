@@ -3,7 +3,7 @@ import { Dictionary, last } from "ramda"
 import { QueryResult } from "@apollo/client"
 
 import { MIR } from "../constants"
-import { isInteger, number } from "../libs/math"
+import { div, isInteger, number } from "../libs/math"
 import { formatAsset } from "../libs/parse"
 import { fromBase64 } from "../libs/formHelpers"
 
@@ -224,7 +224,7 @@ const useParsePoll = () => {
   })
 
   const parseUpdateWeight = ({ asset_token, weight }: UpdateWeight) => ({
-    msg: { asset: getSymbol(asset_token), weight: weight + "%" },
+    msg: { asset: getSymbol(asset_token), weight: div(weight, 100) },
   })
 
   const parseUpdateConfig = (config: Partial<GovConfig>) => {
