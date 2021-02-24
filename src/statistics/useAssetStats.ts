@@ -9,7 +9,7 @@ export default (network = StatsNetwork.TERRA) => {
   const client = useStatsClient()
 
   const result = useQuery<{ assets: AssetStatsData[] }>(ASSETSTATS, {
-    variables: { network },
+    variables: { network: network.toUpperCase() },
     client,
     onCompleted: ({ assets }) => store.assets(parse(assets)),
   })
