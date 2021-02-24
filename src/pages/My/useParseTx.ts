@@ -39,6 +39,9 @@ const useParseTx = ({ type, data, token }: Tx) => {
   const { getSymbol } = useContractsAddress()
   const symbol = getSymbol(token)
 
+  const formatToken = (asset?: Asset) =>
+    formatAsset(asset?.amount, getSymbol(asset?.token))
+
   const collateral = splitTokenText(data.collateralAmount)
   const deposit = splitTokenText(data.depositAmount)
   const withdraw = splitTokenText(data.withdrawAmount)
@@ -48,6 +51,8 @@ const useParseTx = ({ type, data, token }: Tx) => {
   const refund = parseTokenText(data.refundAssets)
   const offer = splitTokenText(data.offer)
   const swap = splitTokenText(data.swapCoin)
+  const liquidated = splitTokenText(data.liquidatedAmount)
+  const returnCollateral = splitTokenText(data.returnCollateralAmount)
 
   const parser: Dictionary<ReactNode[]> = {
     /* Terra */
@@ -60,12 +65,7 @@ const useParseTx = ({ type, data, token }: Tx) => {
       truncate(from),
     ],
     RECEIVE: ["Received", formatAsset(amount, symbol), "from", truncate(from)],
-    TERRA_SWAP: [
-      "Swapped",
-      formatAsset(offer.amount, getSymbol(offer.token)),
-      "to",
-      formatAsset(swap.amount, getSymbol(swap.token)),
-    ],
+    TERRA_SWAP: ["Swapped", formatToken(offer), "to", formatToken(swap)],
 
     /* Trade */
     BUY: [
@@ -84,48 +84,44 @@ const useParseTx = ({ type, data, token }: Tx) => {
     /* Mint */
     OPEN_POSITION: [
       "Minted",
-      formatAsset(mint.amount, getSymbol(mint.token)),
+      formatToken(mint),
       "with",
-      formatAsset(collateral.amount, getSymbol(collateral.token)),
+      formatToken(collateral),
     ],
     DEPOSIT_COLLATERAL: [
       "Deposited",
-      formatAsset(deposit.amount, getSymbol(deposit.token)),
+      formatToken(deposit),
       "to position",
       positionIdx,
     ],
     WITHDRAW_COLLATERAL: [
       "Withdrawn",
-      formatAsset(withdraw.amount, getSymbol(withdraw.token)),
+      formatToken(withdraw),
       "from position",
       positionIdx,
     ],
-    MINT: [
-      "Minted",
-      formatAsset(mint.amount, getSymbol(mint.token)),
-      "to position",
-      positionIdx,
-    ],
-    BURN: [
-      "Burned",
-      formatAsset(burn.amount, getSymbol(burn.token)),
+    MINT: ["Minted", formatToken(mint), "to position", positionIdx],
+    BURN: ["Burned", formatToken(burn), "from position", positionIdx],
+    AUCTION: [
+      "Liquidated",
+      formatToken(liquidated),
       "from position",
       positionIdx,
+      `(${formatToken(returnCollateral)} returned)`,
     ],
-    AUCTION: ["Liquidated position", positionIdx],
 
     /* Pool */
     PROVIDE_LIQUIDITY: [
       "Provided liquidity",
-      formatAsset(assets[0]?.amount, getSymbol(assets[0]?.token)),
+      formatToken(assets[0]),
       "and",
-      formatAsset(assets[1]?.amount, getSymbol(assets[1]?.token)),
+      formatToken(assets[1]),
     ],
     WITHDRAW_LIQUIDITY: [
       "Withdrawn liquidity",
-      formatAsset(refund[0]?.amount, getSymbol(refund[0]?.token)),
+      formatToken(refund[0]),
       "and",
-      formatAsset(refund[1]?.amount, getSymbol(refund[1]?.token)),
+      formatToken(refund[1]),
     ],
 
     /* Stake */
