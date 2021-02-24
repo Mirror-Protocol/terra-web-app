@@ -57,7 +57,7 @@
   },
 
   "Send": {
-    "ShuttleFee": "A fee of 1 UST or 0.1% of the transfer amount (whichever is greater) will be charged for transferring assets from Terra to Ethereum through Shuttle"
+    "ShuttleFee": "A fee of 1 UST or 0.1% of the transfer amount (whichever is greater) will be charged for transferring assets from Terra to Ethereum/BSC through Shuttle"
   },
   "Trade": {
     "General": "The amount of asset traded is automatically calculated based on the current price, spread, and commission",
