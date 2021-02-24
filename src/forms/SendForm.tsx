@@ -178,8 +178,12 @@ const SendForm = ({ tab, shuttleList }: Props) => {
 
   /* confirm */
   const price = find(priceKey, token)
-  const shuttleFee = max([times(amount, 0.001), div(1e6, price)])
+  const shuttleMinimum = div(1e6, price)
+  const shuttleMinimumText = formatAsset(shuttleMinimum, symbol)
+  const shuttleEnough = !network || gt(amount, shuttleMinimum)
+  const shuttleFee = max([times(amount, 0.001), shuttleMinimum])
   const amountAfterShuttleFee = max([minus(amount, shuttleFee), String(0)])
+
   const contents = !value
     ? undefined
     : network
@@ -214,9 +218,11 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   const isShuttleAvailable = getIsShuttleAvailable(network, symbol)
   const messages = !isShuttleAvailable
     ? [`${lookupSymbol(symbol)} is not available on ${getNetworkName(network)}`]
+    : !shuttleEnough
+    ? [`Transactions must be larger than ${shuttleMinimumText}`]
     : ["Double check if the above transaction requires a memo"]
 
-  const disabled = invalid || !isShuttleAvailable
+  const disabled = invalid || !isShuttleAvailable || !shuttleEnough
 
   /* result */
   const parseTx = useSendReceipt()
