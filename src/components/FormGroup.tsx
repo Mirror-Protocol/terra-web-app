@@ -1,3 +1,4 @@
+import { useRef } from "react"
 import classNames from "classnames/bind"
 import Button from "./Button"
 import styles from "./FormGroup.module.scss"
@@ -7,6 +8,12 @@ const cx = classNames.bind(styles)
 const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
   const { label, help, unit, max, assets, focused, error, type = 1 } = props
   const { skipFeedback } = props
+
+  const inputRef = useRef<HTMLInputElement>()
+
+  const handleWheel = () => {
+    inputRef.current?.blur()
+  }
 
   const border = cx(styles.border, { focused, error, readOnly: value })
   const maxProps = {
@@ -40,7 +47,7 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
           <section className={styles.wrapper}>
             <section className={styles.field}>
               {input ? (
-                <input {...input} />
+                <input {...input} onWheel={handleWheel} ref={inputRef} />
               ) : textarea ? (
                 <textarea {...textarea} />
               ) : select ? (

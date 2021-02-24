@@ -103,10 +103,10 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   }, [isEthereum, isTerra, network, setValues])
 
   /* form:focus input on select asset */
-  const valueRef = useRef<HTMLInputElement>(null!)
+  const valueRef = useRef<HTMLInputElement>()
   const onSelect = (token: string) => {
     setValue(Key.token, token)
-    !value && valueRef.current.focus()
+    !value && valueRef.current?.focus()
   }
 
   /* render:form */

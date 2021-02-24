@@ -12,6 +12,7 @@ export enum Type {
   "TEXT" = "TEXT",
   "TEXT_WHITELIST" = "TEXT_WHITELIST",
   "WHITELIST" = "WHITELIST",
+  "INFLATION" = "INFLATION",
   "MINT_UPDATE" = "MINT_UPDATE",
   "GOV_UPDATE" = "GOV_UPDATE",
   "COMMUNITY_SPEND" = "COMMUNITY_SPEND",
@@ -31,13 +32,17 @@ const Buttons = {
     title: "Register whitelist parameters",
     desc: "Register the parameters for a newly whitelisted mAsset",
   },
+  [Type.INFLATION]: {
+    title: "Modify weight parameter",
+    desc: "Modify reward distribution parameter of an existing mAsset",
+  },
   [Type.MINT_UPDATE]: {
     title: "Modify mint parameters",
-    desc: "Modify the existing mint parameters of an mAsset",
+    desc: "Modify the mint parameters of an existing mAsset",
   },
   [Type.GOV_UPDATE]: {
     title: "Modify governance parameters",
-    desc: "Modify the existing governance parameters of an mAsset",
+    desc: "Modify the governance parameters",
   },
   [Type.COMMUNITY_SPEND]: {
     title: "Spend community pool",

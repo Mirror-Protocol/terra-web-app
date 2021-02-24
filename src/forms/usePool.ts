@@ -10,6 +10,7 @@ export default () => {
   const priceKey = PriceKey.PAIR
   const { getSymbol } = useContractsAddress()
   const { parsed, find } = useContract()
+  const pairs = parsed[PriceKey.PAIR]
   useRefetch([priceKey, PriceKey.ORACLE])
 
   /**
@@ -22,7 +23,9 @@ export default () => {
     const price = gt(pair, 0) ? pair : oracle
 
     /* pair pool */
-    const pairPool = parsePairPool(parsed[PriceKey.PAIR][token])
+    const pairPool = pairs
+      ? parsePairPool(pairs[token])
+      : { uusd: "0", asset: "0", total: "0" }
 
     /* estimate uusd */
     const estimated = gt(amount, 0) ? floor(times(amount, price)) : "0"

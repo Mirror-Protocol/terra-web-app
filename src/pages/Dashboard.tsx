@@ -28,7 +28,7 @@ const Dashboard = () => {
       select={select}
       doc={"/user-guide/getting-started"}
     >
-      <DashboardHeader {...dashboard} />
+      <DashboardHeader {...dashboard} network={network} />
       <DashboardCharts {...dashboard} />
 
       <Grid>

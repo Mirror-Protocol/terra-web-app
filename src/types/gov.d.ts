@@ -36,6 +36,7 @@ interface Poll extends PollData {
 type DecodedExecuteMsg =
   | { whitelist: Whitelist }
   | { pass_command: PassCommand }
+  | { update_weight: UpdateWeight }
   | { update_config: Partial<GovConfig> }
   | { spend: Spend }
 
@@ -53,6 +54,11 @@ interface AssetParams {
 
 interface UpdateAsset extends Partial<AssetParams> {
   asset_token: string
+}
+
+interface UpdateWeight {
+  asset_token: string
+  weight: string
 }
 
 interface PassCommand {

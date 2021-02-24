@@ -7,7 +7,7 @@ import useStatsClient from "./useStatsClient"
 
 export enum StatsNetwork {
   COMBINE = "COMBINE",
-  TERRA = "TERRA",
+  TERRA = "Terra",
   ETH = "ETH",
   BSC = "BSC",
 }
@@ -21,7 +21,7 @@ export default (initial = StatsNetwork.TERRA) => {
   const client = useStatsClient()
 
   const result = useQuery<{ statistic: Dashboard }>(STATISTICS, {
-    variables: { from: genesis, to: now, network },
+    variables: { from: genesis, to: now, network: network.toUpperCase() },
     client,
     onCompleted: ({ statistic }) => store.dashboard(statistic),
   })

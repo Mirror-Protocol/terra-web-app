@@ -138,7 +138,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   const uusd = token1 === UUSD ? amount1 : "0"
 
   /* form:focus input on select asset */
-  const valueRef = useRef<HTMLInputElement>(null!)
+  const valueRef = useRef<HTMLInputElement>()
   const onSelect = (name: Key) => (token: string) => {
     const next: Partial<Record<Key, Partial<Values<Key>>>> = {
       [Key.token1]: { token2: token === token2 ? "" : token2 },
@@ -146,7 +146,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     }
 
     setValues({ ...values, ...next[name], [name]: token })
-    !value1 && valueRef.current.focus()
+    !value1 && valueRef.current?.focus()
   }
 
   /* simulation */

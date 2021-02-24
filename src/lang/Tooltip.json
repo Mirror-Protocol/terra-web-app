@@ -4,6 +4,7 @@
     "Fee": "Value of trading fee paid in the last 24 hours",
     "MarketCap": "Total value of all minted assets",
     "TVL": "Total value of collateral, liquidity and staked MIR",
+    "TVLETH": "Total value of liquidity",
     "CollateralRatio": "Ratio of the total collateral value to the total minted asset value",
     "CommunityPoolBalance": "Total number of MIR tokens currently in the community pool"
   },
