@@ -19,6 +19,7 @@ export const getBadge = (type: string) => {
       "WITHDRAW_COLLATERAL",
       "MINT",
       "BURN",
+      "AUCTION",
     ],
     Pool: ["PROVIDE_LIQUIDITY", "WITHDRAW_LIQUIDITY"],
     Stake: ["STAKE", "UNSTAKE", "WITHDRAW_REWARDS"],
