@@ -4,6 +4,7 @@ import { percent } from "../../libs/num"
 import { format } from "../../libs/parse"
 import { useContract, useContractsAddress, useRefetch } from "../../hooks"
 import { PriceKey } from "../../hooks/contractKeys"
+import { StatsNetwork } from "../../statistics/useDashboard"
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
 import Dl from "../../components/Dl"
@@ -12,7 +13,11 @@ import Count from "../../components/Count"
 import { TooltipIcon } from "../../components/Tooltip"
 import useCommunityBalance from "./useCommunityBalance"
 
-const DashboardHeader = (props: Partial<Dashboard>) => {
+interface Props extends Partial<Dashboard> {
+  network: StatsNetwork
+}
+
+const DashboardHeader = ({ network, ...props }: Props) => {
   const { getToken } = useContractsAddress()
   const { find } = useContract()
   const { latest24h, assetMarketCap, totalValueLocked, collateralRatio } = props
@@ -72,7 +77,13 @@ const DashboardHeader = (props: Partial<Dashboard>) => {
         <Card>
           <Summary
             title={
-              <TooltipIcon content={Tooltip.Dashboard.TVL}>
+              <TooltipIcon
+                content={
+                  [StatsNetwork.COMBINE, StatsNetwork.TERRA].includes(network)
+                    ? Tooltip.Dashboard.TVL
+                    : Tooltip.Dashboard.TVLETH
+                }
+              >
                 Total Value Locked
               </TooltipIcon>
             }
