@@ -53,7 +53,6 @@ const useParseTx = ({ type, data, token }: Tx) => {
   const offer = splitTokenText(data.offer)
   const swap = splitTokenText(data.swapCoin)
   const liquidated = splitTokenText(data.liquidatedAmount)
-  const returnCollateral = splitTokenText(data.returnCollateralAmount)
 
   const parser: Dictionary<ReactNode[]> = {
     /* Terra */
@@ -108,7 +107,6 @@ const useParseTx = ({ type, data, token }: Tx) => {
       formatToken(liquidated),
       "from position",
       positionIdx,
-      `(${formatToken(returnCollateral)} returned)`,
     ],
 
     /* Pool */
