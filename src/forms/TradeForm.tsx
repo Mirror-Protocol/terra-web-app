@@ -14,9 +14,11 @@ import useForm from "../libs/useForm"
 import { placeholder, step } from "../libs/formHelpers"
 import { validate as v, validateSlippage } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
+import useLocalStorage from "../libs/useLocalStorage"
 import calc from "../helpers/calc"
 import { useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
+import useTax from "../graphql/useTax"
 
 import FormGroup from "../components/FormGroup"
 import Count from "../components/Count"
@@ -30,7 +32,6 @@ import useSelectAsset from "./useSelectAsset"
 import FormContainer from "./FormContainer"
 import FormIcon from "./FormIcon"
 import SetSlippageTolerance from "./SetSlippageTolerance"
-import useLocalStorage from "../libs/useLocalStorage"
 
 enum Key {
   token = "token",
@@ -125,6 +126,12 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   const select = useSelectAsset(config)
   const delisted = whitelist[token1]?.["status"] === "DELISTED"
 
+  const { getMax } = useTax()
+  const max = {
+    [Type.BUY]: lookup(getMax(balance), UUSD),
+    [Type.SELL]: lookup(balance, symbol),
+  }[type]
+
   const fields = getFields({
     [Key.value1]: {
       label: "From",
@@ -140,10 +147,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         [Type.BUY]: lookupSymbol(symbol1),
         [Type.SELL]: delisted ? symbol1 : select.button,
       }[type],
-      max:
-        type === Type.SELL && gt(balance, 0)
-          ? () => setValue(Key.value1, lookup(balance, symbol))
-          : undefined,
+      max: gt(balance, 0) ? () => setValue(Key.value1, max) : undefined,
       assets: type === Type.SELL && select.assets,
       help: renderBalance(find(balanceKey, token1), symbol1),
       focused: type === Type.SELL && select.isOpen,
