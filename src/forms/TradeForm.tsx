@@ -147,7 +147,7 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
         [Type.BUY]: lookupSymbol(symbol1),
         [Type.SELL]: delisted ? symbol1 : select.button,
       }[type],
-      max: gt(balance, 0) ? () => setValue(Key.value1, max) : undefined,
+      max: gt(max, 0) ? () => setValue(Key.value1, max) : undefined,
       assets: type === Type.SELL && select.assets,
       help: renderBalance(find(balanceKey, token1), symbol1),
       focused: type === Type.SELL && select.isOpen,

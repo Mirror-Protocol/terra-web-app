@@ -27,12 +27,12 @@ export default () => {
         .toString()
 
       const tax = BigNumber.min(calculatedTax, cap)
-      const max = new BigNumber(balanceSafe)
-        .minus(tax)
-        .minus(fee.amount)
-        .toString()
+      const max = BigNumber.max(
+        new BigNumber(balanceSafe).minus(tax).minus(fee.amount),
+        0
+      )
 
-      return max
+      return max.toString()
     } else {
       return "0"
     }
