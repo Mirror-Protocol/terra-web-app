@@ -14,6 +14,7 @@ import { renderBalance } from "../libs/formHelpers"
 import { useNetwork, useRefetch } from "../hooks"
 import { useWallet, useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
+import useTax from "../graphql/useTax"
 
 import FormGroup from "../components/FormGroup"
 import { TooltipIcon } from "../components/Tooltip"
@@ -120,6 +121,10 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   const select = useSelectAsset(config)
   const balance = find(balanceKey, token)
 
+  const { getMax } = useTax()
+  const maxAmount =
+    symbol === UUSD ? lookup(getMax(balance), UUSD) : lookup(balance, symbol)
+
   const fields = {
     ...getFields({
       [Key.network]: {
@@ -160,10 +165,9 @@ const SendForm = ({ tab, shuttleList }: Props) => {
           ref: valueRef,
         },
         unit: select.button,
-        max:
-          symbol === UUSD
-            ? undefined
-            : () => setValue(Key.value, lookup(balance, symbol)),
+        max: gt(maxAmount, 0)
+          ? () => setValue(Key.value, maxAmount)
+          : undefined,
         assets: select.assets,
         help: renderBalance(balance, symbol),
         focused: select.isOpen,
