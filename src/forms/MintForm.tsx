@@ -153,7 +153,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   /* simulation */
   const price1 = find(priceKey, token1)
   const price2 = find(priceKey, token2)
-  const reversed = form.changed !== Key.value1
+  const reversed = !!form.changed && form.changed !== Key.value1
   const operate = type === Type.DEPOSIT || type === Type.CUSTOM ? plus : minus
   const nextCollateralAmount = max([
     operate(prevCollateral?.amount, amount1),
