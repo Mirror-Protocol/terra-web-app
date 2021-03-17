@@ -7,7 +7,7 @@ const networks: Record<string, LocalNetworkConfig> = {
       ethereum: "terra13yxhrk08qvdf5zdc9ss5mwsg5sf7zva9xrgwgc",
       bsc: "terra1g6llg3zed35nd3mh9zx6n64tfw3z67w2c48tn2",
     },
-    fee: { gasPrice: 0.15, amount: 1000 }, // 0.001000 UST
+    fee: { gasPrice: 0.15, amount: 100000 }, // 0.1000 UST
   },
   testnet: {
     contract: "https://whitelist.mirror.finance/tequila.json",
