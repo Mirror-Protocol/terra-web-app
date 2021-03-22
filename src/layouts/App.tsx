@@ -3,6 +3,7 @@ import Container from "../components/Container"
 import { SettingsProvider, useSettingsState } from "../hooks/useSettings"
 import { WalletProvider, useWalletState } from "../hooks/useWallet"
 import { ContractProvider, useContractState } from "../hooks/useContract"
+import useAssets from "../hooks/useAssets"
 import { StatsProvider, useStatsState } from "../statistics/useStats"
 import MobileAlert from "./MobileAlert"
 import Airdrop from "./Airdrop"
@@ -15,6 +16,8 @@ const App = () => {
   const wallet = useWalletState()
   const contract = useContractState(wallet.address)
   const stats = useStatsState()
+
+  useAssets()
 
   return (
     <SettingsProvider value={settings}>
