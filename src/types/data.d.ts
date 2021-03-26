@@ -63,3 +63,13 @@ interface MintPosition {
   collateral: AssetToken | NativeToken
   asset: AssetToken
 }
+
+/* Limit order */
+interface Order {
+  order_id: number
+  bidder_addr: string
+  offer_asset: AssetToken | NativeToken
+  ask_asset: AssetToken | NativeToken
+  filled_offer_amount: string
+  filled_ask_amount: string
+}

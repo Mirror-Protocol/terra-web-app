@@ -4,7 +4,7 @@ import { Dictionary } from "ramda"
 import Dashboard from "./pages/Dashboard"
 import Info from "./pages/Info"
 import Auth from "./pages/Auth"
-import My from "./pages/My"
+import My from "./pages/My/My"
 import Send from "./pages/Send"
 import Airdrop from "./pages/Airdrop"
 import Trade from "./pages/Trade"
@@ -18,6 +18,7 @@ import Reward from "./pages/Reward"
 import Caution from "./forms/Caution"
 import Data from "./tools/Data"
 import Tool from "./tools/Tool"
+import LimitOrder from "./pages/LimitOrder"
 
 export enum MenuKey {
   DASHBOARD = "Dashboard",
@@ -31,6 +32,7 @@ export enum MenuKey {
   POOL = "Pool",
   STAKE = "Stake",
   GOV = "Governance",
+  LIMIT = "Limit order",
 }
 
 export const omit = [
@@ -39,6 +41,7 @@ export const omit = [
   MenuKey.INFO,
   MenuKey.SEND,
   MenuKey.AIRDROP,
+  MenuKey.LIMIT,
 ]
 
 export const menu: Dictionary<RouteProps> = {
@@ -48,6 +51,7 @@ export const menu: Dictionary<RouteProps> = {
   [MenuKey.INFO]: { path: "/info", component: Info },
   [MenuKey.SEND]: { path: "/send", component: Send },
   [MenuKey.AIRDROP]: { path: "/airdrop", component: Airdrop },
+  [MenuKey.LIMIT]: { path: "/limit", component: LimitOrder },
 
   // Menu
   [MenuKey.MY]: { path: "/my", component: My },

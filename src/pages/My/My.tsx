@@ -1,24 +1,25 @@
-import { gt } from "../libs/math"
-import useLocalStorage from "../libs/useLocalStorage"
-import { MenuKey } from "../routes"
-import { useWallet } from "../hooks"
-import Page from "../components/Page"
-import Grid from "../components/Grid"
-import Button from "../components/Button"
-import ConnectionRequired from "../containers/ConnectionRequired"
-import useMy from "./My/useMy"
-import Header from "./My/Header"
-import TotalValue from "./My/TotalValue"
-import HideEmptySections from "./My/HideEmptySections"
-import Holdings from "./My/Holdings"
-import Mint from "./My/Mint"
-import Pool from "./My/Pool"
-import Stake from "./My/Stake"
-import HistoryList from "./My/HistoryList"
+import { gt } from "../../libs/math"
+import useLocalStorage from "../../libs/useLocalStorage"
+import { MenuKey } from "../../routes"
+import { useWallet } from "../../hooks"
+import Page from "../../components/Page"
+import Grid from "../../components/Grid"
+import Button from "../../components/Button"
+import ConnectionRequired from "../../containers/ConnectionRequired"
+import useMy from "./useMy"
+import Header from "./Header"
+import TotalValue from "./TotalValue"
+import HideEmptySections from "./HideEmptySections"
+import Holdings from "./Holdings"
+import Mint from "./Mint"
+import Pool from "./Pool"
+import Stake from "./Stake"
+import Orders from "./Orders"
+import HistoryList from "./HistoryList"
 
 const My = () => {
   const { address, disconnect } = useWallet()
-  const { holdings, mint, pool, stake, total } = useMy()
+  const { holdings, mint, pool, stake, total, orders } = useMy()
   const [hide, setHide] = useLocalStorage("hideEmptySections", false)
   const toggle = () => setHide(!hide)
 
@@ -49,6 +50,11 @@ const My = () => {
       key: "stake",
       dataSource: stake.dataSource,
       component: <Stake {...stake} />,
+    },
+    {
+      key: "orders",
+      dataSource: orders.dataSource,
+      component: <Orders {...orders} />,
     },
   ]
 

@@ -7,15 +7,17 @@ import useMyHoldings from "./useMyHoldings"
 import useMyMint from "./useMyMint"
 import useMyPool from "./useMyPool"
 import useMyStake from "./useMyStake"
+import useMyOrders from "./useMyOrders"
 
 const useMy = () => {
   const holdings = useMyHoldings()
   const mint = useMyMint()
   const pool = useMyPool()
   const stake = useMyStake()
+  const orders = useMyOrders()
 
   const keys = uniq(
-    [holdings, mint, pool, stake].reduce<DataKey[]>(
+    [holdings, mint, pool, stake, orders].reduce<DataKey[]>(
       (acc, { keys }) => [...acc, ...keys],
       []
     )
@@ -33,11 +35,12 @@ const useMy = () => {
     withdrawble: pool.totalWithdrawableValue,
     reward: stake.totalRewardsValue,
     govStaked: stake.govStakedValue,
+    orders: orders.total,
   }
 
   const total = { value: calcTotalValue(values), loading: !data }
 
-  return { holdings, mint, pool, stake, total }
+  return { holdings, mint, pool, stake, total, orders }
 }
 
 export default useMy

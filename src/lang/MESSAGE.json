@@ -54,7 +54,8 @@
       "Holdings": "No current asset balances",
       "Minted": "No current asset mint positions",
       "Pool": "No current liquidity positions",
-      "Staked": "No current staking positions"
+      "Staked": "No current staking positions",
+      "Orders": "No current limit orders"
     }
   }
 }

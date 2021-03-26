@@ -49,7 +49,12 @@
     "APR": "Annualized staking return",
     "Staked": "Quantity of staked LP tokens for the corresponding asset liquidity pool",
     "Reward": "Quantity of claimable rewards for the corresponding staking position",
-    "GovReward": "Protocol fee paid from withdrawing collateral is distributed to MIR stakers and increases staked MIR"
+    "GovReward": "Protocol fee paid from withdrawing collateral is distributed to MIR stakers and increases staked MIR",
+
+    "LimitOrders": "List of trade orders to be executed at the limit price",
+    "LimitPrice": "Price at which the order will be executed",
+    "OrderValue": "Value of the limit order",
+    "TotalLockedValue": "Total value of assets locked in unfilled limit orders"
   },
 
   "Forms": {
