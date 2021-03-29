@@ -54,14 +54,15 @@ interface Values {
   withdrawble: string
   reward: string
   govStaked: string
+  orders: string
 }
 
 export const calcTotalValue = (values: Values) => {
-  const { holdings, minted, collateral, withdrawble, reward } = values
+  const { holdings, minted, collateral, withdrawble, reward, orders } = values
   const { uusd, govStaked } = values
 
   return minus(
-    sum([holdings, collateral, withdrawble, reward, govStaked, uusd]),
+    sum([holdings, collateral, withdrawble, reward, govStaked, orders, uusd]),
     minted
   )
 }
