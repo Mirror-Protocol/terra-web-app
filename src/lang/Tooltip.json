@@ -108,7 +108,7 @@
   "Gov": {
     "TotalStaked": "Total quantity of MIR tokens staked",
     "StakingRatio": "Ratio of the quantity of staked MIR tokens to the total quantity of MIR",
-    "APR": "Annualized MIR staking return based on the MIR distribution and staking ratio",
+    "APR": "Annualized MIR staking return based on 15 days average of MIR distribution and staking ratio",
 
     "Polls": "Staked MIR can be used as voting power in polls that are currently in progress",
 
