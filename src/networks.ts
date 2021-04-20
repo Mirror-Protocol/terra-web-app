@@ -31,6 +31,16 @@ const networks: Record<string, LocalNetworkConfig> = {
     },
     fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
   },
+  localterra: {
+    contract: "http://local.mirror.finance:3000/data/LocalTerra.json",
+    mantle: "http://localhost:1337/",
+    stats: "http://localhost:3858/graphql",
+    shuttle: {
+      ethereum: "",
+      bsc: "",
+    },
+    fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
+  },
 }
 
 export default networks

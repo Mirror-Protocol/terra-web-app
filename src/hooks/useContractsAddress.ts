@@ -3,6 +3,7 @@ import { Dictionary } from "ramda"
 import { UUSD } from "../constants"
 import createContext from "./createContext"
 import { useNetwork } from "./useNetwork"
+import LocalTerra from "./LocalTerra.json"
 
 interface ContractAddressJSON {
   /** Contract addresses */
@@ -42,7 +43,7 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
         const json: ContractAddressJSON = await response.json()
         setData(json)
       } catch {
-        setData({ contracts: {}, whitelist: {} })
+        setData(LocalTerra as ContractAddressJSON)
       }
     }
 
