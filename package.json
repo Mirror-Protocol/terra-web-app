@@ -6,65 +6,64 @@
   "author": "Terra <engineering@terra.money>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@apollo/client": "^3.2.9",
-    "@material-ui/core": "^4.11.1",
-    "@sentry/react": "^5.28.0",
-    "@sentry/tracing": "^5.28.0",
-    "@terra-money/terra.js": "^1.3.1",
-    "@testing-library/jest-dom": "^5.11.6",
-    "@testing-library/react": "^11.2.2",
-    "@testing-library/user-event": "^12.2.2",
-    "@tippyjs/react": "^4.2.0",
-    "@types/chart.js": "^2.9.28",
-    "@types/classnames": "^2.2.11",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^14.14.10",
-    "@types/numeral": "^0.0.28",
-    "@types/ramda": "^0.27.32",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
-    "@types/react-modal": "^3.10.6",
-    "@types/react-router-dom": "^5.1.6",
+    "@apollo/client": "^3.3.15",
+    "@material-ui/core": "^4.11.3",
+    "@sentry/react": "^6.3.0",
+    "@sentry/tracing": "^6.3.0",
+    "@terra-money/terra.js": "^1.7.0",
+    "@terra-money/wallet-provider": "^0.5.0",
+    "@testing-library/jest-dom": "^5.12.0",
+    "@testing-library/react": "^11.2.6",
+    "@testing-library/user-event": "^13.1.5",
+    "@tippyjs/react": "^4.2.5",
+    "@types/chart.js": "^2.9.32",
+    "@types/classnames": "^2.3.1",
+    "@types/jest": "^26.0.22",
+    "@types/node": "^14.14.41",
+    "@types/numeral": "^2.0.1",
+    "@types/ramda": "^0.27.40",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "@types/react-modal": "^3.12.0",
+    "@types/react-router-dom": "^5.1.7",
     "axios": "^0.21.1",
     "bignumber.js": "^9.0.1",
-    "chart.js": "^2.9.4",
-    "classnames": "^2.2.6",
-    "date-fns": "^2.16.1",
-    "ethers": "^5.0.23",
-    "graphql": "^15.4.0",
-    "husky": "^4.3.0",
-    "lint-staged": "^10.5.2",
-    "node-sass": "^4",
+    "chart.js": "^2",
+    "classnames": "^2.3.1",
+    "date-fns": "^2.21.1",
+    "ethers": "^5.1.3",
+    "graphql": "^15.5.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
+    "node-sass": "^5",
     "numeral": "^2.0.6",
-    "prettier": "^2.2.0",
+    "prettier": "^2.2.1",
     "ramda": "^0.27.1",
-    "react": "^17.0.1",
-    "react-chartjs-2": "^2.11.1",
-    "react-dom": "^17.0.1",
-    "react-modal": "^3.12.1",
-    "react-query": "^3.8.2",
+    "react": "^17.0.2",
+    "react-chartjs-2": "^2",
+    "react-dom": "^17.0.2",
+    "react-modal": "^3.13.1",
+    "react-query": "^3.13.11",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.1",
-    "source-map-explorer": "^2.5.0",
-    "typescript": "~4.1.2",
-    "use-onclickoutside": "^0.3.1"
+    "react-scripts": "4.0.3",
+    "source-map-explorer": "^2.5.2",
+    "typescript": "~4.2.4",
+    "use-onclickoutside": "^0.3.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "analyze": "source-map-explorer 'build/static/js/*.js'"
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
+    "postinstall": "husky install",
+    "prepublishOnly": "pinst --disable",
+    "postpublish": "pinst --enable"
   },
   "eslintConfig": {
     "extends": "react-app",
     "rules": {
       "import/no-anonymous-default-export": "off"
-    }
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
@@ -86,5 +85,9 @@
   },
   "prettier": {
     "semi": false
+  },
+  "devDependencies": {
+    "husky": "^6.0.0",
+    "pinst": "^2.0.0"
   }
 }
