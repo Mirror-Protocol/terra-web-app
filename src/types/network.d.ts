@@ -1,9 +1,6 @@
 interface Network extends NetworkConfig {
   /** Get finder link */
   finder: (address: string, path?: string) => string
-
-  /** Refresh the network from the extension */
-  refresh: () => void
 }
 
 type NetworkConfig = ExtNetworkConfig & LocalNetworkConfig
@@ -11,7 +8,6 @@ type NetworkConfig = ExtNetworkConfig & LocalNetworkConfig
 interface ExtNetworkConfig {
   name: string
   chainID: string
-  lcd: string
 }
 
 interface LocalNetworkConfig {

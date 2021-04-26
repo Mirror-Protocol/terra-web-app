@@ -1,6 +1,6 @@
 import { last } from "ramda"
 import { useEffect, useState } from "react"
-import { useContractsAddress, useWallet } from "../../hooks"
+import { useContractsAddress, useAddress } from "../../hooks"
 import useContractQuery from "../useContractQuery"
 
 const LIMIT = 30
@@ -10,7 +10,7 @@ export default () => {
   const [offset, setOffset] = useState<string>()
   const [done, setDone] = useState(true)
 
-  const { address } = useWallet()
+  const address = useAddress()
   const { contracts } = useContractsAddress()
   const variables = {
     contract: contracts["mint"],

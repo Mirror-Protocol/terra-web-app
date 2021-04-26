@@ -3,7 +3,7 @@ import { last } from "ramda"
 import { UUSD } from "../../constants"
 import useContractQuery from "../../graphql/useContractQuery"
 import { useContractsAddress, useContract, useNetwork } from "../../hooks"
-import { useCombineKeys, useWallet } from "../../hooks"
+import { useCombineKeys, useAddress } from "../../hooks"
 import { PriceKey } from "../../hooks/contractKeys"
 import { div, minus, sum, times } from "../../libs/math"
 import { Type } from "../Trade"
@@ -76,7 +76,7 @@ export default useMyOrders
 const LIMIT = 30
 export const useQueryOrders = () => {
   const { limitOrder = "" } = useNetwork()
-  const { address } = useWallet()
+  const address = useAddress()
 
   const [orders, setOrders] = useState<Order[]>([])
   const [offset, setOffset] = useState<number>()

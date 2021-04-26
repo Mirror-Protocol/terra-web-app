@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Dictionary } from "ramda"
 import { UUSD } from "../constants"
 import createContext from "./createContext"
-import { useNetwork } from "./useNetwork"
+import useNetwork from "./useNetwork"
 
 interface ContractAddressJSON {
   /** Contract addresses */

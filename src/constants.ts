@@ -22,11 +22,6 @@ export const COMMISSION = 0.003
 
 /* network:settings */
 export const TX_POLLING_INTERVAL = 1000
-export const DEFAULT_EXT_NETWORK: ExtNetworkConfig = {
-  name: "mainnet",
-  chainID: "columbus-4",
-  lcd: "https://lcd.terra.dev",
-}
 
 /* outbound */
 export const TRADING_HOURS =

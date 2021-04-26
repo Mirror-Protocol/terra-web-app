@@ -1,12 +1,14 @@
-import { useNetwork } from "../hooks"
+import { useLCD } from "../layouts/WalletConnectProvider"
 
 export default () => {
-  const { lcd } = useNetwork()
+  const lcd = useLCD()
+
   return (contract: string, msg: string | object) => {
     const query_msg =
       typeof msg === "string"
         ? toQueryMsg(msg)
         : encodeURIComponent(JSON.stringify(msg))
+
     return `${lcd}/wasm/contracts/${contract}/store?query_msg=${query_msg}`
   }
 }

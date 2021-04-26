@@ -1,12 +1,12 @@
 import { useEffect } from "react"
 import { useHistory } from "react-router-dom"
 import { getPath, MenuKey } from "../routes"
-import { useWallet } from "../hooks"
+import { useAddress } from "../hooks"
 import Page from "../components/Page"
 import GlanceForm from "../forms/GlanceForm"
 
 const Auth = () => {
-  const { address } = useWallet()
+  const address = useAddress()
   const { replace } = useHistory()
 
   useEffect(() => {
