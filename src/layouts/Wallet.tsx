@@ -1,3 +1,4 @@
+import { useWallet } from "@terra-money/wallet-provider"
 import MESSAGE from "../lang/MESSAGE.json"
 import { UUSD } from "../constants"
 import { truncate } from "../libs/text"
@@ -5,7 +6,6 @@ import { useNetwork, useAddress, useRefetch } from "../hooks"
 import { AccountInfoKey } from "../hooks/contractKeys"
 import { getPath, MenuKey } from "../routes"
 import ConnectedInfo from "../components/ConnectedInfo"
-import { useWallet } from "@terra-money/wallet-provider"
 
 const Wallet = ({ close }: { close: () => void }) => {
   const address = useAddress()

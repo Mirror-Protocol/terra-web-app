@@ -1,23 +1,14 @@
 import { StationNetworkInfo } from "@terra-dev/chrome-extension"
 
-export const mainnet: StationNetworkInfo = {
-  name: "mainnet",
-  chainID: "columbus-4",
-  lcd: "https://lcd.terra.dev",
-  fcd: "https://fcd.terra.dev",
-  ws: "wss://fcd.terra.dev",
-}
+type NetworkInfo = StationNetworkInfo & LocalNetworkConfig
 
-export const testnet: StationNetworkInfo = {
-  name: "testnet",
-  chainID: "tequila-0004",
-  lcd: "https://tequila-lcd.terra.dev",
-  fcd: "https://tequila-fcd.terra.dev",
-  ws: "wss://tequila-ws.terra.dev",
-}
-
-const networks: Record<string, LocalNetworkConfig> = {
+const networks: Record<string, NetworkInfo> = {
   mainnet: {
+    name: "mainnet",
+    chainID: "columbus-4",
+    lcd: "https://lcd.terra.dev",
+    fcd: "https://fcd.terra.dev",
+    ws: "wss://fcd.terra.dev",
     contract: "https://whitelist.mirror.finance/columbus.json",
     mantle: "https://mantle.terra.dev/",
     stats: "https://graph.mirror.finance/graphql",
@@ -29,6 +20,11 @@ const networks: Record<string, LocalNetworkConfig> = {
     fee: { gasPrice: 0.15, amount: 100000 }, // 0.1 UST
   },
   testnet: {
+    name: "testnet",
+    chainID: "tequila-0004",
+    lcd: "https://tequila-lcd.terra.dev",
+    fcd: "https://tequila-fcd.terra.dev",
+    ws: "wss://tequila-ws.terra.dev",
     contract: "https://whitelist.mirror.finance/tequila.json",
     mantle: "https://tequila-mantle.terra.dev/",
     stats: "https://tequila-graph.mirror.finance/graphql",
@@ -37,7 +33,7 @@ const networks: Record<string, LocalNetworkConfig> = {
       bsc: "terra1paav7jul3dzwzv78j0k59glmevttnkfgmgzv2r",
     },
     limitOrder: "terra1vc4ch0z3n6c23f9uywzy5yqaj2gmpnam8qgge7",
-    fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
+    fee: { gasPrice: 0.0015, amount: 1500 }, // 0.15 UST
   },
 }
 

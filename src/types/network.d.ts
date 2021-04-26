@@ -1,9 +1,9 @@
+type NetworkConfig = ExtNetworkConfig & LocalNetworkConfig
+
 interface Network extends NetworkConfig {
   /** Get finder link */
   finder: (address: string, path?: string) => string
 }
-
-type NetworkConfig = ExtNetworkConfig & LocalNetworkConfig
 
 interface ExtNetworkConfig {
   name: string

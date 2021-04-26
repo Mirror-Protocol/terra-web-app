@@ -62,14 +62,14 @@ const useMyMint = () => {
               change: collateralChange,
               delisted:
                 collateral.token !== UUSD &&
-                whitelist[collateral.token]["status"] === "DELISTED",
+                whitelist[collateral.token]?.["status"] === "DELISTED",
             },
             asset: {
               ...asset,
               price: assetPrice,
               value: assetValue,
               change: assetChange,
-              delisted: whitelist[asset.token]["status"] === "DELISTED",
+              delisted: whitelist[asset.token]?.["status"] === "DELISTED",
             },
             ratio,
             minRatio,

@@ -1,9 +1,9 @@
 import MESSAGE from "../lang/MESSAGE.json"
-import Modal, { useModal } from "../containers/Modal"
-import ConnectList from "./ConnectList"
+import useAddress from "../hooks/useAddress"
+import { useModal } from "../containers/Modal"
 import ConnectButton from "../components/ConnectButton"
 import Connected from "./Connected"
-import useAddress from "../hooks/useAddress"
+import ConnectListModal from "./ConnectListModal"
 
 const Connect = () => {
   const address = useAddress()
@@ -15,9 +15,7 @@ const Connect = () => {
         {MESSAGE.Wallet.Connect}
       </ConnectButton>
 
-      <Modal {...modal}>
-        <ConnectList />
-      </Modal>
+      <ConnectListModal {...modal} />
     </>
   ) : (
     <Connected />

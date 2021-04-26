@@ -1,10 +1,7 @@
 import { useEffect } from "react"
 import { useLazyQuery } from "@apollo/client"
-import {
-  TxFailedError,
-  TxResult,
-  UserDeniedError,
-} from "@terra-money/wallet-provider"
+import { TxResult } from "@terra-money/wallet-provider"
+import { TxFailedError, UserDeniedError } from "@terra-money/wallet-provider"
 
 import { TX_POLLING_INTERVAL } from "../constants"
 import { TXINFOS } from "../graphql/gqldocs"
@@ -23,7 +20,8 @@ interface Props extends TxResult {
   onFailure: () => void
 }
 
-const Result = ({ success, result, error, ...props }: Props) => {
+const Result = ({ result, error, ...props }: Props) => {
+  const success = !error
   const { parseTx, onFailure, gov } = props
   const { txhash: hash = "" } = result ?? {}
 

@@ -13,6 +13,8 @@ import { useContract, useSettings, useAddress } from "../hooks"
 import useTax from "../graphql/useTax"
 import useFee from "../graphql/useFee"
 
+import { useModal } from "../containers/Modal"
+import ConnectListModal from "../layouts/ConnectListModal"
 import Container from "../components/Container"
 import Tab from "../components/Tab"
 import Card from "../components/Card"
@@ -61,6 +63,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   const { attrs, pretax, deduct, parseTx = () => [], gov } = props
 
   /* context */
+  const modal = useModal()
   const { post } = useWallet()
   const { hash } = useHash()
   const { agreementState } = useSettings()
@@ -68,7 +71,6 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
 
   const { uusd, result } = useContract()
   const address = useAddress()
-  const { connect } = useWallet()
   const { loading } = result.uusd
 
   /* tax */
@@ -139,7 +141,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
           disabled,
         }
       : {
-          onClick: connect,
+          onClick: () => modal.open(),
           children: MESSAGE.Form.Button.ConnectWallet,
         }
 
@@ -199,6 +201,8 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
           )}
         </form>
       )}
+
+      {!address && <ConnectListModal {...modal} />}
     </Container>
   )
 }

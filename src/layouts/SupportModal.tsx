@@ -20,17 +20,26 @@ const SupportModal = (modal: Modal) => {
           </article>
         </Card>
       ) : (
-        <Card>
-          <article className={styles.article}>
-            <p className={styles.desc}>
-              {"Download Terra Station Extension\nto connect your wallet"}
-            </p>
+        <>
+          <Card>
+            <article className={styles.article}>
+              <p className={styles.desc}>
+                {"Download Terra Station Extension\nto connect your wallet"}
+              </p>
 
-            <ExtLinkButton href={EXTENSION} size="lg" block>
-              Download Terra Station Extension
-            </ExtLinkButton>
-          </article>
-        </Card>
+              <ExtLinkButton href={EXTENSION} size="lg" block>
+                Download Terra Station Extension
+              </ExtLinkButton>
+            </article>
+          </Card>
+
+          <button
+            className={styles.installed}
+            onClick={() => window.location.reload()}
+          >
+            I installed it.
+          </button>
+        </>
       )}
     </Modal>
   )
