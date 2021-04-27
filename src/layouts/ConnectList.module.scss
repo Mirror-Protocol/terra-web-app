@@ -1,0 +1,30 @@
+@import "mixins";
+
+.component {
+  padding: 10px;
+  max-width: $modal-width;
+  margin: 0 auto;
+}
+
+.title {
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.button {
+  @include flex(space-between);
+  background-color: $bg;
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 20px;
+  width: 100%;
+
+  & + & {
+    margin-top: 20px;
+  }
+}

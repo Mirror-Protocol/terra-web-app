@@ -52,10 +52,13 @@ $card-padding-horizontal: 25px;
 $card-padding-header: 20px $card-padding-horizontal;
 $card-padding-main: $card-padding-header;
 
+$modal-width: 620px;
+
 /* Transitions */
 $transition-duration: 0.2s;
 
 /* Z-indexes */
 $zindex-sticky: 1020;
+$zindex-modal: 1050;
 
 @import "../customize";
