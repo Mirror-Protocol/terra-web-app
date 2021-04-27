@@ -13,17 +13,18 @@ import Wait, { STATUS } from "../components/Wait"
 import TxHash from "./TxHash"
 import TxInfo from "./TxInfo"
 
-interface Props extends TxResult {
+interface Props {
+  response?: TxResult
   error?: TxFailedError | TxFailedError
   parseTx: ResultParser
   gov?: boolean
   onFailure: () => void
 }
 
-const Result = ({ result, error, ...props }: Props) => {
+const Result = ({ response, error, parseTx, onFailure, gov }: Props) => {
   const success = !error
-  const { parseTx, onFailure, gov } = props
-  const { txhash: hash = "" } = result ?? {}
+  const hash = response?.result.txhash ?? ""
+  const raw_log = response?.result.raw_log ?? ""
 
   /* context */
   const { uusd } = useResult()
@@ -75,7 +76,7 @@ const Result = ({ result, error, ...props }: Props) => {
   /* render */
   const message =
     txInfo?.RawLog ||
-    result?.raw_log ||
+    raw_log ||
     error?.message ||
     (error instanceof UserDeniedError && MESSAGE.Result.DENIED)
 

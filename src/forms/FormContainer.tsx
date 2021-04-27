@@ -184,9 +184,9 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
 
   return (
     <Container sm>
-      {response ? (
+      {error || response ? (
         <Result
-          {...response}
+          response={response}
           error={error}
           parseTx={parseTx}
           onFailure={reset}
