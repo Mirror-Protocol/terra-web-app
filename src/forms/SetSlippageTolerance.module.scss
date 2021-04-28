@@ -1,11 +1,7 @@
 @import "mixins";
 
-.component {
-  margin-top: -20px;
-  text-align: right;
-}
-
 .button {
+  @include flex;
   color: $battleship;
 }
 

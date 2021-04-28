@@ -19,6 +19,7 @@ import calc from "../helpers/calc"
 import { useContractsAddress, useContract, useRefetch } from "../hooks"
 import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
 import { BalanceKey } from "../hooks/contractKeys"
+import useTax from "../graphql/useTax"
 import { MenuKey } from "../routes"
 
 import FormGroup from "../components/FormGroup"
@@ -152,7 +153,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   /* simulation */
   const price1 = find(priceKey, token1)
   const price2 = find(priceKey, token2)
-  const reversed = form.changed !== Key.value1
+  const reversed = !!form.changed && form.changed !== Key.value1
   const operate = type === Type.DEPOSIT || type === Type.CUSTOM ? plus : minus
   const nextCollateralAmount = max([
     operate(prevCollateral?.amount, amount1),
@@ -229,6 +230,12 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   const select1 = useSelectAsset({ priceKey, balanceKey, ...config1 })
   const select2 = useSelectAsset({ priceKey, balanceKey, ...config2 })
 
+  const { getMax: getMaxAmount } = useTax()
+  const maxAmount =
+    symbol1 === UUSD
+      ? lookup(getMaxAmount(find(balanceKey, token1)), UUSD)
+      : lookup(find(balanceKey, token1), symbol1)
+
   const fields = {
     ...getFields({
       [Key.value1]: {
@@ -241,6 +248,10 @@ const MintForm = ({ position, type, tab, message }: Props) => {
           ref: valueRef,
         },
         unit: open ? select1.button : lookupSymbol(symbol1),
+        max:
+          gt(maxAmount, 0) && open
+            ? () => setValue(Key.value1, maxAmount)
+            : undefined,
         assets: select1.assets,
         help: renderBalance(getMax(token1), symbol1),
         focused: select1.isOpen,

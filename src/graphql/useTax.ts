@@ -1,15 +1,42 @@
 import { useQuery } from "@apollo/client"
-import { ceil, min, times } from "../libs/math"
+import BigNumber from "bignumber.js"
 import { TAX } from "./gqldocs"
+import useFee from "./useFee"
 
-export default (amount?: string) => {
-  const { data } = useQuery<TaxData>(TAX)
-  return calcTax(amount, data)
-}
+export default () => {
+  const { data, ...query } = useQuery<TaxData>(TAX)
+  const fee = useFee()
 
-/* parse */
-const calcTax = (amount?: string, data?: TaxData) => {
   const rate = data?.TreasuryTaxRate.Result
   const cap = data?.TreasuryTaxCapDenom.Result
-  return rate && cap && ceil(min([times(amount, rate), cap]))
+
+  const calcTax = (amount: string) =>
+    rate && cap
+      ? BigNumber.min(new BigNumber(amount).times(rate), cap)
+          .integerValue(BigNumber.ROUND_CEIL)
+          .toString()
+      : "0"
+
+  const getMax = (balance: string) => {
+    if (rate && cap) {
+      const balanceSafe = new BigNumber(balance).minus(1e6)
+      const calculatedTax = new BigNumber(balanceSafe)
+        .times(rate)
+        .div(new BigNumber(1).plus(rate))
+        .integerValue(BigNumber.ROUND_CEIL)
+        .toString()
+
+      const tax = BigNumber.min(calculatedTax, cap)
+      const max = BigNumber.max(
+        new BigNumber(balanceSafe).minus(tax).minus(fee.amount),
+        0
+      )
+
+      return max.toString()
+    } else {
+      return "0"
+    }
+  }
+
+  return { ...query, calcTax, getMax }
 }

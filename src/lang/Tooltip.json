@@ -49,7 +49,12 @@
     "APR": "Annualized staking return",
     "Staked": "Quantity of staked LP tokens for the corresponding asset liquidity pool",
     "Reward": "Quantity of claimable rewards for the corresponding staking position",
-    "GovReward": "Protocol fee paid from withdrawing collateral is distributed to MIR stakers and increases staked MIR"
+    "GovReward": "Protocol fee paid from withdrawing collateral is distributed to MIR stakers and increases staked MIR",
+
+    "LimitOrders": "List of trade orders to be executed at the limit price",
+    "LimitPrice": "Price at which the order will be executed",
+    "OrderValue": "Value of the limit order",
+    "TotalLockedValue": "Total value of assets locked in unfilled limit orders"
   },
 
   "Forms": {
@@ -57,7 +62,7 @@
   },
 
   "Send": {
-    "ShuttleFee": "A fee of 1 UST or 0.1% of the transfer amount (whichever is greater) will be charged for transferring assets from Terra to Ethereum through Shuttle"
+    "ShuttleFee": "A fee of 1 UST or 0.1% of the transfer amount (whichever is greater) will be charged for transferring assets from Terra to Ethereum/BSC through Shuttle"
   },
   "Trade": {
     "General": "The amount of asset traded is automatically calculated based on the current price, spread, and commission",
@@ -103,7 +108,7 @@
   "Gov": {
     "TotalStaked": "Total quantity of MIR tokens staked",
     "StakingRatio": "Ratio of the quantity of staked MIR tokens to the total quantity of MIR",
-    "APR": "Annualized MIR staking return based on the MIR distribution and staking ratio",
+    "APR": "Annualized MIR staking return based on 15 days average of MIR distribution and staking ratio",
 
     "Polls": "Staked MIR can be used as voting power in polls that are currently in progress",
 

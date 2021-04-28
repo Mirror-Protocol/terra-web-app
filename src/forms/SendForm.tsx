@@ -14,6 +14,7 @@ import { renderBalance } from "../libs/formHelpers"
 import { useNetwork, useRefetch } from "../hooks"
 import { useWallet, useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
+import useTax from "../graphql/useTax"
 
 import FormGroup from "../components/FormGroup"
 import { TooltipIcon } from "../components/Tooltip"
@@ -120,6 +121,10 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   const select = useSelectAsset(config)
   const balance = find(balanceKey, token)
 
+  const { getMax } = useTax()
+  const maxAmount =
+    symbol === UUSD ? lookup(getMax(balance), UUSD) : lookup(balance, symbol)
+
   const fields = {
     ...getFields({
       [Key.network]: {
@@ -160,10 +165,9 @@ const SendForm = ({ tab, shuttleList }: Props) => {
           ref: valueRef,
         },
         unit: select.button,
-        max:
-          symbol === UUSD
-            ? undefined
-            : () => setValue(Key.value, lookup(balance, symbol)),
+        max: gt(maxAmount, 0)
+          ? () => setValue(Key.value, maxAmount)
+          : undefined,
         assets: select.assets,
         help: renderBalance(balance, symbol),
         focused: select.isOpen,
@@ -178,8 +182,12 @@ const SendForm = ({ tab, shuttleList }: Props) => {
 
   /* confirm */
   const price = find(priceKey, token)
-  const shuttleFee = max([times(amount, 0.001), div(1e6, price)])
+  const shuttleMinimum = div(1e6, price)
+  const shuttleMinimumText = formatAsset(shuttleMinimum, symbol)
+  const shuttleEnough = !network || gt(amount, shuttleMinimum)
+  const shuttleFee = max([times(amount, 0.001), shuttleMinimum])
   const amountAfterShuttleFee = max([minus(amount, shuttleFee), String(0)])
+
   const contents = !value
     ? undefined
     : network
@@ -214,9 +222,11 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   const isShuttleAvailable = getIsShuttleAvailable(network, symbol)
   const messages = !isShuttleAvailable
     ? [`${lookupSymbol(symbol)} is not available on ${getNetworkName(network)}`]
+    : !shuttleEnough
+    ? [`Transactions must be larger than ${shuttleMinimumText}`]
     : ["Double check if the above transaction requires a memo"]
 
-  const disabled = invalid || !isShuttleAvailable
+  const disabled = invalid || !isShuttleAvailable || !shuttleEnough
 
   /* result */
   const parseTx = useSendReceipt()

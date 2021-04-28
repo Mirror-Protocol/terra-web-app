@@ -8,8 +8,9 @@ import { UUSD } from "../constants"
 import { gt, plus, sum } from "../libs/math"
 import useHash from "../libs/useHash"
 import extension, { PostResponse } from "../terra/extension"
-import { useContract, useNetwork, useSettings, useWallet } from "../hooks"
+import { useContract, useSettings, useWallet } from "../hooks"
 import useTax from "../graphql/useTax"
+import useFee from "../graphql/useFee"
 
 import Container from "../components/Container"
 import Tab from "../components/Tab"
@@ -60,7 +61,6 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
 
   /* context */
   const { hash } = useHash()
-  const { fee } = useNetwork()
   const { agreementState } = useSettings()
   const [hasAgreed] = agreementState
 
@@ -69,9 +69,11 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   const { loading } = result.uusd
 
   /* tax */
-  const tax = useTax(pretax)
+  const fee = useFee()
+  const { calcTax, loading: loadingTax } = useTax()
+  const tax = pretax ? calcTax(pretax) : "0"
   const uusdAmount = !deduct
-    ? sum([pretax ?? "0", tax ?? "0", fee.amount])
+    ? sum([pretax ?? "0", tax, fee.amount])
     : fee.amount
 
   const invalid =
@@ -87,7 +89,8 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   /* submit */
   const [submitted, setSubmitted] = useState(false)
   const [response, setResponse] = useState<PostResponse>()
-  const disabled = props.disabled || invalid || submitted || !msgs?.length
+  const disabled =
+    loadingTax || props.disabled || invalid || submitted || !msgs?.length
 
   const submit = async () => {
     setSubmitted(true)

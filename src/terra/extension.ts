@@ -1,6 +1,6 @@
 import { Extension, SyncTxBroadcastResult } from "@terra-money/terra.js"
 import { CreateTxOptions, StdFee } from "@terra-money/terra.js"
-import { ceil, plus, times } from "../libs/math"
+import { plus } from "../libs/math"
 
 export type Result = SyncTxBroadcastResult.Data
 export interface PostResponse {
@@ -30,16 +30,14 @@ class ExtensionSingleton {
 
   async post(
     options: CreateTxOptions,
-    txFee: { gasPrice: number; amount: number; tax?: string }
+    txFee: { gas: number; gasPrice: number; amount: number; tax?: string }
   ): Promise<PostResponse> {
-    const { gasPrice, amount, tax } = txFee
-    const gas = Math.floor(amount / gasPrice)
-    const feeAmount = ceil(times(gas, gasPrice))
+    const { gas, gasPrice, amount, tax } = txFee
     const res = await ext.request("post", {
       msgs: options.msgs.map((msg) => msg.toJSON()),
       memo: options.memo,
       gasPrices: `${gasPrice}uusd`,
-      fee: new StdFee(gas, { uusd: plus(feeAmount, tax) }).toJSON(),
+      fee: new StdFee(gas, { uusd: plus(amount, tax) }).toJSON(),
       purgeQueue: true,
     })
 

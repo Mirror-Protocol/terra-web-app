@@ -12,13 +12,21 @@ export const getBadge = (type: string) => {
   const group: Dictionary<string[]> = {
     Terra: ["TERRA_SEND", "TERRA_RECEIVE", "TERRA_SWAP"],
 
-    Trade: ["BUY", "SELL"],
+    Trade: [
+      "BUY",
+      "SELL",
+      "BID_LIMIT_ORDER",
+      "EXECUTE_LIMIT_ORDER",
+      "ASK_LIMIT_ORDER",
+      "CANCEL_LIMIT_ORDER",
+    ],
     Mint: [
       "OPEN_POSITION",
       "DEPOSIT_COLLATERAL",
       "WITHDRAW_COLLATERAL",
       "MINT",
       "BURN",
+      "AUCTION",
     ],
     Pool: ["PROVIDE_LIQUIDITY", "WITHDRAW_LIQUIDITY"],
     Stake: ["STAKE", "UNSTAKE", "WITHDRAW_REWARDS"],
@@ -39,15 +47,34 @@ const useParseTx = ({ type, data, token }: Tx) => {
   const { getSymbol } = useContractsAddress()
   const symbol = getSymbol(token)
 
+  const formatToken = (asset?: Asset) =>
+    formatAsset(asset?.amount, getSymbol(asset?.token))
+
+  /* terra: swap */
+  const offer = splitTokenText(data.offer)
+  const swap = splitTokenText(data.swapCoin)
+
+  /* mint */
   const collateral = splitTokenText(data.collateralAmount)
   const deposit = splitTokenText(data.depositAmount)
   const withdraw = splitTokenText(data.withdrawAmount)
   const mint = splitTokenText(data.mintAmount)
   const burn = splitTokenText(data.burnAmount)
+
+  /* pool */
   const assets = parseTokenText(data.assets)
   const refund = parseTokenText(data.refundAssets)
-  const offer = splitTokenText(data.offer)
-  const swap = splitTokenText(data.swapCoin)
+
+  /* liquidation */
+  const liquidated = splitTokenText(data.liquidatedAmount)
+
+  /* limit order */
+  const askLimitOrder = splitTokenText(data.askAsset)
+  const offerLimitOrder = splitTokenText(data.offerAsset)
+  const bidderReceiveLimitOrder = splitTokenText(data.bidderReceive)
+  const executorReceiveLimitOrder = splitTokenText(data.executorReceive)
+  const limitOrderType =
+    bidderReceiveLimitOrder.token === "uusd" ? "SELL" : "BUY"
 
   const parser: Dictionary<ReactNode[]> = {
     /* Terra */
@@ -60,12 +87,7 @@ const useParseTx = ({ type, data, token }: Tx) => {
       truncate(from),
     ],
     RECEIVE: ["Received", formatAsset(amount, symbol), "from", truncate(from)],
-    TERRA_SWAP: [
-      "Swapped",
-      formatAsset(offer.amount, getSymbol(offer.token)),
-      "to",
-      formatAsset(swap.amount, getSymbol(swap.token)),
-    ],
+    TERRA_SWAP: ["Swapped", formatToken(offer), "to", formatToken(swap)],
 
     /* Trade */
     BUY: [
@@ -80,52 +102,74 @@ const useParseTx = ({ type, data, token }: Tx) => {
       "for",
       formatAsset(returnAmount, getSymbol(askAsset)),
     ],
+    BID_LIMIT_ORDER: [
+      "Order to buy",
+      formatToken(askLimitOrder),
+      "with",
+      formatToken(offerLimitOrder),
+    ],
+    ASK_LIMIT_ORDER: [
+      "Order to sell",
+      formatToken(offerLimitOrder),
+      "with",
+      formatToken(askLimitOrder),
+    ],
+    EXECUTE_LIMIT_ORDER: {
+      BUY: [
+        "Bought",
+        formatToken(bidderReceiveLimitOrder),
+        "with",
+        formatToken(executorReceiveLimitOrder),
+      ],
+      SELL: [
+        "Sold",
+        formatToken(executorReceiveLimitOrder),
+        "for",
+        formatToken(bidderReceiveLimitOrder),
+      ],
+    }[limitOrderType],
+    CANCEL_LIMIT_ORDER: ["Canceled limit order ID", data.orderId],
 
     /* Mint */
     OPEN_POSITION: [
       "Minted",
-      formatAsset(mint.amount, getSymbol(mint.token)),
+      formatToken(mint),
       "with",
-      formatAsset(collateral.amount, getSymbol(collateral.token)),
+      formatToken(collateral),
     ],
     DEPOSIT_COLLATERAL: [
       "Deposited",
-      formatAsset(deposit.amount, getSymbol(deposit.token)),
+      formatToken(deposit),
       "to position",
       positionIdx,
     ],
     WITHDRAW_COLLATERAL: [
       "Withdrawn",
-      formatAsset(withdraw.amount, getSymbol(withdraw.token)),
+      formatToken(withdraw),
       "from position",
       positionIdx,
     ],
-    MINT: [
-      "Minted",
-      formatAsset(mint.amount, getSymbol(mint.token)),
-      "to position",
-      positionIdx,
-    ],
-    BURN: [
-      "Burned",
-      formatAsset(burn.amount, getSymbol(burn.token)),
+    MINT: ["Minted", formatToken(mint), "to position", positionIdx],
+    BURN: ["Burned", formatToken(burn), "from position", positionIdx],
+    AUCTION: [
+      "Liquidated",
+      formatToken(liquidated),
       "from position",
       positionIdx,
     ],
-    AUCTION: ["Liquidated position", positionIdx],
 
     /* Pool */
     PROVIDE_LIQUIDITY: [
       "Provided liquidity",
-      formatAsset(assets[0]?.amount, getSymbol(assets[0]?.token)),
+      formatToken(assets[0]),
       "and",
-      formatAsset(assets[1]?.amount, getSymbol(assets[1]?.token)),
+      formatToken(assets[1]),
     ],
     WITHDRAW_LIQUIDITY: [
       "Withdrawn liquidity",
-      formatAsset(refund[0]?.amount, getSymbol(refund[0]?.token)),
+      formatToken(refund[0]),
       "and",
-      formatAsset(refund[1]?.amount, getSymbol(refund[1]?.token)),
+      formatToken(refund[1]),
     ],
 
     /* Stake */
