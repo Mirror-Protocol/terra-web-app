@@ -25,3 +25,5 @@ yarn-error.log*
 .vscode
 .vercel
 .eslintcache
+
+src/hooks/LocalTerra.json
