@@ -131,6 +131,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
     setConfirming(false)
     setSubmitted(false)
     setResponse(undefined)
+    setError(undefined)
   }
 
   /* event */
