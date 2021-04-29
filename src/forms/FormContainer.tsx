@@ -2,7 +2,9 @@ import { useState } from "react"
 import { ReactNode, HTMLAttributes, FormEvent } from "react"
 import { Msg, StdFee } from "@terra-money/terra.js"
 import { useWallet } from "@terra-money/wallet-provider"
-import { TxFailedError, TxResult } from "@terra-money/wallet-provider"
+import { TxResult } from "@terra-money/wallet-provider"
+import { UserDenied, CreateTxFailed } from "@terra-money/wallet-provider"
+import { TxFailed, TxUnspecifiedError } from "@terra-money/wallet-provider"
 
 import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
@@ -58,6 +60,12 @@ interface Props {
   children?: ReactNode
 }
 
+export type PostError =
+  | UserDenied
+  | CreateTxFailed
+  | TxFailed
+  | TxUnspecifiedError
+
 export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   const { contents, messages, label, tab, children } = props
   const { attrs, pretax, deduct, parseTx = () => [], gov } = props
@@ -94,7 +102,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   /* submit */
   const [submitted, setSubmitted] = useState(false)
   const [response, setResponse] = useState<TxResult>()
-  const [error, setError] = useState<TxFailedError | TxFailedError>()
+  const [error, setError] = useState<PostError>()
   const disabled =
     loadingTax || props.disabled || invalid || submitted || !msgs?.length
 
