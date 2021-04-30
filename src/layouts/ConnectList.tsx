@@ -6,7 +6,7 @@ import styles from "./ConnectList.module.scss"
 const size = { width: 24, height: 24 }
 
 const ConnectList = () => {
-  const { /* availableConnectTypes, */ connect } = useWallet()
+  const { availableConnectTypes, connect } = useWallet()
 
   const buttons = {
     [ConnectType.CHROME_EXTENSION]: {
@@ -23,16 +23,18 @@ const ConnectList = () => {
     <article className={styles.component}>
       <h1 className={styles.title}>Connect to a wallet</h1>
       <section>
-        {Object.entries(buttons).map(([key, { label, image }]) => (
-          <button
-            className={styles.button}
-            onClick={() => connect(key as ConnectType)}
-            key={key}
-          >
-            {label}
-            {image}
-          </button>
-        ))}
+        {Object.entries(buttons)
+          .filter(([key]) => availableConnectTypes.includes(key as ConnectType))
+          .map(([key, { label, image }]) => (
+            <button
+              className={styles.button}
+              onClick={() => connect(key as ConnectType)}
+              key={key}
+            >
+              {label}
+              {image}
+            </button>
+          ))}
       </section>
     </article>
   )
