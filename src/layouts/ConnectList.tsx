@@ -1,6 +1,5 @@
+import { ConnectType, useWallet } from "@terra-money/wallet-provider"
 import { ReactNode } from "react"
-import { useWallet, ConnectType } from "@terra-money/wallet-provider"
-import { useInstallChromeExtension } from "@terra-money/wallet-provider"
 import { ReactComponent as Terra } from "../images/Terra.svg"
 import WalletConnect from "../images/WalletConnect.png"
 import styles from "./ConnectList.module.scss"
@@ -8,22 +7,32 @@ import styles from "./ConnectList.module.scss"
 const size = { width: 24, height: 24 }
 
 const ConnectList = () => {
-  const { availableConnectTypes, connect } = useWallet()
-  const installChromeExtension = useInstallChromeExtension()
+  const {
+    availableConnectTypes,
+    availableInstallTypes,
+    connect,
+    install,
+  } = useWallet()
 
   type Button = { label: string; image: ReactNode; onClick: () => void }
   const buttons = ([] as Button[])
     .concat(
-      installChromeExtension
+      availableInstallTypes.includes(ConnectType.CHROME_EXTENSION)
         ? {
             label: "Terra Station (extension)",
             image: <Terra {...size} />,
-            onClick: installChromeExtension,
+            onClick: () => install(ConnectType.CHROME_EXTENSION),
           }
         : []
     )
     .concat(
-      availableConnectTypes.includes(ConnectType.CHROME_EXTENSION)
+      availableConnectTypes.includes(ConnectType.WEBEXTENSION)
+        ? {
+            label: "Terra Station (extension)",
+            image: <Terra {...size} />,
+            onClick: () => connect(ConnectType.WEBEXTENSION),
+          }
+        : availableConnectTypes.includes(ConnectType.CHROME_EXTENSION)
         ? {
             label: "Terra Station (extension)",
             image: <Terra {...size} />,
