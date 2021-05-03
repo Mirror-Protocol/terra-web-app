@@ -3099,9 +3099,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@terra-money/wallet-provider@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "@terra-money/wallet-provider@npm:0.8.0"
+"@terra-money/wallet-provider@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "@terra-money/wallet-provider@npm:0.9.0"
   dependencies:
     "@anchor-protocol/types": ^0.8.0
     "@terra-dev/chrome-extension": ^0.8.0
@@ -3115,7 +3115,7 @@ __metadata:
     react: ^17.0.2
     react-router-dom: ^5.2.0
     rxjs: ^6.6.7
-  checksum: bf95721fb2605457d451c895567f45348c7298ba9603308578e035c068b0b7402d12645fce2a7b51879ce64aa403ad48d4a00592caf941d8007af436d1253c92
+  checksum: f649a66331ec941141bb45e6cc663e44804b5bf8df616d0dd5500226a8c19f1624a95438e8c91bf4fbd9e6d1c4294bc223b1d8c18c17119f76acf8f6ee8ca494
   languageName: node
   linkType: hard
 
@@ -11958,7 +11958,7 @@ fsevents@^1.2.7:
     "@terra-dev/readonly-wallet": ^0.7.0
     "@terra-dev/walletconnect": ^0.7.0
     "@terra-money/terra.js": ^1.7.0
-    "@terra-money/wallet-provider": ^0.8.0
+    "@terra-money/wallet-provider": ^0.9.0
     "@testing-library/jest-dom": ^5.12.0
     "@testing-library/react": ^11.2.6
     "@testing-library/user-event": ^13.1.5
