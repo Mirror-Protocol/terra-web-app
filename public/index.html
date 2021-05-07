@@ -8,9 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <title>Mirror</title>
 
+    <% if (process.env.NODE_ENV === 'production') { %>
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "09c7ac4125c64164933f9a6be1cc2f7e"}'></script>
     <!-- End Cloudflare Web Analytics -->
+    <% } %>
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RHECFDZEEJ"></script>
