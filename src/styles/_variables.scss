@@ -20,14 +20,14 @@ $header: $darkblue !default;
 $saturated-blue: saturate(darken($darkblue, 2%), 6%);
 
 $colors: (
-  bg: $bg,
-  darkblue: $darkblue,
-  battleship: $battleship,
-  slate: $slate,
-  blue: $blue,
-  aqua: $aqua,
-  red: $red,
-  orange: $orange,
+  "bg": $bg,
+  "darkblue": $darkblue,
+  "battleship": $battleship,
+  "slate": $slate,
+  "blue": $blue,
+  "aqua": $aqua,
+  "red": $red,
+  "orange": $orange,
 );
 
 $hr-shadow: fade-out(black, 0.8);
