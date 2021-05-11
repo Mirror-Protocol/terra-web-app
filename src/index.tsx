@@ -33,4 +33,9 @@ render(
   document.getElementById("mirror")
 )
 
-serviceWorkerRegistration.register()
+serviceWorkerRegistration.register({
+  onUpdate: ({ waiting }) => {
+    waiting?.postMessage({ type: "SKIP_WAITING" })
+    window.location.reload()
+  },
+})
