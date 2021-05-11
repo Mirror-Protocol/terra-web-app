@@ -4,6 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom"
 import * as Sentry from "@sentry/react"
 import { Integrations } from "@sentry/tracing"
 
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration"
 import "./index.scss"
 import { DSN } from "./constants"
 import ScrollToTop from "./layouts/ScrollToTop"
@@ -31,3 +32,5 @@ render(
   </StrictMode>,
   document.getElementById("mirror")
 )
+
+serviceWorkerRegistration.register()
