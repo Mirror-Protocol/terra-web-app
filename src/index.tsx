@@ -33,9 +33,29 @@ render(
   document.getElementById("mirror")
 )
 
+type ServiceWorkerState =
+  | "installing"
+  | "installed"
+  | "activating"
+  | "activated"
+  | "redundant"
+
+interface ServiceWorkerEventTarget extends EventTarget {
+  state: ServiceWorkerState
+}
+
 serviceWorkerRegistration.register({
   onUpdate: ({ waiting }) => {
-    waiting?.postMessage({ type: "SKIP_WAITING" })
-    window.location.reload()
+    if (waiting) {
+      waiting.addEventListener("statechange", (event) => {
+        const state = (event?.target as ServiceWorkerEventTarget)?.state
+        if (state === "activated") {
+          alert("Mirror web app has been updated.")
+          window.location.reload()
+        }
+      })
+
+      waiting.postMessage({ type: "SKIP_WAITING" })
+    }
   },
 })
