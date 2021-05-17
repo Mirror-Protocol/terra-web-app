@@ -105,20 +105,23 @@ const Holdings = ({ loading, totalValue, dataSource }: Props) => {
             {
               key: "actions",
               dataIndex: "token",
-              render: (token) => {
+              render: (token, { status }) => {
                 const to = {
                   pathname: getPath(MenuKey.TRADE),
                   state: { token },
                 }
 
-                const list = [
-                  { to: { ...to, hash: Type.BUY }, children: Type.BUY },
-                  { to: { ...to, hash: Type.SELL }, children: Type.SELL },
-                  {
-                    to: { ...to, pathname: getPath(MenuKey.SEND) },
-                    children: MenuKey.SEND,
-                  },
-                ]
+                const list =
+                  status === "LISTED"
+                    ? [
+                        { to: { ...to, hash: Type.BUY }, children: Type.BUY },
+                        { to: { ...to, hash: Type.SELL }, children: Type.SELL },
+                        {
+                          to: { ...to, pathname: getPath(MenuKey.SEND) },
+                          children: MenuKey.SEND,
+                        },
+                      ]
+                    : [{ to: `/burn/${token}`, children: MenuKey.BURN }]
 
                 return <DashboardActions list={list} />
               },

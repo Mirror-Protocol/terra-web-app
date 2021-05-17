@@ -10,9 +10,11 @@ import Dl from "../../components/Dl"
 import Button from "../../components/Button"
 import { TooltipIcon } from "../../components/Tooltip"
 import DashboardActions from "../../components/DashboardActions"
+import Delisted from "../../components/Delisted"
 import NoAssets from "./NoAssets"
 
 interface OrderDetails extends Order {
+  status: ListedItemStatus
   type: string
   asset: Asset
   uusd: Asset
@@ -59,8 +61,13 @@ const Orders = ({ loading, dataSource, total, more }: Props) => {
             {
               key: "order_id",
               title: "ID",
+              render: (id, { status }) => (
+                <>
+                  {status === "DELISTED" && <Delisted />}
+                  {id}
+                </>
+              ),
               bold: true,
-              align: "center",
             },
             {
               key: "type",

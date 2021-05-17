@@ -2,6 +2,7 @@ export enum PriceKey {
   // Dictionary<string>
   PAIR = "pair",
   ORACLE = "oracle",
+  END = "end",
 }
 
 export enum AssetInfoKey {

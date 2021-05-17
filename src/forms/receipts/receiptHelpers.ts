@@ -5,6 +5,13 @@ export const findValue = (logs: TxLog[]) => (key: string, index = 0) => {
   return attribute?.find((attr) => attr.Key === key)?.Value ?? ""
 }
 
+export const findValues = (logs: TxLog[]) => (key: string, index = 0) => {
+  const attribute = logs[index]?.Events.find((e) => e.Type === "from_contract")
+    ?.Attributes
+
+  return attribute?.filter((attr) => attr.Key === key).map(({ Value }) => Value)
+}
+
 export const fromContract = (logs: TxLog[]) =>
   logs.map(({ Events }) => {
     const attributes = Events.find(({ Type }) => Type === "from_contract")

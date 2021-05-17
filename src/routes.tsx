@@ -9,6 +9,7 @@ import Send from "./pages/Send"
 import Airdrop from "./pages/Airdrop"
 import Trade from "./pages/Trade"
 import Mint from "./pages/Mint"
+import Burn from "./pages/Burn"
 import Pool from "./pages/Pool"
 import Stake from "./pages/Stake"
 import Gov from "./pages/Gov"
@@ -29,6 +30,7 @@ export enum MenuKey {
   AIRDROP = "Airdrop",
   TRADE = "Trade",
   MINT = "Mint",
+  BURN = "Burn",
   POOL = "Pool",
   STAKE = "Stake",
   GOV = "Governance",
@@ -40,6 +42,7 @@ export const omit = [
   MenuKey.AUTH,
   MenuKey.INFO,
   MenuKey.SEND,
+  MenuKey.BURN,
   MenuKey.AIRDROP,
   MenuKey.LIMIT,
 ]
@@ -57,6 +60,7 @@ export const menu: Dictionary<RouteProps> = {
   [MenuKey.MY]: { path: "/my", component: My },
   [MenuKey.TRADE]: { path: "/trade", component: Trade },
   [MenuKey.MINT]: { path: "/mint", component: Mint },
+  [MenuKey.BURN]: { path: "/burn/:token", component: Burn },
   [MenuKey.POOL]: { path: "/pool", component: Pool },
   [MenuKey.STAKE]: { path: "/stake", component: Stake },
   [MenuKey.GOV]: { path: "/gov", component: Gov },

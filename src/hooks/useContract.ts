@@ -78,6 +78,7 @@ export const useContractState = (address: string): Contract => {
   const result: Result = {
     [PriceKey.PAIR]: pairPool.result,
     [PriceKey.ORACLE]: oraclePrices.result,
+    [PriceKey.END]: mintInfo.result,
 
     [AssetInfoKey.LIQUIDITY]: pairPool.result,
     [AssetInfoKey.MINCOLLATERALRATIO]: mintInfo.result,
@@ -98,6 +99,7 @@ export const useContractState = (address: string): Contract => {
   const parsed = {
     [PriceKey.PAIR]: pairPool.parsed,
     [PriceKey.ORACLE]: oraclePrices.parsed,
+    [PriceKey.END]: mintInfo.parsed,
 
     [BalanceKey.TOKEN]: tokenBalance.parsed,
     [BalanceKey.LPTOTAL]: lpTokenBalance.parsed,
@@ -113,6 +115,7 @@ export const useContractState = (address: string): Contract => {
     [PriceKey.PAIR]: pairPool.parsed && price[PriceKey.PAIR](pairPool.parsed),
     [PriceKey.ORACLE]:
       oraclePrices.parsed && price[PriceKey.ORACLE](oraclePrices.parsed),
+    [PriceKey.END]: mintInfo.parsed && price[PriceKey.END](mintInfo.parsed),
 
     [AssetInfoKey.LIQUIDITY]:
       pairPool.parsed && contractInfo[AssetInfoKey.LIQUIDITY](pairPool.parsed),

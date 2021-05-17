@@ -5,6 +5,7 @@ import { WalletProvider, useWalletState } from "../hooks/useWallet"
 import { ContractProvider, useContractState } from "../hooks/useContract"
 import { StatsProvider, useStatsState } from "../statistics/useStats"
 import MobileAlert from "./MobileAlert"
+import DelistAlert from "./DelistAlert"
 import Airdrop from "./Airdrop"
 import Header from "./Header"
 import Footer from "./Footer"
@@ -24,6 +25,7 @@ const App = () => {
             <Header />
             <Container>
               <MobileAlert />
+              <DelistAlert />
               {routes()}
             </Container>
             <Footer />

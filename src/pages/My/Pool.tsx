@@ -96,28 +96,31 @@ const Pool = ({ loading, totalWithdrawableValue, dataSource }: Props) => {
             {
               key: "actions",
               dataIndex: "token",
-              render: (token) => {
+              render: (token, { status }) => {
                 const to = {
                   pathname: getPath(MenuKey.POOL),
                   state: { token },
                 }
 
-                const stake = `${getPath(MenuKey.STAKE)}/${token}`
+                const provideItem = {
+                  to: { ...to, hash: Type.PROVIDE },
+                  children: Type.PROVIDE,
+                }
 
-                const list = [
-                  {
-                    to: { ...to, hash: Type.PROVIDE },
-                    children: Type.PROVIDE,
-                  },
-                  {
-                    to: { ...to, hash: Type.WITHDRAW },
-                    children: Type.WITHDRAW,
-                  },
-                  {
-                    to: stake,
-                    children: StakeType.STAKE,
-                  },
-                ]
+                const withdrawItem = {
+                  to: { ...to, hash: Type.WITHDRAW },
+                  children: Type.WITHDRAW,
+                }
+
+                const stakeItem = {
+                  to: `${getPath(MenuKey.STAKE)}/${token}`,
+                  children: StakeType.STAKE,
+                }
+
+                const list =
+                  status === "LISTED"
+                    ? [provideItem, withdrawItem, stakeItem]
+                    : [withdrawItem]
 
                 return <DashboardActions list={list} />
               },

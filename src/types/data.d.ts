@@ -23,6 +23,7 @@ interface PairPool {
 /* Contract Info */
 interface MintInfo {
   min_collateral_ratio: string
+  end_price: string
 }
 
 interface StakingPool {

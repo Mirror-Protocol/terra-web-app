@@ -4,26 +4,29 @@ import { PriceKey, BalanceKey } from "../../hooks/contractKeys"
 import useYesterday, { calcChange } from "../../statistics/useYesterday"
 
 const useMyHoldings = () => {
-  const priceKey = PriceKey.PAIR
   const balanceKey = BalanceKey.TOKEN
-  const keys = [priceKey, balanceKey]
+  const keys = [PriceKey.PAIR, PriceKey.ORACLE, balanceKey]
 
   const { loading, data } = useCombineKeys(keys)
   const { listedAll } = useContractsAddress()
   const { find } = useContract()
-  const { [priceKey]: yesterday } = useYesterday()
+  const yesterday = useYesterday()
 
   const dataSource = !data
     ? []
     : listedAll
         .map((item) => {
-          const { token } = item
+          const { token, status } = item
+          const priceKey = status === "LISTED" ? PriceKey.PAIR : PriceKey.END
+          const yesterdayItem = yesterday[PriceKey.PAIR]
+
           const balance = find(balanceKey, token)
           const price = find(priceKey, token)
           const value = times(balance, price)
+
           const change = calcChange({
             today: price,
-            yesterday: yesterday[token],
+            yesterday: yesterdayItem[token],
           })
 
           return { ...item, balance, price, value, change }

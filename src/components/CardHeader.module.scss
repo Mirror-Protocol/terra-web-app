@@ -11,6 +11,10 @@
   color: white;
   font-size: 16px;
   text-transform: capitalize;
+
+  .center & {
+    text-align: center;
+  }
 }
 
 .description:not(:empty) {
@@ -24,6 +28,10 @@
   .wrapper {
     flex: 1;
     margin-right: 20px;
+  }
+
+  .center {
+    margin-right: 0;
   }
 }
 

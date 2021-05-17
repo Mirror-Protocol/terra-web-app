@@ -13,7 +13,7 @@ const useMyOrders = () => {
   const keys = [priceKey]
 
   const { loading: loadingPrice } = useCombineKeys(keys)
-  const { parseToken } = useContractsAddress()
+  const { whitelist, parseToken } = useContractsAddress()
   const { find } = useContract()
   const { result, orders, more } = useQueryOrders()
   const { loading: loadingOrders } = result
@@ -54,8 +54,12 @@ const useMyOrders = () => {
     const offerPrice = find(priceKey, offerAsset.token)
     const offerValue = times(offerPrice, offerAsset.amount)
 
+    const { status } = whitelist[asset.token]
+
     return {
       ...order,
+      token: asset.token,
+      status,
       type,
       asset,
       uusd,

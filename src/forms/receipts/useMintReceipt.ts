@@ -10,11 +10,10 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
   const open = type === Type.OPEN
   const close = type === Type.CLOSE
   const custom = type === Type.CUSTOM
-  const priceKey = PriceKey.ORACLE
-  useRefetch([priceKey])
+  useRefetch([PriceKey.ORACLE, PriceKey.END])
 
   /* context */
-  const { getSymbol, parseToken } = useContractsAddress()
+  const { whitelist, getSymbol, parseToken } = useContractsAddress()
   const { find } = useContract()
   const val = findValue(logs)
 
@@ -78,9 +77,16 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
     ? { amount: mint.amount, token: mint.token }
     : { amount: prevAsset?.amount, token: prevAsset?.token }
 
-  const collateralPrice = find(priceKey, nextCollateral.token!)
+  const getPriceKey = (token: string) =>
+    whitelist[token].status === "DELISTED" ? PriceKey.END : PriceKey.ORACLE
+
+  const collateralPrice =
+    nextCollateral.token &&
+    find(getPriceKey(nextCollateral.token), nextCollateral.token)
   const collateralValue = times(nextCollateral.amount, collateralPrice)
-  const mintedPrice = find(priceKey, nextAsset.token!)
+
+  const mintedPrice =
+    nextAsset.token && find(getPriceKey(nextAsset.token), nextAsset.token)
   const mintedValue = times(nextAsset.amount, mintedPrice)
   const ratio = div(collateralValue, mintedValue)
 
