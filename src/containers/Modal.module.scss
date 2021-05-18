@@ -4,6 +4,8 @@
 .modal {
   width: 620px;
   outline: 0;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 
 .overlay {
