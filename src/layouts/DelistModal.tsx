@@ -88,7 +88,7 @@ const DelistModal = ({ tokens }: { tokens: string[] }) => {
           </ExtLink>
 
           <Button onClick={modal.close} size="lg" block>
-            I understrand
+            I understand
           </Button>
         </div>
       </Card>
