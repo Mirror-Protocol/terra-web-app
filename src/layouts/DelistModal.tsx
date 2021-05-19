@@ -1,14 +1,27 @@
+import { useState } from "react"
 import { format } from "date-fns"
 import { useContractsAddress } from "../hooks"
 import Card from "../components/Card"
 import Button from "../components/Button"
 import ExtLink from "../components/ExtLink"
+import Checkbox from "../components/Checkbox"
 import Modal, { useModal } from "../containers/Modal"
 import styles from "./DelistModal.module.scss"
 
-const DelistModal = ({ tokens }: { tokens: string[] }) => {
+interface Props {
+  tokens: string[]
+  onClose: () => void
+}
+
+const DelistModal = ({ tokens, onClose }: Props) => {
   const { delist, getSymbol } = useContractsAddress()
   const modal = useModal(true)
+  const [checked, setChecked] = useState(false)
+
+  const submit = () => {
+    modal.close()
+    onClose()
+  }
 
   return (
     <Modal {...modal}>
@@ -87,7 +100,17 @@ const DelistModal = ({ tokens }: { tokens: string[] }) => {
             How does stock split/merge work on Mirror Protocol?
           </ExtLink>
 
-          <Button onClick={modal.close} size="lg" block>
+          <footer className={styles.footer}>
+            <button
+              type="button"
+              className={styles.label}
+              onClick={() => setChecked(!checked)}
+            >
+              <Checkbox checked={checked}>Do not show again</Checkbox>
+            </button>
+          </footer>
+
+          <Button className={styles.submit} onClick={submit} size="lg" block>
             I understand
           </Button>
         </div>

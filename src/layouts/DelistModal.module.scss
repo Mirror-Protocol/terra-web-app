@@ -64,10 +64,18 @@
   display: inline-block;
   font-size: 12px;
   font-weight: 500;
-  margin-bottom: 40px;
   text-decoration: underline;
 
   &:hover {
     color: $light;
   }
+}
+
+.footer {
+  font-size: 12px;
+  margin-top: 30px;
+}
+
+.submit {
+  margin-top: 20px;
 }
