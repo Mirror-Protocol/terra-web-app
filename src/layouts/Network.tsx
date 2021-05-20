@@ -1,6 +1,7 @@
 import { FC } from "react"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
+import { HttpLink, ApolloLink } from "@apollo/client"
 import { DefaultOptions } from "@apollo/client"
 import { NetworkProvider, useNetworkState } from "../hooks/useNetwork"
 
@@ -13,8 +14,16 @@ export const DefaultApolloClientOptions: DefaultOptions = {
 
 const Network: FC = ({ children }) => {
   const network = useNetworkState()
+
+  const uri = network.mantle
+  const httpLink = new HttpLink({ uri })
+  const namedLink = new ApolloLink((operation, forward) => {
+    operation.setContext(() => ({ uri: `${uri}?${operation.operationName}` }))
+    return forward ? forward(operation) : null
+  })
+
   const client = new ApolloClient({
-    uri: network.mantle,
+    link: ApolloLink.from([namedLink, httpLink]),
     cache: new InMemoryCache(),
     connectToDevTools: true,
     defaultOptions: DefaultApolloClientOptions,
