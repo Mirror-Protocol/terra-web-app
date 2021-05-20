@@ -13,6 +13,6 @@ export default () => {
     return symbol === MIR ? undefined : variables
   }
 
-  const query = useLazyContractQueries<MintInfo>(generate)
+  const query = useLazyContractQueries<MintInfo>(generate, "MintInfo")
   return query
 }

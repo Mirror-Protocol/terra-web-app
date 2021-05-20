@@ -2,8 +2,8 @@ import { gql } from "@apollo/client"
 
 export const WASMQUERY = "WasmContractsContractAddressStore"
 
-export const CONTRACT = gql`
-  query($contract: String, $msg: String) {
+export const getContract = (name: string) => gql`
+  query ${name} ($contract: String, $msg: String) {
     WasmContractsContractAddressStore(
       ContractAddress: $contract
       QueryMsg: $msg
@@ -15,7 +15,7 @@ export const CONTRACT = gql`
 `
 
 export const TAX = gql`
-  query {
+  query tax {
     TreasuryTaxRate {
       Result
     }
@@ -27,7 +27,7 @@ export const TAX = gql`
 `
 
 export const TXINFOS = gql`
-  query($hash: String) {
+  query txInfos($hash: String) {
     TxInfos(TxHash: $hash) {
       Height
       TxHash

@@ -17,8 +17,8 @@ const alias = ({ token, contract, msg }: Query) =>
       Result
     }`
 
-export default (queries: Query[]) => gql`
-  query {
+export default (queries: Query[], name: string) => gql`
+  query ${name} {
     ${queries.map(alias)}
   }
 `

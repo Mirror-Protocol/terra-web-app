@@ -75,7 +75,7 @@ export const useRefetchGov = (keys: GovKey[]) => {
 const useGovConfig = () => {
   const { contracts } = useContractsAddress()
   const variables = { contract: contracts["gov"], msg: { config: {} } }
-  const query = useContractQuery<GovConfig>(variables)
+  const query = useContractQuery<GovConfig>(variables, "GovConfig")
   return query
 }
 
@@ -83,7 +83,7 @@ const useGovConfig = () => {
 export const useGovStateState = () => {
   const { contracts } = useContractsAddress()
   const variables = { contract: contracts["gov"], msg: { state: {} } }
-  const query = useContractQuery<GovState>(variables)
+  const query = useContractQuery<GovState>(variables, "GovState")
   return query
 }
 
@@ -95,7 +95,11 @@ const useMirrorBalance = () => {
     msg: { balance: { address: contracts["gov"] } },
   }
 
-  const query = useContractQuery<{ balance: string }>(variables)
+  const query = useContractQuery<{ balance: string }>(
+    variables,
+    "GovMirrorTokenBalance"
+  )
+
   return query
 }
 
@@ -111,7 +115,7 @@ const usePolls = () => {
     msg: { polls: { limit: LIMIT, start_after: offset } },
   }
 
-  const query = useContractQuery<PollsData>(variables)
+  const query = useContractQuery<PollsData>(variables, `Polls${offset ?? ""}`)
   const { result, parsed } = query
 
   const select = useSelect()
@@ -144,7 +148,7 @@ export const usePoll = (id: number) => {
     msg: { poll: { poll_id: id } },
   }
 
-  const query = useContractQuery<PollData>(variables)
+  const query = useContractQuery<PollData>(variables, `Poll${id}`)
   const { parsed } = query
 
   const parsePoll = useParsePoll()
@@ -160,7 +164,11 @@ export const useVoters = (id: number) => {
     msg: { voters: { poll_id: id, limit: Math.pow(2, 16) - 1 } },
   }
 
-  const { parsed } = useContractQuery<{ voters: Voter[] }>(variables)
+  const { parsed } = useContractQuery<{ voters: Voter[] }>(
+    variables,
+    `Voters${id}`
+  )
+
   return { voters: parsed?.voters }
 }
 

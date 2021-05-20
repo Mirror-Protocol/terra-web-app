@@ -5,6 +5,6 @@ export default (address: string) => {
     return { contract: lpToken, msg: { balance: { address } } }
   }
 
-  const query = useLazyContractQueries<Balance>(generate)
+  const query = useLazyContractQueries<Balance>(generate, "LpTokenBalance")
   return query
 }

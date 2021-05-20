@@ -1,7 +1,7 @@
 import { gql, useLazyQuery } from "@apollo/client"
 
 const QUERY = gql`
-  query($address: String) {
+  query BankBalancesAddress($address: String) {
     BankBalancesAddress(Address: $address) {
       Result {
         Amount

@@ -86,12 +86,15 @@ export const useQueryOrders = () => {
   const [offset, setOffset] = useState<number>()
   const [done, setDone] = useState(true)
 
-  const query = useContractQuery<{ orders: Order[] }>({
-    contract: limitOrder,
-    msg: {
-      orders: { bidder_addr: address, limit: LIMIT, start_after: offset },
+  const query = useContractQuery<{ orders: Order[] }>(
+    {
+      contract: limitOrder,
+      msg: {
+        orders: { bidder_addr: address, limit: LIMIT, start_after: offset },
+      },
     },
-  })
+    `LimitOrders${offset ?? ""}`
+  )
 
   const { parsed } = query
 
@@ -112,8 +115,11 @@ export const useQueryOrders = () => {
 export const useQueryOrder = (id: number) => {
   const { limitOrder = "" } = useNetwork()
 
-  return useContractQuery<Order>({
-    contract: limitOrder,
-    msg: { order: { order_id: id } },
-  })
+  return useContractQuery<Order>(
+    {
+      contract: limitOrder,
+      msg: { order: { order_id: id } },
+    },
+    `LimitOrder${id}`
+  )
 }

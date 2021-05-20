@@ -5,6 +5,6 @@ export default () => {
     return { contract: lpToken, msg: { token_info: {} } }
   }
 
-  const query = useLazyContractQueries<TotalSupply>(generate)
+  const query = useLazyContractQueries<TotalSupply>(generate, "LpTokenInfo")
   return query
 }

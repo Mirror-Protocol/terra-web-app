@@ -8,6 +8,6 @@ export default (address: string) => {
     msg: { reward_info: { staker: address } },
   }
 
-  const query = useLazyContractQuery<StakingReward>(variables)
+  const query = useLazyContractQuery<StakingReward>(variables, "StakingReward")
   return query
 }

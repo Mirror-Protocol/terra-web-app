@@ -13,6 +13,6 @@ export default () => {
     return symbol === MIR ? undefined : variables
   }
 
-  const query = useLazyContractQueries<Rate>(generate)
+  const query = useLazyContractQueries<Rate>(generate, "OraclePrice")
   return query
 }

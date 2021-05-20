@@ -5,10 +5,13 @@ import { useLazyContractQuery } from "../useContractQuery"
 const useMintPosition = (idx?: string) => {
   const { contracts } = useContractsAddress()
 
-  const query = useLazyContractQuery<MintPosition>({
-    contract: contracts["mint"],
-    msg: { position: { position_idx: idx } },
-  })
+  const query = useLazyContractQuery<MintPosition>(
+    {
+      contract: contracts["mint"],
+      msg: { position: { position_idx: idx } },
+    },
+    "MintPosition"
+  )
 
   const { load, refetch } = query.result
 

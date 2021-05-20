@@ -8,6 +8,6 @@ export default () => {
     msg: { pool_info: { asset_token: token } },
   })
 
-  const query = useLazyContractQueries<StakingPool>(generate)
+  const query = useLazyContractQueries<StakingPool>(generate, "StakingPool")
   return query
 }
