@@ -25,11 +25,11 @@ const App = () => {
             <Header />
             <Container>
               <MobileAlert />
-              <DelistAlert />
+              {wallet.address && <DelistAlert />}
               {routes()}
             </Container>
             <Footer />
-            <Airdrop />
+            {wallet.address && <Airdrop />}
           </StatsProvider>
         </ContractProvider>
       </WalletProvider>
