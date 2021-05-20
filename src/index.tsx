@@ -2,7 +2,6 @@ import { StrictMode } from "react"
 import { render } from "react-dom"
 import { BrowserRouter as Router } from "react-router-dom"
 import * as Sentry from "@sentry/react"
-import { Integrations } from "@sentry/tracing"
 
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration"
 import "./index.scss"
@@ -13,11 +12,7 @@ import Contract from "./layouts/Contract"
 import App from "./layouts/App"
 
 process.env.NODE_ENV === "production" &&
-  Sentry.init({
-    dsn: DSN,
-    integrations: [new Integrations.BrowserTracing()],
-    tracesSampleRate: 1.0,
-  })
+  Sentry.init({ dsn: DSN, tracesSampleRate: 1.0 })
 
 render(
   <StrictMode>
