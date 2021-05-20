@@ -24,6 +24,7 @@ import FormGroup from "../components/FormGroup"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
 import PriceChart from "../containers/PriceChart"
+import DelistModal from "../layouts/DelistModal"
 import { Type } from "../pages/Trade"
 import useTradeReceipt from "./receipts/useTradeReceipt"
 import useLimitOrderReceipt from "./receipts/useLimitOrderReceipt"
@@ -50,7 +51,8 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
   /* context */
   const { state } = useLocation<{ token: string }>()
   const { limitOrder: limitOrderContract } = useNetwork()
-  const { whitelist, getToken, getSymbol, toToken } = useContractsAddress()
+  const contractAddress = useContractsAddress()
+  const { whitelist, delist, getToken, getSymbol, toToken } = contractAddress
   const { find } = useContract()
   useRefetch([priceKey, balanceKey])
   usePolling()
@@ -376,6 +378,10 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   return (
     <FormContainer {...container} {...tax}>
+      {type === Type.BUY && !!delist[token] && (
+        <DelistModal tokens={[token]} key={token} />
+      )}
+
       <div className={styles.header}>
         <ToggleLimitOrder state={limitOrderState} />
         <SetSlippageTolerance state={slippageState} error={slippageError} />

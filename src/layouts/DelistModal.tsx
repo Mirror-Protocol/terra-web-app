@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { format } from "date-fns"
+import useLocalStorage from "../libs/useLocalStorage"
 import { useContractsAddress } from "../hooks"
 import Card from "../components/Card"
 import Button from "../components/Button"
@@ -10,20 +11,22 @@ import styles from "./DelistModal.module.scss"
 
 interface Props {
   tokens: string[]
-  onClose: () => void
 }
 
-const DelistModal = ({ tokens, onClose }: Props) => {
+const DelistModal = (props: Props) => {
   const { delist, getSymbol } = useContractsAddress()
   const modal = useModal(true)
   const [checked, setChecked] = useState(false)
+  const state = useLocalStorage<string[]>("doNotShowAgainDelist", [])
+  const [doNotShowAgain, setDoNotShowAgain] = state
+  const tokens = props.tokens.filter((token) => !doNotShowAgain.includes(token))
 
   const submit = () => {
+    checked && setDoNotShowAgain([...doNotShowAgain, ...tokens])
     modal.close()
-    onClose()
   }
 
-  return (
+  return !tokens.length ? null : (
     <Modal {...modal}>
       <Card title="Stock Split / Merge Notification" center>
         <div className={styles.contents}>
