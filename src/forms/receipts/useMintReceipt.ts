@@ -13,7 +13,7 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
   useRefetch([PriceKey.ORACLE, PriceKey.END])
 
   /* context */
-  const { whitelist, getSymbol, parseToken } = useContractsAddress()
+  const { getSymbol, parseToken, getIsDelisted } = useContractsAddress()
   const { find } = useContract()
   const val = findValue(logs)
 
@@ -78,7 +78,7 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
     : { amount: prevAsset?.amount, token: prevAsset?.token }
 
   const getPriceKey = (token: string) =>
-    whitelist[token].status === "DELISTED" ? PriceKey.END : PriceKey.ORACLE
+    getIsDelisted(token) ? PriceKey.END : PriceKey.ORACLE
 
   const collateralPrice =
     nextCollateral.token &&

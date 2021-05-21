@@ -71,10 +71,10 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
         ? ""
         : token.startsWith("u")
         ? token
-        : whitelist[token]?.["symbol"] ?? ""
+        : whitelist[token]?.symbol ?? ""
 
     const getIsDelisted = (token: string) =>
-      whitelist[token].status === "DELISTED"
+      whitelist[token]?.status === "DELISTED"
 
     const toAssetInfo = (token: string) =>
       token === UUSD
