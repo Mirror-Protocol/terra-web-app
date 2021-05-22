@@ -41,10 +41,13 @@ export default Reward
 /* hooks */
 const useCollected = () => {
   const { contracts } = useContractsAddress()
-  const { parsed } = useContractQueries<Balance>(({ token }) => ({
-    contract: token,
-    msg: { balance: { address: contracts["collector"] } },
-  }))
+  const { parsed } = useContractQueries<Balance>(
+    ({ token }) => ({
+      contract: token,
+      msg: { balance: { address: contracts["collector"] } },
+    }),
+    "CollectorBalance"
+  )
 
   return parsed && dict(parsed, ({ balance }) => balance)
 }

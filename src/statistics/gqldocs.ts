@@ -86,7 +86,7 @@ const alias = (
     }`
 
 export const prices = (tokens: string[], timestamp: number) => gql`
-  query {
+  query prices {
     ${tokens.map((token) => alias(token, timestamp))}
   }
 `

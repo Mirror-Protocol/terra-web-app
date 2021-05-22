@@ -20,8 +20,9 @@ interface LocalNetworkConfig {
   /** Graphql server URL */
   mantle: string
   stats: string
-  /** Ethereum */
+  /** Contracts */
   shuttle: Record<ShuttleNetwork, string>
+  limitOrder?: string
   /** Fixed fee */
   fee: { gasPrice: number; amount: number }
 }

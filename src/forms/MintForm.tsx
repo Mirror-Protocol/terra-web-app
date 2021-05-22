@@ -54,14 +54,13 @@ interface Props {
 }
 
 const MintForm = ({ position, type, tab, message }: Props) => {
-  const priceKey = PriceKey.ORACLE
   const balanceKey = BalanceKey.TOKEN
 
   /* context */
-  const { contracts, ...helpers } = useContractsAddress()
+  const { contracts, delist, ...helpers } = useContractsAddress()
   const { getSymbol, parseToken, toToken, toAssetInfo } = helpers
   const { find } = useContract()
-  const { loading } = useRefetch([priceKey, balanceKey])
+  const { loading } = useRefetch([PriceKey.ORACLE, PriceKey.END, balanceKey])
 
   /* context:position */
   const open = !position
@@ -104,16 +103,20 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   /* form:hook */
   const prevCollateral = position && parseToken(position.collateral)
   const prevAsset = position && parseToken(position.asset)
+  const prevCollateralDelisted = prevCollateral && delist[prevCollateral.token]
+  const prevAssetDelisted = prevAsset && delist[prevAsset.token]
+  const priceKey1 = prevCollateralDelisted ? PriceKey.END : PriceKey.ORACLE
+  const priceKey2 = prevAssetDelisted ? PriceKey.END : PriceKey.ORACLE
 
   const params = prevCollateral &&
     prevAsset && {
       collateral: {
         amount: prevCollateral.amount,
-        price: find(priceKey, prevCollateral.token),
+        price: find(priceKey1, prevCollateral.token),
       },
       asset: {
         amount: prevAsset.amount,
-        price: find(priceKey, prevAsset.token),
+        price: find(priceKey2, prevAsset.token),
       },
     }
 
@@ -132,7 +135,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   const { values, setValue, setValues, getFields } = form
   const { touched, errors, attrs, invalid } = form
   const { token1, token2, value1, value2, ratio } = values
-  const amount1 = toAmount(value1)
+  const amount1 = close ? prevCollateral?.amount ?? "0" : toAmount(value1)
   const amount2 = toAmount(value2)
   const symbol1 = getSymbol(token1)
   const symbol2 = getSymbol(token2)
@@ -151,8 +154,8 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   }
 
   /* simulation */
-  const price1 = find(priceKey, token1)
-  const price2 = find(priceKey, token2)
+  const price1 = find(priceKey1, token1)
+  const price2 = find(priceKey2, token2)
   const reversed = !!form.changed && form.changed !== Key.value1
   const operate = type === Type.DEPOSIT || type === Type.CUSTOM ? plus : minus
   const nextCollateralAmount = max([
@@ -227,8 +230,17 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     dim: (token) => isClosed(getSymbol(token)),
   }
 
-  const select1 = useSelectAsset({ priceKey, balanceKey, ...config1 })
-  const select2 = useSelectAsset({ priceKey, balanceKey, ...config2 })
+  const select1 = useSelectAsset({
+    priceKey: priceKey1,
+    balanceKey,
+    ...config1,
+  })
+
+  const select2 = useSelectAsset({
+    priceKey: priceKey2,
+    balanceKey,
+    ...config2,
+  })
 
   const { getMax: getMaxAmount } = useTax()
   const maxAmount =
@@ -335,7 +347,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   }, [minRatio, setValues])
 
   /* confirm */
-  const price = div(find(priceKey, token2), find(priceKey, token1))
+  const price = div(find(priceKey2, token2), find(priceKey1, token1))
 
   const priceContents = {
     title: <TooltipIcon content={Tooltip.Mint.Price}>Price</TooltipIcon>,
@@ -359,6 +371,8 @@ const MintForm = ({ position, type, tab, message }: Props) => {
 
   const PROTOCOL_FEE = 0.015
   const getProtocolFee = (n = "0") => times(n, PROTOCOL_FEE)
+  const closeDelistedAsset =
+    prevAssetDelisted && prevAsset && gt(prevAsset.amount, 0)
 
   const contents = {
     [Type.OPEN]: !gt(price, 0) ? undefined : [priceContents],
@@ -368,14 +382,16 @@ const MintForm = ({ position, type, tab, message }: Props) => {
         title: "Burn Amount",
         content: <Count symbol={prevAsset?.symbol}>{prevAsset?.amount}</Count>,
       },
-      {
-        title: "Withdraw Amount",
-        content: (
-          <Count symbol={prevCollateral?.symbol}>
-            {prevCollateral?.amount}
-          </Count>
-        ),
-      },
+      closeDelistedAsset
+        ? undefined
+        : {
+            title: "Withdraw Amount",
+            content: (
+              <Count symbol={prevCollateral?.symbol}>
+                {prevCollateral?.amount}
+              </Count>
+            ),
+          },
       {
         title: (
           <TooltipIcon content={Tooltip.Mint.ProtocolFee}>
@@ -414,7 +430,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
         content: <Count symbol={symbol2}>{nextAssetAmount}</Count>,
       },
     ],
-  }[type]
+  }[type]?.filter(Boolean) as Content[]
 
   /* submit */
   const newContractMsg = useNewContractMsg()
@@ -466,7 +482,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
           })
         : newContractMsg(token1, createSend(deposit, amount1))
       : undefined,
-  ].filter(Boolean) as MsgExecuteContract[]
+  ]
 
   const data = {
     [Type.OPEN]: [
@@ -478,8 +494,12 @@ const MintForm = ({ position, type, tab, message }: Props) => {
         : newContractMsg(token1, createSend(openPosition, amount1)),
     ],
     [Type.CLOSE]: [
-      newContractMsg(token2, createSend(burn, prevAsset?.amount)),
-      newContractMsg(contracts["mint"], withdraw),
+      prevAsset && gt(prevAsset.amount, 0)
+        ? newContractMsg(token2, createSend(burn, prevAsset?.amount))
+        : undefined,
+      closeDelistedAsset
+        ? undefined
+        : newContractMsg(contracts["mint"], withdraw),
     ],
     [Type.DEPOSIT]: [
       isCollateralUST
@@ -491,7 +511,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     ],
     [Type.WITHDRAW]: [newContractMsg(contracts["mint"], withdraw)],
     [Type.CUSTOM]: gt(amount1, 0) ? reverse(customData) : customData,
-  }[type]
+  }[type]?.filter(Boolean) as MsgExecuteContract[]
 
   const ratioMessages = errors[Key.ratio]
     ? [errors[Key.ratio]]

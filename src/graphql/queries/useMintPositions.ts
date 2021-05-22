@@ -19,7 +19,11 @@ export default () => {
     },
   }
 
-  const query = useContractQuery<MintPositions>(variables)
+  const query = useContractQuery<MintPositions>(
+    variables,
+    `MintPositions${offset ?? ""}`
+  )
+
   const { parsed } = query
 
   useEffect(() => {

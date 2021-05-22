@@ -6,6 +6,7 @@ import { ContractProvider, useContractState } from "../hooks/useContract"
 import useAssets from "../hooks/useAssets"
 import { StatsProvider, useStatsState } from "../statistics/useStats"
 import MobileAlert from "./MobileAlert"
+import DelistAlert from "./DelistAlert"
 import Airdrop from "./Airdrop"
 import Header from "./Header"
 import Footer from "./Footer"
@@ -27,10 +28,11 @@ const App = () => {
             <Header />
             <Container>
               <MobileAlert />
+              {wallet.address && <DelistAlert />}
               {routes()}
             </Container>
             <Footer />
-            <Airdrop />
+            {wallet.address && <Airdrop />}
           </StatsProvider>
         </ContractProvider>
       </WalletProvider>

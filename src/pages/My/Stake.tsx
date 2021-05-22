@@ -92,7 +92,7 @@ const Stake = ({ loading, dataSource, ...props }: Props) => {
             {
               key: "apr",
               title: <TooltipIcon content={Tooltip.My.APR}>APR</TooltipIcon>,
-              render: (value) => percent(value),
+              render: (value = "0") => percent(value),
               align: "right",
             },
             {
@@ -130,7 +130,7 @@ const Stake = ({ loading, dataSource, ...props }: Props) => {
             {
               key: "actions",
               dataIndex: "token",
-              render: (token, { gov }) => {
+              render: (token, { status, gov }) => {
                 const edit = !gov
                   ? `${getPath(MenuKey.STAKE)}/${token}`
                   : `${getPath(MenuKey.GOV)}/stake`
@@ -139,11 +139,12 @@ const Stake = ({ loading, dataSource, ...props }: Props) => {
                   ? `${getPath(MenuKey.STAKE)}/${token}/claim`
                   : ``
 
-                const list = [
-                  {
-                    to: { pathname: edit, hash: Type.STAKE },
-                    children: Type.STAKE,
-                  },
+                const stakeItem = {
+                  to: { pathname: edit, hash: Type.STAKE },
+                  children: Type.STAKE,
+                }
+
+                const defaultList = [
                   {
                     to: { pathname: edit, hash: Type.UNSTAKE },
                     children: Type.UNSTAKE,
@@ -153,6 +154,11 @@ const Stake = ({ loading, dataSource, ...props }: Props) => {
                     children: StakeMenuKey.CLAIMSYMBOL,
                   },
                 ]
+
+                const list =
+                  status === "LISTED"
+                    ? [stakeItem, ...defaultList]
+                    : defaultList
 
                 return <DashboardActions list={list} />
               },

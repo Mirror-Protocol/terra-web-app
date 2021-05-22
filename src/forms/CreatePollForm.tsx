@@ -615,7 +615,11 @@ export default CreatePollForm
 const useCommunityPool = () => {
   const { contracts } = useContractsAddress()
   const variables = { contract: contracts["community"], msg: { config: {} } }
-  const query = useContractQuery<{ spend_limit: string }>(variables)
+  const query = useContractQuery<{ spend_limit: string }>(
+    variables,
+    "CommunityPool"
+  )
+
   return query
 }
 
@@ -626,7 +630,10 @@ const useDistributionInfo = () => {
     msg: { distribution_info: {} },
   }
 
-  const { parsed } = useContractQuery<{ weights: [string, number][] }>(params)
+  const { parsed } = useContractQuery<{ weights: [string, number][] }>(
+    params,
+    "DistributionInfo"
+  )
 
   return (token: string) =>
     parsed?.weights.find(([addr]) => addr === token)?.[1]

@@ -28,6 +28,7 @@ interface AssetData extends Asset {
 
 interface Data {
   idx: string
+  status: ListedItemStatus
   collateral: AssetData
   asset: AssetData
   ratio?: string
@@ -85,8 +86,7 @@ const Mint = ({ loading, dataSource, ...props }: Props) => {
             {
               key: "idx",
               title: "ID",
-              render: (idx, { warning, danger, collateral, asset }) => {
-                const isDelisted = collateral.delisted || asset.delisted
+              render: (idx, { warning, danger, status }) => {
                 const shouldWarn = warning || danger
                 const className = classNames(styles.idx, { red: shouldWarn })
                 const tooltip = warning
@@ -95,7 +95,7 @@ const Mint = ({ loading, dataSource, ...props }: Props) => {
 
                 return (
                   <>
-                    {isDelisted && <Delisted />}
+                    {status === "DELISTED" && <Delisted />}
                     <span className={className}>
                       {idx}
                       {shouldWarn && (
@@ -186,25 +186,31 @@ const Mint = ({ loading, dataSource, ...props }: Props) => {
             {
               key: "actions",
               dataIndex: "idx",
-              render: (idx) => {
+              render: (idx, { status }) => {
                 const to = {
                   pathname: getPath(MenuKey.MINT),
                   search: `idx=${idx}`,
                 }
-                const list = [
-                  {
-                    to: { ...to, hash: Type.DEPOSIT },
-                    children: Type.DEPOSIT,
-                  },
-                  {
-                    to: { ...to, hash: Type.WITHDRAW },
-                    children: Type.WITHDRAW,
-                  },
-                  {
-                    to: { ...to, hash: Type.CLOSE },
-                    children: `${Type.CLOSE} position`,
-                  },
-                ]
+
+                const depositItem = {
+                  to: { ...to, hash: Type.DEPOSIT },
+                  children: Type.DEPOSIT,
+                }
+
+                const withdrawItem = {
+                  to: { ...to, hash: Type.WITHDRAW },
+                  children: Type.WITHDRAW,
+                }
+
+                const closeItem = {
+                  to: { ...to, hash: Type.CLOSE },
+                  children: `${Type.CLOSE} position`,
+                }
+
+                const list =
+                  status === "LISTED"
+                    ? [depositItem, withdrawItem, closeItem]
+                    : [withdrawItem, closeItem]
 
                 return <DashboardActions list={list} />
               },

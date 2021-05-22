@@ -18,7 +18,7 @@ const Modal: FC<Modal> = ({ isOpen, close, children }) => (
 export default Modal
 
 /* modal */
-export const useModal = () => {
-  const [isOpen, setIsOpen] = useState(false)
+export const useModal = (initial = false) => {
+  const [isOpen, setIsOpen] = useState(initial)
   return { isOpen, open: () => setIsOpen(true), close: () => setIsOpen(false) }
 }

@@ -9,6 +9,8 @@ interface ContractAddressJSON {
   contracts: Dictionary<string>
   /** Token addresses */
   whitelist: Dictionary<ListedItem>
+  /** Delist schedules */
+  delist: Dictionary<DelistItem>
 }
 
 interface ContractAddressHelpers {
@@ -19,6 +21,8 @@ interface ContractAddressHelpers {
   getToken: (symbol?: string) => string
   /** Find symbol with token */
   getSymbol: (token?: string) => string
+  /** Status */
+  getIsDelisted: (token: string) => boolean
   /** Convert structure for chain */
   toAssetInfo: (token: string) => AssetInfo | NativeInfo
   toToken: (params: Asset) => Token
@@ -42,7 +46,7 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
         const json: ContractAddressJSON = await response.json()
         setData(json)
       } catch {
-        setData({ contracts: {}, whitelist: {} })
+        setData({ contracts: {}, whitelist: {}, delist: {} })
       }
     }
 
@@ -67,7 +71,10 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
         ? ""
         : token.startsWith("u")
         ? token
-        : whitelist[token]?.["symbol"] ?? ""
+        : whitelist[token]?.symbol ?? ""
+
+    const getIsDelisted = (token: string) =>
+      whitelist[token]?.status === "DELISTED"
 
     const toAssetInfo = (token: string) =>
       token === UUSD
@@ -98,6 +105,7 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
       listedAll,
       getToken,
       getSymbol,
+      getIsDelisted,
       toAssetInfo,
       toToken,
       parseToken,

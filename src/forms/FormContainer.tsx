@@ -69,7 +69,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   const { loading } = result.uusd
 
   /* tax */
-  const fee = useFee()
+  const fee = useFee(msgs?.length)
   const { calcTax, loading: loadingTax } = useTax()
   const tax = pretax ? calcTax(pretax) : "0"
   const uusdAmount = !deduct

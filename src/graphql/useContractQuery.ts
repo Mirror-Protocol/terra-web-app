@@ -1,16 +1,22 @@
 import { useQuery, useLazyQuery } from "@apollo/client"
-import { CONTRACT, WASMQUERY } from "./gqldocs"
+import { getContract, WASMQUERY } from "./gqldocs"
 import { parseResult } from "./response"
 
-export const useLazyContractQuery = <Parsed>(params: ContractVariables) => {
+export const useLazyContractQuery = <Parsed>(
+  params: ContractVariables,
+  name: string
+) => {
   const variables = generateVariables(params)
-  const [load, result] = useLazyQuery<ContractsData>(CONTRACT, { variables })
+  const [load, result] = useLazyQuery<ContractsData>(getContract(name), {
+    variables,
+  })
+
   return { result: { load, ...result }, parsed: parse<Parsed>(result) }
 }
 
-export default <Parsed>(params: ContractVariables) => {
+export default <Parsed>(params: ContractVariables, name: string) => {
   const variables = generateVariables(params)
-  const result = useQuery<ContractsData>(CONTRACT, { variables })
+  const result = useQuery<ContractsData>(getContract(name), { variables })
   return { result, parsed: parse<Parsed>(result) }
 }
 

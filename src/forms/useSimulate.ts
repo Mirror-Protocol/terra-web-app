@@ -41,7 +41,11 @@ export default ({ amount, token, pair, reverse, type }: Params) => {
   }
 
   const valid = amount && gt(amount, 0) && token && pair
-  const { result, parsed } = useLazyContractQuery<SimulatedData>(variables)
+  const { result, parsed } = useLazyContractQuery<SimulatedData>(
+    variables,
+    "Simulate"
+  )
+
   const { load, error } = result
 
   useEffect(() => {

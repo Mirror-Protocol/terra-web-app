@@ -5,6 +5,6 @@ export default () => {
     return { token, contract: pair, msg: { pool: {} } }
   }
 
-  const query = useLazyContractQueries<PairPool>(generate)
+  const query = useLazyContractQueries<PairPool>(generate, "PairPool")
   return query
 }

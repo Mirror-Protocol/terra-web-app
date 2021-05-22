@@ -4,6 +4,8 @@
 .modal {
   width: 620px;
   outline: 0;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 
 .overlay {
@@ -14,4 +16,5 @@
   right: 0;
   bottom: 0;
   background: fade-out(#070a13, 0.2);
+  z-index: $zindex-modal;
 }

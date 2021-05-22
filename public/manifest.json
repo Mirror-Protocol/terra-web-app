@@ -1,0 +1,15 @@
+{
+  "short_name": "Mirror",
+  "name": "Mirror",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#172240",
+  "background_color": "#172240"
+}

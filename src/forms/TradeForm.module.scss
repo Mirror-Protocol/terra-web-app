@@ -1,0 +1,7 @@
+@import "mixins";
+
+.header {
+  @include flex(space-between);
+  margin-top: -10px;
+  margin-bottom: 20px;
+}

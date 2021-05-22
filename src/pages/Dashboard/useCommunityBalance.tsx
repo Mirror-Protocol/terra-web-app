@@ -16,7 +16,11 @@ const useCommunityCurrentBalance = () => {
     msg: { balance: { address: contracts["community"] } },
   }
 
-  const result = useContractQuery<{ balance: string }>(query)
+  const result = useContractQuery<{ balance: string }>(
+    query,
+    `CommunityMirrorTokenBalance`
+  )
+
   return result
 }
 

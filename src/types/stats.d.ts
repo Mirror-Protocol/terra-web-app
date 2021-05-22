@@ -56,3 +56,14 @@ interface Yesterday {
   pair: Dict<string | undefined>
   oracle: Dict<string | undefined>
 }
+
+/* cdp */
+interface CDP {
+  address: string
+  collateralAmount: string
+  collateralRatio: string
+  collateralToken: string
+  id: string
+  mintAmount: string
+  token: string
+}

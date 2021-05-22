@@ -15,8 +15,16 @@ interface ListedItem {
   token: string
   pair: string
   lpToken: string
-  status: "LISTED" | "DELISTED"
+  status: ListedItemStatus
 }
+
+interface DelistItem {
+  symbol: string
+  date: string
+  ratio: string
+}
+
+type ListedItemStatus = "LISTED" | "DELISTED"
 
 /* chain */
 interface AssetInfo {

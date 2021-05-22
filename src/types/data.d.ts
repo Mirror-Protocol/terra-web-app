@@ -23,6 +23,7 @@ interface PairPool {
 /* Contract Info */
 interface MintInfo {
   min_collateral_ratio: string
+  end_price: string
 }
 
 interface StakingPool {
@@ -62,4 +63,14 @@ interface MintPosition {
   owner: string
   collateral: AssetToken | NativeToken
   asset: AssetToken
+}
+
+/* Limit order */
+interface Order {
+  order_id: number
+  bidder_addr: string
+  offer_asset: AssetToken | NativeToken
+  ask_asset: AssetToken | NativeToken
+  filled_offer_amount: string
+  filled_ask_amount: string
 }

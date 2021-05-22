@@ -32,6 +32,8 @@ export interface Props {
   shadow?: boolean
   /** Show loading indicator to the right of title */
   loading?: boolean
+  /** Center title */
+  center?: boolean
 }
 
 interface Badge {
