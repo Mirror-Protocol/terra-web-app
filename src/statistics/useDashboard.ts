@@ -13,7 +13,7 @@ export enum StatsNetwork {
 
 export default (initial = StatsNetwork.TERRA) => {
   const [network, setNetwork] = useState<StatsNetwork>(initial)
-  const { dashboard, store } = useStats()
+  const { getDashboard, store } = useStats()
 
   const now = getTime(startOfMinute(new Date()))
   const genesis = getTime(startOfMinute(subDays(new Date(), 100)))
@@ -22,8 +22,8 @@ export default (initial = StatsNetwork.TERRA) => {
   const result = useQuery<{ statistic: Dashboard }>(STATISTICS, {
     variables: { from: genesis, to: now, network: network.toUpperCase() },
     client,
-    onCompleted: ({ statistic }) => store.dashboard(statistic),
+    onCompleted: ({ statistic }) => store.dashboard({ [network]: statistic }),
   })
 
-  return { ...result, dashboard, network, setNetwork }
+  return { ...result, dashboard: getDashboard(network), network, setNetwork }
 }

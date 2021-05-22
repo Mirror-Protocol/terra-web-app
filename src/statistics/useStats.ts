@@ -1,12 +1,15 @@
 import { Dispatch, SetStateAction, useState } from "react"
 import createContext from "../hooks/createContext"
+import { StatsNetwork } from "./useDashboard"
+
+type DashboardByNetwork = Record<StatsNetwork, Dashboard | undefined>
 
 interface Stats {
-  dashboard?: Dashboard
+  getDashboard: (network: StatsNetwork) => Dashboard | undefined
   assets: AssetStats
   yesterday: Yesterday
   store: {
-    dashboard: Dispatch<SetStateAction<Dashboard | undefined>>
+    dashboard: (data: Partial<DashboardByNetwork>) => void
     assets: Dispatch<SetStateAction<AssetStats>>
     yesterday: Dispatch<SetStateAction<Yesterday>>
   }
@@ -26,15 +29,23 @@ export const useStatsState = (): Stats => {
   }
 
   const initialYesterday = { pair: {}, oracle: {} }
-  const [dashboard, setDashboard] = useState<Dashboard>()
+  const initDashboard = () =>
+    Object.keys(StatsNetwork).reduce(
+      (acc, key) => ({ ...acc, [key]: undefined }),
+      {} as DashboardByNetwork
+    )
+
+  const [dashboard, setDashboard] = useState<DashboardByNetwork>(initDashboard)
   const [assets, setAssets] = useState<AssetStats>(initialAssets)
   const [yesterday, setYesterday] = useState<Yesterday>(initialYesterday)
 
+  const getDashboard = (network: StatsNetwork) => dashboard[network]
   const store = {
-    dashboard: setDashboard,
+    dashboard: (data: Partial<DashboardByNetwork>) =>
+      setDashboard((dashboard) => ({ ...dashboard, ...data })),
     assets: setAssets,
     yesterday: setYesterday,
   }
 
-  return { dashboard, assets, yesterday, store }
+  return { getDashboard, assets, yesterday, store }
 }
