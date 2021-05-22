@@ -3,15 +3,22 @@ import { getIcon } from "../components/TokenPair"
 import { useContractsAddress } from "./useContractsAddress"
 
 const useAssets = () => {
-  const { listed } = useContractsAddress()
+  const { listed, listedAll } = useContractsAddress()
   const tokens = JSON.stringify(
-    listed.reduce(
-      (acc, { symbol, token }) => ({
+    listedAll.reduce((acc, { symbol, name, token, status }) => {
+      const suffix = status === "DELISTED" ? " (Delisted)" : ""
+
+      return {
         ...acc,
-        [token]: { symbol, token, icon: getIcon(symbol) },
-      }),
-      {}
-    )
+        [token]: {
+          protocol: "Mirror",
+          symbol: symbol + suffix,
+          name,
+          token,
+          icon: getIcon(symbol),
+        },
+      }
+    }, {})
   )
 
   const pairs = JSON.stringify(
