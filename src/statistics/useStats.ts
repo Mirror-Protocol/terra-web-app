@@ -2,15 +2,16 @@ import { Dispatch, SetStateAction, useState } from "react"
 import createContext from "../hooks/createContext"
 import { StatsNetwork } from "./useDashboard"
 
-type DashboardByNetwork = Record<StatsNetwork, Dashboard | undefined>
+type ByNetwork<T> = Record<StatsNetwork, T | undefined>
 
 interface Stats {
   getDashboard: (network: StatsNetwork) => Dashboard | undefined
-  assets: AssetStats
+  getAssets: (network: StatsNetwork) => AssetStats | undefined
   yesterday: Yesterday
+
   store: {
-    dashboard: (data: Partial<DashboardByNetwork>) => void
-    assets: Dispatch<SetStateAction<AssetStats>>
+    dashboard: (data: Dashboard, network: StatsNetwork) => void
+    assets: (data: AssetStats, network: StatsNetwork) => void
     yesterday: Dispatch<SetStateAction<Yesterday>>
   }
 }
@@ -20,32 +21,27 @@ export const [useStats, StatsProvider] = stats
 
 /* state */
 export const useStatsState = (): Stats => {
-  const initialAssets = {
-    description: {},
-    liquidity: {},
-    volume: {},
-    apr: {},
-    apy: {},
-  }
-
   const initialYesterday = { pair: {}, oracle: {} }
-  const initDashboard = () =>
+  const init = () =>
     Object.keys(StatsNetwork).reduce(
       (acc, key) => ({ ...acc, [key]: undefined }),
-      {} as DashboardByNetwork
+      {} as ByNetwork<any>
     )
 
-  const [dashboard, setDashboard] = useState<DashboardByNetwork>(initDashboard)
-  const [assets, setAssets] = useState<AssetStats>(initialAssets)
+  const [dashboard, setDashboard] = useState<ByNetwork<Dashboard>>(init)
+  const [assets, setAssets] = useState<ByNetwork<AssetStats>>(init)
   const [yesterday, setYesterday] = useState<Yesterday>(initialYesterday)
 
   const getDashboard = (network: StatsNetwork) => dashboard[network]
+  const getAssets = (network: StatsNetwork) => assets[network]
+
   const store = {
-    dashboard: (data: Partial<DashboardByNetwork>) =>
-      setDashboard((dashboard) => ({ ...dashboard, ...data })),
-    assets: setAssets,
+    dashboard: (data: Dashboard, network: StatsNetwork) =>
+      setDashboard((prev) => ({ ...prev, [network]: data })),
+    assets: (data: AssetStats, network: StatsNetwork) =>
+      setAssets((prev) => ({ ...prev, [network]: data })),
     yesterday: setYesterday,
   }
 
-  return { getDashboard, assets, yesterday, store }
+  return { getDashboard, getAssets, yesterday, store }
 }

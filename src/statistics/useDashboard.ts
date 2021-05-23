@@ -22,7 +22,7 @@ export default (initial = StatsNetwork.TERRA) => {
   const result = useQuery<{ statistic: Dashboard }>(STATISTICS, {
     variables: { from: genesis, to: now, network: network.toUpperCase() },
     client,
-    onCompleted: ({ statistic }) => store.dashboard({ [network]: statistic }),
+    onCompleted: ({ statistic }) => store.dashboard(statistic, network),
   })
 
   return { ...result, dashboard: getDashboard(network), network, setNetwork }

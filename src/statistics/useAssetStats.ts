@@ -5,16 +5,16 @@ import { useStats } from "./useStats"
 import useStatsClient from "./useStatsClient"
 
 export default (network = StatsNetwork.TERRA) => {
-  const { assets, store } = useStats()
+  const { getAssets, store } = useStats()
   const client = useStatsClient()
 
   const result = useQuery<{ assets: AssetStatsData[] }>(ASSETSTATS, {
     variables: { network: network.toUpperCase() },
     client,
-    onCompleted: ({ assets }) => store.assets(parse(assets)),
+    onCompleted: ({ assets }) => store.assets(parse(assets), network),
   })
 
-  return { ...result, ...assets }
+  return { ...result, ...getAssets(network) }
 }
 
 /* parse */

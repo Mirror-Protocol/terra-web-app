@@ -28,7 +28,7 @@ const TopTrading = ({ network }: { network: StatsNetwork }) => {
   const { loading, data } = useRefetch(keys)
 
   const dataSource = listed
-    .filter(({ token }) => gt(liquidity[token] ?? 0, 0))
+    .filter(({ token }) => gt(liquidity?.[token] ?? 0, 0))
     .map((item) => {
       const { token } = item
       const pair = find(PriceKey.PAIR, token)
@@ -52,8 +52,8 @@ const TopTrading = ({ network }: { network: StatsNetwork }) => {
           }),
         },
         premium,
-        liquidity: liquidity[token] ?? "0",
-        volume: volume[token] ?? "0",
+        liquidity: liquidity?.[token] ?? "0",
+        volume: volume?.[token] ?? "0",
       }
     })
     .sort((a, b) => (lt(a.volume, b.volume) ? 1 : -1))

@@ -29,8 +29,8 @@ const StakeList = () => {
   const getPool = usePool()
 
   const getItem = ({ token }: ListedItem) => {
-    const apy = stats["apy"][token] ?? "0"
-    const apr = stats["apr"][token] ?? "0"
+    const apy = stats?.["apy"]?.[token] ?? "0"
+    const apr = stats?.["apr"]?.[token] ?? "0"
     const symbol = getSymbol(token)
 
     const totalStakedLP = find(AssetInfoKey.LPTOTALSTAKED, token)
@@ -66,7 +66,9 @@ const StakeList = () => {
       <Grid wrap={3}>
         {listed
           .map(getItem)
-          .sort(({ token: a }, { token: b }) => number(minus(apr[b], apr[a])))
+          .sort(({ token: a }, { token: b }) =>
+            number(minus(apr?.[b], apr?.[a]))
+          )
           .sort(
             ({ symbol: a }, { symbol: b }) =>
               Number(b === "MIR") - Number(a === "MIR")

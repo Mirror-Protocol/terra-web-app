@@ -121,7 +121,7 @@ const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
 
       <section className={styles.description}>
         <PriceChartDescription key={token}>
-          {description[token]}
+          {description?.[token]}
         </PriceChartDescription>
       </section>
     </div>
