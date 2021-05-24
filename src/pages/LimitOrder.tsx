@@ -1,7 +1,7 @@
 import { RouteProps, useRouteMatch } from "react-router-dom"
 import Page from "../components/Page"
 import CancelOrderForm from "../forms/CancelOrderForm"
-import { useNetwork } from "../hooks"
+import { useContractsAddress } from "../hooks"
 import routes from "../routes"
 import { useQueryOrder } from "./My/useMyOrders"
 
@@ -13,13 +13,13 @@ const CancelOrder = () => {
   const { params } = useRouteMatch<{ id: string }>()
   const { id } = params
 
-  const { limitOrder } = useNetwork()
+  const { contracts } = useContractsAddress()
   const { parsed } = useQueryOrder(Number(id))
 
   return (
     <Page title={MenuKey.CANCEL}>
-      {limitOrder && parsed && (
-        <CancelOrderForm order={parsed} contract={limitOrder} />
+      {parsed && (
+        <CancelOrderForm order={parsed} contract={contracts["limitOrder"]} />
       )}
     </Page>
   )

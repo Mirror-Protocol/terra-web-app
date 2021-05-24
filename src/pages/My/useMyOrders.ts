@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { last } from "ramda"
 import { UUSD } from "../../constants"
 import useContractQuery from "../../graphql/useContractQuery"
-import { useContractsAddress, useContract, useNetwork } from "../../hooks"
+import { useContractsAddress, useContract } from "../../hooks"
 import { useCombineKeys, useWallet } from "../../hooks"
 import { PriceKey } from "../../hooks/contractKeys"
 import { div, minus, sum, times } from "../../libs/math"
@@ -79,7 +79,7 @@ export default useMyOrders
 /* query */
 const LIMIT = 30
 export const useQueryOrders = () => {
-  const { limitOrder = "" } = useNetwork()
+  const { contracts } = useContractsAddress()
   const { address } = useWallet()
 
   const [orders, setOrders] = useState<Order[]>([])
@@ -88,7 +88,7 @@ export const useQueryOrders = () => {
 
   const query = useContractQuery<{ orders: Order[] }>(
     {
-      contract: limitOrder,
+      contract: contracts["limitOrder"],
       msg: {
         orders: { bidder_addr: address, limit: LIMIT, start_after: offset },
       },
@@ -113,11 +113,11 @@ export const useQueryOrders = () => {
 }
 
 export const useQueryOrder = (id: number) => {
-  const { limitOrder = "" } = useNetwork()
+  const { contracts } = useContractsAddress()
 
   return useContractQuery<Order>(
     {
-      contract: limitOrder,
+      contract: contracts["limitOrder"],
       msg: { order: { order_id: id } },
     },
     `LimitOrder${id}`
