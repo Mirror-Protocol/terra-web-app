@@ -1,5 +1,5 @@
 import useURL from "../graphql/useURL"
-import { useContractsAddress, useWallet } from "../hooks"
+import { useContractsAddress, useAddress } from "../hooks"
 import ExtLink from "../components/ExtLink"
 import styles from "./ContractError.module.scss"
 
@@ -27,7 +27,7 @@ export default ContractError
 /* hook */
 export const useParseContractError = (message: string) => {
   const { contracts, getSymbol } = useContractsAddress()
-  const { address } = useWallet()
+  const address = useAddress()
   const getURL = useURL()
 
   try {

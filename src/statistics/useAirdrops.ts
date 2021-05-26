@@ -1,13 +1,13 @@
 import { useState } from "react"
 import { useQuery } from "@apollo/client"
 import { gt, sum } from "../libs/math"
-import { useWallet } from "../hooks/useWallet"
+import useAddress from "../hooks/useAddress"
 import AIRDROP from "../airdrop/gqldocs"
 import useStatsClient from "./useStatsClient"
 
 export default () => {
   const [airdropList, setAirdropList] = useState<Airdrop[]>()
-  const { address } = useWallet()
+  const address = useAddress()
   const client = useStatsClient()
 
   const { loading } = useQuery<{ airdrop: Airdrop[] }>(AIRDROP, {

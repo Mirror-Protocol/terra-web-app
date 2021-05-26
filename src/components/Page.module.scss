@@ -5,8 +5,11 @@
 }
 
 .header {
-  @include flex(space-between);
   margin-bottom: 20px;
+
+  @include desktop {
+    @include flex(space-between);
+  }
 }
 
 .heading {
@@ -58,12 +61,6 @@
 
 .icon {
   margin-right: 4px;
-}
-
-.action {
-  @include mobile {
-    display: none;
-  }
 }
 
 .description {

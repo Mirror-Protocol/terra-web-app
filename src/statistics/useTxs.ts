@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { gql, useQuery } from "@apollo/client"
 import { UUSD } from "../constants"
-import { useWallet } from "../hooks"
+import { useAddress } from "../hooks"
 import useStatsClient from "./useStatsClient"
 
 const LIMIT = 30
@@ -31,7 +31,7 @@ const useTxs = () => {
   const [done, setDone] = useState(true)
 
   const client = useStatsClient()
-  const { address } = useWallet()
+  const address = useAddress()
   const query = useQuery<{ txs: Tx[] }>(TXS, {
     client,
     variables: { account: address, offset, limit: LIMIT },

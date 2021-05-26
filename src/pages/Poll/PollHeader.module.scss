@@ -2,11 +2,14 @@
 @import "variables";
 
 .wrapper {
-  @include flex(space-between);
   margin-bottom: 20px;
 
   :only-child {
     flex: 1;
+  }
+
+  @include desktop {
+    @include flex(space-between);
   }
 }
 

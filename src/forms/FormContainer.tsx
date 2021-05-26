@@ -1,17 +1,22 @@
 import { useState } from "react"
 import { ReactNode, HTMLAttributes, FormEvent } from "react"
-import { Msg } from "@terra-money/terra.js"
+import { Msg, StdFee } from "@terra-money/terra.js"
+import { useWallet } from "@terra-money/wallet-provider"
+import { TxResult } from "@terra-money/wallet-provider"
+import { UserDenied, CreateTxFailed } from "@terra-money/wallet-provider"
+import { TxFailed, TxUnspecifiedError } from "@terra-money/wallet-provider"
 
 import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
 import { UUSD } from "../constants"
 import { gt, plus, sum } from "../libs/math"
 import useHash from "../libs/useHash"
-import extension, { PostResponse } from "../terra/extension"
-import { useContract, useSettings, useWallet } from "../hooks"
+import { useContract, useSettings, useAddress } from "../hooks"
 import useTax from "../graphql/useTax"
 import useFee from "../graphql/useFee"
 
+import { useModal } from "../containers/Modal"
+import ConnectListModal from "../layouts/ConnectListModal"
 import Container from "../components/Container"
 import Tab from "../components/Tab"
 import Card from "../components/Card"
@@ -55,17 +60,25 @@ interface Props {
   children?: ReactNode
 }
 
+export type PostError =
+  | UserDenied
+  | CreateTxFailed
+  | TxFailed
+  | TxUnspecifiedError
+
 export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
   const { contents, messages, label, tab, children } = props
   const { attrs, pretax, deduct, parseTx = () => [], gov } = props
 
   /* context */
+  const modal = useModal()
+  const { post } = useWallet()
   const { hash } = useHash()
   const { agreementState } = useSettings()
   const [hasAgreed] = agreementState
 
   const { uusd, result } = useContract()
-  const { address, connect } = useWallet()
+  const address = useAddress()
   const { loading } = result.uusd
 
   /* tax */
@@ -88,19 +101,29 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
 
   /* submit */
   const [submitted, setSubmitted] = useState(false)
-  const [response, setResponse] = useState<PostResponse>()
+  const [response, setResponse] = useState<TxResult>()
+  const [error, setError] = useState<PostError>()
   const disabled =
     loadingTax || props.disabled || invalid || submitted || !msgs?.length
 
   const submit = async () => {
     setSubmitted(true)
 
-    const response = await extension.post(
-      { msgs, memo },
-      { ...fee, tax: !deduct ? tax : undefined }
-    )
+    try {
+      const { gas, gasPrice, amount } = fee
+      const txOptions = {
+        msgs,
+        memo,
+        gasPrices: `${gasPrice}uusd`,
+        fee: new StdFee(gas, { uusd: plus(amount, !deduct ? tax : undefined) }),
+        purgeQueue: true,
+      }
 
-    setResponse(response)
+      const response = await post(txOptions)
+      setResponse(response)
+    } catch (error) {
+      setError(error)
+    }
   }
 
   /* reset */
@@ -108,6 +131,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
     setConfirming(false)
     setSubmitted(false)
     setResponse(undefined)
+    setError(undefined)
   }
 
   /* event */
@@ -126,7 +150,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
           disabled,
         }
       : {
-          onClick: connect,
+          onClick: () => modal.open(),
           children: MESSAGE.Form.Button.ConnectWallet,
         }
 
@@ -169,8 +193,14 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
 
   return (
     <Container sm>
-      {response ? (
-        <Result {...response} parseTx={parseTx} onFailure={reset} gov={gov} />
+      {error || response ? (
+        <Result
+          response={response}
+          error={error}
+          parseTx={parseTx}
+          onFailure={reset}
+          gov={gov}
+        />
       ) : (
         <form {...attrs} onSubmit={handleSubmit}>
           {!confirming ? (
@@ -180,6 +210,8 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
           )}
         </form>
       )}
+
+      {!address && <ConnectListModal {...modal} />}
     </Container>
   )
 }

@@ -1,23 +1,21 @@
 import MESSAGE from "../lang/MESSAGE.json"
-import { useWallet } from "../hooks"
+import useAddress from "../hooks/useAddress"
 import { useModal } from "../containers/Modal"
 import ConnectButton from "../components/ConnectButton"
 import Connected from "./Connected"
-import SupportModal from "./SupportModal"
+import ConnectListModal from "./ConnectListModal"
 
 const Connect = () => {
-  const { address, installed, connect } = useWallet()
+  const address = useAddress()
   const modal = useModal()
-
-  const handleClick = () => (installed ? connect() : modal.open())
 
   return !address ? (
     <>
-      <ConnectButton onClick={handleClick}>
+      <ConnectButton onClick={() => modal.open()}>
         {MESSAGE.Wallet.Connect}
       </ConnectButton>
 
-      <SupportModal {...modal} />
+      <ConnectListModal {...modal} />
     </>
   ) : (
     <Connected />

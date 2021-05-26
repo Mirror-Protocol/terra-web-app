@@ -1,5 +1,12 @@
-const networks: Record<string, LocalNetworkConfig> = {
+import { NetworkInfo } from "@terra-dev/wallet-types"
+
+type MirrorNetworkInfo = NetworkInfo & LocalNetworkConfig
+
+const networks: Record<string, MirrorNetworkInfo> = {
   mainnet: {
+    name: "mainnet",
+    chainID: "columbus-4",
+    lcd: "https://lcd.terra.dev",
     contract: "https://whitelist.mirror.finance/columbus.json",
     mantle: "https://mantle.terra.dev/",
     stats: "https://graph.mirror.finance/graphql",
@@ -10,22 +17,15 @@ const networks: Record<string, LocalNetworkConfig> = {
     fee: { gasPrice: 0.15, amount: 100000 }, // 0.1 UST
   },
   testnet: {
+    name: "testnet",
+    chainID: "tequila-0004",
+    lcd: "https://tequila-lcd.terra.dev",
     contract: "https://whitelist.mirror.finance/tequila.json",
     mantle: "https://tequila-mantle.terra.dev/",
     stats: "https://tequila-graph.mirror.finance/graphql",
     shuttle: {
       ethereum: "terra10a29fyas9768pw8mewdrar3kzr07jz8f3n73t3",
       bsc: "terra1paav7jul3dzwzv78j0k59glmevttnkfgmgzv2r",
-    },
-    fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
-  },
-  moonshine: {
-    contract: "https://whitelist.mirror.finance/moonshine.json",
-    mantle: "https://moonshine-mantle.terra.dev/",
-    stats: "https://moonshine-graph.mirror.finance/graphql",
-    shuttle: {
-      ethereum: "",
-      bsc: "",
     },
     fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
   },

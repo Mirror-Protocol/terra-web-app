@@ -1,8 +1,8 @@
 import { MsgExecuteContract, Coins, Coin } from "@terra-money/terra.js"
-import { useWallet } from "../hooks"
+import { useAddress } from "../hooks"
 
 export default () => {
-  const { address: sender } = useWallet()
+  const sender = useAddress()
 
   return (
     contract: string,

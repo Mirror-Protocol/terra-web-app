@@ -40,7 +40,6 @@ const Stake = ({ loading, dataSource, ...props }: Props) => {
 
   const claimAll = {
     to: getPath(MenuKey.STAKE) + stakeMenu[StakeMenuKey.CLAIMALL].path,
-    className: "desktop",
     children: StakeMenuKey.CLAIMALL,
     disabled: !gt(totalRewards, 0),
     color: "aqua",

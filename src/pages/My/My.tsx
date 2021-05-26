@@ -1,7 +1,8 @@
+import { useWallet } from "@terra-money/wallet-provider"
 import { gt } from "../../libs/math"
 import useLocalStorage from "../../libs/useLocalStorage"
 import { MenuKey } from "../../routes"
-import { useWallet } from "../../hooks"
+import { useAddress } from "../../hooks"
 import Page from "../../components/Page"
 import Grid from "../../components/Grid"
 import Button from "../../components/Button"
@@ -18,7 +19,8 @@ import Orders from "./Orders"
 import HistoryList from "./HistoryList"
 
 const My = () => {
-  const { address, disconnect } = useWallet()
+  const address = useAddress()
+  const { disconnect } = useWallet()
   const { holdings, mint, pool, stake, total, orders } = useMy()
   const [hide, setHide] = useLocalStorage("hideEmptySections", false)
   const toggle = () => setHide(!hide)

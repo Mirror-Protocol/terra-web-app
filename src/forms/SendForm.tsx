@@ -12,7 +12,7 @@ import useForm from "../libs/useForm"
 import { validate as v, placeholder, step } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import { useNetwork, useRefetch } from "../hooks"
-import { useWallet, useContractsAddress, useContract } from "../hooks"
+import { useAddress, useContractsAddress, useContract } from "../hooks"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 import useTax from "../graphql/useTax"
 
@@ -51,7 +51,7 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   /* context */
   const { state } = useLocation<{ token: string }>()
   const { shuttle } = useNetwork()
-  const { address } = useWallet()
+  const address = useAddress()
   const { getSymbol } = useContractsAddress()
   const { find } = useContract()
   useRefetch([priceKey, balanceKey])

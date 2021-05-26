@@ -44,11 +44,7 @@ const PollHeader = ({ titleClassName, ...props }: Props) => {
         </section>
 
         {params.id && !end && (
-          <LinkButton
-            to={url + "/vote"}
-            className="desktop"
-            disabled={alreadyVoted}
-          >
+          <LinkButton to={url + "/vote"} disabled={alreadyVoted}>
             {alreadyVoted ? "Voted" : "Vote"}
           </LinkButton>
         )}

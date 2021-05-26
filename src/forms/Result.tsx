@@ -1,9 +1,9 @@
 import { useEffect } from "react"
 import { useLazyQuery } from "@apollo/client"
+import { TxResult, UserDenied } from "@terra-money/wallet-provider"
 
 import { TX_POLLING_INTERVAL } from "../constants"
 import { TXINFOS } from "../graphql/gqldocs"
-import { PostResponse } from "../terra/extension"
 import MESSAGE from "../lang/MESSAGE.json"
 import { useResult } from "../hooks"
 import { getPath, MenuKey } from "../routes"
@@ -11,16 +11,20 @@ import { getPath, MenuKey } from "../routes"
 import Wait, { STATUS } from "../components/Wait"
 import TxHash from "./TxHash"
 import TxInfo from "./TxInfo"
+import { PostError } from "./FormContainer"
 
-interface Props extends PostResponse {
+interface Props {
+  response?: TxResult
+  error?: PostError
   parseTx: ResultParser
   gov?: boolean
   onFailure: () => void
 }
 
-const Result = ({ success, result, error, ...props }: Props) => {
-  const { parseTx, onFailure, gov } = props
-  const { txhash: hash = "" } = result ?? {}
+const Result = ({ response, error, parseTx, onFailure, gov }: Props) => {
+  const success = !error
+  const hash = response?.result.txhash ?? ""
+  const raw_log = response?.result.raw_log ?? ""
 
   /* context */
   const { uusd } = useResult()
@@ -72,9 +76,9 @@ const Result = ({ success, result, error, ...props }: Props) => {
   /* render */
   const message =
     txInfo?.RawLog ||
-    result?.raw_log ||
+    raw_log ||
     error?.message ||
-    (error?.code === 1 && MESSAGE.Result.DENIED)
+    (error instanceof UserDenied && MESSAGE.Result.DENIED)
 
   const content = {
     [STATUS.SUCCESS]: txInfo && <TxInfo txInfo={txInfo} parser={parseTx} />,

@@ -2,7 +2,7 @@
 @import "variables";
 
 .modal {
-  width: 620px;
+  width: $modal-width;
   outline: 0;
   max-height: 100vh;
   overflow-y: auto;

@@ -1,9 +1,10 @@
 import { FC } from "react"
+import { useWallet, WalletStatus } from "@terra-money/wallet-provider"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 import { HttpLink, ApolloLink } from "@apollo/client"
 import { DefaultOptions } from "@apollo/client"
-import { NetworkProvider, useNetworkState } from "../hooks/useNetwork"
+import useNetwork from "../hooks/useNetwork"
 
 const queryClient = new QueryClient()
 
@@ -13,7 +14,8 @@ export const DefaultApolloClientOptions: DefaultOptions = {
 }
 
 const Network: FC = ({ children }) => {
-  const network = useNetworkState()
+  const { status } = useWallet()
+  const network = useNetwork()
 
   const uri = network.mantle
   const httpLink = new HttpLink({ uri })
@@ -29,12 +31,10 @@ const Network: FC = ({ children }) => {
     defaultOptions: DefaultApolloClientOptions,
   })
 
-  return (
-    <NetworkProvider value={network} key={network.name}>
-      <QueryClientProvider client={queryClient}>
-        <ApolloProvider client={client}>{children}</ApolloProvider>
-      </QueryClientProvider>
-    </NetworkProvider>
+  return status === WalletStatus.INITIALIZING ? null : (
+    <QueryClientProvider client={queryClient}>
+      <ApolloProvider client={client}>{children}</ApolloProvider>
+    </QueryClientProvider>
   )
 }
 

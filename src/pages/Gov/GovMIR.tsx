@@ -3,7 +3,7 @@ import Tooltip from "../../lang/Tooltip.json"
 import { MIR } from "../../constants"
 import { ReactComponent as Logo } from "../../images/MIR.svg"
 import { percent } from "../../libs/num"
-import { useWallet } from "../../hooks"
+import { useAddress } from "../../hooks"
 import Count from "../../components/Count"
 import LinkButton from "../../components/LinkButton"
 import { TooltipIcon } from "../../components/Tooltip"
@@ -12,7 +12,7 @@ import styles from "./GovMIR.module.scss"
 import useDashboard from "../../statistics/useDashboard"
 
 const GovMIR = () => {
-  const { address } = useWallet()
+  const address = useAddress()
 
   /* apr */
   const { dashboard } = useDashboard()
