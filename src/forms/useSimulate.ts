@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { equals } from "ramda"
 import { div, gt } from "../libs/math"
 import { useContractsAddress } from "../hooks"
 import { useLazyContractQuery } from "../graphql/useContractQuery"
@@ -26,8 +27,18 @@ interface Simulated {
   price: string
 }
 
+interface Result {
+  params: Params
+  simulated: Simulated
+}
+
 export default ({ amount, token, pair, reverse, type }: Params) => {
-  const [simulated, setSimulated] = useState<Simulated>()
+  const params = useMemo(
+    () => ({ amount, token, pair, reverse, type }),
+    [amount, token, pair, reverse, type]
+  )
+
+  const [results, setResults] = useState<Result[]>([])
 
   /* context */
   const { toToken } = useContractsAddress()
@@ -69,14 +80,20 @@ export default ({ amount, token, pair, reverse, type }: Params) => {
   }[type]
 
   useEffect(() => {
-    error
-      ? setSimulated(undefined)
-      : simulatedAmount &&
-        spread &&
-        commission &&
-        price &&
-        setSimulated({ amount: simulatedAmount, spread, commission, price })
-  }, [simulatedAmount, spread, commission, price, error])
+    if (!error) {
+      if (simulatedAmount && spread && commission && price) {
+        setResults((prev) => {
+          const amount = simulatedAmount
+          const simulated = { amount, spread, commission, price }
+          return [...prev, { params, simulated }]
+        })
+      }
+    }
+  }, [simulatedAmount, spread, commission, price, error, params])
+
+  const simulated = results.find((result) =>
+    equals(result.params, params)
+  )?.simulated
 
   return { ...result, simulated }
 }
