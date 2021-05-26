@@ -1,5 +1,5 @@
 import { UUSD } from "../../constants"
-import { lt, lte, minus, sum, times } from "../../libs/math"
+import { gte, lt, lte, minus, sum, times } from "../../libs/math"
 import { useContractsAddress, useContract, useCombineKeys } from "../../hooks"
 import { AssetInfoKey } from "../../hooks/contractKeys"
 import { PriceKey } from "../../hooks/contractKeys"
@@ -22,73 +22,79 @@ const useMyMint = () => {
   const dataSource =
     !data || !positions
       ? []
-      : positions.map((position) => {
-          /* collateral */
-          const collateral = parseToken(position.collateral)
-          const collateralDelisted =
-            collateral.token !== UUSD &&
-            whitelist[collateral.token]["status"] === "DELISTED"
-          const collateralPrice = find(
-            collateralDelisted ? PriceKey.END : PriceKey.ORACLE,
-            collateral.token
+      : positions
+          .map((position) => {
+            /* collateral */
+            const collateral = parseToken(position.collateral)
+            const collateralDelisted =
+              collateral.token !== UUSD &&
+              whitelist[collateral.token]["status"] === "DELISTED"
+            const collateralPrice = find(
+              collateralDelisted ? PriceKey.END : PriceKey.ORACLE,
+              collateral.token
+            )
+            const collateralValue = times(collateral.amount, collateralPrice)
+            const collateralChange = calcChange({
+              today: collateralPrice,
+              yesterday: yesterday[collateral.token],
+            })
+
+            /* asset */
+            const asset = parseToken(position.asset)
+            const assetDelisted =
+              whitelist[asset.token]["status"] === "DELISTED"
+            const assetPrice = find(
+              assetDelisted ? PriceKey.END : PriceKey.ORACLE,
+              asset.token
+            )
+            const assetValue = times(asset.amount, assetPrice)
+            const assetChange = calcChange({
+              today: assetPrice,
+              yesterday: yesterday[asset.token],
+            })
+
+            /* ratio */
+            const minRatio = find(AssetInfoKey.MINCOLLATERALRATIO, asset.token)
+
+            const { ratio } = calc.mint({
+              collateral: { ...collateral, price: collateralPrice },
+              asset: { ...asset, price: assetPrice },
+            })
+
+            const danger = lt(minus(ratio, minRatio), DANGER)
+            const warning = !danger && lte(minus(ratio, minRatio), WARNING)
+
+            /* status */
+            const status: ListedItemStatus =
+              collateralDelisted || assetDelisted ? "DELISTED" : "LISTED"
+
+            return {
+              ...position,
+              status,
+              collateral: {
+                ...collateral,
+                price: collateralPrice,
+                value: collateralValue,
+                change: collateralChange,
+                delisted: collateralDelisted,
+              },
+              asset: {
+                ...asset,
+                price: assetPrice,
+                value: assetValue,
+                change: assetChange,
+                delisted: assetDelisted,
+              },
+              ratio,
+              minRatio,
+              danger,
+              warning,
+            }
+          })
+          .filter(
+            ({ collateral, asset }) =>
+              gte(collateral.value, 10000) && gte(asset.value, 10000)
           )
-          const collateralValue = times(collateral.amount, collateralPrice)
-          const collateralChange = calcChange({
-            today: collateralPrice,
-            yesterday: yesterday[collateral.token],
-          })
-
-          /* asset */
-          const asset = parseToken(position.asset)
-          const assetDelisted = whitelist[asset.token]["status"] === "DELISTED"
-          const assetPrice = find(
-            assetDelisted ? PriceKey.END : PriceKey.ORACLE,
-            asset.token
-          )
-          const assetValue = times(asset.amount, assetPrice)
-          const assetChange = calcChange({
-            today: assetPrice,
-            yesterday: yesterday[asset.token],
-          })
-
-          /* ratio */
-          const minRatio = find(AssetInfoKey.MINCOLLATERALRATIO, asset.token)
-
-          const { ratio } = calc.mint({
-            collateral: { ...collateral, price: collateralPrice },
-            asset: { ...asset, price: assetPrice },
-          })
-
-          const danger = lt(minus(ratio, minRatio), DANGER)
-          const warning = !danger && lte(minus(ratio, minRatio), WARNING)
-
-          /* status */
-          const status: ListedItemStatus =
-            collateralDelisted || assetDelisted ? "DELISTED" : "LISTED"
-
-          return {
-            ...position,
-            status,
-            collateral: {
-              ...collateral,
-              price: collateralPrice,
-              value: collateralValue,
-              change: collateralChange,
-              delisted: collateralDelisted,
-            },
-            asset: {
-              ...asset,
-              price: assetPrice,
-              value: assetValue,
-              change: assetChange,
-              delisted: assetDelisted,
-            },
-            ratio,
-            minRatio,
-            danger,
-            warning,
-          }
-        })
 
   const totalCollateralValue = sum(
     dataSource.map(({ collateral }) => collateral.value)
