@@ -24,21 +24,23 @@ enum Key {
 interface Props {
   type: Type
   token: string
-  tab: Tab
+  tab?: Tab
   /** Gov stake */
   gov?: boolean
 }
 
 const StakeForm = ({ type, token, tab, gov }: Props) => {
-  const balanceKey = (!gov
-    ? {
-        [Type.STAKE]: BalanceKey.LPSTAKABLE,
-        [Type.UNSTAKE]: BalanceKey.LPSTAKED,
-      }
-    : {
-        [Type.STAKE]: BalanceKey.TOKEN,
-        [Type.UNSTAKE]: BalanceKey.MIRGOVSTAKED,
-      })[type as Type]
+  const balanceKey = (
+    !gov
+      ? {
+          [Type.STAKE]: BalanceKey.LPSTAKABLE,
+          [Type.UNSTAKE]: BalanceKey.LPSTAKED,
+        }
+      : {
+          [Type.STAKE]: BalanceKey.TOKEN,
+          [Type.UNSTAKE]: BalanceKey.MIRGOVSTAKED,
+        }
+  )[type as Type]
 
   /* context */
   const { contracts, whitelist, getSymbol } = useContractsAddress()

@@ -21,6 +21,8 @@ export interface Config {
   formatTokenName?: (symbol: string) => string
   /** Condition to be dimmed */
   dim?: (token: string) => boolean
+  /** Show delisted token if balance exists */
+  showDelisted?: boolean
 }
 
 export default (config: Config) => {

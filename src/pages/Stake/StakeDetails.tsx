@@ -9,8 +9,10 @@ import { Type } from "../Stake"
 const StakeDetails = () => {
   const { token } = useParams<{ token: string }>()
   const { hash: type } = useHash<Type>(Type.STAKE)
-  const { getSymbol } = useContractsAddress()
-  const tab = { tabs: [Type.STAKE, Type.UNSTAKE], current: type }
+  const { getSymbol, getIsDelisted } = useContractsAddress()
+  const tab = getIsDelisted(token)
+    ? undefined
+    : { tabs: [Type.STAKE, Type.UNSTAKE], current: type }
 
   return (
     <Page title={<StakeDetailsHeader>{getSymbol(token)}</StakeDetailsHeader>}>

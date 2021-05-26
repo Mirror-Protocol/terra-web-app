@@ -18,9 +18,9 @@ interface Props extends Config {
 
 const Assets = ({ selected, onSelect, ...props }: Props) => {
   const { priceKey, balanceKey } = props
-  const { useUST, skip, dim, formatTokenName } = props
+  const { useUST, skip, dim, formatTokenName, showDelisted } = props
 
-  const { listed } = useContractsAddress()
+  const { listedAll } = useContractsAddress()
   const { uusd, find } = useContract()
   const { loading } = useCombineKeys([priceKey, balanceKey])
 
@@ -36,7 +36,12 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
       price: "1",
       balance: uusd,
     }),
-    ...listed
+    ...listedAll
+      .filter(({ token, status }) =>
+        showDelisted && balanceKey
+          ? status === "LISTED" || gt(find(balanceKey, token), 0)
+          : status === "LISTED"
+      )
       .filter(({ symbol }) => !skip?.includes(symbol))
       .map((item) => ({
         ...item,

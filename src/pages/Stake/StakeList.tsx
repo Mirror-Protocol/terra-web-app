@@ -22,13 +22,14 @@ const StakeList = () => {
   const { loading } = useRefetch(keys)
 
   /* context */
-  const { listed, getSymbol } = useContractsAddress()
+  const { listedAll, getSymbol } = useContractsAddress()
   const { find } = useContract()
   const stats = useAssetStats()
   const { apr } = stats
   const getPool = usePool()
 
-  const getItem = ({ token }: ListedItem) => {
+  const getItem = (item: ListedItem) => {
+    const { token } = item
     const apy = stats?.["apy"]?.[token] ?? "0"
     const apr = stats?.["apr"]?.[token] ?? "0"
     const symbol = getSymbol(token)
@@ -37,6 +38,7 @@ const StakeList = () => {
     const { fromLP } = getPool({ amount: totalStakedLP, token })
 
     return {
+      ...item,
       token,
       symbol,
       staked: gt(find(BalanceKey.LPSTAKED, token), 0),
@@ -64,7 +66,11 @@ const StakeList = () => {
       </LoadingTitle>
 
       <Grid wrap={3}>
-        {listed
+        {listedAll
+          .filter(
+            ({ status, token }) =>
+              status === "LISTED" || find(BalanceKey.LPSTAKED, token)
+          )
           .map(getItem)
           .sort(({ token: a }, { token: b }) =>
             number(minus(apr?.[b], apr?.[a]))

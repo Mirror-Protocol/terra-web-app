@@ -9,15 +9,12 @@ import Count from "./Count"
 import TokenPair from "./TokenPair"
 import { DlFooter } from "./Dl"
 import { TooltipIcon } from "./Tooltip"
+import Delisted from "./Delisted"
 import styles from "./StakeItemCard.module.scss"
 
 const cx = classNames.bind(styles)
 
-export interface Props {
-  token: string
-  symbol: string
-  name?: string
-
+export interface Props extends ListedItem {
   staked: boolean
   stakable: boolean
 
@@ -32,7 +29,7 @@ export interface Props {
 }
 
 const StakeItemCard: FC<Props> = ({ token, symbol, name, to, ...item }) => {
-  const { staked, stakable } = item
+  const { status, staked, stakable } = item
   const { price, apr, apy, totalStaked, action, emphasize, children } = item
 
   const badges = [
@@ -57,11 +54,13 @@ const StakeItemCard: FC<Props> = ({ token, symbol, name, to, ...item }) => {
       {action && <aside className={styles.action}>{action}</aside>}
 
       <article className={styles.component}>
+        {status === "DELISTED" && <Delisted />}
+
         <div className={styles.main}>
           <TokenPair symbol={symbol} />
 
           <header className={cx(styles.header, { to })}>
-            <h1 className={styles.heading}>{name ?? getLpName(symbol)}</h1>
+            <h1 className={styles.heading}>{getLpName(symbol)}</h1>
             {to && <Icon name="chevron_right" size={20} />}
           </header>
 
