@@ -6,7 +6,7 @@ import useNewContractMsg from "../terra/useNewContractMsg"
 import { COMMISSION, MAX_SPREAD, MIR, UST, UUSD } from "../constants"
 import Tooltip from "../lang/Tooltip.json"
 import { div, gt, isFinite, times } from "../libs/math"
-import { useNetwork, usePolling, useRefetch } from "../hooks"
+import { usePolling, useRefetch } from "../hooks"
 import { dp, format, lookup, lookupSymbol } from "../libs/parse"
 import { decimal } from "../libs/parse"
 import { toAmount } from "../libs/parse"
@@ -50,9 +50,9 @@ const TradeForm = ({ type, tab }: { type: Type; tab: Tab }) => {
 
   /* context */
   const { state } = useLocation<{ token: string }>()
-  const { limitOrder: limitOrderContract } = useNetwork()
-  const contractAddress = useContractsAddress()
-  const { whitelist, delist, getToken, getSymbol, toToken } = contractAddress
+  const { contracts, whitelist, delist, ...rest } = useContractsAddress()
+  const { getToken, getSymbol, toToken } = rest
+  const limitOrderContract = contracts["limitOrder"]
   const { find } = useContract()
   useRefetch([priceKey, balanceKey])
   usePolling()

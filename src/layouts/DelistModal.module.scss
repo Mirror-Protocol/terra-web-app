@@ -4,10 +4,11 @@
   padding: 10px 0;
 }
 
-.header {
+.p {
   font-size: 14px;
   font-weight: normal;
   text-align: center;
+  margin-bottom: 20px;
 
   strong {
     color: $blue;
@@ -21,12 +22,14 @@
   border-radius: 5px;
   font-size: 16px;
   font-weight: 500;
-  margin: 20px 0;
+  margin-bottom: 20px;
   padding: 15px;
   text-align: center;
 }
 
 .list {
+  margin-bottom: 20px;
+
   li {
     @include flex(flex-start, flex-start);
     color: $brown;
@@ -55,7 +58,6 @@
   font-size: 12px;
   font-style: italic;
   font-weight: normal;
-  margin-top: 40px;
   margin-bottom: 20px;
 }
 
@@ -73,7 +75,10 @@
 
 .footer {
   font-size: 12px;
-  margin-top: 30px;
+
+  p {
+    margin-bottom: 20px;
+  }
 }
 
 .submit {

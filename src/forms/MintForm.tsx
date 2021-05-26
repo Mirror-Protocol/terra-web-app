@@ -57,7 +57,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   const balanceKey = BalanceKey.TOKEN
 
   /* context */
-  const { contracts, delist, ...helpers } = useContractsAddress()
+  const { contracts, delist, getIsDelisted, ...helpers } = useContractsAddress()
   const { getSymbol, parseToken, toToken, toAssetInfo } = helpers
   const { find } = useContract()
   const { loading } = useRefetch([PriceKey.ORACLE, PriceKey.END, balanceKey])
@@ -219,7 +219,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     onSelect: onSelect(Key.token1),
     useUST: true,
     skip: [MIR],
-    dim: (token) => isClosed(getSymbol(token)),
+    dim: (token) => (getIsDelisted(token) ? false : isClosed(getSymbol(token))),
   }
 
   const config2: Config = {
@@ -227,7 +227,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     onSelect: onSelect(Key.token2),
     useUST: false,
     skip: [MIR],
-    dim: (token) => isClosed(getSymbol(token)),
+    dim: (token) => (getIsDelisted(token) ? false : isClosed(getSymbol(token))),
   }
 
   const select1 = useSelectAsset({
@@ -538,8 +538,8 @@ const MintForm = ({ position, type, tab, message }: Props) => {
 
   /* latest price */
   const { isClosed } = useLatest()
-  const isMarketClosed1 = isClosed(symbol1)
-  const isMarketClosed2 = isClosed(symbol2)
+  const isMarketClosed1 = getIsDelisted(token1) ? false : isClosed(symbol1)
+  const isMarketClosed2 = getIsDelisted(token2) ? false : isClosed(symbol2)
   const isMarketClosed = isMarketClosed1 || isMarketClosed2
 
   const messages = isMarketClosed

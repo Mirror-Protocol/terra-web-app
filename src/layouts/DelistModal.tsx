@@ -26,14 +26,17 @@ const DelistModal = (props: Props) => {
     modal.close()
   }
 
+  const plural = tokens.length > 1
+
   return !tokens.length ? null : (
     <Modal {...modal}>
       <Card title="Stock Split / Merge Notification" center>
         <div className={styles.contents}>
-          <header className={styles.header}>
-            The following {tokens.length === 1 ? "asset" : "assets"} will be{" "}
-            <strong>delisted</strong> due to a stock split / merge on the dates
-            below:
+          <header>
+            <p className={styles.p}>
+              The following {plural ? "assets" : "asset"} will be affected by a
+              stock split / merge on the {plural ? "dates" : "date"} below:
+            </p>
           </header>
 
           <section className={styles.info}>
@@ -45,65 +48,56 @@ const DelistModal = (props: Props) => {
             ))}
           </section>
 
-          <ul className={styles.list}>
-            <li>
-              <p>
-                <strong>Delisted assets can be</strong> sent, withdrawn from
-                liquidity pools and used to close existing mint positions.
-              </p>
-            </li>
-            <li>
-              <p>
-                <strong>Delisted assets cannot be</strong> traded, minted or
-                provided to liquidity pools. LP staking rewards will immediately
-                stop.
-              </p>
-            </li>
-            <li>
-              <p>
-                You may burn your{" "}
-                <strong>
-                  {tokens.map((token) => getSymbol(token)).join(", ")}{" "}
-                  (delisted)
-                </strong>{" "}
-                and claim UST at the last price before stock split / merge
-                event.
-              </p>
-            </li>
-          </ul>
-
-          <section className={styles.info}>
-            {tokens.map((token) => (
-              <p key={token}>
-                {getSymbol(token)} Stock split ratio = {delist[token].ratio}
-              </p>
-            ))}
-          </section>
-
-          <ul className={styles.list}>
-            <li>
-              <p>
-                You may trade, mint, provide liquidity for and stake LP tokens
-                for the new asset immediately after the stock split / merge.
-              </p>
-            </li>
-          </ul>
-
-          <p className={styles.italic}>
-            Note that when UST to be returned after burning becomes
-            insufficient, you may receive other mAssets. Please close mint
-            positions with collateral other than UST before or immediately after
-            stock split / merge to avoid any losses.
+          <p className={styles.p}>
+            These assets will be <strong>DELISTED</strong> as soon as the market
+            closes on the last trading day before the stock split / merge.
           </p>
 
-          <ExtLink
-            href="https://docs.mirror.finance/protocol/mirrored-assets-massets#delisting-and-migration"
-            className={styles.link}
-          >
-            How does stock split/merge work on Mirror Protocol?
-          </ExtLink>
+          <ul className={styles.list}>
+            <li>
+              <p>LP staking rewards will immediately stop.</p>
+            </li>
+            <li>
+              <p>
+                Delisted assets can be burned to claim UST at the last price
+                before stock split / merge.
+              </p>
+            </li>
+            <li>
+              <p>
+                Delisted assets can be withdrawn from liquidity pools to be
+                burnt or be used to close existing mint positions.
+              </p>
+            </li>
+            <li>
+              <p>
+                Delisted assets cannot be traded, minted or provided to
+                liquidity pools.
+              </p>
+            </li>
+            <li>
+              <p>
+                If you want to close your mint position immediately, make sure
+                that you acquire a sufficient amount of mAsset before delisting.
+              </p>
+            </li>
+          </ul>
 
           <footer className={styles.footer}>
+            <p className={styles.italic}>
+              New assets will replace delisted ones on the{" "}
+              {plural ? "dates" : "date"} mentioned above.
+            </p>
+
+            <p>
+              <ExtLink
+                href="https://docs.mirror.finance/protocol/mirrored-assets-massets#delisting-and-migration"
+                className={styles.link}
+              >
+                How does stock split/merge work on Mirror Protocol?
+              </ExtLink>
+            </p>
+
             <button
               type="button"
               className={styles.label}
@@ -111,11 +105,11 @@ const DelistModal = (props: Props) => {
             >
               <Checkbox checked={checked}>Do not show again</Checkbox>
             </button>
-          </footer>
 
-          <Button className={styles.submit} onClick={submit} size="lg" block>
-            I understand
-          </Button>
+            <Button className={styles.submit} onClick={submit} size="lg" block>
+              I understand
+            </Button>
+          </footer>
         </div>
       </Card>
     </Modal>
