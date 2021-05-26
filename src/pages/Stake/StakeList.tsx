@@ -69,7 +69,7 @@ const StakeList = () => {
         {listedAll
           .filter(
             ({ status, token }) =>
-              status === "LISTED" || find(BalanceKey.LPSTAKED, token)
+              status === "LISTED" || gt(find(BalanceKey.LPSTAKED, token), 0)
           )
           .map(getItem)
           .sort(({ token: a }, { token: b }) =>

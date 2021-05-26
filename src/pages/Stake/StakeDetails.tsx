@@ -8,8 +8,10 @@ import { Type } from "../Stake"
 
 const StakeDetails = () => {
   const { token } = useParams<{ token: string }>()
-  const { hash: type } = useHash<Type>(Type.STAKE)
   const { getSymbol, getIsDelisted } = useContractsAddress()
+  const initial = getIsDelisted(token) ? Type.UNSTAKE : Type.STAKE
+  const { hash: type } = useHash<Type>(initial)
+
   const tab = getIsDelisted(token)
     ? undefined
     : { tabs: [Type.STAKE, Type.UNSTAKE], current: type }

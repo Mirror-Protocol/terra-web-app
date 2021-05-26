@@ -1,3 +1,4 @@
+import Delisted from "../components/Delisted"
 import { UST } from "../constants"
 import { gt } from "../libs/math"
 import { format, lookupSymbol } from "../libs/parse"
@@ -7,30 +8,35 @@ interface Props extends AssetItem {
   formatTokenName?: (symbol: string) => string
 }
 
-const Asset = ({ symbol, name, price, balance, formatTokenName }: Props) => (
-  <article className={styles.asset}>
-    <header className={styles.header}>
-      <h1 className={styles.symbol}>
-        {formatTokenName?.(symbol) ?? lookupSymbol(symbol)}
-      </h1>
+const Asset = ({ symbol, name, status, price, balance, ...props }: Props) => {
+  const { formatTokenName } = props
 
-      {name !== UST && <h2 className={styles.name}>{name}</h2>}
-    </header>
+  return (
+    <article className={styles.asset}>
+      <header className={styles.header}>
+        <h1 className={styles.symbol}>
+          {status === "DELISTED" && <Delisted />}
+          {formatTokenName?.(symbol) ?? lookupSymbol(symbol)}{" "}
+        </h1>
 
-    <footer className={styles.footer}>
-      {price && gt(price, 0) && name !== UST && (
-        <p className={styles.price}>
-          {format(price)} {UST}
-        </p>
-      )}
+        {name !== UST && <h2 className={styles.name}>{name}</h2>}
+      </header>
 
-      {balance && gt(balance, 0) && (
-        <p className={styles.balance}>
-          Balance: <strong>{format(balance, symbol)}</strong>
-        </p>
-      )}
-    </footer>
-  </article>
-)
+      <footer className={styles.footer}>
+        {price && gt(price, 0) && name !== UST && (
+          <p className={styles.price}>
+            {format(price)} {UST}
+          </p>
+        )}
+
+        {balance && gt(balance, 0) && (
+          <p className={styles.balance}>
+            Balance: <strong>{format(balance, symbol)}</strong>
+          </p>
+        )}
+      </footer>
+    </article>
+  )
+}
 
 export default Asset

@@ -104,6 +104,7 @@ interface AssetItem {
   symbol: string
   token: string
   name: string
+  status?: ListedItemStatus
   price?: string
   balance?: string
 }
