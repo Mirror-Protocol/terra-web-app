@@ -46,9 +46,6 @@
     "NoContract": "Mirror contracts could not be found on the selected network. Select a different network from the Terra Station extension."
   },
 
-  "App": {
-    "Mobile": "Mirror only supports desktop Chrome"
-  },
   "MyPage": {
     "Empty": {
       "Holdings": "No current asset balances",

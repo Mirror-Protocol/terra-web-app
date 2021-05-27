@@ -25,7 +25,6 @@ const App = () => {
         <StatsProvider value={stats}>
           <Header />
           <Container>
-            <MobileAlert />
             {address && <DelistAlert />}
             {routes()}
           </Container>
