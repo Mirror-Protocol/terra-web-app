@@ -10,9 +10,11 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
   const { skipFeedback } = props
 
   const inputRef = useRef<HTMLInputElement>()
-
-  const handleWheel = () => {
-    inputRef.current?.blur()
+  const inputAttrs = {
+    ...input,
+    inputmode: "numeric",
+    onWheel: () => inputRef.current?.blur(),
+    ref: inputRef,
   }
 
   const border = cx(styles.border, { focused, error, readOnly: value })
@@ -47,7 +49,7 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
           <section className={styles.wrapper}>
             <section className={styles.field}>
               {input ? (
-                <input {...input} onWheel={handleWheel} ref={inputRef} />
+                <input {...inputAttrs} />
               ) : textarea ? (
                 <textarea {...textarea} />
               ) : select ? (
