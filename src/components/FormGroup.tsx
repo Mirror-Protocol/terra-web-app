@@ -12,7 +12,7 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
   const inputRef = useRef<HTMLInputElement>()
   const inputAttrs = {
     ...input,
-    inputmode: "numeric",
+    inputMode: "numeric",
     onWheel: () => inputRef.current?.blur(),
     ref: inputRef,
   }
