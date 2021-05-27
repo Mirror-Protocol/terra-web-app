@@ -91,10 +91,12 @@ const useMyMint = () => {
               warning,
             }
           })
-          .filter(
-            ({ collateral, asset }) =>
-              gte(collateral.value, 10000) && gte(asset.value, 10000)
-          )
+          .filter(({ collateral, asset }) => {
+            const invalid =
+              !gte(collateral.value, 10000) && !gte(asset.value, 10000)
+
+            return !invalid
+          })
 
   const totalCollateralValue = sum(
     dataSource.map(({ collateral }) => collateral.value)
