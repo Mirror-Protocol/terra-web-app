@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom"
 
 import useNewContractMsg from "../terra/useNewContractMsg"
 import Tooltip from "../lang/Tooltip.json"
-import { LP, UST, UUSD } from "../constants"
+import { LP, MAX_SPREAD, UST, UUSD } from "../constants"
 import { plus, minus, max, gt } from "../libs/math"
 import { insertIf } from "../libs/utils"
 import { format, lookup, toAmount } from "../libs/parse"
@@ -233,6 +233,7 @@ const PoolForm = ({ type, tab }: { type: Type; tab: Tab }) => {
             pair,
             {
               provide_liquidity: {
+                slippage_tolerance: String(MAX_SPREAD),
                 assets: [
                   toToken({ amount, token }),
                   toToken({ amount: estimated, token: UUSD }),
