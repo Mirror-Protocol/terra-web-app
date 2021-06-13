@@ -1,3 +1,4 @@
+import { useWallet } from "@terra-money/wallet-provider"
 import routes from "../routes"
 import Container from "../components/Container"
 import { SettingsProvider, useSettingsState } from "../hooks/useSettings"
@@ -12,6 +13,7 @@ import Footer from "./Footer"
 import "./App.scss"
 
 const App = () => {
+  useRedirectByNetwork()
   const address = useAddress()
   const settings = useSettingsState()
   const contract = useContractState(address)
@@ -36,3 +38,20 @@ const App = () => {
 }
 
 export default App
+
+/* redirect by network */
+const useRedirectByNetwork = () => {
+  const { network } = useWallet()
+
+  const domain = {
+    mainnet: "https://terra.mirror.finance",
+    testnet: "https://terra-dev.mirror.finance",
+    moonshine: "https://terra-dev.mirror.finance",
+  }[network.name]
+
+  const redirectTo = window.location.hostname !== domain ? domain : undefined
+
+  if (process.env.NODE_ENV !== "development" && redirectTo) {
+    window.location.assign(redirectTo)
+  }
+}
