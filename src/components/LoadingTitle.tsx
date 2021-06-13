@@ -1,4 +1,4 @@
-import { FC } from "react"
+import React, { FC } from "react"
 import classNames from "classnames"
 import Loading from "./Loading"
 import styles from "./LoadingTitle.module.scss"

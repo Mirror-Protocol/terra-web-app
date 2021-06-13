@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode, useRef } from "react"
+import React, { MouseEvent, ReactNode, useRef } from "react"
 import classNames from "classnames/bind"
 import { div } from "../libs/math"
 import { percent } from "../libs/num"

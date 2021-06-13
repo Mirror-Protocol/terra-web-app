@@ -1,0 +1,121 @@
+@import "mixins";
+@import "variables";
+
+.component {
+  input,
+  textarea {
+    width: 100%;
+    color: $deepgray;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  ::placeholder {
+    color: fade-out(#000000, 0.8);
+  }
+
+  & + & {
+    margin-top: 20px;
+  }
+}
+
+$padding: 10px 10px;
+
+.border {
+  @include transition(border-color);
+  border-radius: 10px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #b5b5b5;
+  padding: $padding;
+  position: relative;
+
+  &.readOnly {
+    $bg: #b5b5b5;
+    border-color: $bg;
+    background: $bg;
+  }
+
+  &.focused {
+    border-color: $realblue;
+  }
+
+  &.error {
+    border-color: $red;
+  }
+}
+
+.select > button {
+  @include flex(space-between);
+  width: 100%;
+}
+
+/* field */
+.header,
+.wrapper {
+  @include flex(space-between);
+
+  .label,
+  .field {
+    flex: 1;
+  }
+
+  .help,
+  .unit {
+    flex: none;
+    text-align: right;
+    @include flex(flex-end);
+  }
+}
+
+.header {
+  color: $deepgray;
+  font-size: 12px;
+}
+
+.wrapper {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.label > label {
+  display: block;
+  font-weight: 800;
+}
+
+.help {
+  white-space: pre;
+}
+
+.max {
+  align-items: center;
+  color: #0222ba;
+  margin-right: 2px;
+  margin-left: 7px;
+  border-radius: 7px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  border-width: 1px;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* assets */
+.assets {
+  margin-top: 10px;
+}
+
+.bottom {
+  @include flex;
+  align-items: unset;
+  justify-content: space-between;
+}
+/* feedback */
+.feedback {
+  color: $red;
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 14px;
+  margin-bottom: 10px;
+}

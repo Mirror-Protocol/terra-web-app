@@ -1,6 +1,12 @@
-import { Extension, SyncTxBroadcastResult } from "@terra-money/terra.js"
+import {
+  Coin,
+  Coins,
+  Extension,
+  SyncTxBroadcastResult,
+} from "@terra-money/terra.js"
 import { CreateTxOptions, StdFee } from "@terra-money/terra.js"
-import { ceil, plus, times } from "../libs/math"
+import { UKRW, ULUNA, UMNT, USDR, UUSD } from "constants/constants"
+import { ceil } from "libs/math"
 
 export type Result = SyncTxBroadcastResult.Data
 export interface PostResponse {
@@ -12,39 +18,78 @@ export interface PostResponse {
 }
 
 const ext = new Extension()
+export default {
+  init: () => !!ext.isAvailable,
 
-class ExtensionSingleton {
-  get init() {
-    return !!ext.isAvailable
-  }
+  info: (callback: (network?: ExtNetworkConfig) => void) => {
+    ext.info()
+    ext.on("onInfo", callback)
+  },
 
-  async info(): Promise<ExtNetworkConfig> {
-    const res = await ext.request("info")
-    return res.payload as any
-  }
+  connect: (callback: (address: string) => void) => {
+    ext.connect()
+    ext.on("onConnect", ({ address }: { address: string }) => callback(address))
+  },
 
-  async connect(): Promise<{ address: string }> {
-    const res = await ext.request("connect")
-    return res.payload as any
-  }
-
-  async post(
+  post: (
     options: CreateTxOptions,
-    txFee: { gasPrice: number; amount: number; tax?: string }
-  ): Promise<PostResponse> {
-    const { gasPrice, amount, tax } = txFee
-    const gas = Math.floor(amount / gasPrice)
-    const feeAmount = ceil(times(gas, gasPrice))
-    const res = await ext.request("post", {
-      msgs: options.msgs.map((msg) => msg.toJSON()),
-      memo: options.memo,
-      gasPrices: `${gasPrice}uusd`,
-      fee: new StdFee(gas, { uusd: plus(feeAmount, tax) }).toJSON(),
+    txFee: {
+      gasPrice: string
+      amount: string
+      tax: string
+      symbol: string
+      gas: string
+    },
+    callback: (params: PostResponse) => void
+  ) => {
+    const { gasPrice, amount, symbol, gas } = txFee
+
+    const feeCoins = new Coins({})
+    feeCoins.set(symbol, ceil(amount))
+    const taxs = txFee.tax.split(",")
+    for (let i = 0; i < taxs.length; i++) {
+      if (taxs[i] === "0") {
+        break
+      }
+      const taxCoin = Coin.fromString(taxs[i])
+      const feeCoin = feeCoins.get(taxCoin.denom)
+      if (feeCoin === undefined) {
+        feeCoins.set(taxCoin.denom, taxCoin.amount)
+      } else {
+        feeCoins.set(taxCoin.denom, feeCoin.amount.add(taxCoin.amount))
+      }
+    }
+
+    const id = ext.post({
+      ...options,
+      gasPrices: new Coins(formateGasPrice(symbol, gasPrice)),
+      fee: new StdFee(parseInt(gas), feeCoins),
       purgeQueue: true,
     })
-
-    return res.payload as any
-  }
+    ext.on("onPost", callback)
+    return id
+  },
 }
 
-export default new ExtensionSingleton()
+function formateGasPrice(symbol: string, gasPrice: string) {
+  let res = {}
+  switch (symbol) {
+    case ULUNA:
+      res = { uluna: gasPrice }
+      break
+    case UKRW:
+      res = { ukrw: gasPrice }
+      break
+    case UMNT:
+      res = { umnt: gasPrice }
+      break
+    case USDR:
+      res = { usdr: gasPrice }
+      break
+    case UUSD:
+      res = { uusd: gasPrice }
+      break
+  }
+
+  return res
+}

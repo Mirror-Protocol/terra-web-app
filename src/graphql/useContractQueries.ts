@@ -20,10 +20,8 @@ export default <Parsed>(generate: GenerateVariables) => {
 
 /* helpers */
 const useGenerateQuery = (generate: GenerateVariables) => {
-  const { listedAll } = useContractsAddress()
-  return alias(
-    listedAll.map((item) => ({ token: item.token, ...generate(item) }))
-  )
+  const { listed } = useContractsAddress()
+  return alias(listed.map((item) => ({ token: item.token, ...generate(item) })))
 }
 
 const parse = <Parsed>({ data }: { data?: Dictionary<ContractData> }) =>

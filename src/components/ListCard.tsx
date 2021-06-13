@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import React, { ReactNode } from "react"
 import Card from "./Card"
 import styles from "./ListCard.module.scss"
 

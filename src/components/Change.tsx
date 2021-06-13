@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import React, { ReactNode } from "react"
 import classNames from "classnames/bind"
 import { abs, gt, gte, lt } from "../libs/math"
 import { percent } from "../libs/num"

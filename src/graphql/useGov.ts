@@ -2,9 +2,9 @@ import { useEffect } from "react"
 import { Dictionary } from "ramda"
 import { QueryResult } from "@apollo/client"
 import { number } from "../libs/math"
-import { fromBase64 } from "../libs/formHelpers"
 import { useContractsAddress } from "../hooks"
 import createContext from "../hooks/createContext"
+import { fromBase64 } from "../forms/formHelpers"
 import { WASMQUERY } from "./gqldocs"
 import useContractQuery from "./useContractQuery"
 
@@ -139,6 +139,8 @@ const useSelect = (data?: PollsData) => {
     const parsed =
       "whitelist" in decoded
         ? parseWhitelist(decoded.whitelist)
+        : "migrate_asset" in decoded
+        ? parseMigrateAsset(decoded.migrate_asset)
         : "update_weight" in decoded
         ? parseUpdateWeight(decoded.update_weight)
         : parsePassCommand(decoded.pass_command)
@@ -150,6 +152,15 @@ const useSelect = (data?: PollsData) => {
     msg: whitelist,
     params,
   })
+
+  const parseMigrateAsset = (params: MigrateAsset) => {
+    const { conversion_rate, ...migrate_asset } = params
+
+    return {
+      msg: migrate_asset,
+      params: { conversion_rate },
+    }
+  }
 
   const parseUpdateWeight = ({ asset_token, weight }: UpdateWeight) => ({
     msg: { asset: getSymbol(asset_token) },

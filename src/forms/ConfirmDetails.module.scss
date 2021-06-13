@@ -1,0 +1,99 @@
+@import "mixins";
+@import "variables";
+
+.item {
+  border-top: 1px solid #b5b5b5;
+  padding-top: 10px;
+  padding-bottom: 13px;
+}
+
+.item:last-child {
+  border-bottom: 1px solid #b5b5b5;
+}
+
+.article {
+  @include flex;
+  align-items: flex-start;
+}
+
+.title,
+.content {
+  flex: 1;
+  display: flex;
+  margin-top: 6px;
+}
+
+.title {
+  color: #5c5c5c;
+  font-size: 14px;
+  font-weight: 600;
+  padding-top: 5px;
+}
+
+.content {
+  flex: 3;
+  display: inline-block;
+  color: #5c5c5c;
+  font-size: 14px;
+  text-align: right;
+  white-space: pre-line;
+  word-break: break-all;
+}
+
+.txhash {
+  flex: 3;
+  justify-content: flex-end;
+  color: #4360e5;
+  font-size: 20px;
+  text-align: right;
+  white-space: pre-line;
+  word-break: break-all;
+}
+
+.content0 {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.title1,
+.content1 {
+}
+
+.title1 {
+  color: #5c5c5c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.content1 {
+  color: #5c5c5c;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: right;
+  white-space: pre-line;
+  word-break: break-all;
+  align-self: flex-end;
+}
+
+.title2 {
+  margin-top: 6px;
+  color: #5c5c5c;
+  font-size: 14px;
+  font-weight: normal;
+  align-self: flex-end;
+}
+
+.content2 {
+  color: #5c5c5c;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: right;
+  white-space: pre-line;
+  word-break: break-all;
+  margin-left: 8px;
+  align-self: flex-end;
+}
+
+.result {
+  color: #5c5c5c;
+}

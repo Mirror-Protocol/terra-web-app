@@ -1,0 +1,24 @@
+@import "mixins";
+@import "variables";
+
+.list {
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.item:not(:first-child) {
+  margin-top: 3px;
+}
+
+.article {
+  @include flex(space-between);
+}
+
+.title {
+  color: $brown;
+  font-weight: normal;
+}
+
+.content {
+  color: $deepgray;
+}

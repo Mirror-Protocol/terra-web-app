@@ -1,22 +1,22 @@
 /* Colors */
-$bg: #121a2f !default;
-$darkblue: #172240 !default;
-$airdrop: #1a314c !default;
+$bg: #121a2f;
+$darkblue: #ffffff;
+$realblue: #0222ba;
+$semiblue: #e2e7ff;
 
-$gray: #cccccc !default;
-$brown: #a0a0a0 !default;
-$light: #f0f0f0 !default;
-$battleship: #6d738c !default;
-$slate: #505466 !default;
+$gray: #cccccc;
+$brown: #a0a0a0;
+$light: #f0f0f0;
+$battleship: #6d738c;
+$slate: #505466;
+$deepgray: #5c5c5c;
 
-$blue: #1eb2ff !default;
-$aqua: #47d7e2 !default;
-$red: #e64c57 !default;
-$orange: #dd794a !default;
+$blue: #0222ba;
+$aqua: #47d7e2;
+$red: #e64c57;
+$orange: #dd794a;
 
 $text: $gray;
-$button: white !default;
-$header: $darkblue !default;
 
 $colors: (
   bg: $bg,
@@ -36,9 +36,9 @@ $border: 1px solid fade-out($slate, 0.8);
 /* Fonts */
 $font-size: 14px;
 $font-family: "Poppins";
+$font-family-swap: "Open Sans", arial, sans-serif;
 
 /* Sizes */
-$max-width: 1200px !default;
 $breakpoint: 992px;
 $gutter: 30px;
 $line-height: 1.5;
@@ -55,5 +55,3 @@ $transition-duration: 0.2s;
 
 /* Z-indexes */
 $zindex-sticky: 1020;
-
-@import "../customize";

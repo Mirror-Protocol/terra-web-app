@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react"
+import React, { FC, ReactNode } from "react"
 import Container from "./Container"
 import styles from "./Page.module.scss"
 
@@ -15,18 +15,16 @@ const Page: FC<Props> = ({ title, description, children, ...props }) => {
 
   return (
     <article className={styles.article}>
-      {title && (
-        <header className={styles.header}>
-          <h1 className={styles.title}>{title}</h1>
-          {action && <section className={styles.action}>{action}</section>}
-        </header>
-      )}
+      <header className={styles.header}>
+        <h1 className={styles.title}>{title}</h1>
+        {action && <section className={styles.action}>{action}</section>}
+      </header>
 
       {description && (
         <section className={styles.description}>{description}</section>
       )}
 
-      {!!title && !noBreak && <hr />}
+      {!noBreak && <hr />}
 
       {sm ? <Container sm>{children}</Container> : children}
     </article>

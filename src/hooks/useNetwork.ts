@@ -1,8 +1,8 @@
-import { useEffect } from "react"
-import { DEFAULT_EXT_NETWORK, FINDER } from "../constants"
-import useLocalStorage from "../libs/useLocalStorage"
-import extension from "../terra/extension"
-import networks from "../networks"
+import { useCallback, useEffect, useState } from "react"
+import { DEFAULT_EXT_NETWORK, FINDER } from "constants/constants"
+import useLocalStorage from "libs/useLocalStorage"
+import extension from "terra/extension"
+import networks from "constants/networks"
 import createContext from "./createContext"
 
 const context = createContext<Network>("useNetwork")
@@ -14,16 +14,20 @@ export const useNetworkState = (): Network => {
     "network",
     DEFAULT_EXT_NETWORK
   )
+  const [isInitialized, setIsInitialized] = useState(false)
 
-  const refresh = async () => {
-    const network = await extension.info()
-    setExtNetwork(network ?? DEFAULT_EXT_NETWORK)
-  }
+  const refresh = useCallback(
+    () => extension.info((network) => network && setExtNetwork(network)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
 
   useEffect(() => {
-    refresh()
-    // eslint-disable-next-line
-  }, [])
+    if (!isInitialized) {
+      refresh()
+      setIsInitialized(true)
+    }
+  }, [refresh, isInitialized])
 
   const network = networks[extNetwork.name]
 

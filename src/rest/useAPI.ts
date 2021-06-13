@@ -1,0 +1,310 @@
+import { useContractsAddress, useNetwork, useWallet } from "hooks"
+import {
+  UAUD,
+  UCAD,
+  UCHF,
+  UCNY,
+  UEUR,
+  UGBP,
+  UHKD,
+  UINR,
+  UJPY,
+  UKRW,
+  ULUNA,
+  UMNT,
+  USDR,
+  USGD,
+  UTHB,
+  UUSD,
+} from "constants/constants"
+import { useCallback } from "react"
+import useURL from "graphql/useURL"
+import terraswapConfig from "constants/terraswap.json"
+import axios from "./request"
+interface DenomBalanceResponse {
+  height: string
+  result: DenomInfo[]
+}
+
+interface DenomInfo {
+  denom: string
+  amount: string
+}
+
+interface ContractBalanceResponse {
+  height: string
+  result: ContractBalance
+}
+
+interface ContractBalance {
+  balance: string
+}
+
+interface GasPriceResponse {
+  uluna: string
+  uusd: string
+  usdr: string
+  ukrw: string
+  umnt: string
+  uaud: string
+  ucad: string
+  uchf: string
+  ucny: string
+  ueur: string
+  ugbp: string
+  uhkd: string
+  uinr: string
+  ujpy: string
+  usgd: string
+  uthb: string
+}
+
+interface Pairs {
+  pairs: Pair[]
+}
+
+export interface Pair {
+  pair: TokenInfo[]
+  contract: string
+  liquidity_token: string
+}
+
+interface TokenInfo {
+  symbol: string
+  name: string
+  contract_addr: string
+}
+
+interface PairsResponse {
+  height: string
+  result: PairsResult
+}
+
+interface PairsResult {
+  pairs: PairResult[]
+}
+
+interface PairResult {
+  liquidity_token: string
+  contract_addr: string
+  asset_infos: (NativeInfo | AssetInfo)[]
+}
+
+interface TokenResult {
+  name: string
+  symbol: string
+  decimals: number
+  total_supply: string
+}
+
+interface PoolResponse {
+  height: string
+  result: Pool
+}
+
+interface Pool {
+  assets: Token[]
+  total_share: string
+}
+
+interface PoolResult {
+  estimated: string
+  price1: string
+  price2: string
+  afterPool: string
+  LP: string
+  // fromLP: Asset[]
+  // text: string
+}
+
+interface SimulatedResponse {
+  height: string
+  result: SimulatedData
+}
+interface SimulatedData {
+  return_amount: string
+  offer_amount: string
+  commission_amount: string
+  spread_amount: string
+}
+interface TaxResponse {
+  height: string
+  result: string
+}
+
+const blacklist = terraswapConfig.blacklist.map(
+  (blacklist) => blacklist.contract_addr
+)
+
+const isBlacklisted = (info: NativeInfo | AssetInfo) => {
+  if (!isAssetInfo(info) || !blacklist.includes(info.token.contract_addr)) {
+    return false
+  }
+
+  return true
+}
+
+export function isAssetInfo(object: any): object is AssetInfo {
+  return "token" in object
+}
+
+export function isNativeInfo(object: any): object is NativeInfo {
+  return "native_token" in object
+}
+
+export default () => {
+  const { fcd, factory } = useNetwork()
+  const { address } = useWallet()
+  const { getSymbol } = useContractsAddress()
+  const getURL = useURL()
+
+  // useBalance
+  const loadDenomBalance = useCallback(async () => {
+    const url = `${fcd}/bank/balances/${address}`
+    const res: DenomBalanceResponse = (await axios.get(url)).data
+    return res.result
+  }, [address, fcd])
+
+  const loadContractBalance = useCallback(
+    async (localContractAddr: string) => {
+      const url = getURL(localContractAddr, { balance: { address: address } })
+      const res: ContractBalanceResponse = (await axios.get(url)).data
+      return res.result
+    },
+    [address, getURL]
+  )
+
+  // useGasPrice
+
+  const loadGasPrice = useCallback(
+    async (symbol: string) => {
+      const symbolName = getSymbol(symbol) || symbol
+      const url = `${fcd}/v1/txs/gas_prices`
+      const res: GasPriceResponse = (await axios.get(url)).data
+
+      let gasPrice = "0"
+      if (
+        [
+          UUSD,
+          UKRW,
+          UMNT,
+          ULUNA,
+          USDR,
+          UAUD,
+          UCAD,
+          UCHF,
+          UCNY,
+          UEUR,
+          UGBP,
+          UHKD,
+          UINR,
+          UJPY,
+          USGD,
+          UTHB,
+        ].includes(symbolName)
+      ) {
+        gasPrice = (res as any)?.[symbolName]
+      }
+
+      return gasPrice
+    },
+    [fcd, getSymbol]
+  )
+
+  // usePairs
+  const loadPairs = useCallback(async () => {
+    let result: PairsResult = {
+      pairs: [],
+    }
+    let lastPair: (NativeInfo | AssetInfo)[] | null = null
+    while (true) {
+      const url = getURL(factory, {
+        pairs: { limit: 30, start_after: lastPair },
+      })
+      const pairs: PairsResponse = (await axios.get(url)).data
+
+      if (!Array.isArray(pairs?.result?.pairs)) {
+        // node might be down
+        break
+      }
+
+      if (pairs.result.pairs.length <= 0) {
+        break
+      }
+
+      pairs.result.pairs
+        .filter(
+          (pair) =>
+            !isBlacklisted(pair?.asset_infos?.[0]) &&
+            !isBlacklisted(pair?.asset_infos?.[1])
+        )
+        .forEach((pair) => {
+          result.pairs.push(pair)
+        })
+      lastPair = pairs.result.pairs.slice(-1)[0]?.asset_infos
+    }
+    return result
+  }, [factory, getURL])
+
+  const loadTokenInfo = useCallback(
+    async (contract: string): Promise<TokenResult> => {
+      const url = getURL(contract, { token_info: {} })
+      const res = (await axios.get(url)).data
+      return res.result
+    },
+    [getURL]
+  )
+
+  // usePool
+  const loadPool = useCallback(
+    async (contract: string) => {
+      const url = getURL(contract, { pool: {} })
+      const res: PoolResponse = (await axios.get(url)).data
+      return res.result
+    },
+    [getURL]
+  )
+
+  // useSwapSimulate
+  const querySimulate = useCallback(
+    async (variables: { contract: string; msg: any }) => {
+      const { contract, msg } = variables
+      const url = getURL(contract, msg)
+      const res: SimulatedResponse = (await axios.get(url)).data
+      return res
+    },
+    [getURL]
+  )
+
+  // useTax
+  const loadTaxInfo = useCallback(
+    async (symbol: string) => {
+      if (!symbol) {
+        return ""
+      }
+      const symbolName = getSymbol(symbol) || symbol
+      const url = `${fcd}/treasury/tax_cap/${symbolName}`
+      const res: TaxResponse = (await axios.get(url)).data
+      return res.result
+    },
+    [fcd, getSymbol]
+  )
+
+  const loadTaxRate = useCallback(async () => {
+    const url = `${fcd}/treasury/tax_rate`
+    const res: TaxResponse = (await axios.get(url)).data
+    return res.result
+  }, [fcd])
+
+  return {
+    loadDenomBalance,
+    loadContractBalance,
+    loadGasPrice,
+    loadPairs,
+    loadTokenInfo,
+    loadPool,
+    querySimulate,
+    loadTaxInfo,
+    loadTaxRate,
+  }
+}

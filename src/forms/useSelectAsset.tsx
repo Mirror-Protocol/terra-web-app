@@ -1,12 +1,11 @@
-import { useState } from "react"
-import { useContractsAddress } from "../hooks"
+import React, { useState } from "react"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
-import SelectAssetButton from "./SelectAssetButton"
+import SelectAsset from "./SelectAsset"
 import Assets from "./Assets"
 
 export interface Config {
   /** Current value */
-  token: string
+  value: string
   /** Function to call when a value is selected */
   onSelect: (asset: string) => void
   /** Key of price to show from data */
@@ -22,25 +21,23 @@ export interface Config {
 }
 
 export default (config: Config) => {
-  const { token, onSelect } = config
-  const { getSymbol } = useContractsAddress()
+  const { value, onSelect } = config
   const [isOpen, setIsOpen] = useState(false)
-  const toggle = () => (isOpen ? handleSelect(token) : setIsOpen(!isOpen))
+  const toggle = () => (isOpen ? handleSelect(value) : setIsOpen(!isOpen))
 
   /* select asset */
-  const handleSelect = (token: string) => {
-    onSelect(token)
+  const handleSelect = (asset: string) => {
+    onSelect(asset)
     setIsOpen(false)
   }
 
-  const symbol = getSymbol(token)
-  const select = { ...config, isOpen, symbol, onClick: toggle }
+  const select = { ...config, isOpen, asset: value, onClick: toggle }
 
   return {
     isOpen,
-    button: <SelectAssetButton {...select} />,
+    button: <SelectAsset {...select} />,
     assets: isOpen ? (
-      <Assets {...config} selected={token} onSelect={handleSelect} />
+      <Assets {...config} selected={value} onSelect={handleSelect} />
     ) : undefined,
   }
 }

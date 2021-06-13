@@ -13,9 +13,6 @@ export const times = (a?: BN.Value, b?: BN.Value): string =>
 export const div = (a?: BN.Value, b?: BN.Value): string =>
   new BN(a || 0).div(b || 1).toString()
 
-export const pow = (a: BN.Value, b: BN.Value): string =>
-  new BN(a).pow(b).toString()
-
 export const sum = (array: BN.Value[]): string =>
   BN.sum.apply(null, array.filter(isFinite)).toString()
 
@@ -30,6 +27,9 @@ export const ceil = (n: BN.Value): string =>
 
 export const floor = (n: BN.Value): string =>
   new BN(n).integerValue(BN.ROUND_FLOOR).toString()
+
+  export const halfUp = (n: BN.Value): string =>
+  new BN(n).integerValue(BN.ROUND_HALF_UP).toString()
 
 export const abs = (n: BN.Value): string => new BN(n).abs().toString()
 

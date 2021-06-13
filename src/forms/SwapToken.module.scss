@@ -1,0 +1,50 @@
+@import "mixins";
+@import "variables";
+
+$symbol: 18px;
+$name: 12px;
+
+.asset {
+  @include flex(space-between);
+  // Because only one line of data can exist, fix the height.
+  height: (($symbol + $name) * $line-height);
+}
+
+.header {
+  text-align: left;
+}
+
+.symbol {
+}
+
+.divide {
+  color: $deepgray;
+  margin-left: 15px;
+  margin-right: 15px;
+  font-size: $symbol;
+  font-weight: 500;
+  float: left;
+  line-height: 20px;
+}
+
+.logo {
+  float: left;
+}
+
+.name {
+  color: $deepgray;
+  margin-left: 15px;
+  font-size: $symbol;
+  font-weight: 500;
+  float: left;
+  line-height: 20px;
+}
+
+.footer {
+  text-align: left;
+}
+
+.balance {
+  color: $blue;
+  font-size: 12px;
+}

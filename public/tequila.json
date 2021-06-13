@@ -1,0 +1,91 @@
+{
+  "contracts": {
+    "gov": "terra102pll8yzs4knwvz0x20ymwauwvq46zk0adkwd8",
+    "mirrorToken": "terra1dw9sjfvzm9udg3uqtnrr3cph8ce3welc9ljr83",
+    "factory": "terra1um0l5ufa44v8nqj022tvvmyd6g4nqfy4y9ryk9",
+    "oracle": "terra187un3r3c59dav3y5l8n47ekp5rpgrh08ttd04x",
+    "mint": "terra1ptrsap5h4n0ee29qxqjpgkmhqjc4pewe8j6lxz",
+    "staking": "terra1wt65k5ugrpujen6r4unh3lddzr0678erny3f4q",
+    "tokenFactory": "terra1n0mdp2fcwuk6mkhuwtwp65upza9z5v0deawvma",
+    "collector": "terra18skkp9lsrv3sq0urf682nfk0cs49xdlfx3a0a8"
+  },
+  "whitelist": {
+    "terra1sjw2wpak38g7595lhh95m2es78muzzaql850ss": {
+      "symbol": "mAAPL",
+      "name": "Apple",
+      "token": "terra1sjw2wpak38g7595lhh95m2es78muzzaql850ss",
+      "pair": "terra13qyg6hrztrl2gmx9l3h463pjladeup86cs8g2j",
+      "lpToken": "terra12dtk9pwlwyum9em2nkeefphsvg0c4ks88a2aju"
+    },
+    "terra18xmyk8tqhrcgekxf0z69mkrna8rvgp5n8wzjx6": {
+      "symbol": "mGOOGL",
+      "name": "Google",
+      "token": "terra18xmyk8tqhrcgekxf0z69mkrna8rvgp5n8wzjx6",
+      "pair": "terra180dsn37yx3qul3qm5t9f0kd58950r663ekc3mg",
+      "lpToken": "terra1pnq3stlvvn597fkfwdf5ur2mffqq59an4rj88e"
+    },
+    "terra147eejpkvujqyj02zm6gs6rmql4yjmht56hkjdj": {
+      "symbol": "mTSLA",
+      "name": "Tesla",
+      "token": "terra147eejpkvujqyj02zm6gs6rmql4yjmht56hkjdj",
+      "pair": "terra1pq5sy6dhzuvdyges2454vm7csx8y08lhjvnt64",
+      "lpToken": "terra1v85p94we3wp56almy3qzzpqskp0yu8amnpccey"
+    },
+    "terra1lp6p2wuvlzv54s6a28k5mfd6spzg7mvdcfyavj": {
+      "symbol": "mNFLX",
+      "name": "Netflix",
+      "token": "terra1lp6p2wuvlzv54s6a28k5mfd6spzg7mvdcfyavj",
+      "pair": "terra1k33nulqk4mhvx3zh7dn87cv537k73elfptnela",
+      "lpToken": "terra1vgcyf0fmhnshl45qrrqjgjwzkvptnjdm6wcqe3"
+    },
+    "terra10k5y7j85ajgg92grtvht30uqlrn64t2ayhexmk": {
+      "symbol": "mQQQ",
+      "name": "Invesco QQQ Trust",
+      "token": "terra10k5y7j85ajgg92grtvht30uqlrn64t2ayhexmk",
+      "pair": "terra1wvywrtd9aqsej6j74fa80umjkz0xwkuk6uan9w",
+      "lpToken": "terra1pju0hte482vqku5zgthdgly2j64tz6gm2s7p00"
+    },
+    "terra1nkcss7j5umfuh0sjzmsk2l5xn2nlynumyz63wj": {
+      "symbol": "mTWTR",
+      "name": "Twitter",
+      "token": "terra1nkcss7j5umfuh0sjzmsk2l5xn2nlynumyz63wj",
+      "pair": "terra15hpqv732702rv9e34k9zcfv5f7rs3pyj5kjqmh",
+      "lpToken": "terra15gd9umv09spet6u7rhvqheknhcrxazvg9adjlj"
+    },
+    "terra1x7f9dd465clkj6cu8ll4z4l9v643xhpkgx0jm3": {
+      "symbol": "mBABA",
+      "name": "Alibaba Group Holdings Ltd ADR",
+      "token": "terra1x7f9dd465clkj6cu8ll4z4l9v643xhpkgx0jm3",
+      "pair": "terra19src9qxfgaxan4st23s2hz4axq6ypkdffzn5qw",
+      "lpToken": "terra1vwj824y645u80l22kkqtp7qfr4n74lkhzss6s3"
+    },
+    "terra100gxsglqfc7uz3uppet5ytl3cp03lmkcqx9njn": {
+      "symbol": "mIAU",
+      "name": "iShares Gold Trust",
+      "token": "terra100gxsglqfc7uz3uppet5ytl3cp03lmkcqx9njn",
+      "pair": "terra1djcthczd5nvhqjqdfuzzugyxuq34924kmtcgpm",
+      "lpToken": "terra1uk8kkm2kjs68ygyyn68kev67n0dmsfq6vspjx6"
+    },
+    "terra1dqy7hjqx7c9qx92t308ylfgmmlq0eg9gtp5wvc": {
+      "symbol": "mSLV",
+      "name": "iShares Silver Trust",
+      "token": "terra1dqy7hjqx7c9qx92t308ylfgmmlq0eg9gtp5wvc",
+      "pair": "terra19dw9fxmcmte5w2l4m0wwfw9yngtl3gj2awmfr9",
+      "lpToken": "terra12z3lpeq4gvxfsftrcj9yfkmx9elwjh0xxf2fhc"
+    },
+    "terra10rz7tjtduxam6nmaxm83ts6s7uprtraautrtwd": {
+      "symbol": "mUSO",
+      "name": "United States Oil Fund, LP",
+      "token": "terra10rz7tjtduxam6nmaxm83ts6s7uprtraautrtwd",
+      "pair": "terra13zrgavrjcffxfde7dp0uppdzw2ppjqupmrr3qk",
+      "lpToken": "terra153ptn9uudypurdlcsx58eg6wdxfhhe04qrw0tn"
+    },
+    "terra1y3ja7tu658x7f0twm3vpzsf4ee2vjm9xr4n0m2": {
+      "symbol": "mVIXY",
+      "name": "ProShares VIX",
+      "token": "terra1y3ja7tu658x7f0twm3vpzsf4ee2vjm9xr4n0m2",
+      "pair": "terra16th48uswly2gt6dg4m48el9wkt42g4vlfj69vj",
+      "lpToken": "terra1ceamc3dpkm6f8mvkzrmx3pdt8rdmqc6w46cc5l"
+    }
+  }
+}

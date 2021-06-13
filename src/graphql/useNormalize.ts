@@ -1,22 +1,26 @@
 import { Dictionary } from "ramda"
-import { MIR, UUSD } from "../constants"
-import { plus, div, floor, gt } from "../libs/math"
-import calc from "../helpers/calc"
-import { useContractsAddress } from "../hooks"
-import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
-import { BalanceKey, AccountInfoKey } from "../hooks/contractKeys"
+import { MIR, UUSD } from "constants/constants"
+import { plus, div, floor, gt } from "libs/math"
+import calc from "helpers/calc"
+import { useContractsAddress } from "hooks"
+import { PriceKey, AssetInfoKey } from "hooks/contractKeys"
+import { BalanceKey, AccountInfoKey } from "hooks/contractKeys"
 
 export default () => {
-  const { listedAll, getToken } = useContractsAddress()
+  const { getListedItem, listed } = useContractsAddress()
 
   const price = {
     [PriceKey.PAIR]: (pairPool: Dictionary<PairPool>) =>
       dict(pairPool, calcPairPrice),
-    [PriceKey.ORACLE]: (oraclePrice: Dictionary<Rate>) =>
-      dict(oraclePrice, ({ rate }) => rate),
+    [PriceKey.ORACLE]: (oraclePrice: Dictionary<Price>) =>
+      dict(oraclePrice, ({ price }) => price),
   }
 
   const contractInfo = {
+    [AssetInfoKey.COMMISSION]: (pairConfig: Dictionary<PairConfig>) =>
+      dict(pairConfig, ({ lp_commission, owner_commission }) =>
+        plus(lp_commission, owner_commission)
+      ),
     [AssetInfoKey.LIQUIDITY]: (pairPool: Dictionary<PairPool>) =>
       dict(pairPool, (pool) => parsePairPool(pool).asset),
     [AssetInfoKey.MINCOLLATERALRATIO]: (mintInfo: Dictionary<MintInfo>) =>
@@ -33,13 +37,13 @@ export default () => {
     [BalanceKey.LPTOTAL]: (
       lpTokenBalance: Dictionary<Balance>,
       stakingReward: StakingReward
-    ) => reduceLP(listedAll, { lpTokenBalance, stakingReward }),
+    ) => reduceLP(listed, { lpTokenBalance, stakingReward }),
     [BalanceKey.LPSTAKABLE]: (lpTokenBalance: Dictionary<Balance>) =>
       dict(lpTokenBalance, ({ balance }) => balance),
     [BalanceKey.LPSTAKED]: (stakingReward: StakingReward) =>
       reduceBondAmount(stakingReward),
     [BalanceKey.MIRGOVSTAKED]: (govStake: Balance) => {
-      const token = getToken(MIR)
+      const { token } = getListedItem(MIR)
       return { [token]: govStake.balance }
     },
     [BalanceKey.REWARD]: (
@@ -91,10 +95,10 @@ interface LPParams {
 }
 
 const reduceLP = (
-  listedAll: ListedItem[],
+  listed: ListedItem[],
   { lpTokenBalance, stakingReward }: LPParams
 ) =>
-  listedAll.reduce<Dictionary<string>>(
+  listed.reduce<Dictionary<string>>(
     (acc, { token }) => ({
       ...acc,
       [token]: plus(

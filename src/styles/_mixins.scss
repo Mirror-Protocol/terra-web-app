@@ -35,16 +35,3 @@
 @mixin transition($property: all) {
   transition: $property $transition-duration;
 }
-
-/* app */
-@mixin app {
-  font-size: $font-size;
-
-  position: relative;
-  min-height: 100vh;
-  padding-bottom: $footer-height;
-
-  @include mobile {
-    padding-bottom: $footer-height-mobile;
-  }
-}

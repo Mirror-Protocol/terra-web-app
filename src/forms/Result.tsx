@@ -1,110 +1,137 @@
-import { useEffect } from "react"
-import { useLazyQuery } from "@apollo/client"
+import React, { useEffect, useState } from "react"
+import classNames from "classnames/bind"
 
-import { TX_POLLING_INTERVAL } from "../constants"
-import { TXINFOS } from "../graphql/gqldocs"
-import { PostResponse } from "../terra/extension"
-import MESSAGE from "../lang/MESSAGE.json"
-import { useResult } from "../hooks"
-import { getPath, MenuKey } from "../routes"
+import { TX_POLLING_INTERVAL } from "constants/constants"
+import { PostResponse } from "terra/extension"
+import MESSAGE from "lang/MESSAGE.json"
+import { useNetwork } from "hooks"
 
-import Wait, { STATUS } from "../components/Wait"
-import TxHash from "./TxHash"
-import TxInfo from "./TxInfo"
+import SwapCard from "components/SwapCard"
+import Icon from "components/Icon"
+import Loading from "components/Loading"
+import Button from "components/Button"
+import SwapTxHash from "./SwapTxHash"
+import SwapTxInfo from "./SwapTxInfo"
+import styles from "./Result.module.scss"
 
-interface Props extends PostResponse {
-  parseTx: ResultParser
+export interface ResultProps extends PostResponse {
   gov?: boolean
+  parserKey: string
   onFailure: () => void
 }
 
-const Result = ({ success, result, error, ...props }: Props) => {
-  const { parseTx, onFailure, gov } = props
-  const { txhash: hash = "" } = result ?? {}
+const cx = classNames.bind(styles)
 
-  /* context */
-  const { uusd } = useResult()
-  const { refetch } = uusd
+enum STATUS {
+  SUCCESS = "success",
+  LOADING = "loading",
+  FAILURE = "failure",
+}
+
+const Result = ({ success, result, error, ...props }: ResultProps) => {
+  const { parserKey, onFailure } = props
+  const { txhash: hash = "" } = result ?? {}
 
   /* polling */
   const variables = { hash }
-  const [load, tx] = useLazyQuery<TxInfos>(TXINFOS, { variables })
+  const [tx, setTx] = useState<SwapTxInfo>()
 
-  const { data, startPolling, stopPolling } = tx
-  const txInfo = data?.TxInfos[0]
+  const [status, setStatus] = useState<STATUS>(STATUS.LOADING)
+  const { fcd } = useNetwork()
+
+  useEffect(() => {
+    const load = async () => {
+      if (variables.hash === "") {
+        setStatus(STATUS.FAILURE)
+        return
+      }
+      const response: Response = await fetch(`${fcd}/txs/${variables.hash}`)
+      const res: any = await response.json()
+      if (res?.error && res.error.indexOf("Tx: RPC error -32603") > -1) {
+        setTimeout(() => {
+          load()
+        }, TX_POLLING_INTERVAL)
+      } else {
+        setStatus(STATUS.SUCCESS)
+      }
+      setTx(res)
+    }
+    load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const txInfo = tx
 
   /* status */
   // TODO
   // 1. TIMEOUT - When there is no response for 20 seconds
   // 2. User denied
-  const status =
-    !success || !hash || tx.error || (txInfo && !txInfo?.Success)
-      ? STATUS.FAILURE
-      : tx.loading || !txInfo
-      ? STATUS.LOADING
-      : STATUS.SUCCESS
-
-  useEffect(() => {
-    success && hash && load()
-  }, [success, hash, load])
-
-  useEffect(() => {
-    if (status === STATUS.LOADING) {
-      startPolling?.(TX_POLLING_INTERVAL)
-    } else {
-      stopPolling?.()
-      refetch?.()
-    }
-  }, [status, startPolling, stopPolling, refetch])
-
-  /* verbose */
-  const verbose = txInfo ? JSON.stringify(txInfo, null, 2) : undefined
-  useEffect(() => {
-    const log = () => {
-      console.groupCollapsed("Logs")
-      console.info(verbose)
-      console.groupEnd()
-    }
-
-    verbose && log()
-  }, [verbose])
 
   /* render */
+  const name = {
+    [STATUS.SUCCESS]: "check_circle_outline",
+    [STATUS.LOADING]: "",
+    [STATUS.FAILURE]: "highlight_off",
+  }[status]
+
+  const icon = name ? (
+    <Icon name={name} className={cx(status)} size={50} />
+  ) : (
+    <Loading size={40} />
+  )
+
+  const title = {
+    [STATUS.SUCCESS]: (
+      <span className={styles.success}>{MESSAGE.Result.SUCCESS}</span>
+    ),
+    [STATUS.LOADING]: MESSAGE.Result.LOADING,
+    [STATUS.FAILURE]: (
+      <span className={styles.failure}>{MESSAGE.Result.FAILURE}</span>
+    ),
+  }[status]
+
   const message =
-    txInfo?.RawLog ||
-    result?.raw_log ||
-    error?.message ||
+    result?.raw_log ??
+    error?.message ??
     (error?.code === 1 && MESSAGE.Result.DENIED)
 
   const content = {
-    [STATUS.SUCCESS]: txInfo && <TxInfo txInfo={txInfo} parser={parseTx} />,
-    [STATUS.LOADING]: null,
-    [STATUS.FAILURE]: message,
+    [STATUS.SUCCESS]: txInfo && (
+      <SwapTxInfo txInfo={txInfo} parserKey={parserKey} />
+    ),
+    [STATUS.LOADING]: (
+      <div>
+        <Loading className={styles.progress} size={48} />
+        <br />
+        <br />
+        <p className={styles.hash}>
+          <SwapTxHash>{hash}</SwapTxHash>
+        </p>
+      </div>
+    ),
+    [STATUS.FAILURE]: <p className={styles.feedback}>{message}</p>,
   }[status]
 
-  const wait = {
-    status,
+  const button = {
+    [STATUS.SUCCESS]: (
+      <Button onClick={() => window.location.reload()} size="swap" submit>
+        Done
+      </Button>
+    ),
+    [STATUS.LOADING]: null,
+    [STATUS.FAILURE]: (
+      <Button onClick={onFailure} size="swap" submit>
+        {MESSAGE.Result.Button.FAILURE}
+      </Button>
+    ),
+  }[status]
 
-    hash: status === STATUS.LOADING && <TxHash>{hash}</TxHash>,
-
-    link:
-      status === STATUS.SUCCESS
-        ? {
-            to: getPath(!gov ? MenuKey.MY : MenuKey.GOV),
-            children: !gov ? MenuKey.MY : MenuKey.GOV,
-          }
-        : undefined,
-
-    button:
-      status === STATUS.FAILURE
-        ? {
-            onClick: onFailure,
-            children: MESSAGE.Result.Button.FAILURE,
-          }
-        : undefined,
-  }
-
-  return <Wait {...wait}>{content}</Wait>
+  return (
+    <SwapCard icon={icon} title={title} lg>
+      <section className={styles.contents}>{content}</section>
+      <footer>{button}</footer>
+    </SwapCard>
+  )
 }
 
 export default Result

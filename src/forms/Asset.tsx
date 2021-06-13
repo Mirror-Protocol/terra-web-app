@@ -1,6 +1,7 @@
-import { UST } from "../constants"
-import { gt } from "../libs/math"
-import { format, lookupSymbol } from "../libs/parse"
+import React from "react"
+import { UST } from "constants/constants"
+import { gt } from "libs/math"
+import { format, lookupSymbol } from "libs/parse"
 import styles from "./Asset.module.scss"
 
 interface Props extends AssetItem {

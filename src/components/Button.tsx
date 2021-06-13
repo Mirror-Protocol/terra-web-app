@@ -1,3 +1,4 @@
+import React from "react"
 import classNames from "classnames/bind"
 import Loading from "./Loading"
 import styles from "./Button.module.scss"
@@ -7,10 +8,12 @@ const cx = classNames.bind(styles)
 const Button = (props: Button) => {
   const { loading, children } = props
   return (
-    <button {...getAttrs(props)}>
-      {loading && <Loading className={styles.progress} />}
-      {children}
-    </button>
+    <div className={styles.middle}>
+      <button {...getAttrs(props)}>
+        {loading && <Loading className={styles.progress} />}
+        {children}
+      </button>
+    </div>
   )
 }
 

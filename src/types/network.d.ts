@@ -8,20 +8,26 @@ interface Network extends NetworkConfig {
 
 type NetworkConfig = ExtNetworkConfig & LocalNetworkConfig
 
-interface LocalNetworkConfig {
+interface NetworkConfig {
+  /** Chain ID */
+  id: string
   /** Contract Addresses JSON URL */
   contract: string
+  /** Swap Contract Addresses JSON URL */
+  swap: string
   /** Graphql server URL */
   mantle: string
   stats: string
-  /** Ethereum */
-  shuttle: string
+  /** LCDClientConfig */
+  lcd: LCDClientConfig
   /** Fixed fee */
-  fee: { gasPrice: number; amount: number }
+  fee: { gasPrice: string; amount: string; gas: string }
+  factory: string
 }
 
 interface ExtNetworkConfig {
   name: string
   chainID: string
   lcd: string
+  fcd: string
 }

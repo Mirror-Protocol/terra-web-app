@@ -1,0 +1,41 @@
+@import "mixins";
+@import "variables";
+
+.success {
+  color: $aqua;
+}
+
+.failure {
+  color: $red;
+}
+
+.hash {
+  color: $battleship;
+  font-size: 12px;
+  text-align: center;
+}
+
+.feedback {
+  text-align: center;
+  margin: 20px 0 40px;
+  color: $deepgray;
+  font-size: 18px;
+}
+
+.success {
+  color: #0222ba;
+  font-size: 28px;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.failure {
+  color: #fd3303;
+  font-size: 28px;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+}

@@ -12,7 +12,6 @@ interface PollData {
 
   yes_votes?: string
   no_votes?: string
-  total_balance_at_end_poll?: string
 
   title: string
   description: string
@@ -35,6 +34,7 @@ interface Poll extends PollData {
 
 type DecodedExecuteMsg =
   | { whitelist: Whitelist }
+  | { migrate_asset: MigrateAsset }
   | { update_weight: UpdateWeight }
   | { pass_command: PassCommand }
 
@@ -43,6 +43,13 @@ interface Whitelist {
   symbol: string
   oracle_feeder: string
   params: AssetParams
+}
+
+interface MigrateAsset {
+  name: string
+  symbol: string
+  from_token: string
+  conversion_rate: string
 }
 
 interface AssetParams {
@@ -73,6 +80,7 @@ type DecodedPassCommandMsg =
 
 /* votes */
 interface Voter {
+  share: string
   vote: "yes" | "no"
   voter: string
 }

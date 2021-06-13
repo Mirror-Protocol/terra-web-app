@@ -6,7 +6,7 @@
 
 html {
   line-height: $line-height;
-  font-family: $font-family, sans-serif;
+  font-family: $font-family-swap;
 }
 
 body {
@@ -81,7 +81,6 @@ th {
 
 button,
 input,
-select,
 textarea {
   border: 0;
   padding: 0;
@@ -91,8 +90,7 @@ textarea {
   font: inherit;
 }
 
-button,
-select {
+button {
   cursor: pointer;
   user-select: none;
 
@@ -103,23 +101,16 @@ select {
 
 input:disabled,
 textarea:disabled,
-select:disabled {
+input:read-only {
   opacity: 0.5;
+  cursor: default;
 }
 
 textarea {
   resize: none;
 }
 
-svg {
-  fill: white;
-}
-
 [type="number"]::-webkit-inner-spin-button,
 [type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
-}
-
-::-webkit-scrollbar {
-  display: none;
 }

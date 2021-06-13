@@ -1,11 +1,11 @@
-import { ReactNode } from "react"
+import React, { ReactNode } from "react"
 import classNames from "classnames/bind"
 import { path } from "ramda"
 import styles from "./Table.module.scss"
 
 const cx = classNames.bind(styles)
 
-interface Props<T> {
+interface Table<T> {
   rows?: (record: T) => Row
   columns: Column<T>[]
   dataSource: T[]
@@ -40,7 +40,7 @@ enum BorderPosition {
 const SEP = "."
 
 type DefaultRecordType = Record<string, any>
-function Table<T extends DefaultRecordType>(props: Props<T>) {
+function Table<T extends DefaultRecordType>(props: Table<T>) {
   const { rows, columns, dataSource } = props
 
   const normalized = columns.reduce<Column<T>[]>(
@@ -110,7 +110,7 @@ function Table<T extends DefaultRecordType>(props: Props<T>) {
   }
 
   const colspan = columns.some(({ children }) => children)
-  return !dataSource.length ? null : (
+  return (
     <div className={styles.wrapper}>
       <table className={cx({ margin: colspan })}>
         <thead>

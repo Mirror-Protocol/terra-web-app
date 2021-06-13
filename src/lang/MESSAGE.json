@@ -14,7 +14,14 @@
     },
     "Button": {
       "ConnectWallet": "Connect Wallet",
-      "SelectAsset": "Select an asset"
+      "ConnectTheWallet": "Connect the Wallet",
+      "SelectAsset": "Select an asset",
+      "SelectToken": "Select a token"
+    },
+    "Migrate": {
+      "Desc": "Balance of the asset(s) below will be changed due to a passed governance poll regarding a corporate event",
+      "Footer": "The value of the asset(s) remain unchanged. Confirm to use other functions.",
+      "Button": "Confirm"
     }
   },
   "Confirm": {
@@ -26,28 +33,29 @@
     }
   },
   "Result": {
+    "LOADING": "Processing",
+    "SUCCESS": "Complete!",
+    "FAILURE": "Failed",
     "TIMEOUT": "The execution of this transaction is taking a little longer than usual. It has been successfully broadcasted, but have not been executed yet. The transaction may fail in the future, so please check again later",
-    "DENIED": "Denied by the user",
+    "DENIED": "Failed: User denied transaction",
     "Button": { "FAILURE": "Try Again" }
   },
 
   "Wallet": {
     "Connect": "Connect",
     "Disconnect": "Disconnect",
-    "DownloadExtension": "Download Terra Station Extension",
+    "DownloadExtension": "Download Terra Extension",
     "ConnectWallet": "Connect Wallet",
-    "TerraFinder": "Terra Finder"
-  },
-  "Network": {
-    "NoContract": "Mirror contracts could not be found on the selected network. Select a different network from the Terra Station extension."
+    "CopyAddress": "Copy Address",
+    "TerraFinder": "View on Terra Finder"
   },
 
   "MyPage": {
     "Empty": {
-      "Holdings": "No current asset balances",
-      "Minted": "No current asset mint positions",
-      "Pool": "No current liquidity positions",
-      "Staked": "No current staking positions"
+      "Invested": "No available asset",
+      "Minted": "No available minted position",
+      "Pool": "No available LP",
+      "Staked": "No available staking position"
     }
   }
 }

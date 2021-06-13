@@ -2,10 +2,6 @@ interface Price {
   price: string
 }
 
-interface Rate {
-  rate: string
-}
-
 interface Balance {
   balance: string
 }
@@ -18,6 +14,11 @@ interface TotalSupply {
 interface PairPool {
   assets: (AssetToken | NativeToken)[]
   total_share: string
+}
+
+interface PairConfig {
+  lp_commission: string
+  owner_commission: string
 }
 
 /* Contract Info */

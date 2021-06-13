@@ -1,0 +1,31 @@
+@import "mixins";
+@import "variables";
+
+.modal {
+  width: 460px;
+  outline: 0;
+  position: relative;
+}
+
+.overlay {
+  @include flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: fade-out(#070a13, 0.2);
+  z-index: 3;
+}
+
+.close {
+  position: absolute;
+  width: calc(100% - 50px);
+  text-align: right;
+  margin-top: 25px;
+  z-index: 1;
+
+  span {
+    cursor: pointer;
+  }
+}

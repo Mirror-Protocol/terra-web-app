@@ -1,21 +1,18 @@
-import { FC } from "react"
-import { useNetwork } from "../hooks"
+import React, { FC } from "react"
 import { useContractsAddressState } from "../hooks/useContractsAddress"
 import { ContractsAddressProvider } from "../hooks/useContractsAddress"
-import Reconnect from "./Reconnect"
+import { useContractsAddressTokenState } from "../hooks/useContractsAddressToken"
+import { ContractsAddressTokenProvider } from "../hooks/useContractsAddressToken"
 
 const Contract: FC = ({ children }) => {
-  const network = useNetwork()
   const contractsAddress = useContractsAddressState()
+  const contractsAddressToken = useContractsAddressTokenState()
 
-  const empty =
-    contractsAddress && !Object.values(contractsAddress.whitelist).length
-
-  return !network.contract || empty ? (
-    <Reconnect {...network} />
-  ) : !contractsAddress ? null : (
+  return !contractsAddress ? null : (
     <ContractsAddressProvider value={contractsAddress}>
-      {children}
+      <ContractsAddressTokenProvider value={contractsAddressToken}>
+        {children}
+      </ContractsAddressTokenProvider>
     </ContractsAddressProvider>
   )
 }

@@ -3,10 +3,16 @@
 .container {
   margin: 0 auto;
   padding: 0 $gutter;
-  max-width: ($max-width + 2 * $gutter);
+  max-width: (1200px + 2 * $gutter);
 }
 
 .sm {
   margin: 60px auto;
-  max-width: 620px;
+  max-width: 460px;
+}
+
+p {
+  color: #5c5c5c;
+  font-size: 12px;
+  text-align: center;
 }

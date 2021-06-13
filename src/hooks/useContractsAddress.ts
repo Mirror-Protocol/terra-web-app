@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { Dictionary } from "ramda"
-import { UUSD } from "../constants"
 import createContext from "./createContext"
 import { useNetwork } from "./useNetwork"
+import { NATIVE_TOKENS } from "constants/constants"
+import { getSymbol } from "helpers/token"
 
 interface ContractAddressJSON {
   /** Contract addresses */
@@ -14,15 +15,16 @@ interface ContractAddressJSON {
 interface ContractAddressHelpers {
   /** Array of listed item */
   listed: ListedItem[]
-  listedAll: ListedItem[]
-  /** Find token with symbol */
-  getToken: (symbol?: string) => string
-  /** Find symbol with token */
-  getSymbol: (token?: string) => string
+  /** Find contract address with any key */
+  getListedItem: (key?: string) => ListedItem
+  // getSymbol: (key?: string) => string
+  getSymbol: (key: string) => string
+  isNativeToken: (key: string) => boolean
   /** Convert structure for chain */
-  toAssetInfo: (token: string) => AssetInfo | NativeInfo
+  toAssetInfo: (symbol: string) => AssetInfo | NativeInfo
   toToken: (params: Asset) => Token
   /** Convert from token of structure for chain */
+  parseAssetInfo: (info: AssetInfo | NativeInfo) => string
   parseToken: (token: AssetToken | NativeToken) => Asset
 }
 
@@ -37,65 +39,78 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
 
   useEffect(() => {
     const load = async () => {
-      try {
-        const response = await fetch(url)
-        const json: ContractAddressJSON = await response.json()
-        setData(json)
-      } catch {
-        setData({ contracts: {}, whitelist: {} })
-      }
+      const response = await fetch(url)
+      const json: ContractAddressJSON = await response.json()
+      setData(json)
     }
 
-    url && load()
+    load()
   }, [url])
 
   const helpers = ({
     whitelist,
   }: ContractAddressJSON): ContractAddressHelpers => {
-    const listedAll = Object.values(whitelist)
-    const listed = listedAll.filter(({ status }) => status === "LISTED")
+    const listed = Object.values(whitelist)
 
-    const getToken = (symbol?: string) =>
-      !symbol
-        ? ""
-        : symbol === UUSD
-        ? symbol
-        : listed.find((item) => item.symbol === symbol)?.["token"] ?? ""
+    const getListedItem = (key?: string) =>
+      listed.find((item) => Object.values(item).includes(key)) ?? {
+        symbol: "",
+        name: "",
+        token: "",
+        pair: "",
+        lpToken: "",
+      }
 
-    const getSymbol = (token?: string) =>
-      !token ? "" : token === UUSD ? token : whitelist[token]?.["symbol"] ?? ""
+    // const getSymbol = (key?: string) =>
+    //   key === UUSD ? key : getListedItem(key).symbol
 
-    const toAssetInfo = (token: string) =>
-      token === UUSD
-        ? { native_token: { denom: token } }
-        : { token: { contract_addr: token } }
+    // const toAssetInfo = (symbol: string) => {
+    //   symbol === 'Luna'
+    //     ? { native_token: { denom: symbol } }
+    //     : { token: { contract_addr: getListedItem(symbol)["token"] } }
+    //   }
 
-    const toToken = ({ amount, token }: Asset) => ({
+    // const isNativeToken: boolean = (key: string) => {
+    // const isNativeToken = (key: string): boolean =>
+    const isNativeToken = (key: string) =>
+      NATIVE_TOKENS.indexOf(key) > -1 ? true : false
+
+    // const getContractAddr = (key: string) => {
+    //   const retVal: { [key: string]: string } = {
+    //     LABS: "terra1xt8efpfkyka8807t9kd29zs5mfcmt4rzhqfw8c",
+    //     DELIGHT: "terra18sl63stqew9kd9g0f2ngw0cdxud7236xt7ydh9",
+    //   }
+    //   return retVal[key]
+    // }
+
+    const toAssetInfo = (key: string) =>
+      NATIVE_TOKENS.indexOf(key) > -1
+        ? { native_token: { denom: key } }
+        : { token: { contract_addr: key } }
+
+    const toToken = ({ amount, symbol }: Asset) => ({
       amount,
-      info: toAssetInfo(token),
+      info: toAssetInfo(symbol),
     })
 
-    const parseAssetInfo = (info: AssetInfo | NativeInfo) => {
-      const token =
-        "native_token" in info
-          ? info.native_token.denom
-          : info.token.contract_addr
-
-      return { token, symbol: getSymbol(token) }
-    }
+    const parseAssetInfo = (info: AssetInfo | NativeInfo) =>
+      "native_token" in info
+        ? info.native_token.denom
+        : getSymbol(info.token.contract_addr)
 
     const parseToken = ({ amount, info }: AssetToken | NativeToken) => ({
       amount,
-      ...parseAssetInfo(info),
+      symbol: parseAssetInfo(info),
     })
 
     return {
       listed,
-      listedAll,
-      getToken,
+      getListedItem,
+      isNativeToken,
       getSymbol,
       toAssetInfo,
       toToken,
+      parseAssetInfo,
       parseToken,
     }
   }

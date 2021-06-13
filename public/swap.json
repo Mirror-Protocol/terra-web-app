@@ -1,0 +1,109 @@
+{
+    "pairs": [
+        {
+            "owner": "terra1a9azdnvp60nkajc2mwejvqlh5wj08q93zlv7qv",
+            "contract_addr": "terra1wlkgeumfv64avwwg87aqk8zw9n6750xzumtulh",
+            "lpToken": "terra1uv9fgatntfgfhq5er4k4x8xanads35t6rq9srk",
+            "asset_infos": [
+                {
+                    "token": {
+                        "contract_addr": "terra1xt8efpfkyka8807t9kd29zs5mfcmt4rzhqfw8c",
+                        "symbol": "LABS",
+                        "name": "DELIGHTLABS"
+                    }
+                },
+                {
+                    "token": {
+                        "contract_addr": "terra18sl63stqew9kd9g0f2ngw0cdxud7236xt7ydh9",
+                        "symbol": "DELIGHT",
+                        "name": "DELIGHT"
+                    }
+                }
+            ]
+        },
+        {
+            "owner": "terra1a9azdnvp60nkajc2mwejvqlh5wj08q93zlv7qv",
+            "contract_addr": "terra12vnpp7qkyj2khqsvdtkmymtdd9zek88razqa49",
+            "lpToken": "terra13xgf48yukcn2r52f0jqffayxy5mweft8nq2383",
+            "asset_infos": [
+                {
+                    "token": {
+                        "contract_addr": "terra1xt8efpfkyka8807t9kd29zs5mfcmt4rzhqfw8c",
+                        "symbol": "LABS",
+                        "name": "DELIGHTLABS"
+                    }
+                },
+                {
+                    "native_token": {
+                        "denom": "uluna",
+                        "symbol": "Luna",
+                        "name": "uluna"
+                    }
+                }
+            ]
+        },
+        {
+            "owner": "terra1a9azdnvp60nkajc2mwejvqlh5wj08q93zlv7qv",
+            "contract_addr": "terra1cvdn5wrfqmjts9qy845y9yjyhcqa39ve4gl273",
+            "lpToken": "terra132kvrlzltqp2frg85yps8jnelpw6auvf5g3qgu",
+            "asset_infos": [
+                {
+                    "token": {
+                        "contract_addr": "terra18sl63stqew9kd9g0f2ngw0cdxud7236xt7ydh9",
+                        "symbol": "DELIGHT",
+                        "name": "DELIGHT"
+                    }
+                },
+                {
+                    "native_token": {
+                        "denom": "uluna",
+                        "symbol": "Luna",
+                        "name": "uluna"
+                    }
+                }
+            ]
+        },
+        {
+            "owner": "terra1a9azdnvp60nkajc2mwejvqlh5wj08q93zlv7qv",
+            "contract_addr": "terra1gs0uanree7ds9udmd4j36qg0pfcfkkhfvt3us9",
+            "lpToken": "terra1xe4rhy8aup4ny4gwxmtc8j854cvwpz5rhn9jsj",
+            "asset_infos": [
+                {
+                    "native_token": {
+                        "denom": "ukrw",
+                        "symbol": "KRT",
+                        "name": "ukrw"
+                    }
+                },
+                {
+                    "native_token": {
+                        "denom": "uluna",
+                        "symbol": "Luna",
+                        "name": "uluna"
+                    }
+                }
+            ]
+        },
+        {
+            "owner": "terra1a9azdnvp60nkajc2mwejvqlh5wj08q93zlv7qv",
+            "contract_addr": "terra14uvwt4s76urudwzj6q9s42znfwngrakqvptm4x",
+            "lpToken": "terra1yn4z7v3cff3f7n0x5n6cxhcxvcvvrvewzcsygg",
+            "asset_infos": [
+                {
+                    "native_token": {
+                        "denom": "uusd",
+                        "symbol": "UST",
+                        "name": "uusd"
+                    }
+                },
+                {
+                    "native_token": {
+                        "denom": "uluna",
+                        "symbol": "Luna",
+                        "name": "uluna"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,13 +1,5 @@
 import { gql } from "@apollo/client"
 
-export const CONNECT = gql`
-  mutation connect($address: String!) {
-    connect(address: $address) {
-      address
-    }
-  }
-`
-
 export const STATISTICS = gql`
   query statistic($from: Float!, $to: Float!) {
     statistic {

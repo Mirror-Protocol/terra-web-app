@@ -5,8 +5,7 @@ interface Coin {
 
 interface Asset {
   amount: string
-  token: string
-  symbol?: string
+  symbol: string
 }
 
 interface ListedItem {
@@ -15,7 +14,13 @@ interface ListedItem {
   token: string
   pair: string
   lpToken: string
-  status: "LISTED" | "DELISTED"
+}
+
+interface ListedSwapItem {
+  owner: string
+  contract_addr: string
+  lpToken: string
+  asset_infos: []
 }
 
 /* chain */

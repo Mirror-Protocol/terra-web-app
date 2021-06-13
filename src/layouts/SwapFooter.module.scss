@@ -1,0 +1,111 @@
+@import "mixins";
+@import "variables";
+
+.footer {
+  color: $slate;
+
+  @include desktop {
+    height: $footer-height;
+  }
+
+  @include mobile {
+    height: $footer-height-mobile;
+  }
+
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.container {
+  @include desktop {
+    @include flex(space-between);
+  }
+}
+
+/* network */
+.network {
+  @include flex;
+  @include desktop;
+  margin-top: -29px;
+}
+
+.button {
+  @include flex;
+  @include link;
+  @include transition(color);
+  padding: 6px 11px 6px 8px;
+  text-transform: capitalize;
+
+  i {
+    margin-right: 5px;
+    position: relative;
+  }
+
+  &:disabled {
+    color: white;
+    border: 1px solid white;
+    border-radius: 50px;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 7px;
+    background-image: url(./../images/RadioBtnOff.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  &:disabled .icon {
+    width: 20px;
+    height: 20px;
+    background-image: url(./../images/RadioBtnOn.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+
+  &:disabled i::after {
+    content: " ";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 14px;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    background-color: #4360e5;
+  }
+}
+
+/* author */
+.community {
+  @include flex;
+  margin: -10px;
+  margin-bottom: 10px;
+
+  @include mobile {
+    margin-top: 40px;
+  }
+  span {
+    font-size: 12px;
+    color: #fff;
+    margin-right: 10px;
+  }
+  svg {
+    vertical-align: middle;
+  }
+}
+
+.link {
+  @include flex;
+  @include transition(opacity);
+  padding: 10px;
+  opacity: 0.3;
+
+  &:hover {
+    opacity: 1;
+  }
+}

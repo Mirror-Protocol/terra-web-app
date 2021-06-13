@@ -1,6 +1,6 @@
-import { MIR } from "../../constants"
-import { useContractsAddress } from "../../hooks"
-import { useLazyContractQueries } from "../useContractQueries"
+import { MIR } from "constants/constants"
+import { useContractsAddress } from "hooks"
+import { useLazyContractQueries } from "graphql/useContractQueries"
 
 export default () => {
   const { contracts } = useContractsAddress()

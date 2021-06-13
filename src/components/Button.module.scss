@@ -34,9 +34,14 @@
   }
 }
 
+.middle {
+  // width: 100%;
+  text-align: center;
+}
+
 .button:not(.outline) {
   background-color: $blue;
-  color: $button;
+  color: white;
 
   @include hover {
     background-color: fade-out($blue, 0.25);
@@ -102,6 +107,27 @@
 .lg {
   @include button-size(16px, 50px, 30px);
   width: 100%;
+}
+
+/* swap */
+.swap {
+  @include button-size(16px, 50px, 30px);
+  width: 60%;
+  background-color: $realblue;
+  font-weight: 600;
+  border-radius: 10px;
+  text-transform: none;
+  @include mobile {
+    width: 80%;
+  }
+}
+.swap:not(.outline) {
+  background-color: $realblue;
+  color: white;
+
+  @include hover {
+    background-color: #4360e5;
+  }
 }
 
 /* theme */

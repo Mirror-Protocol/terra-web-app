@@ -1,4 +1,4 @@
-import { FC } from "react"
+import React, { FC } from "react"
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 import { DefaultOptions } from "@apollo/client"
 import { NetworkProvider, useNetworkState } from "../hooks/useNetwork"
@@ -18,7 +18,7 @@ const Network: FC = ({ children }) => {
   })
 
   return (
-    <NetworkProvider value={network} key={network.name}>
+    <NetworkProvider value={network} key={network.key}>
       <ApolloProvider client={client}>{children}</ApolloProvider>
     </NetworkProvider>
   )

@@ -1,4 +1,4 @@
-import { AnchorHTMLAttributes } from "react"
+import React, { AnchorHTMLAttributes } from "react"
 
 export type Props = AnchorHTMLAttributes<HTMLAnchorElement>
 const ExtLink = ({ children, ...attrs }: Props) => (

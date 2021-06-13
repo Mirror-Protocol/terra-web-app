@@ -1,0 +1,16 @@
+@import "mixins";
+@import "variables";
+
+.connected {
+  border-width: 1px;
+
+  > * {
+    @include flex;
+  }
+}
+
+.address {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0px 10px 0px 8px;
+}

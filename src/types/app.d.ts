@@ -4,6 +4,11 @@ interface Result {
   data?: any
 }
 
+interface Content {
+  title?: ReactNode
+  content?: ReactNode
+}
+
 interface Dict<T = string> {
   [token: string]: T
 }

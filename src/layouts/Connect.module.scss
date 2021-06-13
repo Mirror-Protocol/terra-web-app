@@ -1,0 +1,28 @@
+@import "mixins";
+@import "variables";
+
+.button {
+  @include flex;
+  @include transition(background-color);
+
+  background-color: transparent;
+  border-radius: 50px;
+  border-width: 1px;
+  border-style: solid;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  height: 38px;
+  padding: 8px 15px 9px 16px;
+
+  .msg {
+    margin-left: 7px;
+    margin-right: 2px;
+  }
+
+  &:hover {
+    background-color: fade-out(#ffffff, 0);
+    color: fade-out($blue, 0);
+    text-decoration: none;
+  }
+}

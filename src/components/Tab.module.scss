@@ -5,38 +5,38 @@ $radius: 10px;
 
 .tabs {
   @include flex;
+  justify-content: left;
+  padding-left: 30px;
 }
 
 .tab {
   @include flex;
   @include link;
 
-  flex: 1;
-
-  font-size: 18px;
-  font-weight: 500;
-  height: 60px;
-  text-transform: capitalize;
+  color: #0222ba;
+  font-size: 16px;
+  background: #ffffff;
+  margin-top: 30px;
+  margin-right: 20px;
 
   &:only-child {
     height: unset;
-    margin-top: 30px;
   }
 
   &.active {
-    border-bottom: 1px solid $darkblue;
+    color: #0222ba;
+    font-weight: bold;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-style: solid;
   }
 
-  &:not(.active) {
-    background: saturate(darken($darkblue, 2%), 6%);
-    border-bottom: 1px solid $bg;
-  }
-
-  & + & {
-    border-left: 1px solid $bg;
+  &:hover {
+    color: #0222ba;
   }
 }
 
 .content {
-  padding: 30px 25px;
+  padding: 30px;
 }

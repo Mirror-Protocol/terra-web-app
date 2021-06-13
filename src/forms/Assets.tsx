@@ -1,10 +1,10 @@
-import { useState } from "react"
+import React, { useState } from "react"
 import classNames from "classnames/bind"
-import { UST, UUSD } from "../constants"
-import { gt } from "../libs/math"
-import { insertIf } from "../libs/utils"
-import { useContractsAddress, useContract, useCombineKeys } from "../hooks"
-import Icon from "../components/Icon"
+import { UST, UUSD } from "constants/constants"
+import { gt } from "libs/math"
+import { insertIf } from "libs/utils"
+import { useContractsAddress, useContract, useCombineKeys } from "hooks"
+import Icon from "components/Icon"
 import { Config } from "./useSelectAsset"
 import Asset from "./Asset"
 import styles from "./Assets.module.scss"
@@ -13,7 +13,7 @@ const cx = classNames.bind(styles)
 
 interface Props extends Config {
   selected?: string
-  onSelect: (token: string) => void
+  onSelect: (asset: string) => void
 }
 
 const Assets = ({ selected, onSelect, ...props }: Props) => {
@@ -30,7 +30,6 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
   /* list */
   const list: AssetItem[] = [
     ...insertIf(useUST, {
-      token: UUSD,
       symbol: UUSD,
       name: UST,
       price: "1",
@@ -38,10 +37,11 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
     }),
     ...listed
       .filter(({ symbol }) => !skip?.includes(symbol))
-      .map((item) => ({
-        ...item,
-        price: priceKey && find(priceKey, item.token),
-        balance: balanceKey && find(balanceKey, item.token),
+      .map(({ symbol, name, token }) => ({
+        symbol,
+        name,
+        price: priceKey && find(priceKey, token),
+        balance: balanceKey && find(balanceKey, token),
       })),
   ]
 
@@ -69,21 +69,21 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
               text.toLowerCase().includes(value.toLowerCase())
             )
           )
-          .sort(({ token: a }, { token: b }) => {
+          .sort(({ symbol: a }, { symbol: b }) => {
             const hasA = balanceKey && gt(find(balanceKey, a), 0) ? 1 : 0
             const hasB = balanceKey && gt(find(balanceKey, b), 0) ? 1 : 0
             return hasB - hasA
           })
           .map((item) => {
-            const { token, price } = item
-            const isSelected = token === selected
+            const { symbol, price } = item
+            const isSelected = symbol === selected
 
             return (
-              <li key={token}>
+              <li key={symbol}>
                 <button
                   type="button"
                   className={cx(styles.button, { disabled: isSelected })}
-                  onClick={() => onSelect(token)}
+                  onClick={() => onSelect(symbol)}
                   disabled={priceKey && (!price || !gt(price, 0))}
                 >
                   <Asset {...item} formatTokenName={formatTokenName} />

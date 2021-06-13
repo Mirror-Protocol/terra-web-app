@@ -3,13 +3,10 @@ interface TxInfos {
 }
 
 interface TxInfo {
-  Success: boolean
-  RawLog: string
-
   TxHash: string
 
   Tx: {
-    Fee: { Amount: FeeAmount[] }
+    Fee: { Amount: FeeAmount }
     Memo: string
   }
 

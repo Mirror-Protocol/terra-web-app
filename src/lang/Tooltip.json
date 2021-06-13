@@ -1,101 +1,96 @@
 {
   "Dashboard": {
-    "Transactions": "Total transactions within the last 24 hours",
-    "Fee": "Total transaction fees paid within the last 24 hours",
-    "MarketCap": "Total value of all minted assets",
-    "TVL": "Total value of all assets and UST currently locked",
-    "CollateralRatio": "Ratio of the total collateral value to the total minted asset value"
+    "Transactions": "Number of transactions occured in the last 24 hours",
+    "Fee": "Value of transaction fee paid in the last 24 hours",
+    "MarketCap": "Total value of all assets held by users and liquidity pools",
+    "TVL": "Value of all collateral",
+    "CollateralRatio": "(Total collateral value) ÷ (Total minted asset value)"
   },
   "Chart": {
-    "Liquidity": "Total value of all mAssets and UST in liquidity pools",
-    "Volume": "Total value of assets traded in the last 24 hours"
+    "Liquidity": "Total asset value in all liquidity pools",
+    "Volume": "Total value of all assets that were traded in the last 24 hours. The chart data is accumulated on daily basis."
   },
   "TopTrading": {
-    "Liquidity": "Current liquidity value of the mAsset and UST in the pool",
-    "Volume": "Total value of the corresponding asset traded within the last 24 hours"
+    "Liquidity": "Total value of assets and UST in this liquidity pool",
+    "Volume": "Value of assets traded in the last 24 hours"
   },
 
   "My": {
-    "Holdings": "List of mAssets held",
-    "Mint": "List of mint positions",
-    "Pool": "List of liquidity provider positions",
-    "Stake": "List of LP token and MIR stake positions",
+    "TotalValue": "Sum of all \"Value\"",
+    "Balance": "Amount of asset",
+    "Value": "Product of \"Balance\" and \"Price\"",
+    "PortfolioRatio": "Weight of the asset in portfolio",
 
-    "TotalValue": "Total value of all assets held",
-    "Balance": "Quantity of the corresponding asset held",
-    "Value": "Value of the corresponding asset held",
-    "PortfolioRatio": "Percent allocation of the corresponding asset held",
-
-    "TotalAssetValue": "Total value of all assets minted",
-    "TotalCollateralValue": "Total value of all collateral locked",
-    "MintedBalance": "Quantity of the corresponding asset minted",
-    "MintedValue": "Value of corresponding asset minted",
-    "CollateralBalance": "Quantity of collateral locked for the corresponding mint position",
-    "CollateralValue": "Value of collateral locked for the corresponding mint position",
-    "CollateralRatio": "Ratio of the Collateral Value to the Minted Value",
+    "TotalAssetValue": "Sum of minted asset \"Value\"",
+    "TotalCollateralValue": "Sum of collateral \"Value\"",
+    "MintedBalance": "Amount of minted asset",
+    "MintedValue": "UST value of minted asset",
+    "CollateralBalance": "Amount of locked collateral",
+    "CollateralValue": "UST value of collateral",
+    "CollateralRatio": "Ratio of collateral value to minted asset value",
     "PositionWarning": "Position is close to liquidation. Close the position or deposit more collateral.",
     "PositionDanger": "Position can be liquidated anytime upon request. Close the position or deposit more collateral.",
 
-    "TotalWithdrawableValue": "Total value of all mAssets and UST withdrawable from liquidity pools",
-    "LP": "Quantity of LP for the corresponding asset liquidity pool",
-    "Withdrawable": "Quantity of withdrawable assets from the corresponding asset liquidity pool",
-    "PoolShare": "Ratio of the liquidity provided to the total liquidity provided",
+    "TotalWithdrawableValue": "Sum of UST value in all pools",
+    "LP": "Amount of LP",
+    "Withdrawable": "Amount of assets redeemable from buring \"LP\"",
+    "PoolShare": "Ratio of pool balance to total pool balance.",
 
     "APR": "Annualized staking return",
-    "Staked": "Quantity of staked LP tokens for the corresponding asset liquidity pool",
-    "Reward": "Quantity of claimable rewards for the corresponding staking position"
+    "Staked": "Amount of staked tokens",
+    "StakingRatio": "Ratio of staked LP to total staked LP",
+    "Reward": "Amount of claimable rewards"
   },
 
   "Forms": {
-    "TxFee": "Fee paid to execute this transaction"
+    "TxFee": "Paid to execute transaction"
   },
 
   "Trade": {
-    "General": "The amount of asset traded is automatically calculated based on the current price, spread, and commission",
-    "Price": "Price is based on the pool ratio. The effective price changes dynamically depending on the trade size.\n\n• Spread: Fee paid due to the difference between market price and estimated price.\n• Commission: Fee charged by the protocol that is automatically deducted from the assets that user receives.",
-    "MinimumReceived": "Expected minimum quantity to be received based on the current price, maximum spread, and commission"
+    "General": "The amount of asset traded is automatically calculated based on the current price, spread and commission",
+    "Price": "Price is based on the pool ratio. The effective price changes dynamically depending on the trade size.\n\n• Spread: Fee paid due to the difference between market price and estimated price.\n• Commission: Deducted from the assets that user receives.",
+    "MinimumReceived": "Expected minimum amount based on current price, maximum spread and commission"
   },
   "Mint": {
-    "Open": "New assets will be minted when collateral is deposited. Any price change of either the collateral or the minted assets may lead to liquidation.",
+    "Open": "New assets will be minted when collateral is deposited. Any price change of either collateral or minted assets may lead to liquidation.",
 
     "Collateral": "Current amount of collateral",
     "Asset": "Current amount of minted asset",
 
-    "ExpectedMintedAsset": "Expected quantity of assets received with above collateral",
-    "CollateralRatio": "Ratio of the collateral value to the minted value",
-    "MinCollateralRatio": "Minimum collateral ratio. When the position drops below this value, any user may immediately liquidate the position.",
+    "ExpectedMintedAsset": "The expected amount of asset minted",
+    "CollateralRatio": "Ratio of collateral value to minted asset value",
+    "MinCollateralRatio": "Liquidated below this ratio",
     "SafeCollateralRatio": "(Minimum collateral ratio) + 50%",
 
-    "Price": "Price of the corresponding asset that is determined by the oracle feeder",
-    "ProtocolFee": "Paid from withdrawn collateral"
+    "Price": "Oracle price of minted asset"
   },
   "Pool": {
-    "Provide": "Provide liquidity to receive LP tokens. LP tokens can be staked to earn MIR token rewards",
-    "Withdraw": "Withdraw asset liquidity provided by burning LP tokens",
+    "Provide": "Receive LP by providing liquidity. LP can be staked to earn MIR as rewards.",
+    "Withdraw": "Withdraw pool share by burning LP",
 
-    "InputAsset": "Quantity of assets to be added to the corresponding asset liquidity pool",
-    "InputUST": "Corresponding required amount of UST added to the liquidity pool",
-    "LP": "Quantity of LP tokens to be burned",
-    "Output": "Estimated quantity of mAsset and UST to be received",
+    "InputAsset": "Amount to add to the pool",
+    "InputUST": "Equivalent amount of UST added to the pool",
+    "LP": "Amount of LP to burn",
+    "Output": "Estimated amount of redeemed mAsset and UST",
 
-    "PoolPrice": "Price of the corresponding asset that is determined by the current pool ratio",
-    "PoolShare": "Ratio of the liquidity provided to the total liquidity provided post-transaction",
-    "LPfromTx": "Quantity of LP tokens to be received"
+    "PoolPrice": "The price determined by the pool ratio",
+    "PoolShare": "Contribution percentage to the pool",
+    "LPfromTx": "LP received from providing liquidity"
   },
   "Stake": {
-    "MIRprice": "Terraswap price of MIR that is determined by the current pool ratio",
+    "MIRprice": "Pool price of MIR",
     "MIRvolume": "Total value of MIR traded in the last 24 hours",
-    "MIRsupply": "Total quantity of MIR tokens minted since genesis",
-    "Title": "LP tokens can be staked to earn MIR as rewards. LP tokens are obtained by providing asset liquidity.",
-    "APR": "Annualized LP staking return based on the MIR distribution, LP staking ratio, and pool value",
-    "TotalStaked": "Quantity of LP tokens staked for the corresponding asset liquidity pool"
+    "MIRsupply": "Total number of generated MIR",
+    "Title": "LP can be staked to earn MIR as rewards. LP is obtainable by providing liquidity.",
+    "APR": "Annualized LP staking return based on MIR distribution, LP staking ratio and pool value",
+    "TotalStaked": "Amount of all LP staked"
   },
   "Gov": {
-    "TotalStaked": "Total quantity of MIR tokens staked",
-    "StakingRatio": "Ratio of the quantity of staked MIR tokens to the total quantity of MIR",
-    "APR": "Annualized MIR staking return based on the MIR distribution and staking ratio",
+    "TotalStaked": "Amount of all MIR staked",
+    "StakingRatio": "Ratio of staked MIR to total MIR",
+    "APR": "Annualized MIR staking return based on MIR distribution and staking ratio",
 
-    "Polls": "Staked MIR can be used as voting power in polls that are currently in progress",
+    "Polls": "Staked MIR can be used as voting power",
 
     "Weight": "Weight which MIR is distributed",
     "LPcommission": "Percentage of the receiving amount from the trade sent to the liquidity pool",
@@ -103,5 +98,11 @@
     "AuctionDiscount": "Discount rate applied to collateral sold in liquidation auction",
     "MinimumCollateralRatio": "Lowest collateral ratio which users can set to mint new assets. Position will be liquidated below this ratio",
     "Deposit": "Passing the quorum will return the deposit to the creator. Failure to pass quorum will distribute the deposit to all MIR stakers."
+  },
+  "Swap": {
+    "Rate": "Swap price is calculated based on the pool price and spread",
+    "MinimumReceived": "Expected minimum quantity to be received based on the current price, maximum spread, and trading fee",
+    "TradingFee": "0.3% of asset received by the user is paid to Terraswap pool",
+    "TxFee": "Fee paid to execute this transaction"
   }
 }

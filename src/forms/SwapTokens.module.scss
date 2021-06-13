@@ -1,0 +1,78 @@
+@import "mixins";
+@import "variables";
+
+.component {
+  @include flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 400px;
+  font-family: $font-family-swap;
+}
+
+/* search */
+.search {
+  @include flex(flex-start, stretch);
+  flex: none;
+  margin-bottom: 5px;
+
+  border: 1px solid $realblue;
+  border-radius: 5px;
+  height: 50px;
+
+  label {
+    @include flex;
+  }
+
+  i {
+    margin: 0 15px;
+  }
+
+  input {
+    flex: 1;
+    padding: 10px;
+  }
+  input::placeholder {
+    text-align: center;
+    color: $brown;
+  }
+}
+
+/* feedback */
+.feedback {
+  text-align: center;
+}
+
+/* assets */
+.list {
+  flex: 1;
+  margin: 0 0 0 -20px;
+  overflow-y: scroll;
+}
+
+.button {
+  padding: 10px 30px;
+  width: 100%;
+
+  &:not(.disabled):hover {
+    background: fade-out(white, 0.95);
+  }
+
+  &.disabled {
+    opacity: 0.3;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: lightgray;
+}
+::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+}
