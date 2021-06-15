@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { format } from "date-fns"
-import classNames from "classnames"
 import { FMT } from "../constants"
 import useLocalStorage from "../libs/useLocalStorage"
 import { useProtocol } from "../data/contract/protocol"
@@ -42,20 +41,24 @@ const DelistModal = (props: Props) => {
             </p>
           </header>
 
-          <ul>
-            {tokens.map((token) => (
-              <li key={token}>
-                <section className={classNames(styles.info, styles.asset)}>
-                  <AssetIcon
-                    symbol={getSymbol(token)}
-                    className={styles.icon}
-                  />
-                  {getSymbol(token)} (
-                  {format(new Date(delist[token].date), FMT.MMdd)})
-                </section>
-              </li>
-            ))}
-          </ul>
+          <section className={styles.info}>
+            <ul>
+              {tokens.map((token) => (
+                <li key={token}>
+                  <article className={styles.asset}>
+                    <AssetIcon
+                      symbol={getSymbol(token)}
+                      className={styles.icon}
+                    />
+                    {getSymbol(token)}
+                    <span className={styles.date}>
+                      {format(new Date(delist[token].date), FMT.MMdd)}
+                    </span>
+                  </article>
+                </li>
+              ))}
+            </ul>
+          </section>
 
           <p className={styles.p}>
             These assets will be <strong>DELISTED</strong> as soon as the market
