@@ -22,6 +22,12 @@
   @include flex(flex-start);
 }
 
+.action {
+  @include mobile {
+    margin-top: 12px;
+  }
+}
+
 .title {
   color: $white-92;
 

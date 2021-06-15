@@ -1,5 +1,15 @@
 @import "mixins";
 
+.main {
+  @include mobile {
+    margin-top: 40px;
+  }
+
+  @include desktop {
+    margin-top: 72px;
+  }
+}
+
 .footer {
   margin-top: 32px;
   text-align: right;

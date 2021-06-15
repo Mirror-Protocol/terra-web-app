@@ -99,27 +99,25 @@ const MyConnected = () => {
       <TotalValue />
 
       {!!tabs.length && (
-        <>
-          <Gutter>
-            <Tab
-              tabs={[Tabs.ALL, ...tabs.map(({ label }) => label)]}
-              current={tab}
-              onClick={(tab) => setTab({ tab: tab as Tabs })}
-            >
-              {contents.map(({ component, label }) =>
-                Array.isArray(component) ? (
-                  <Fragment key={label}>
-                    {component.map((component, index) => (
-                      <Gutter key={index}>{component}</Gutter>
-                    ))}
-                  </Fragment>
-                ) : (
-                  <Gutter key={label}>{component}</Gutter>
-                )
-              )}
-            </Tab>
-          </Gutter>
-        </>
+        <section className={styles.main}>
+          <Tab
+            tabs={[Tabs.ALL, ...tabs.map(({ label }) => label)]}
+            current={tab}
+            onClick={(tab) => setTab({ tab: tab as Tabs })}
+          >
+            {contents.map(({ component, label }) =>
+              Array.isArray(component) ? (
+                <Fragment key={label}>
+                  {component.map((component, index) => (
+                    <Gutter key={index}>{component}</Gutter>
+                  ))}
+                </Fragment>
+              ) : (
+                <Gutter key={label}>{component}</Gutter>
+              )
+            )}
+          </Tab>
+        </section>
       )}
 
       {disconnect && (

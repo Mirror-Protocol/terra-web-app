@@ -38,10 +38,6 @@ $padding: 20px;
 .ranges {
   @include flex;
 
-  @include mobile {
-    margin-top: 10px;
-  }
-
   background: $gray-11;
   padding: 1px 0;
 }
