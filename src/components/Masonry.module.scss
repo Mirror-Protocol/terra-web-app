@@ -1,13 +1,24 @@
 @import "mixins";
 
 .masonry {
+  @include flex;
+
+  @include mobile {
+    flex-direction: column;
+  }
+
   @include desktop {
-    @include flex;
     align-items: stretch;
   }
 }
 
 .column {
+  @include mobile {
+    &:first-child {
+      order: 1;
+    }
+  }
+
   @include desktop {
     @include flex;
 
