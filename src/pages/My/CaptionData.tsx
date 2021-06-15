@@ -1,6 +1,10 @@
 import styles from "./CaptionData.module.scss"
 
-const CaptionData = ({ list }: { list: Content[] }) => {
+interface Props {
+  list: Content[]
+}
+
+const CaptionData = ({ list }: Props) => {
   return (
     <ul className={styles.list}>
       {list.map(({ title, content }, index) => (

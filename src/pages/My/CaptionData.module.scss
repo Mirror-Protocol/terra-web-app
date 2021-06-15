@@ -3,6 +3,10 @@
 .list {
   @include desktop {
     @include flex(flex-end);
+
+    & + & {
+      margin-top: 8px;
+    }
   }
 }
 

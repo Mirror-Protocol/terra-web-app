@@ -28,10 +28,11 @@ export const CaptionAction: FC<ActionProps> = ({ className, to, children }) => {
 interface Props {
   title: ReactNode
   description?: ReactNode
+  action?: ReactNode
   loading?: boolean
 }
 
-const Caption = ({ title, description, loading }: Props) => {
+const Caption = ({ title, description, action, loading }: Props) => {
   return (
     <div className={styles.component}>
       <LoadingTitle loading={loading} size={16}>
@@ -39,6 +40,7 @@ const Caption = ({ title, description, loading }: Props) => {
       </LoadingTitle>
 
       <section className={styles.desc}>{description}</section>
+      {action && <section className={styles.action}>{action}</section>}
     </div>
   )
 }

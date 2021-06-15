@@ -1,32 +1,59 @@
+import { format as formatDate } from "date-fns"
+import { FMT } from "../../constants"
 import Tooltip from "../../lang/Tooltip.json"
+import { gt } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
 import { useMyShortFarming } from "../../data/my/short"
 
 import Table from "../../components/Table"
-import Caption from "../../components/Caption"
+import Caption, { CaptionAction } from "../../components/Caption"
 import { TooltipIcon } from "../../components/Tooltip"
 import Delisted from "../../components/Delisted"
 import Formatted from "../../components/Formatted"
 import Percent from "../../components/Percent"
+import { getPath, MenuKey } from "../../routes"
 import CaptionData from "./CaptionData"
 
 const ShortFarming = () => {
-  const { dataSource, totalRewards, totalRewardsValue } = useMyShortFarming()
+  const { totalRewards, totalRewardsValue, ...rest } = useMyShortFarming()
+  const { dataSource, totalLockedUST, totalUnlockedUST } = rest
 
   const dataExists = !!dataSource.length
   const description = dataExists && (
-    <CaptionData
-      list={[
-        {
-          title: "Total Reward",
-          content: formatAsset(totalRewards, "MIR"),
-        },
-        {
-          title: "Total Reward Value",
-          content: formatAsset(totalRewardsValue, "uusd"),
-        },
-      ]}
-    />
+    <>
+      <CaptionData
+        list={[
+          {
+            title: "Total Reward",
+            content: formatAsset(totalRewards, "MIR"),
+          },
+          {
+            title: "Total Reward Value",
+            content: formatAsset(totalRewardsValue, "uusd"),
+          },
+        ]}
+      />
+      <CaptionData
+        list={[
+          {
+            title: "Total Locked UST",
+            content: formatAsset(totalLockedUST, "uusd"),
+          },
+          {
+            title: "Total Unlocked UST",
+            content: formatAsset(totalUnlockedUST, "uusd"),
+          },
+          {
+            title: "",
+            content: (
+              <CaptionAction to={getPath(MenuKey.CLAIMUST)}>
+                Claim UST
+              </CaptionAction>
+            ),
+          },
+        ]}
+      />
+    </>
   )
 
   return !dataExists ? null : (
@@ -54,6 +81,23 @@ const ShortFarming = () => {
           render: (value, { symbol }) => (
             <Formatted symbol={symbol}>{value}</Formatted>
           ),
+          align: "right",
+        },
+        {
+          key: "locked",
+          title: ["Locked UST", "Last Unlock Time"],
+          render: (amount, { unlock_time }) => {
+            const formatted = <Formatted symbol="uusd">{amount}</Formatted>
+            return gt(amount, 0)
+              ? [formatted, formatDate(new Date(unlock_time * 1000), FMT.HHmm)]
+              : formatted
+          },
+          align: "right",
+        },
+        {
+          key: "unlocked",
+          title: "Unlocked UST",
+          render: (amount) => <Formatted symbol="uusd">{amount}</Formatted>,
           align: "right",
         },
         {

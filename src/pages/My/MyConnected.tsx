@@ -18,7 +18,6 @@ import Holding from "./Holding"
 import Borrowing from "./Borrowing"
 import Farming from "./Farming"
 import ShortFarming from "./ShortFarming"
-import LockedUST from "./LockedUST"
 import LimitOrder from "./LimitOrder"
 import Gov from "./Gov"
 import HistoryList from "./HistoryList"
@@ -78,7 +77,7 @@ const MyConnected = () => {
     {
       label: Tabs.FARMING,
       hidden: !hasFarming,
-      component: [<Farming />, <ShortFarming />, <LockedUST />],
+      component: [<Farming />, <ShortFarming />],
     },
     {
       label: Tabs.GOVERN,
