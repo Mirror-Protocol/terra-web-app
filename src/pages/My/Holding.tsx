@@ -28,7 +28,7 @@ const Holding = () => {
     <CaptionData
       list={[
         {
-          title: "Total Holding Value",
+          title: "Holding Value",
           content: renderTooltip(totalValue, Tooltip.My.TotalHoldingValue),
         },
       ]}

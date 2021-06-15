@@ -24,11 +24,11 @@ const ShortFarming = () => {
       <CaptionData
         list={[
           {
-            title: "Total Reward",
+            title: "Reward",
             content: formatAsset(totalRewards, "MIR"),
           },
           {
-            title: "Total Reward Value",
+            title: "Reward Value",
             content: formatAsset(totalRewardsValue, "uusd"),
           },
         ]}
@@ -36,11 +36,11 @@ const ShortFarming = () => {
       <CaptionData
         list={[
           {
-            title: "Total Locked UST",
+            title: "Locked UST",
             content: formatAsset(totalLockedUST, "uusd"),
           },
           {
-            title: "Total Unlocked UST",
+            title: "Unlocked UST",
             content: formatAsset(totalUnlockedUST, "uusd"),
           },
           {

@@ -24,11 +24,11 @@ const Farming = () => {
     <CaptionData
       list={[
         {
-          title: "Total Reward",
+          title: "Reward",
           content: formatAsset(totalRewards, "MIR"),
         },
         {
-          title: "Total Reward Value",
+          title: "Reward Value",
           content: formatAsset(totalRewardsValue, "uusd"),
         },
       ]}

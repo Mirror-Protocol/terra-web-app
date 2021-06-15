@@ -30,14 +30,14 @@ const Borrowing = () => {
     <CaptionData
       list={[
         {
-          title: "Total Borrowed Value",
+          title: "Borrowed Value",
           content: renderTooltip(
             totalMintedValue,
             Tooltips.My.TotalBorrowedValue
           ),
         },
         {
-          title: "Total Collateral Value",
+          title: "Collateral Value",
           content: renderTooltip(
             totalCollateralValue,
             Tooltips.My.TotalCollateralValue

@@ -21,11 +21,11 @@ const LockedUST = () => {
       <CaptionData
         list={[
           {
-            title: "Total Locked UST",
+            title: "Locked UST",
             content: formatAsset(totalLockedUST, "uusd"),
           },
           {
-            title: "Total Unlocked UST",
+            title: "Unlocked UST",
             content: formatAsset(totalUnlockedUST, "uusd"),
           },
           {
