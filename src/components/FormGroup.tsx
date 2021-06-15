@@ -7,7 +7,7 @@ import styles from "./FormGroup.module.scss"
 const cx = classNames.bind(styles)
 
 const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
-  const { label, help, unit, max, assets, focused, error, warn } = props
+  const { label, help, unit, max, assets, focused, error, warn, info } = props
   const { type = 1, skipFeedback } = props
 
   const inputRef = useRef<HTMLInputElement>()
@@ -80,9 +80,9 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
         </section>
       </div>
 
-      {!skipFeedback && (error || warn) && (
-        <section className={cx(styles.feedback, { warn })}>
-          {error || warn}
+      {!skipFeedback && (error || warn || info) && (
+        <section className={cx(styles.feedback, { warn, info })}>
+          {error || warn || info}
         </section>
       )}
     </div>

@@ -42,6 +42,7 @@ interface FormGroup {
   focused?: boolean
   error?: string
   warn?: ReactNode
+  info?: ReactNode
   type?: 1 | 2
   skipFeedback?: boolean
   unitAfterValue?: boolean

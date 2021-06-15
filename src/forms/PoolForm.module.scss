@@ -1,0 +1,7 @@
+@import "mixins";
+
+.link {
+  @include link($blue, $blue);
+  font-weight: 500;
+  text-transform: uppercase;
+}

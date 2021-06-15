@@ -142,4 +142,12 @@ $padding: 18px 24px;
       fill: $orange;
     }
   }
+
+  &.info {
+    color: $white-80;
+
+    svg {
+      fill: $white-80;
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import { useRef } from "react"
-import { useLocation } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
 import Tooltip from "../lang/Tooltip.json"
@@ -15,29 +15,30 @@ import { usePolling } from "../hooks"
 import { PriceKey, BalanceKey, StakingKey } from "../hooks/contractKeys"
 import { useFind, useFindStaking } from "../data/contract/normalize"
 
+import { getPath, MenuKey } from "../routes"
 import FormGroup from "../components/FormGroup"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
 import WithPriceChart from "../containers/WithPriceChart"
-import { PoolType } from "../types/Types"
+import { MintType, PoolType, TradeType } from "../types/Types"
 import usePoolReceipt from "./receipts/usePoolReceipt"
 import useSelectAsset from "./useSelectAsset"
 import usePool from "./usePool"
 import FormContainer from "./FormContainer"
 import FormIcon from "./FormIcon"
+import styles from "./PoolForm.module.scss"
+
+interface Props {
+  type: PoolType
+  poolOnly?: boolean
+}
 
 enum Key {
   token = "token",
   value = "value",
 }
 
-const PoolForm = ({
-  type,
-  poolOnly,
-}: {
-  type: PoolType
-  poolOnly?: boolean
-}) => {
+const PoolForm = ({ type, poolOnly }: Props) => {
   const priceKey = PriceKey.PAIR
 
   /* context */
@@ -111,6 +112,36 @@ const PoolForm = ({
   const select = useSelectAsset(config)
   const delisted = whitelist[token]?.["status"] === "DELISTED"
 
+  const toBuy = {
+    pathname: getPath(MenuKey.TRADE),
+    hash: TradeType.BUY,
+    state: { token },
+  }
+
+  const toBorrow = {
+    pathname: getPath(MenuKey.BORROW),
+    hash: MintType.BORROW,
+    state: { token },
+  }
+
+  const info = gt(balance, 0) ? undefined : (
+    <p>
+      <Link className={styles.link} to={toBuy}>
+        Buy
+      </Link>
+      {symbol !== "MIR" && (
+        <>
+          {" "}
+          or{" "}
+          <Link className={styles.link} to={toBorrow}>
+            Borrow
+          </Link>
+        </>
+      )}{" "}
+      {symbol} to farm with
+    </p>
+  )
+
   const fields = {
     ...getFields({
       [Key.value]: {
@@ -136,6 +167,7 @@ const PoolForm = ({
         assets: select.assets,
         help: renderBalance(balance, symbol),
         focused: type === PoolType.WITHDRAW && select.isOpen,
+        info,
       },
     }),
 
