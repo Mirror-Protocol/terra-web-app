@@ -67,8 +67,9 @@ const MintForm = ({ position, type, message }: Props) => {
 
   /* context */
   const { state } = useLocation<{ token: string }>()
-  const { contracts, delist, getSymbol, getToken, ...helpers } = useProtocol()
-  const { getIsDelisted, parseToken, toToken, toAssetInfo } = helpers
+  const { contracts, listed, delist, ...helpers } = useProtocol()
+  const { getSymbol, getToken, getIsDelisted } = helpers
+  const { parseToken, toToken, toAssetInfo } = helpers
   const find = useFind()
   const findAssetInfo = useFindAssetInfo()
   const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
@@ -144,8 +145,8 @@ const MintForm = ({ position, type, message }: Props) => {
     [Key.token1]: prevCollateral?.token ?? "uusd",
     [Key.token2]:
       prevAsset?.token ??
-      (state?.token !== getToken("MIR") ? state?.token : "") ??
-      "",
+      state?.token ??
+      listed.find(({ symbol }) => symbol !== "MIR")?.token,
     [Key.ratio]: prevRatio ? lookup(times(prevRatio, 100)) : "200",
   }
 
