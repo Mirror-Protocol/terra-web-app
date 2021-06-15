@@ -51,9 +51,9 @@ const Dashboard = () => {
       <Masonry>
         {[
           [
+            { flex: 6, component: <TVL {...dashboard.totalValueLocked} /> },
             { flex: 3, component: <MIRPrice /> },
             { flex: 7, component: <MIRSupply {...dashboard.mirSupply} /> },
-            { flex: 6, component: <TVL {...dashboard.totalValueLocked} /> },
           ],
           [
             {
