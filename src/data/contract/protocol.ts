@@ -52,7 +52,7 @@ const protocolHelpersQuery = selector({
         ? symbol.slice(1)
         : symbol
 
-      const icon = `${ICON_URL}/${ticker}.png`
+      const icon = ticker && `${ICON_URL}/${ticker}.png`
       const externalIconURL = whitelistExternal[token]?.icon
       return externalIconURL ?? icon
     }
