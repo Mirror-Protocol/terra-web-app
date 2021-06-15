@@ -16,6 +16,11 @@ interface Props extends Config {
   onSelect: (token: string) => void
 }
 
+const getSymbolIndex = (symbol: string) => {
+  const indexes = ["uusd", "aUST", "uluna", "MIR", "ANC"]
+  return indexes.includes(symbol) ? indexes.indexOf(symbol) : indexes.length
+}
+
 const Assets = ({ selected, onSelect, ...props }: Props) => {
   const { native = [], showDelisted, showExternal } = props
   const { getPriceKey, priceKey, balanceKey } = props
@@ -67,7 +72,9 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
           : undefined,
         balance: balanceKey && find(balanceKey, item.token),
       })),
-  ]
+  ].sort(
+    ({ symbol: a }, { symbol: b }) => getSymbolIndex(a) - getSymbolIndex(b)
+  )
 
   return (
     <div className={styles.component}>
