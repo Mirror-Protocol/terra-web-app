@@ -24,6 +24,15 @@ export enum PollType {
 
 const Groups = [
   {
+    title: "Suggestions",
+    items: [
+      PollType.TEXT,
+      PollType.TEXT_WHITELIST,
+      PollType.TEXT_PREIPO,
+      PollType.COMMUNITY_SPEND,
+    ],
+  },
+  {
     title: "Asset Listing",
     items: [PollType.WHITELIST, PollType.PREIPO, PollType.DELIST],
   },
@@ -34,15 +43,6 @@ const Groups = [
   {
     title: "Parameters",
     items: [PollType.MINT_UPDATE, PollType.GOV_UPDATE, PollType.COLLATERAL],
-  },
-  {
-    title: "Suggestions/Others",
-    items: [
-      PollType.COMMUNITY_SPEND,
-      PollType.TEXT_WHITELIST,
-      PollType.TEXT_PREIPO,
-      PollType.TEXT,
-    ],
   },
 ]
 

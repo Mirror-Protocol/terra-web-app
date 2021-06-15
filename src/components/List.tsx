@@ -16,7 +16,7 @@ const List = ({ groups }: { groups: Group[] }) => {
   return (
     <div className={styles.component}>
       {groups.map((group, index) => (
-        <ListGroup {...group} initial={false} key={group.title} />
+        <ListGroup {...group} initial={!index} key={group.title} />
       ))}
     </div>
   )
