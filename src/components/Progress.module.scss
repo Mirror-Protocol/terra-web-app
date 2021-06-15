@@ -25,7 +25,7 @@ $axis-height: 25px;
 .x {
   position: absolute;
   top: 0;
-  color: $white-80;
+  color: $white-52;
   font-size: 12px;
   font-weight: 500;
 
@@ -43,8 +43,8 @@ $axis-height: 25px;
     content: "";
     display: block;
     width: 1px;
-    height: 5px;
-    background: $gray-34;
+    height: 8px;
+    background: $white-52;
 
     position: absolute;
     left: 50%;

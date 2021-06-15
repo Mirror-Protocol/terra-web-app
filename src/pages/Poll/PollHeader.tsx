@@ -30,12 +30,12 @@ const PollHeader = ({ titleClassName, ...props }: Props) => {
 
       <section
         className={cx(styles.status, {
-          blue: status === PollStatus.Passed,
+          blue: [PollStatus.Passed, PollStatus.Executed].includes(status),
           red: status === PollStatus.Rejected,
           strike: status === PollStatus.InProgress && end,
         })}
       >
-        <Icon name={icons[status as PollStatus]} size={20} />
+        <Icon name={icons[status as PollStatus]} size={18} />
         {status.replace("_", " ")}
       </section>
 

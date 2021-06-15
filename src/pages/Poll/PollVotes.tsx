@@ -1,15 +1,11 @@
-import { ReactNode } from "react"
-import classNames from "classnames/bind"
+import classNames from "classnames"
 import { div, gt, max, sum, times } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
 import { percent } from "../../libs/num"
 import { useGovConfig } from "../../data/gov/config"
 import { useGovState } from "../../data/gov/state"
 import Progress from "../../components/Progress"
-import Icon from "../../components/Icon"
 import styles from "./PollVotes.module.scss"
-
-const cx = classNames.bind(styles)
 
 interface Item {
   label: string
@@ -20,19 +16,16 @@ interface Item {
 
 interface VotesProps {
   list: Item[]
-  lg?: boolean
-  help?: ReactNode
 }
 
-const Votes = ({ list, lg, help }: VotesProps) => (
-  <div className={cx(styles.wrapper, { lg, sm: !lg })}>
-    {!lg && help}
+const Votes = ({ list }: VotesProps) => (
+  <div className={styles.wrapper}>
     <section className={styles.votes}>
       {list.map(({ label, value, amount, color }) => (
         <span className={classNames(styles.label, color)} key={label}>
-          <strong>{label}</strong>
+          <strong className={styles.answer}>{label}</strong>
           <span>{percent(value)}</span>
-          <small>{lg && formatAsset(amount, "MIR", { integer: true })}</small>
+          <small>{formatAsset(amount, "MIR", { integer: true })}</small>
         </span>
       ))}
     </section>
@@ -61,22 +54,10 @@ const PollVotes = ({ lg, ...props }: Props) => {
 
   const parsed = config && state && parseVotes(votes, config, state)
 
-  const renderHelp = (data: { voted: string; quorum: string }) => {
-    const { voted, quorum } = data
-    const danger = !gt(voted, quorum)
-    return (
-      <span className={cx(styles.help, { danger })}>
-        {danger && <Icon name="ExclamationCircle" size={16} />}
-        <strong>Voted</strong>
-        {percent(voted)}
-      </span>
-    )
-  }
-
   return !parsed ? null : (
     <>
       <Progress {...parsed} noLabel />
-      <Votes list={parsed.data} lg={lg} help={renderHelp(parsed)} />
+      {lg && <Votes list={parsed.data} />}
     </>
   )
 }

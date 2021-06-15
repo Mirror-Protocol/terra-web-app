@@ -25,7 +25,7 @@ const GovMIRFooter = () => {
     <footer className={styles.footer}>
       {contents.map((item, index) => (
         <article className={styles.item} key={index}>
-          <Di {...item} fontSize={16} type="vertical" align="center" />
+          <Di {...item} type="vertical" align="center" />
         </article>
       ))}
     </footer>
