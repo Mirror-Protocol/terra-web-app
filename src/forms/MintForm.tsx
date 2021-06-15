@@ -68,8 +68,7 @@ const MintForm = ({ position, type, message }: Props) => {
   /* context */
   const { state } = useLocation<{ token: string }>()
   const { contracts, listed, delist, ...helpers } = useProtocol()
-  const { getSymbol, getToken, getIsDelisted } = helpers
-  const { parseToken, toToken, toAssetInfo } = helpers
+  const { getSymbol, getIsDelisted, parseToken, toToken, toAssetInfo } = helpers
   const find = useFind()
   const findAssetInfo = useFindAssetInfo()
   const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
