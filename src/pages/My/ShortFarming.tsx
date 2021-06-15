@@ -20,43 +20,37 @@ const ShortFarming = () => {
 
   const dataExists = !!dataSource.length
   const description = dataExists && (
-    <>
-      <CaptionData
-        list={[
-          {
-            title: "Reward",
-            content: (
-              <>
-                {formatAsset(totalRewards, "MIR")}{" "}
-                <span className="muted">
-                  ≈ {formatAsset(totalRewardsValue, "uusd")}
-                </span>
-              </>
-            ),
-          },
-        ]}
-      />
-      <CaptionData
-        list={[
-          {
-            title: "Locked UST",
-            content: formatAsset(totalLockedUST, "uusd"),
-          },
-          {
-            title: "Unlocked UST",
-            content: formatAsset(totalUnlockedUST, "uusd"),
-          },
-          {
-            title: "",
-            content: (
-              <CaptionAction to={getPath(MenuKey.CLAIMUST)}>
-                Claim UST
-              </CaptionAction>
-            ),
-          },
-        ]}
-      />
-    </>
+    <CaptionData
+      list={[
+        {
+          title: "Reward",
+          content: (
+            <>
+              {formatAsset(totalRewards, "MIR")}{" "}
+              <span className="muted">
+                ≈ {formatAsset(totalRewardsValue, "uusd")}
+              </span>
+            </>
+          ),
+        },
+        {
+          title: "Locked UST",
+          content: formatAsset(totalLockedUST, "uusd"),
+        },
+        {
+          title: "Unlocked UST",
+          content: formatAsset(totalUnlockedUST, "uusd"),
+        },
+        {
+          title: "",
+          content: (
+            <CaptionAction to={getPath(MenuKey.CLAIMUST)}>
+              Claim UST
+            </CaptionAction>
+          ),
+        },
+      ]}
+    />
   )
 
   return !dataExists ? null : (
