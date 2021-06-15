@@ -11,23 +11,29 @@ const DashboardFooter = ({ latest24h, assetMarketCap }: Dashboard) => {
 
         <section className={styles.section}>
           <h1 className={styles.title}>Market Cap</h1>
-          <Formatted symbol="uusd" config={{ integer: true }}>
-            {assetMarketCap}
-          </Formatted>
+          <p className={styles.number}>
+            <Formatted symbol="uusd" config={{ integer: true }}>
+              {assetMarketCap}
+            </Formatted>
+          </p>
         </section>
 
         <section className={styles.section}>
           <h1 className={styles.title}>Trading Fee</h1>
-          <Formatted symbol="uusd" config={{ integer: true }}>
-            {latest24h.feeVolume}
-          </Formatted>
+          <p className={styles.number}>
+            <Formatted symbol="uusd" config={{ integer: true }}>
+              {latest24h.feeVolume}
+            </Formatted>
+          </p>
         </section>
 
         <section className={styles.section}>
           <h1 className={styles.title}>Transactions</h1>
-          <Formatted config={{ integer: true }}>
-            {latest24h.transactions}
-          </Formatted>
+          <p className={styles.number}>
+            <Formatted config={{ integer: true }}>
+              {latest24h.transactions}
+            </Formatted>
+          </p>
         </section>
       </CardMain>
 
