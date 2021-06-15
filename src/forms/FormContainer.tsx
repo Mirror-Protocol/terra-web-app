@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { ReactNode, HTMLAttributes, FormEvent } from "react"
+import { useLocation } from "react-router-dom"
 import { Msg, StdFee } from "@terra-money/terra.js"
 import { useWallet } from "@terra-money/wallet-provider"
 import { TxResult } from "@terra-money/wallet-provider"
@@ -8,21 +9,22 @@ import { TxFailed, TxUnspecifiedError } from "@terra-money/wallet-provider"
 
 import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
-import { UUSD } from "../constants"
 import { gt, plus, sum } from "../libs/math"
+import { capitalize } from "../libs/utils"
 import useHash from "../libs/useHash"
-import { useContract, useSettings, useAddress } from "../hooks"
-import useTax from "../graphql/useTax"
-import useFee from "../graphql/useFee"
+import useLocalStorage from "../libs/useLocalStorage"
+import { useAddress } from "../hooks"
+import useTax from "../hooks/useTax"
+import useFee from "../hooks/useFee"
+import { BalanceKey } from "../hooks/contractKeys"
+import { useFind } from "../data/contract/normalize"
 
 import { useModal } from "../containers/Modal"
 import ConnectListModal from "../layouts/ConnectListModal"
-import Container from "../components/Container"
-import Tab from "../components/Tab"
 import Card from "../components/Card"
 import Confirm from "../components/Confirm"
 import FormFeedback from "../components/FormFeedback"
-import Button from "../components/Button"
+import Button, { Submit } from "../components/Button"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
 
@@ -47,8 +49,6 @@ interface Props {
   /** Submit label */
   label?: string
 
-  /** Render tab */
-  tab?: Tab
   /** Form event */
   attrs?: HTMLAttributes<HTMLFormElement>
 
@@ -66,45 +66,44 @@ export type PostError =
   | TxFailed
   | TxUnspecifiedError
 
-export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
-  const { contents, messages, label, tab, children } = props
+export const Component = ({ data: msgs, memo, ...props }: Props) => {
+  const { contents, messages, label, children } = props
   const { attrs, pretax, deduct, parseTx = () => [], gov } = props
 
   /* context */
   const modal = useModal()
   const { post } = useWallet()
   const { hash } = useHash()
-  const { agreementState } = useSettings()
-  const [hasAgreed] = agreementState
+  const [agreed, setAgreed] = useLocalStorage("agreement", false)
+  const agree = () => {
+    setAgreed(true)
+    submit()
+  }
 
-  const { uusd, result } = useContract()
+  const find = useFind()
+  const uusd = find(BalanceKey.NATIVE, "uusd")
   const address = useAddress()
-  const { loading } = result.uusd
 
   /* tax */
   const fee = useFee(msgs?.length)
-  const { calcTax, loading: loadingTax } = useTax()
+  const { calcTax } = useTax()
   const tax = pretax ? calcTax(pretax) : "0"
   const uusdAmount = !deduct
     ? sum([pretax ?? "0", tax, fee.amount])
     : fee.amount
 
   const invalid =
-    address && !loading && !gt(uusd, uusdAmount)
-      ? ["Not enough UST"]
-      : undefined
+    address && !gt(uusd, uusdAmount) ? ["Not enough UST"] : undefined
 
   /* confirm */
   const [confirming, setConfirming] = useState(false)
-  const confirm = () => (hasAgreed ? submit() : setConfirming(true))
-  const cancel = () => setConfirming(false)
+  const confirm = () => (agreed ? submit() : setConfirming(true))
 
   /* submit */
   const [submitted, setSubmitted] = useState(false)
   const [response, setResponse] = useState<TxResult>()
   const [error, setError] = useState<PostError>()
-  const disabled =
-    loadingTax || props.disabled || invalid || submitted || !msgs?.length
+  const disabled = props.disabled || invalid || submitted || !msgs?.length
 
   const submit = async () => {
     setSubmitted(true)
@@ -145,7 +144,7 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
     const next = address
       ? {
           onClick: confirm,
-          children: label ?? hash ?? "Submit",
+          children: capitalize(label ?? hash ?? "Submit"),
           loading: submitted,
           disabled,
         }
@@ -154,45 +153,41 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
           children: MESSAGE.Form.Button.ConnectWallet,
         }
 
+    const txFeeTitle = (
+      <TooltipIcon content={Tooltip.Forms.TxFee}>Tx Fee</TooltipIcon>
+    )
+
     const txFee = (
-      <Count symbol={UUSD} dp={6}>
+      <Count symbol="uusd" dp={6}>
         {plus(tax, fee.amount)}
       </Count>
     )
 
-    const form = (
-      <>
-        {children}
-
-        {contents && (
-          <Confirm
-            list={[
-              ...contents,
-              {
-                title: (
-                  <TooltipIcon content={Tooltip.Forms.TxFee}>
-                    Tx Fee
-                  </TooltipIcon>
-                ),
-                content: txFee,
-              },
-            ]}
-          />
-        )}
-
-        {(invalid ?? messages)?.map((message, index) => (
-          <FormFeedback key={index}>{message}</FormFeedback>
-        ))}
-
-        <Button {...next} type="button" size="lg" submit />
-      </>
+    const renderConfirm = (contents: Content[]) => (
+      <Confirm list={[...contents, { title: txFeeTitle, content: txFee }]} />
     )
 
-    return tab ? <Tab {...tab}>{form}</Tab> : <Card lg>{form}</Card>
+    return (
+      <>
+        <Card confirm={contents && renderConfirm(contents)} lg>
+          {children}
+        </Card>
+
+        {(invalid ?? messages)?.map((message, index) => (
+          <FormFeedback type="error" key={index}>
+            {message}
+          </FormFeedback>
+        ))}
+
+        <Submit>
+          <Button {...next} type="button" size="lg" />
+        </Submit>
+      </>
+    )
   }
 
   return (
-    <Container sm>
+    <>
       {error || response ? (
         <Result
           response={response}
@@ -203,17 +198,18 @@ export const FormContainer = ({ data: msgs, memo, ...props }: Props) => {
         />
       ) : (
         <form {...attrs} onSubmit={handleSubmit}>
-          {!confirming ? (
-            render(children)
-          ) : (
-            <Caution goBack={cancel} onAgree={submit} />
-          )}
+          {!confirming ? render(children) : <Caution onAgree={agree} />}
         </form>
       )}
 
       {!address && <ConnectListModal {...modal} />}
-    </Container>
+    </>
   )
+}
+
+const FormContainer = (props: Props) => {
+  const { hash } = useLocation()
+  return <Component {...props} key={hash} />
 }
 
 export default FormContainer

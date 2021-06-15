@@ -1,31 +1,23 @@
-import { MIR } from "../../constants"
+import { useRecoilValue } from "recoil"
 import { formatAsset } from "../../libs/parse"
-import { useContract, useContractsAddress } from "../../hooks"
-import { BalanceKey } from "../../hooks/contractKeys"
-import WithResult from "../../containers/WithResult"
+import { useProtocol } from "../../data/contract/protocol"
+import { govStakedQuery, useFindBalance } from "../../data/contract/normalize"
 import { Di } from "../../components/Dl"
 import styles from "./GovMIRFooter.module.scss"
 
 const GovMIRFooter = () => {
-  const { getToken } = useContractsAddress()
-  const { find } = useContract()
+  const { getToken } = useProtocol()
+  const govStaked = useRecoilValue(govStakedQuery)
+  const find = useFindBalance()
 
   const contents = [
     {
-      title: `Staked ${MIR}`,
-      content: (
-        <WithResult keys={[BalanceKey.MIRGOVSTAKED]}>
-          {formatAsset(find(BalanceKey.MIRGOVSTAKED, getToken(MIR)), MIR)}
-        </WithResult>
-      ),
+      title: `Staked MIR`,
+      content: formatAsset(govStaked, "MIR"),
     },
     {
-      title: `Stakable ${MIR}`,
-      content: (
-        <WithResult keys={[BalanceKey.TOKEN]}>
-          {formatAsset(find(BalanceKey.TOKEN, getToken(MIR)), MIR)}
-        </WithResult>
-      ),
+      title: `Stakable MIR`,
+      content: formatAsset(find(getToken("MIR")), "MIR"),
     },
   ]
 

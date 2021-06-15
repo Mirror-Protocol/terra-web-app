@@ -1,0 +1,13 @@
+@import "mixins";
+
+.footer {
+  margin-top: 32px;
+  text-align: right;
+}
+
+.disconnect {
+  @include link($white-44);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}

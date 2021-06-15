@@ -1,25 +1,24 @@
 import Tooltip from "../../lang/Tooltip.json"
-import { MIR } from "../../constants"
 import { div, minus, isFinite } from "../../libs/math"
 import { percent } from "../../libs/num"
-import { GovKey } from "../../graphql/useGov"
-import { useGov, useGovState, useRefetchGov } from "../../graphql/useGov"
-import useDashboard from "../../statistics/useDashboard"
+import { useDashboard } from "../../data/stats/statistic"
+import { useGovState } from "../../data/gov/state"
+import { mirrorTokenGovBalanceQuery } from "../../data/contract/info"
+
 import Grid from "../../components/Grid"
 import Card from "../../components/Card"
 import Summary from "../../components/Summary"
 import { TooltipIcon } from "../../components/Tooltip"
 import Count from "../../components/Count"
-import CountWithResult from "../../containers/CountWithResult"
 import GovMIR from "./GovMIR"
 import styles from "./GovHomeHeader.module.scss"
+import { useRecoilValue } from "recoil"
 
 const GovHomeHeader = () => {
-  useRefetchGov([GovKey.BALANCE])
   const state = useGovState()
-  const { balance } = useGov()
-  const dashboard = useDashboard()
-  const supply = dashboard.dashboard?.mirCirculatingSupply
+  const balance = useRecoilValue(mirrorTokenGovBalanceQuery)
+  const { mirSupply } = useDashboard()
+  const supply = mirSupply.circulating
 
   const totalStaked = [balance, state?.total_deposit].every(isFinite)
     ? minus(balance, state?.total_deposit)
@@ -41,7 +40,7 @@ const GovHomeHeader = () => {
                 </TooltipIcon>
               }
             >
-              <Count symbol={MIR} integer>
+              <Count symbol="MIR" integer>
                 {totalStaked}
               </Count>
             </Summary>
@@ -57,9 +56,7 @@ const GovHomeHeader = () => {
                 </TooltipIcon>
               }
             >
-              <CountWithResult results={[dashboard]} format={percent}>
-                {totalStakedRatio}
-              </CountWithResult>
+              <Count format={percent}>{totalStakedRatio}</Count>
             </Summary>
           </Card>
         </Grid>

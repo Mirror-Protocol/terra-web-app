@@ -1,21 +1,32 @@
-export const findValue = (logs: TxLog[]) => (key: string, index = 0) => {
-  const attribute = logs[index]?.Events.find((e) => e.Type === "from_contract")
-    ?.Attributes
+/* find the first value by key */
+export const findValueFromLogs =
+  (logs: TxLog[]) =>
+  (key: string, index = 0) => {
+    const attribute = logs[index]?.Events.find(
+      (e) => e.Type === "from_contract"
+    )?.Attributes
 
-  return attribute?.find((attr) => attr.Key === key)?.Value ?? ""
-}
+    return attribute?.find((attr) => attr.Key === key)?.Value ?? ""
+  }
 
-export const findValues = (logs: TxLog[]) => (key: string, index = 0) => {
-  const attribute = logs[index]?.Events.find((e) => e.Type === "from_contract")
-    ?.Attributes
+export const findValuesFromLogs =
+  (logs: TxLog[]) =>
+  (key: string, index = 0) => {
+    const attribute = logs[index]?.Events.find(
+      (e) => e.Type === "from_contract"
+    )?.Attributes
 
-  return attribute?.filter((attr) => attr.Key === key).map(({ Value }) => Value)
-}
+    return attribute
+      ?.filter((attr) => attr.Key === key)
+      .map(({ Value }) => Value)
+  }
 
+/* convert from_contract to a object */
 export const fromContract = (logs: TxLog[]) =>
   logs.map(({ Events }) => {
-    const attributes = Events.find(({ Type }) => Type === "from_contract")
-      ?.Attributes
+    const attributes = Events.find(
+      ({ Type }) => Type === "from_contract"
+    )?.Attributes
 
     return attributes
       ?.reduce<FromContract[]>((acc, { Key, Value }) => {
@@ -25,14 +36,14 @@ export const fromContract = (logs: TxLog[]) =>
           ? [...acc, { [Key]: Value }]
           : [...acc.slice(0, acc.length - 1), { ...last, [Key]: Value }]
       }, [])
-      .reduce<Dict<FromContract>>(
+      .reduce<Dictionary<FromContract>>(
         (acc, item) => ({ ...acc, [item.action]: item }),
         {}
       )
   })
 
 export const parseEvents = (events: TxEvent[]) =>
-  events.reduce<Dict<Dict<string>>>(
+  events.reduce<Dictionary<Dictionary>>(
     (acc, { Type, Attributes }) => ({
       ...acc,
       [Type]: parseAttributes(Attributes),

@@ -1,13 +1,42 @@
 @import "mixins";
 @import "variables";
 
-$symbol: 14px;
-$name: 12px;
+@include mobile {
+  $line-height: 1.5;
+
+  .asset {
+    height: 66px;
+    padding: 0 $gutter-horizontal-mobile;
+  }
+
+  .price {
+    font-size: 12px;
+  }
+
+  .balance {
+    font-size: 12px;
+  }
+}
+
+@include desktop {
+  $line-height: 1.5;
+
+  .asset {
+    height: 68px;
+    padding: 0 $gutter-horizontal-desktop;
+  }
+
+  .price {
+    font-size: 14px;
+  }
+
+  .balance {
+    font-size: 12px;
+  }
+}
 
 .asset {
   @include flex(space-between);
-  // Because only one line of data can exist, fix the height.
-  height: (($symbol + $name) * $line-height);
 }
 
 .header {
@@ -15,13 +44,11 @@ $name: 12px;
 }
 
 .symbol {
-  font-size: $symbol;
   font-weight: 500;
 }
 
 .name {
-  color: $slate;
-  font-size: $name;
+  color: $gray-34;
   font-weight: normal;
 }
 
@@ -29,7 +56,18 @@ $name: 12px;
   text-align: right;
 }
 
+.price + .balance {
+  margin-top: 2px;
+}
+
 .balance {
-  color: $blue;
-  font-size: 12px;
+  @include flex;
+
+  color: $white-44;
+  font-weight: 500;
+
+  svg {
+    fill: $blue;
+    margin-right: 6px;
+  }
 }

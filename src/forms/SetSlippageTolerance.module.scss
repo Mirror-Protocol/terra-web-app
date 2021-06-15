@@ -2,7 +2,10 @@
 
 .button {
   @include flex;
-  color: $battleship;
+
+  svg {
+    fill: $white-64;
+  }
 }
 
 .card {
@@ -28,11 +31,10 @@
   @include transition;
 
   flex: none;
-  background-color: $color;
-  border: 1px solid $color;
+  background-color: $gray-18;
+  border: 1px solid $gray-18;
   border-radius: 20px;
   font-size: 14px;
-  font-weight: 500;
   height: 40px;
   width: 60px;
 
@@ -85,12 +87,14 @@
 .active {
   background-color: $blue;
   border-color: $blue;
-  color: $darkblue;
+  color: $gray-11;
 }
 
 .feedback {
-  font-size: 14px;
-  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 8px;
+  text-align: right;
 
   &.error {
     color: $red;

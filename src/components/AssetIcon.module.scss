@@ -1,0 +1,25 @@
+@import "mixins";
+
+.default {
+  @include mobile {
+    width: 24px;
+    height: 24px;
+  }
+
+  @include desktop {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.small {
+  @include mobile {
+    width: 18px;
+    height: 18px;
+  }
+
+  @include desktop {
+    width: 24px;
+    height: 24px;
+  }
+}

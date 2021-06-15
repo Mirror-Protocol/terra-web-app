@@ -9,25 +9,31 @@
 }
 
 /* search */
+$gutter-horizontal: 24px;
+$gutter-vertical: 16px;
+$gutter: $gutter-vertical $gutter-horizontal;
+
 .search {
   @include flex(flex-start, stretch);
   flex: none;
-  margin-bottom: 5px;
+  margin: 20px (-$gutter-horizontal) 0;
+  padding: 0 $gutter-horizontal;
 
   background: fade-out($bg, 0.5);
-  border-radius: 5px;
-  height: 40px;
+  height: 56px;
 
   label {
     @include flex;
   }
 
-  i {
-    margin: 0 15px;
+  svg {
+    fill: $blue;
+    margin-right: 12px;
   }
 
   input {
     flex: 1;
+    font-size: 14px;
   }
 }
 
@@ -39,17 +45,18 @@
 /* assets */
 .list {
   flex: 1;
-  margin: 0 -20px;
+  margin: 0 -24px;
   overflow-y: scroll;
 }
 
 .button {
-  padding: 10px 30px;
+  @include transition(background-color);
+
   width: 100%;
 
   &.selected,
   &:not(.disabled):hover {
-    background: fade-out(white, 0.95);
+    background-color: fade-out(white, 0.95);
   }
 
   &.disabled {

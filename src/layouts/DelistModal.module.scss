@@ -1,14 +1,14 @@
 @import "mixins";
 
 .contents {
-  padding: 10px 0;
+  margin-top: 40px;
 }
 
 .p {
+  color: $white-92;
   font-size: 14px;
   font-weight: normal;
-  text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 
   strong {
     color: $blue;
@@ -18,35 +18,51 @@
 }
 
 .info {
-  background-color: rgba(white, 0.1);
+  background-color: $gray-14;
   border-radius: 5px;
-  font-size: 16px;
+  color: white;
   font-weight: 500;
-  margin-bottom: 20px;
-  padding: 15px;
-  text-align: center;
+  margin-bottom: 24px;
+  padding: 16px 32px;
+}
+
+.asset {
+  @include flex(flex-start);
+  display: inline-flex;
+
+  .icon {
+    margin-right: 8px;
+  }
 }
 
 .list {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 
   li {
     @include flex(flex-start, flex-start);
-    color: $brown;
+    color: $white-64;
     font-size: 12px;
     font-weight: normal;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+
+    position: relative;
+    padding-left: 16px;
   }
 
   li:before {
     flex: none;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+
     content: "";
     display: block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: $blue;
-    margin: 6px 16px;
+
+    width: 1px;
+
+    background-color: $gray-34;
   }
 
   strong {
@@ -58,29 +74,18 @@
   font-size: 12px;
   font-style: italic;
   font-weight: normal;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .link {
-  color: $light;
+  @include link($blue, $blue);
   display: inline-block;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  text-decoration: underline;
-
-  &:hover {
-    color: $light;
-  }
 }
 
-.footer {
+.checkbox {
   font-size: 12px;
-
-  p {
-    margin-bottom: 20px;
-  }
-}
-
-.submit {
-  margin-top: 20px;
+  margin-top: 10px;
+  text-align: center;
 }

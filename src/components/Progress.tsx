@@ -9,7 +9,7 @@ const cx = classNames.bind(styles)
 interface Item {
   value: string
   label?: string
-  color?: "blue" | "orange" | "red"
+  color?: "blue" | "red" | "gray"
 }
 
 interface Props {
@@ -18,9 +18,11 @@ interface Props {
   className?: string
   onClick?: (x: string) => void
   noLabel?: boolean
+  compact?: boolean
 }
 
-const Progress = ({ data, axis, className, onClick, noLabel }: Props) => {
+const Progress = ({ data, axis, className, onClick, ...props }: Props) => {
+  const { noLabel, compact } = props
   const componentRef = useRef<HTMLDivElement>(null!)
 
   const handleClick = (e: MouseEvent) => {
@@ -31,7 +33,7 @@ const Progress = ({ data, axis, className, onClick, noLabel }: Props) => {
 
   return (
     <div
-      className={cx(styles.component, className, { cursor: onClick })}
+      className={cx(styles.component, className, { cursor: onClick, compact })}
       onClick={handleClick}
       ref={componentRef}
     >
@@ -39,7 +41,7 @@ const Progress = ({ data, axis, className, onClick, noLabel }: Props) => {
         <div className={styles.axis}>
           {axis.map(({ x, label }, index) => (
             <div className={styles.x} style={{ left: percent(x) }} key={index}>
-              {label}
+              <span className={styles.text}>{label}</span>
             </div>
           ))}
         </div>

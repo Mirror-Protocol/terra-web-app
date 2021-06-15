@@ -4,21 +4,26 @@ import Icon from "./Icon"
 import styles from "./ConnectButton.module.scss"
 
 interface Props {
-  address?: string
   className?: string
-  onClick: () => void
+  onClick?: () => void
 }
 
-const ConnectButton: FC<Props> = (props) => {
-  const { address, className, children, ...attrs } = props
+const ConnectButton: FC<Props> = ({ className, onClick, children }) => {
+  const attrs = {
+    className: classNames(styles.component, className),
+    children: (
+      <>
+        <section className={styles.wrapper}>
+          <Icon name="Wallet" size={14} />
+          {children}
+        </section>
 
-  return (
-    <button {...attrs} className={classNames(styles.button, className)}>
-      <Icon name="account_balance_wallet" size={14} />
-      {address && <span className={styles.address}>{address}</span>}
-      {children}
-    </button>
-  )
+        <Icon name="ChevronRight" size={8} />
+      </>
+    ),
+  }
+
+  return onClick ? <button {...attrs} onClick={onClick} /> : <div {...attrs} />
 }
 
 export default ConnectButton

@@ -1,10 +1,10 @@
 interface Dashboard {
   assetMarketCap: string
-  totalValueLocked: string
   collateralRatio: string
-  mirCirculatingSupply: string
   govAPR: string
-  govAPY: string
+
+  mirSupply: MIRSupply
+  totalValueLocked: TVL
 
   latest24h: {
     transactions: string
@@ -12,9 +12,24 @@ interface Dashboard {
     feeVolume: string
     mirVolume: string
   }
+}
 
+interface DashboardHistory {
   liquidityHistory: ChartItem[]
   tradingVolumeHistory: ChartItem[]
+}
+
+interface MIRSupply {
+  circulating: string
+  liquidity: string
+  staked: string
+}
+
+interface TVL {
+  total: string
+  liquidity: string
+  collateral: string
+  stakedMir: string
 }
 
 interface ChartItem {
@@ -22,39 +37,62 @@ interface ChartItem {
   value: string
 }
 
+/* account */
+interface StatsAccount {
+  accumulatedGovReward: string
+  voteHistory: VoteItem[]
+}
+
+interface VoteItem {
+  pollId: string
+  amount: string
+  voteOption: VoteAnswer
+}
+
 /* asset */
-interface AssetStatsData {
+interface AssetDataItem {
   token: string
   description?: string
+
+  prices: {
+    price: string
+    priceAt: string
+    oraclePrice: string
+  }
+
   statistic: {
     liquidity: string
+    shortValue: string
     volume: string
-    apr: string
-    apy: string
+    apr: APR
   }
 }
 
-interface AssetStats {
-  description: Dict<string | undefined>
-  liquidity: Dict<string | undefined>
-  volume: Dict<string | undefined>
-  apr: Dict<string | undefined>
-  apy: Dict<string | undefined>
-}
+interface AssetHistoryItem {
+  token: string
 
-/* price */
-interface YesterdayData {
-  [token: string]: {
-    prices: {
-      priceAt: string | null
-      oraclePriceAt: string | null
-    }
+  prices: {
+    history: PriceHistoryItem[]
   }
 }
 
-interface Yesterday {
-  pair: Dict<string | undefined>
-  oracle: Dict<string | undefined>
+interface AssetData extends AssetDataItem {
+  prices: {
+    price: string
+    priceAt: string
+    oraclePrice: string
+    history: PriceHistoryItem[]
+  }
+}
+
+interface PriceHistoryItem {
+  timestamp: number
+  price: string
+}
+
+interface APR {
+  long: string
+  short: string
 }
 
 /* cdp */

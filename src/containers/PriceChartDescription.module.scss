@@ -1,31 +1,30 @@
 @import "mixins";
 
 $font-size: 12px;
+$line-height: 1.5;
 
 .component {
-  color: $brown;
+  color: $white-44;
   font-size: $font-size;
   text-align: left;
-  position: relative;
 }
 
 .collapsed {
-  height: ($font-size * $line-height * 2);
+  height: ($font-size * $line-height * 4);
   overflow: hidden;
 }
 
 .button {
-  position: absolute;
-  bottom: 0;
-  right: 0;
+  color: $blue;
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.26px;
+  text-align: right;
+  margin-top: 12px;
 
-  // background-color: $saturated-blue;
-  background-image: linear-gradient(
-    to left,
-    $saturated-blue,
-    $saturated-blue,
-    transparent
-  );
-  color: white;
-  padding-left: 60px;
+  svg {
+    fill: $blue;
+    margin-left: 2px;
+  }
 }

@@ -1,0 +1,44 @@
+@import "mixins";
+
+.asset {
+  @include flex(flex-start);
+}
+
+.title {
+  @include mobile {
+    margin-left: 12px;
+  }
+
+  @include desktop {
+    margin-left: 20px;
+  }
+}
+
+.symbol {
+  color: $white-92;
+  font-weight: 500;
+}
+
+.content {
+  @include flex(flex-start);
+
+  color: $white-44;
+  margin-top: 2px;
+
+  @include mobile {
+    font-size: 11px;
+  }
+
+  @include desktop {
+    font-size: 12px;
+  }
+}
+
+.name {
+  @include mobile {
+    width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

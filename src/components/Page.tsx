@@ -1,7 +1,6 @@
 import { FC, ReactNode } from "react"
-import { DOCS } from "../constants"
+import Boundary from "./Boundary"
 import Container from "./Container"
-import ExtLink from "./ExtLink"
 import Icon from "./Icon"
 import styles from "./Page.module.scss"
 
@@ -12,11 +11,10 @@ interface Props {
   select?: ReactNode
   doc?: string
   sm?: boolean
-  noBreak?: boolean
 }
 
 const Page: FC<Props> = ({ title, description, children, ...props }) => {
-  const { doc, action, select, sm, noBreak } = props
+  const { action, select, sm } = props
 
   return (
     <article className={styles.article}>
@@ -28,17 +26,11 @@ const Page: FC<Props> = ({ title, description, children, ...props }) => {
             {select && (
               <div className={styles.select}>
                 {select}
-                <Icon name="arrow_drop_down" size={18} />
+                <Icon name="ChevronDown" size={8} />
               </div>
             )}
-
-            {doc && (
-              <ExtLink href={DOCS + doc} className={styles.doc}>
-                <Icon name="article" size={12} className={styles.icon} />
-                Docs
-              </ExtLink>
-            )}
           </section>
+
           {action && <section className={styles.action}>{action}</section>}
         </header>
       )}
@@ -47,9 +39,9 @@ const Page: FC<Props> = ({ title, description, children, ...props }) => {
         <section className={styles.description}>{description}</section>
       )}
 
-      {!!title && !noBreak && <hr />}
-
-      {sm ? <Container sm>{children}</Container> : children}
+      <Boundary>
+        {sm ? <Container sm>{children}</Container> : children}
+      </Boundary>
     </article>
   )
 }

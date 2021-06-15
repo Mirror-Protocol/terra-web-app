@@ -1,19 +1,20 @@
 import { useEffect } from "react"
 import { useRouteMatch } from "react-router-dom"
+import { useRecoilValue } from "recoil"
 import classNames from "classnames/bind"
 
 import MESSAGE from "../lang/MESSAGE.json"
-import { MIR } from "../constants"
 import { gt } from "../libs/math"
 import { lookup, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
 import { placeholder, step, validate as v } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
-import useNewContractMsg from "../terra/useNewContractMsg"
-import { useContractsAddress, useContract, useRefetch } from "../hooks"
-import { BalanceKey } from "../hooks/contractKeys"
+import useNewContractMsg from "../libs/useNewContractMsg"
+import { useProtocol } from "../data/contract/protocol"
+import { govStakedQuery } from "../data/contract/normalize"
 
 import FormGroup from "../components/FormGroup"
+import Container from "../components/Container"
 import useGovReceipt from "./receipts/useGovReceipt"
 import FormContainer from "./FormContainer"
 import styles from "./VoteForm.module.scss"
@@ -28,21 +29,19 @@ enum Key {
 enum AnswerKey {
   Y = "yes",
   N = "no",
+  A = "abstain",
 }
 
 const VoteForm = ({ tab }: { tab: Tab }) => {
-  const balanceKey = BalanceKey.MIRGOVSTAKED
-  const symbol = MIR
+  const symbol = "MIR"
 
   /* context */
-  const { getToken } = useContractsAddress()
-  const { find } = useContract()
+  const govStaked = useRecoilValue(govStakedQuery)
   const { params } = useRouteMatch<{ id: string }>()
   const id = Number(params.id)
-  useRefetch([balanceKey])
 
   /* form:validate */
-  const max = find(balanceKey, getToken(symbol))
+  const max = govStaked
   const validate = ({ answer, value }: Values<Key>) => ({
     [Key.answer]: v.required(answer),
     [Key.value]: v.amount(value, { symbol, max }),
@@ -84,7 +83,7 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const { contracts } = useContractsAddress()
+  const { contracts } = useProtocol()
   const data = [
     newContractMsg(contracts["gov"], {
       cast_vote: {
@@ -104,36 +103,38 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
   const container = { tab, attrs, contents, messages, disabled, data, parseTx }
 
   return (
-    <FormContainer {...container} gov>
-      <div className={styles.list}>
-        {Object.values(AnswerKey).map((answer) => {
-          const checked = answer === values[Key.answer]
+    <Container sm>
+      <FormContainer {...container} gov>
+        <div className={styles.list}>
+          {Object.values(AnswerKey).map((answer) => {
+            const checked = answer === values[Key.answer]
 
-          return (
-            <div className={styles.wrapper} key={answer}>
-              <input
-                type="radio"
-                name={Key.answer}
-                id={answer}
-                value={answer}
-                onChange={handleChange}
-                checked={checked}
-                hidden
-              />
+            return (
+              <div className={styles.wrapper} key={answer}>
+                <input
+                  type="radio"
+                  name={Key.answer}
+                  id={answer}
+                  value={answer}
+                  onChange={handleChange}
+                  checked={checked}
+                  hidden
+                />
 
-              <label
-                htmlFor={answer}
-                className={cx(styles.answer, answer, { checked })}
-              >
-                {answer}
-              </label>
-            </div>
-          )
-        })}
-      </div>
+                <label
+                  htmlFor={answer}
+                  className={cx(styles.answer, answer, { checked })}
+                >
+                  {answer}
+                </label>
+              </div>
+            )
+          })}
+        </div>
 
-      <FormGroup {...fields["value"]} />
-    </FormContainer>
+        <FormGroup {...fields["value"]} />
+      </FormContainer>
+    </Container>
   )
 }
 

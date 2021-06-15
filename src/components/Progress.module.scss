@@ -3,6 +3,12 @@
 
 .component {
   user-select: none;
+  width: 100%;
+}
+
+.compact {
+  display: inline-block;
+  width: 80px;
 }
 
 .cursor {
@@ -19,9 +25,16 @@ $axis-height: 25px;
 .x {
   position: absolute;
   top: 0;
-  color: $slate;
-  font-size: 10px;
+  color: $white-80;
+  font-size: 12px;
   font-weight: 500;
+
+  .compact & {
+    color: $white-64;
+    font-weight: normal;
+    letter-spacing: -0.2px;
+  }
+
   height: $axis-height;
   transform: translate(-50%, 0);
   white-space: nowrap;
@@ -31,19 +44,19 @@ $axis-height: 25px;
     display: block;
     width: 1px;
     height: 5px;
-    background: $slate;
+    background: $gray-34;
 
     position: absolute;
     left: 50%;
     bottom: 0;
+    transform: translate(-50%, 0);
   }
 }
 
 /* track */
 .track {
   @include flex(flex-start, stretch);
-  background: $slate;
-  border-radius: 4px;
+  background: $gray-34;
   height: 8px;
   overflow: hidden;
 }
@@ -84,8 +97,4 @@ $axis-height: 25px;
   &:last-child {
     text-align: right;
   }
-}
-
-.percent {
-  font-size: 16px;
 }

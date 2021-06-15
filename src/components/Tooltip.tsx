@@ -60,7 +60,7 @@ export const TooltipIcon: FC<Props> = ({ children, ...props }) => (
     {children}
     <div className={styles.icon}>
       <Tooltip {...props}>
-        <Icon name="info_outline" size={16} />
+        <Icon name="InfoCircle" size={16} />
       </Tooltip>
     </div>
   </div>

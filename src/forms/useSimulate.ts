@@ -1,23 +1,16 @@
-import { useEffect, useMemo, useState } from "react"
+import { useRecoilValue } from "recoil"
+import { useEffect, useState } from "react"
 import { equals } from "ramda"
 import { div, gt } from "../libs/math"
-import { useContractsAddress } from "../hooks"
-import { useLazyContractQuery } from "../graphql/useContractQuery"
-import { Type } from "../pages/Trade"
+import { TradeType } from "../types/Types"
+import { pairSimulateQuery } from "../data/contract/simulate"
 
 interface Params {
   amount: string
   token: string
   pair: string
   reverse: boolean
-  type: Type
-}
-
-interface SimulatedData {
-  return_amount: string
-  offer_amount: string
-  commission_amount: string
-  spread_amount: string
+  type: TradeType
 }
 
 interface Simulated {
@@ -32,68 +25,58 @@ interface Result {
   simulated: Simulated
 }
 
-export default ({ amount, token, pair, reverse, type }: Params) => {
-  const params = useMemo(
-    () => ({ amount, token, pair, reverse, type }),
-    [amount, token, pair, reverse, type]
-  )
-
+export default (params: Params, isLimitOrder: boolean) => {
+  const { amount, token, pair, reverse, type } = params
   const [results, setResults] = useState<Result[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<Error>()
 
-  /* context */
-  const { toToken } = useContractsAddress()
-
-  /* query */
-  const variables = {
-    contract: pair,
-    msg: !reverse
-      ? { simulation: { offer_asset: toToken({ token, amount }) } }
-      : { reverse_simulation: { ask_asset: toToken({ token, amount }) } },
-  }
-
-  const valid = amount && gt(amount, 0) && token && pair
-  const { result, parsed } = useLazyContractQuery<SimulatedData>(
-    variables,
-    "Simulate"
-  )
-
-  const { load, error } = result
+  const valid = amount && gt(amount, 0) && token && pair && !isLimitOrder
+  const simulate = useRecoilValue(pairSimulateQuery)
 
   useEffect(() => {
-    valid && load()
-  }, [valid, load])
+    const fn = async () => {
+      try {
+        setLoading(true)
+        const params = { amount, token, pair, reverse, type }
+        const result = await simulate(params)
 
-  const simulatedAmount = !reverse
-    ? parsed?.return_amount
-    : parsed?.offer_amount
+        const simulatedAmount = !reverse
+          ? result?.return_amount
+          : result?.offer_amount
 
-  const spread = parsed?.spread_amount
-  const commission = parsed?.commission_amount
+        const spread = result?.spread_amount
+        const commission = result?.commission_amount
 
-  const price = {
-    [Type.BUY]: !reverse
-      ? div(amount, simulatedAmount)
-      : div(simulatedAmount, amount),
-    [Type.SELL]: !reverse
-      ? div(simulatedAmount, amount)
-      : div(amount, simulatedAmount),
-  }[type]
+        const price = {
+          [TradeType.BUY]: !reverse
+            ? div(amount, simulatedAmount)
+            : div(simulatedAmount, amount),
+          [TradeType.SELL]: !reverse
+            ? div(simulatedAmount, amount)
+            : div(amount, simulatedAmount),
+        }[type]
 
-  useEffect(() => {
-    if (!error) {
-      if (simulatedAmount && spread && commission && price) {
-        setResults((prev) => {
-          const amount = simulatedAmount
-          const simulated = { amount, spread, commission, price }
-          return [...prev, { params, simulated }]
-        })
+        if (simulatedAmount && spread && commission && price) {
+          setResults((prev) => {
+            const amount = simulatedAmount
+            const simulated = { amount, spread, commission, price }
+            return [...prev, { params, simulated }]
+          })
+        }
+      } catch (error) {
+        setError(error)
       }
+
+      setLoading(false)
     }
-  }, [simulatedAmount, spread, commission, price, error, params])
+
+    valid && fn()
+  }, [valid, simulate, amount, token, pair, reverse, type])
 
   const simulated = results.find((result) =>
     equals(result.params, params)
   )?.simulated
 
-  return { ...result, simulated }
+  return { simulated, loading, error }
 }

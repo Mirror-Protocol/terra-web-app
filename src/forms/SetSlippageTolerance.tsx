@@ -1,9 +1,10 @@
 import { useState } from "react"
+import { useRecoilState, useRecoilValue } from "recoil"
 import Tippy from "@tippyjs/react"
 import classNames from "classnames/bind"
 import Tooltip from "../lang/Tooltip.json"
 import { gt, gte, isFinite, lt, lte } from "../libs/math"
-import { LocalStorage } from "../libs/useLocalStorage"
+import * as slippage from "../data/tx/slippage"
 import { DropdownTippyProps, TooltipIcon } from "../components/Tooltip"
 import Dropdown from "../components/Dropdown"
 import Icon from "../components/Icon"
@@ -11,10 +12,17 @@ import styles from "./SetSlippageTolerance.module.scss"
 
 const cx = classNames.bind(styles)
 
-const SlippageTolerance = ({ state, error }: Props) => {
-  const [value, setValue] = state
-  const [focused, setFocused] = useState(false)
+const SlippageTolerance = () => {
   const list = ["0.1", "0.5", "1"]
+
+  const [focused, setFocused] = useState(false)
+  const [value, setValue] = useRecoilState(slippage.slippageInputState)
+  const error = useRecoilValue(slippage.slippageInputErrorQuery)
+
+  const setSlippage = (value: string) => {
+    localStorage.setItem("slippage", value)
+    setValue(value)
+  }
 
   const feedback = error
     ? { status: "error", message: error }
@@ -40,7 +48,7 @@ const SlippageTolerance = ({ state, error }: Props) => {
         {list.map((item) => (
           <button
             className={cx(styles.item, { active: value === item })}
-            onClick={() => setValue(item)}
+            onClick={() => setSlippage(item)}
             key={item}
           >
             {item}%
@@ -55,7 +63,7 @@ const SlippageTolerance = ({ state, error }: Props) => {
               focused: focused || feedback?.status === "success",
             })}
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => setSlippage(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
           />
@@ -72,15 +80,10 @@ const SlippageTolerance = ({ state, error }: Props) => {
   )
 }
 
-interface Props {
-  state: LocalStorage<string>
-  error?: string
-}
-
-const SetSlippageTolerance = (props: Props) => {
+const SetSlippageTolerance = () => {
   const renderDropdown = () => (
     <Dropdown>
-      <SlippageTolerance {...props} />
+      <SlippageTolerance />
     </Dropdown>
   )
 
@@ -88,7 +91,7 @@ const SetSlippageTolerance = (props: Props) => {
     <div className={styles.component}>
       <Tippy {...DropdownTippyProps} render={renderDropdown}>
         <button type="button" className={styles.button}>
-          <Icon name="settings" size={24} />
+          <Icon name="Settings" size={18} />
         </button>
       </Tippy>
     </div>

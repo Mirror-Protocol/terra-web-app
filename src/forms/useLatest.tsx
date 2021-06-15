@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react"
-import { Dictionary } from "ramda"
-import { UUSD } from "../constants"
 
 type State = "OPEN" | "CLOSED"
 
@@ -25,7 +23,7 @@ const useLatest = () => {
 
   const isClosed = (symbol: string) => {
     const ticker = symbol.slice(1)
-    return symbol !== UUSD && closed[ticker] === "CLOSED"
+    return false && symbol !== "uusd" && closed[ticker] === "CLOSED"
   }
 
   return { isClosed, error }

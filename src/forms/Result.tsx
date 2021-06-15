@@ -1,14 +1,15 @@
-import { useEffect } from "react"
-import { useLazyQuery } from "@apollo/client"
+import { useEffect, useState } from "react"
+import { useQuery } from "react-query"
+import { useRecoilValue, useSetRecoilState } from "recoil"
 import { TxResult, UserDenied } from "@terra-money/wallet-provider"
 
 import { TX_POLLING_INTERVAL } from "../constants"
-import { TXINFOS } from "../graphql/gqldocs"
 import MESSAGE from "../lang/MESSAGE.json"
-import { useResult } from "../hooks"
 import { getPath, MenuKey } from "../routes"
 
 import Wait, { STATUS } from "../components/Wait"
+import { getTxInfosQuery } from "../data/native/tx"
+import { bankBalanceIndexState } from "../data/native/balance"
 import TxHash from "./TxHash"
 import TxInfo from "./TxInfo"
 import { PostError } from "./FormContainer"
@@ -16,9 +17,9 @@ import { PostError } from "./FormContainer"
 interface Props {
   response?: TxResult
   error?: PostError
-  parseTx: ResultParser
+  parseTx?: ResultParser
   gov?: boolean
-  onFailure: () => void
+  onFailure?: () => void
 }
 
 const Result = ({ response, error, parseTx, onFailure, gov }: Props) => {
@@ -26,16 +27,11 @@ const Result = ({ response, error, parseTx, onFailure, gov }: Props) => {
   const hash = response?.result.txhash ?? ""
   const raw_log = response?.result.raw_log ?? ""
 
-  /* context */
-  const { uusd } = useResult()
-  const { refetch } = uusd
-
   /* polling */
-  const variables = { hash }
-  const [load, tx] = useLazyQuery<TxInfos>(TXINFOS, { variables })
-
-  const { data, startPolling, stopPolling } = tx
-  const txInfo = data?.TxInfos[0]
+  const [refetchInterval, setRefetchInterval] = useState<number | false>(false)
+  const getTxInfos = useRecoilValue(getTxInfosQuery)
+  const tx = useQuery(hash, () => getTxInfos(hash), { refetchInterval })
+  const { data: txInfo } = tx
 
   /* status */
   // TODO
@@ -44,22 +40,24 @@ const Result = ({ response, error, parseTx, onFailure, gov }: Props) => {
   const status =
     !success || !hash || tx.error || (txInfo && !txInfo?.Success)
       ? STATUS.FAILURE
-      : tx.loading || !txInfo
+      : tx.isLoading || !txInfo
       ? STATUS.LOADING
       : STATUS.SUCCESS
 
   useEffect(() => {
-    success && hash && load()
-  }, [success, hash, load])
+    success && hash && setRefetchInterval(TX_POLLING_INTERVAL)
+  }, [success, hash])
+
+  const setBankBalanceIndexState = useSetRecoilState(bankBalanceIndexState)
 
   useEffect(() => {
     if (status === STATUS.LOADING) {
-      startPolling?.(TX_POLLING_INTERVAL)
+      setRefetchInterval(TX_POLLING_INTERVAL)
     } else {
-      stopPolling?.()
-      refetch?.()
+      setRefetchInterval(false)
+      setBankBalanceIndexState((n) => n + 1)
     }
-  }, [status, startPolling, stopPolling, refetch])
+  }, [status, setBankBalanceIndexState])
 
   /* verbose */
   const verbose = txInfo ? JSON.stringify(txInfo, null, 2) : undefined

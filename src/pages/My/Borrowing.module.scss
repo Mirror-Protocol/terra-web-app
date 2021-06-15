@@ -1,0 +1,11 @@
+@import "mixins";
+@import "variables";
+
+.idx {
+  @include flex(flex-start);
+
+  svg {
+    fill: $red;
+    margin-right: 4px;
+  }
+}

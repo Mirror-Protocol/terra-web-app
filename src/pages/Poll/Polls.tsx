@@ -1,14 +1,17 @@
 import { useState } from "react"
 import { useRouteMatch } from "react-router-dom"
 import classNames from "classnames/bind"
+
 import Tooltip from "../../lang/Tooltip.json"
-import { GovKey, LIMIT, useGov, useRefetchGov } from "../../graphql/useGov"
+import { usePolls } from "../../data/gov/polls"
+import { useParsePoll } from "../../data/gov/parse"
 import Card from "../../components/Card"
 import Grid from "../../components/Grid"
 import LoadingTitle from "../../components/LoadingTitle"
-import Button from "../../components/Button"
-import Icon from "../../components/Icon"
+import Button, { Submit } from "../../components/Button"
 import { TooltipIcon } from "../../components/Tooltip"
+import Icon from "../../components/Icon"
+
 import { isEmphasizedPoll } from "./pollHelpers"
 import { PollStatus } from "./Poll"
 import PollItem from "./PollItem"
@@ -17,18 +20,16 @@ import styles from "./Polls.module.scss"
 const cx = classNames.bind(styles)
 
 const Polls = ({ title }: { title: string }) => {
+  const parsePoll = useParsePoll()
   const [filter, setFilter] = useState<PollStatus | "">("")
 
   const { url } = useRouteMatch()
-  const { polls, result } = useGov()
-  const { list, more, offset } = polls
-  const { loading } = result[GovKey.POLLS]
-  useRefetchGov([GovKey.POLLS])
+  const { data, more } = usePolls()
 
   return (
     <article className={styles.component}>
       <header className={styles.header}>
-        <LoadingTitle loading={loading} className={styles.title}>
+        <LoadingTitle className={styles.title}>
           <TooltipIcon content={Tooltip.Gov.Polls}>
             <h1>{title}</h1>
           </TooltipIcon>
@@ -47,34 +48,39 @@ const Polls = ({ title }: { title: string }) => {
               </option>
             ))}
           </select>
-          <Icon name="arrow_drop_down" size={16} />
+
+          <Icon name="ChevronDown" size={8} />
         </div>
       </header>
 
-      {!loading && !list.length ? (
+      {!data.length ? (
         <Card>
           <p className="empty">No polls found</p>
         </Card>
       ) : (
         <Grid wrap={2}>
-          {list
-            .filter((id) => !filter || polls.data[id].status === filter)
-            .map((id) => {
-              const dim = !filter && !isEmphasizedPoll(polls.data[id])
+          {data
+            .filter(({ status }) => !filter || status === filter)
+            .map(parsePoll)
+            .map((poll) => {
+              const { id } = poll
+              const dim = !filter && !isEmphasizedPoll(poll)
 
               return (
                 <Card to={`${url}/poll/${id}`} className={cx({ dim })} key={id}>
-                  <PollItem id={id} />
+                  <PollItem {...poll} />
                 </Card>
               )
             })}
         </Grid>
       )}
 
-      {(!offset || offset - 1 > LIMIT) && (
-        <Button onClick={more} block outline submit>
-          More
-        </Button>
+      {more && (
+        <Submit>
+          <Button onClick={more} color="secondary">
+            More
+          </Button>
+        </Submit>
       )}
     </article>
   )

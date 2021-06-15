@@ -1,20 +1,20 @@
-import { MIR } from "../../constants"
 import useHash from "../../libs/useHash"
-import { useContractsAddress } from "../../hooks"
-import Page from "../../components/Page"
+import { useProtocol } from "../../data/contract/protocol"
+import Tab from "../../components/Tab"
 import StakeForm from "../../forms/StakeForm"
-import { Type } from "../Stake"
-import { MenuKey } from "../Gov"
+import { StakeType } from "../../types/Types"
+import Page from "../../components/Page"
 
 const GovStake = () => {
-  const { getToken } = useContractsAddress()
-  const token = getToken(MIR)
-  const { hash: type } = useHash<Type>(Type.STAKE)
-  const tab = { tabs: [Type.STAKE, Type.UNSTAKE], current: type }
+  const { getToken } = useProtocol()
+  const token = getToken("MIR")
+  const { hash: type } = useHash<StakeType>(StakeType.STAKE)
 
   return (
-    <Page title={MenuKey.STAKE}>
-      {type && <StakeForm type={type} token={token} tab={tab} key={type} gov />}
+    <Page>
+      <Tab tabs={[StakeType.STAKE, StakeType.UNSTAKE]} current={type}>
+        <StakeForm type={type} token={token} key={type} gov />
+      </Tab>
     </Page>
   )
 }

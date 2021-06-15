@@ -28,23 +28,20 @@
   }
 }
 
-@mixin button {
-  text-transform: uppercase;
-}
-
 @mixin transition($property: all) {
   transition: $property $transition-duration;
 }
 
 /* app */
 @mixin app {
-  font-size: $font-size;
+  @include mobile {
+    font-size: $font-size-mobile;
+  }
+
+  @include desktop {
+    font-size: $font-size-desktop;
+  }
 
   position: relative;
   min-height: 100vh;
-  padding-bottom: $footer-height;
-
-  @include mobile {
-    padding-bottom: $footer-height-mobile;
-  }
 }

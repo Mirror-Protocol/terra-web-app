@@ -4,9 +4,7 @@ import telegram from "./Community/telegram.png"
 import twitter from "./Community/twitter.png"
 import github from "./Community/github.png"
 
-import Container from "./Container"
 import ExtLink from "./ExtLink"
-import Icon from "./Icon"
 import styles from "./AppFooter.module.scss"
 
 interface Props {
@@ -45,27 +43,16 @@ const AppFooter = ({ network, project }: Props) => {
 
   return (
     <footer className={styles.footer}>
-      <Container className={styles.container}>
-        {network && (
-          <section className={styles.network}>
-            <Icon name="wifi_tethering" size={20} />
-            {network}
-          </section>
+      <section className={styles.community}>
+        {community.map(
+          ({ href, src, alt }) =>
+            href && (
+              <ExtLink href={href} className={styles.link} key={alt}>
+                <img src={src} alt={alt} width={18} height={18} />
+              </ExtLink>
+            )
         )}
-
-        {community && (
-          <section className={styles.community}>
-            {community.map(
-              ({ href, src, alt }) =>
-                href && (
-                  <ExtLink href={href} className={styles.link} key={alt}>
-                    <img src={src} alt={alt} width={20} height={20} />
-                  </ExtLink>
-                )
-            )}
-          </section>
-        )}
-      </Container>
+      </section>
     </footer>
   )
 }

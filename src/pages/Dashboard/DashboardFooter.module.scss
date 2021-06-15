@@ -1,0 +1,64 @@
+@import "mixins";
+
+.card {
+  @include mobile {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  @include desktop {
+    @include flex;
+    align-items: flex-start;
+
+    font-size: 28px;
+    font-weight: 500;
+
+    > * {
+      flex: none;
+      width: 50%;
+    }
+  }
+}
+
+.content {
+  @include mobile {
+    margin-bottom: $card-padding-vertical-mobile;
+  }
+}
+
+.title {
+  color: $white-92;
+  font-weight: 500;
+
+  @include desktop {
+    margin-bottom: 56px;
+  }
+}
+
+.section .title {
+  color: $white-44;
+  font-size: 12px;
+  font-weight: 500;
+
+  @include mobile {
+    margin-top: 24px;
+    margin-bottom: 4px;
+  }
+
+  @include desktop {
+    margin-top: 32px;
+    margin-bottom: 8px;
+  }
+
+  text-transform: uppercase;
+}
+
+.table {
+  @include mobile {
+    border-top: 1px solid $bg;
+  }
+
+  @include desktop {
+    border-left: 2px solid $bg;
+  }
+}

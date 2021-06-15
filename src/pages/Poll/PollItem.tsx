@@ -1,21 +1,11 @@
-import { useGov } from "../../graphql/useGov"
-import Icon from "../../components/Icon"
 import { isEmphasizedPoll } from "./pollHelpers"
-import useEstimateTime from "./useEstimateTime"
+import usePollTimeText from "./usePollTimeText"
 import PollHeader from "./PollHeader"
 import PollVotes from "./PollVotes"
 import styles from "./PollItem.module.scss"
 
-const PollItem = ({ id }: { id: number }) => {
-  const { polls } = useGov()
-  const poll = polls.data[id]
-  const estimatedTime = useEstimateTime(poll)
-  const toNow = (
-    <>
-      <Icon name="schedule" size={18} />
-      {estimatedTime.toNow}
-    </>
-  )
+const PollItem = (poll: Poll) => {
+  const pollTimeText = usePollTimeText(poll)
 
   return !poll ? null : (
     <article className={styles.component}>
@@ -25,9 +15,9 @@ const PollItem = ({ id }: { id: number }) => {
       </section>
 
       <footer className={styles.footer}>
-        <strong>{estimatedTime.label}: </strong>
-        {estimatedTime.text}
-        {isEmphasizedPoll(poll) && toNow}
+        <strong>{pollTimeText.label}: </strong>
+        {pollTimeText.text}
+        {isEmphasizedPoll(poll) && ` (${pollTimeText.toNow})`}
       </footer>
     </article>
   )

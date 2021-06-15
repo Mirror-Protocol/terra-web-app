@@ -6,17 +6,32 @@ import styles from "./Card.module.scss"
 
 const cx = classNames.bind(styles)
 
+interface CardMainProps {
+  className?: string
+  full?: boolean
+}
+
+export const CardMain: FC<CardMainProps> = ({ full, children, className }) => (
+  <section className={cx(styles.main, { full }, className)}>{children}</section>
+)
+
+const CardConfirm: FC = ({ children }) => (
+  <div className={styles.confirm}>
+    <CardMain>{children}</CardMain>
+  </div>
+)
+
 export interface Props {
   /** Icon above title */
   icon?: ReactNode
   header?: ReactNode
   title?: ReactNode
   description?: ReactNode
+  footer?: ReactNode
+  confirm?: ReactNode
 
   /** Card acts as a link */
   to?: string
-  /** Button to the left of the title */
-  goBack?: () => void
   /** Button to the right of the title */
   action?: ReactNode
   /** Badges */
@@ -42,26 +57,30 @@ interface Badge {
 }
 
 const Card: FC<Props> = (props) => {
-  const { children, to, badges, className, lg, full, shadow } = props
+  const { children, footer, confirm, to, className, lg, full, shadow } = props
+
+  const content = (
+    <>
+      <CardHeader {...props} />
+      {full ? children : children && <CardMain>{children}</CardMain>}
+      {confirm && <CardConfirm>{confirm}</CardConfirm>}
+    </>
+  )
 
   const attrs = {
-    className: cx(styles.card, { lg, full, link: to, shadow }, className),
-    children: (
+    className: cx(
+      styles.card,
+      { lg, full, link: to, shadow, flex: footer },
+      className
+    ),
+
+    children: footer ? (
       <>
-        <CardHeader {...props} />
-
-        {badges && (
-          <section className={styles.badges}>
-            {badges.map(({ label, color }) => (
-              <span className={cx(styles.badge, `bg-${color}`)} key={label}>
-                {label}
-              </span>
-            ))}
-          </section>
-        )}
-
-        <section className={styles.main}>{children}</section>
+        <div>{content}</div>
+        {footer}
       </>
+    ) : (
+      content
     ),
   }
 

@@ -1,36 +1,83 @@
 @import "mixins";
-@import "variables";
 
-$padding: 15px;
+$default: $white-64;
+$active: $blue;
 
 .menu {
-  @include desktop {
+  @include mobile {
     @include flex;
   }
-}
-
-.link {
-  @include link;
-  display: block;
-  font-weight: 500;
 
   @include desktop {
-    padding: 0 $padding;
-    line-height: $nav-height;
-  }
-
-  @include mobile {
-    font-size: 24px;
-    line-height: 2;
+    margin-top: 60px;
   }
 }
 
 .item {
-  .submenu {
-    display: none;
+  flex: 1;
+}
+
+.link {
+  display: block;
+  width: 100%;
+  color: $default;
+
+  .icon {
+    fill: $default;
   }
 
-  &:hover .submenu {
-    display: block;
+  &.active {
+    color: $active;
+
+    .icon {
+      fill: $active;
+    }
+  }
+
+  @include desktop {
+    font-size: 14px;
+    padding: 2px 12px;
+  }
+
+  @include mobile {
+    @include flex;
+    font-size: 10px;
+    font-weight: 500;
+    height: $navigate-height-mobile;
+    text-transform: uppercase;
+  }
+}
+
+.wrapper {
+  @include flex;
+
+  border-radius: 8px;
+
+  @include desktop {
+    justify-content: flex-start;
+    padding: 8px 12px;
+  }
+
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.icon {
+  @include desktop {
+    margin-right: 8px;
+  }
+
+  @include mobile {
+    width: 24px;
+    height: 24px;
+
+    margin-bottom: 2px;
+  }
+}
+
+@include desktop {
+  .link:hover .wrapper {
+    background: $gray-18;
   }
 }

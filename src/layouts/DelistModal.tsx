@@ -1,11 +1,14 @@
 import { useState } from "react"
 import { format } from "date-fns"
+import classNames from "classnames"
+import { FMT } from "../constants"
 import useLocalStorage from "../libs/useLocalStorage"
-import { useContractsAddress } from "../hooks"
+import { useProtocol } from "../data/contract/protocol"
 import Card from "../components/Card"
-import Button from "../components/Button"
+import Button, { Submit } from "../components/Button"
 import ExtLink from "../components/ExtLink"
 import Checkbox from "../components/Checkbox"
+import AssetIcon from "../components/AssetIcon"
 import Modal, { useModal } from "../containers/Modal"
 import styles from "./DelistModal.module.scss"
 
@@ -14,7 +17,7 @@ interface Props {
 }
 
 const DelistModal = (props: Props) => {
-  const { delist, getSymbol } = useContractsAddress()
+  const { delist, getSymbol } = useProtocol()
   const modal = useModal(true)
   const [checked, setChecked] = useState(false)
   const state = useLocalStorage<string[]>("doNotShowAgainDelist", [])
@@ -30,7 +33,7 @@ const DelistModal = (props: Props) => {
 
   return !tokens.length ? null : (
     <Modal {...modal}>
-      <Card title="Stock Split / Merge Notification" center>
+      <Card title="Stock Split / Merge Notification">
         <div className={styles.contents}>
           <header>
             <p className={styles.p}>
@@ -39,14 +42,20 @@ const DelistModal = (props: Props) => {
             </p>
           </header>
 
-          <section className={styles.info}>
+          <ul>
             {tokens.map((token) => (
-              <p key={token}>
-                {getSymbol(token)} (
-                {format(new Date(delist[token].date), "LLL dd, yyyy")})
-              </p>
+              <li key={token}>
+                <section className={classNames(styles.info, styles.asset)}>
+                  <AssetIcon
+                    symbol={getSymbol(token)}
+                    className={styles.icon}
+                  />
+                  {getSymbol(token)} (
+                  {format(new Date(delist[token].date), FMT.MMdd)})
+                </section>
+              </li>
             ))}
-          </section>
+          </ul>
 
           <p className={styles.p}>
             These assets will be <strong>DELISTED</strong> as soon as the market
@@ -66,19 +75,20 @@ const DelistModal = (props: Props) => {
             <li>
               <p>
                 Delisted assets can be withdrawn from liquidity pools to be
-                burnt or be used to close existing mint positions.
+                burnt or be used to close existing borrowed positions.
               </p>
             </li>
             <li>
               <p>
-                Delisted assets cannot be traded, minted or provided to
+                Delisted assets cannot be traded, borrowed or provided to
                 liquidity pools.
               </p>
             </li>
             <li>
               <p>
-                If you want to close your mint position immediately, make sure
-                that you acquire a sufficient amount of mAsset before delisting.
+                If you want to close your borrowed position immediately, make
+                sure that you acquire a sufficient amount of mAsset before
+                delisting.
               </p>
             </li>
           </ul>
@@ -88,7 +98,6 @@ const DelistModal = (props: Props) => {
               New assets will replace delisted ones on the{" "}
               {plural ? "dates" : "date"} mentioned above.
             </p>
-
             <p>
               <ExtLink
                 href="https://docs.mirror.finance/protocol/mirrored-assets-massets#delisting-and-migration"
@@ -98,17 +107,21 @@ const DelistModal = (props: Props) => {
               </ExtLink>
             </p>
 
-            <button
-              type="button"
-              className={styles.label}
-              onClick={() => setChecked(!checked)}
-            >
-              <Checkbox checked={checked}>Do not show again</Checkbox>
-            </button>
+            <Submit>
+              <Button onClick={submit} size="lg" block>
+                I understand
+              </Button>
+            </Submit>
 
-            <Button className={styles.submit} onClick={submit} size="lg" block>
-              I understand
-            </Button>
+            <section className={styles.checkbox}>
+              <button
+                type="button"
+                className={styles.label}
+                onClick={() => setChecked(!checked)}
+              >
+                <Checkbox checked={checked}>Do not show again</Checkbox>
+              </button>
+            </section>
           </footer>
         </div>
       </Card>

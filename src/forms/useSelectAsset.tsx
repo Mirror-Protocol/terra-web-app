@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useContractsAddress } from "../hooks"
+import { useProtocol } from "../data/contract/protocol"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 import SelectAssetButton from "./SelectAssetButton"
 import Assets from "./Assets"
@@ -9,25 +9,31 @@ export interface Config {
   token: string
   /** Function to call when a value is selected */
   onSelect: (asset: string) => void
+
   /** Key of price to show from data */
   priceKey?: PriceKey
+  getPriceKey?: (token: string) => PriceKey
   /** Key of balance to show from data */
   balanceKey?: BalanceKey
-  /** Include UST in the list */
-  useUST?: boolean
-  /** Exclude symbol in the list */
-  skip?: string[]
+
+  /** Include native denoms in the list */
+  native?: string[]
+  /** Include external tokens in the list */
+  showExternal?: boolean
+  /** Show delisted token if balance exists */
+  showDelisted?: boolean
+
+  /** Exclude asset in the list */
+  validate?: (params: ListedItem | ListedItemExternal) => boolean
   /** Modify token name */
   formatTokenName?: (symbol: string) => string
   /** Condition to be dimmed */
   dim?: (token: string) => boolean
-  /** Show delisted token if balance exists */
-  showDelisted?: boolean
 }
 
 export default (config: Config) => {
   const { token, onSelect } = config
-  const { getSymbol } = useContractsAddress()
+  const { getSymbol } = useProtocol()
   const [isOpen, setIsOpen] = useState(false)
   const toggle = () => (isOpen ? handleSelect(token) : setIsOpen(!isOpen))
 

@@ -1,0 +1,35 @@
+@import "mixins";
+
+.wrapper {
+  @include flex(space-between);
+
+  @include mobile {
+    margin-top: 40px;
+  }
+
+  @include desktop {
+    margin-top: 60px;
+  }
+}
+
+.item + .item {
+  @include mobile {
+    margin-top: 16px;
+  }
+
+  @include desktop {
+    margin-top: 20px;
+  }
+}
+
+.chart {
+  @include mobile {
+    width: 140px;
+    height: 140px;
+  }
+
+  @include desktop {
+    width: 180px;
+    height: 180px;
+  }
+}

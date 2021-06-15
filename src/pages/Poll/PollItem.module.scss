@@ -28,7 +28,7 @@
 /* footer */
 .footer {
   @include flex(flex-start);
-  color: $slate;
+  color: $gray-34;
   font-size: 12px;
   margin-top: 30px;
   white-space: pre;

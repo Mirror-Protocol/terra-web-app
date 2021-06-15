@@ -1,22 +1,10 @@
-import { UUSD } from "../constants"
-import { useContract } from "../hooks"
-import { AccountInfoKey } from "../hooks/contractKeys"
 import Count from "../components/Count"
-import WithResult from "../containers/WithResult"
+import { useUusdBalance } from "../data/native/balance"
 
 const Balance = () => {
-  const { uusd } = useContract()
-  const renderError = () => <p className="red">Error</p>
+  const uusd = useUusdBalance()
 
-  return (
-    <WithResult
-      keys={[AccountInfoKey.UUSD]}
-      renderError={renderError}
-      size={21}
-    >
-      <Count symbol={UUSD}>{uusd}</Count>
-    </WithResult>
-  )
+  return <Count symbol="uusd">{uusd}</Count>
 }
 
 export default Balance

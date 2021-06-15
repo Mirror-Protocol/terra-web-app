@@ -1,42 +1,52 @@
 import { useEffect, useRef } from "react"
+import { useLocation } from "react-router-dom"
+import { useRecoilValue } from "recoil"
 import { reverse } from "ramda"
+import classNames from "classnames/bind"
 import { MsgExecuteContract } from "@terra-money/terra.js"
 
-import useNewContractMsg from "../terra/useNewContractMsg"
+import useNewContractMsg from "../libs/useNewContractMsg"
 import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
-import { MIR, TRADING_HOURS, UUSD } from "../constants"
+import { TRADING_HOURS } from "../constants"
 import { plus, minus, times, div, floor, max, abs } from "../libs/math"
 import { gt, gte, lt, isFinite } from "../libs/math"
 import { capitalize } from "../libs/utils"
 import { percent } from "../libs/num"
 import { format, formatAsset, lookup, lookupSymbol } from "../libs/parse"
-import { toAmount } from "../libs/parse"
+import { decimal, toAmount, getIsTokenNative } from "../libs/parse"
 import useForm from "../libs/useForm"
 import { validate as v, placeholder, step, toBase64 } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
-import calc from "../helpers/calc"
-import { useContractsAddress, useContract, useRefetch } from "../hooks"
-import { PriceKey, AssetInfoKey } from "../hooks/contractKeys"
+import calc from "../libs/calc"
+import { useProtocol } from "../data/contract/protocol"
+import { slippageQuery } from "../data/tx/slippage"
+import { AssetInfoKey } from "../hooks/contractKeys"
 import { BalanceKey } from "../hooks/contractKeys"
-import useTax from "../graphql/useTax"
-import { MenuKey } from "../routes"
+import useTax from "../hooks/useTax"
+import { useFind, useFindAssetInfo } from "../data/contract/normalize"
+import { getMinRatioQuery } from "../data/contract/collateral"
+import { getMintPriceKeyQuery } from "../data/contract/collateral"
 
 import FormGroup from "../components/FormGroup"
 import Dl from "../components/Dl"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
-import Caution from "../components/Caution"
+import FormFeedback from "../components/FormFeedback"
 import ExtLink from "../components/ExtLink"
 import Icon from "../components/Icon"
-import { Type } from "../pages/Mint"
+import WithPriceChart from "../containers/WithPriceChart"
+import { MintType } from "../types/Types"
 import useMintReceipt from "./receipts/useMintReceipt"
 import FormContainer from "./FormContainer"
-import useSelectAsset, { Config } from "./useSelectAsset"
+import useSelectAsset from "./useSelectAsset"
 import useLatest from "./useLatest"
 import FormIcon from "./FormIcon"
 import CollateralRatio from "./CollateralRatio"
+import SetSlippageTolerance from "./SetSlippageTolerance"
 import styles from "./MintForm.module.scss"
+
+const cx = classNames.bind(styles)
 
 enum Key {
   value1 = "value1",
@@ -48,28 +58,32 @@ enum Key {
 
 interface Props {
   position?: MintPosition
-  type: Type
-  tab?: Tab
+  type: MintType
   message?: string
 }
 
-const MintForm = ({ position, type, tab, message }: Props) => {
+const MintForm = ({ position, type, message }: Props) => {
   const balanceKey = BalanceKey.TOKEN
 
   /* context */
-  const { contracts, delist, getIsDelisted, ...helpers } = useContractsAddress()
-  const { getSymbol, parseToken, toToken, toAssetInfo } = helpers
-  const { find } = useContract()
-  const { loading } = useRefetch([PriceKey.ORACLE, PriceKey.END, balanceKey])
+  const { state } = useLocation<{ token: string }>()
+  const { contracts, delist, getSymbol, getToken, ...helpers } = useProtocol()
+  const { getIsDelisted, parseToken, toToken, toAssetInfo } = helpers
+  const find = useFind()
+  const findAssetInfo = useFindAssetInfo()
+  const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
 
   /* context:position */
   const open = !position
-  const close = type === Type.CLOSE
-  const custom = type === Type.CUSTOM
+  const short = type === MintType.SHORT
+  const close = type === MintType.CLOSE
+  const custom = type === MintType.CUSTOM
 
   /* form:validate */
   const getMax = (token: string) =>
-    type === Type.WITHDRAW ? prevCollateral?.amount : find(balanceKey, token)
+    type === MintType.WITHDRAW
+      ? prevCollateral?.amount
+      : find(balanceKey, token)
 
   const validate = ({ token1, token2, value1, value2, ratio }: Values<Key>) => {
     const symbol1 = getSymbol(token1)
@@ -92,9 +106,13 @@ const MintForm = ({ position, type, tab, message }: Props) => {
       [Key.token2]: open ? v.required(token2) : "",
       [Key.ratio]: custom
         ? ""
-        : prevRatio && !(type === Type.DEPOSIT ? gt : lt)(nextRatio, prevRatio)
+        : prevRatio &&
+          !(type === MintType.DEPOSIT ? gt : lt)(nextRatio, prevRatio)
         ? MESSAGE.Form.Validate.CollateralRatio.Current
-        : !gte(nextRatio, find(AssetInfoKey.MINCOLLATERALRATIO, token2))
+        : !gte(
+            nextRatio,
+            findAssetInfo(AssetInfoKey.MINCOLLATERALRATIO, token2)
+          )
         ? MESSAGE.Form.Validate.CollateralRatio.Minimum
         : v.required(ratio),
     }
@@ -103,20 +121,17 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   /* form:hook */
   const prevCollateral = position && parseToken(position.collateral)
   const prevAsset = position && parseToken(position.asset)
-  const prevCollateralDelisted = prevCollateral && delist[prevCollateral.token]
   const prevAssetDelisted = prevAsset && delist[prevAsset.token]
-  const priceKey1 = prevCollateralDelisted ? PriceKey.END : PriceKey.ORACLE
-  const priceKey2 = prevAssetDelisted ? PriceKey.END : PriceKey.ORACLE
 
   const params = prevCollateral &&
     prevAsset && {
       collateral: {
         amount: prevCollateral.amount,
-        price: find(priceKey1, prevCollateral.token),
+        price: find(getPriceKey(prevCollateral.token), prevCollateral.token),
       },
       asset: {
         amount: prevAsset.amount,
-        price: find(priceKey2, prevAsset.token),
+        price: find(getPriceKey(prevAsset.token), prevAsset.token),
       },
     }
 
@@ -126,8 +141,11 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     [Key.value1]:
       (close && lookup(prevCollateral?.amount, prevCollateral?.token)) || "",
     [Key.value2]: "",
-    [Key.token1]: prevCollateral?.token ?? UUSD,
-    [Key.token2]: prevAsset?.token ?? "",
+    [Key.token1]: prevCollateral?.token ?? "uusd",
+    [Key.token2]:
+      prevAsset?.token ??
+      (state?.token !== getToken("MIR") ? state?.token : "") ??
+      "",
     [Key.ratio]: prevRatio ? lookup(times(prevRatio, 100)) : "200",
   }
 
@@ -139,7 +157,6 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   const amount2 = toAmount(value2)
   const symbol1 = getSymbol(token1)
   const symbol2 = getSymbol(token2)
-  const uusd = token1 === UUSD ? amount1 : "0"
 
   /* form:focus input on select asset */
   const valueRef = useRef<HTMLInputElement>()
@@ -154,10 +171,13 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   }
 
   /* simulation */
+  const priceKey1 = getPriceKey(token1)
+  const priceKey2 = getPriceKey(token2)
   const price1 = find(priceKey1, token1)
   const price2 = find(priceKey2, token2)
-  const reversed = !!form.changed && form.changed !== Key.value1
-  const operate = type === Type.DEPOSIT || type === Type.CUSTOM ? plus : minus
+  const reversed = !open
+  const operate =
+    type === MintType.DEPOSIT || type === MintType.CUSTOM ? plus : minus
   const nextCollateralAmount = max([
     operate(prevCollateral?.amount, amount1),
     "0",
@@ -200,7 +220,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     : !reversed
     ? lookup(times(calculated.ratio, 100))
     : lookup(
-        type === Type.DEPOSIT
+        type === MintType.DEPOSIT
           ? minus(calculated.collateral.amount, prevCollateral?.amount)
           : minus(prevCollateral?.amount, calculated.collateral.amount),
         prevCollateral?.symbol
@@ -214,39 +234,47 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   }, [type, simulated, reversed, setValues, open, close, custom])
 
   /* render:form */
-  const config1: Config = {
+  const select1 = useSelectAsset({
+    getPriceKey,
+    balanceKey,
     token: token1,
     onSelect: onSelect(Key.token1),
-    useUST: true,
-    skip: [MIR],
+    native: ["uusd", "uluna"],
+    showExternal: true,
+    validate: (item) => !("status" in item) || item.status !== "PRE_IPO",
     dim: (token) => (getIsDelisted(token) ? false : isClosed(getSymbol(token))),
-  }
-
-  const config2: Config = {
-    token: token2,
-    onSelect: onSelect(Key.token2),
-    useUST: false,
-    skip: [MIR],
-    dim: (token) => (getIsDelisted(token) ? false : isClosed(getSymbol(token))),
-  }
-
-  const select1 = useSelectAsset({
-    priceKey: priceKey1,
-    balanceKey,
-    ...config1,
   })
 
   const select2 = useSelectAsset({
     priceKey: priceKey2,
     balanceKey,
-    ...config2,
+    token: token2,
+    onSelect: onSelect(Key.token2),
+    validate: ({ symbol }) => symbol !== "MIR",
+    dim: (token) => (getIsDelisted(token) ? false : isClosed(getSymbol(token))),
   })
 
   const { getMax: getMaxAmount } = useTax()
   const maxAmount =
-    symbol1 === UUSD
-      ? lookup(getMaxAmount(find(balanceKey, token1)), UUSD)
+    symbol1 === "uusd"
+      ? lookup(getMaxAmount(find(balanceKey, token1)), "uusd")
       : lookup(find(balanceKey, token1), symbol1)
+
+  /* latest price */
+  const { isClosed } = useLatest()
+  const isMarketClosed1 = getIsDelisted(token1) ? false : isClosed(symbol1)
+  const isMarketClosed2 = getIsDelisted(token2) ? false : isClosed(symbol2)
+  const isMarketClosed = isMarketClosed1 || isMarketClosed2
+
+  const marketClosedMessage = (
+    <p className={styles.message}>
+      Only available during{" "}
+      <ExtLink href={TRADING_HOURS} className={styles.link}>
+        market hours
+      </ExtLink>
+      <Icon name="External" size={14} />
+    </p>
+  )
 
   const fields = {
     ...getFields({
@@ -272,7 +300,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
       [Key.value2]: {
         label: (
           <TooltipIcon content={Tooltip.Mint.ExpectedMintedAsset}>
-            Minted
+            {short ? "Shorted" : "Borrowed"}
           </TooltipIcon>
         ),
         input: {
@@ -284,6 +312,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
         assets: select2.assets,
         help: renderBalance(getMax(token2), symbol2),
         focused: select2.isOpen,
+        warn: isMarketClosed ? marketClosedMessage : undefined,
       },
 
       [Key.ratio]: {
@@ -312,7 +341,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
       ),
     },
     {
-      title: "Minted",
+      title: "Borrowed",
       content: (
         <TooltipIcon content={Tooltip.Mint.Asset}>
           {formatAsset(prevAsset?.amount, prevAsset?.symbol)}
@@ -322,9 +351,8 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   ]
 
   /* render:ratio */
-  const minRatio = token2
-    ? find(AssetInfoKey.MINCOLLATERALRATIO, token2)
-    : "1.5"
+  const getMinRatio = useRecoilValue(getMinRatioQuery)
+  const minRatio = token2 ? getMinRatio(token1, token2) : "1.5"
 
   const safeRatio = plus(minRatio, 0.5)
   const nextRatio = div(ratio, 100)
@@ -332,7 +360,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   const ratioProps = {
     min: minRatio,
     safe: safeRatio,
-    next: nextRatio,
+    ratio: nextRatio,
     prev: prevRatio,
     onClick: (ratio: string) => {
       form.setChanged(Key.ratio)
@@ -342,9 +370,9 @@ const MintForm = ({ position, type, tab, message }: Props) => {
 
   /* Init the collateral ratio based on the minimum collateral ratio */
   useEffect(() => {
-    const ratio = times(plus(minRatio, 0.5), 100)
-    setValues((values) => ({ ...values, [Key.ratio]: ratio }))
-  }, [minRatio, setValues])
+    const ratio = times(safeRatio, 100)
+    open && setValues((values) => ({ ...values, [Key.ratio]: ratio }))
+  }, [safeRatio, setValues, open])
 
   /* confirm */
   const price = div(find(priceKey2, token2), find(priceKey1, token1))
@@ -369,61 +397,35 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     },
   ]
 
-  const PROTOCOL_FEE = 0.015
-  const getProtocolFee = (n = "0") => times(n, PROTOCOL_FEE)
+  const burnContents = {
+    title: "Burn Amount",
+    content: <Count symbol={prevAsset?.symbol}>{prevAsset?.amount}</Count>,
+  }
+
+  const withdrawContents = {
+    title: "Withdraw Amount",
+    content: (
+      <Count symbol={prevCollateral?.symbol}>{prevCollateral?.amount}</Count>
+    ),
+  }
+
+  // const PROTOCOL_FEE = 0.015
+  // const getProtocolFee = (n = "0") => times(n, PROTOCOL_FEE)
   const closeDelistedAsset =
     prevAssetDelisted && prevAsset && gt(prevAsset.amount, 0)
 
   const contents = {
-    [Type.OPEN]: !gt(price, 0) ? undefined : [priceContents],
+    [MintType.BORROW]: !gt(price, 0) ? undefined : [priceContents],
+    [MintType.SHORT]: !gt(price, 0) ? undefined : [priceContents],
 
-    [Type.CLOSE]: [
-      {
-        title: "Burn Amount",
-        content: <Count symbol={prevAsset?.symbol}>{prevAsset?.amount}</Count>,
-      },
-      closeDelistedAsset
-        ? undefined
-        : {
-            title: "Withdraw Amount",
-            content: (
-              <Count symbol={prevCollateral?.symbol}>
-                {prevCollateral?.amount}
-              </Count>
-            ),
-          },
-      {
-        title: (
-          <TooltipIcon content={Tooltip.Mint.ProtocolFee}>
-            Protocol fee
-          </TooltipIcon>
-        ),
-        content: (
-          <Count symbol={prevCollateral?.symbol}>
-            {getProtocolFee(prevCollateral?.amount)}
-          </Count>
-        ),
-      },
-    ],
+    [MintType.CLOSE]: closeDelistedAsset
+      ? [burnContents]
+      : [burnContents, withdrawContents],
 
-    [Type.DEPOSIT]: collateralContents,
-    [Type.WITHDRAW]: [
-      ...collateralContents,
-      {
-        title: (
-          <TooltipIcon content={Tooltip.Mint.ProtocolFee}>
-            Protocol fee
-          </TooltipIcon>
-        ),
-        content: (
-          <Count symbol={prevCollateral?.symbol}>
-            {getProtocolFee(amount1)}
-          </Count>
-        ),
-      },
-    ],
+    [MintType.DEPOSIT]: collateralContents,
+    [MintType.WITHDRAW]: collateralContents,
 
-    [Type.CUSTOM]: [
+    [MintType.CUSTOM]: [
       ...collateralContents,
       {
         title: "Total asset",
@@ -436,18 +438,23 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   const newContractMsg = useNewContractMsg()
   const collateral = toToken({ amount: abs(amount1), token: token1 })
   const asset = toToken({ amount: abs(amount2), token: token2 })
-  const isCollateralUST = token1 === UUSD
+  const isCollateralNative = getIsTokenNative(token1)
+  const slippage = useRecoilValue(slippageQuery)
+  const belief = decimal(div(1, price), 18)
 
   const createSend = (msg: object, amount?: string) => ({
     send: { amount, contract: contracts["mint"], msg: toBase64(msg) },
   })
 
   const openPosition = {
-    open_position: {
-      collateral,
-      collateral_ratio: div(ratio, 100),
-      asset_info: toAssetInfo(token2),
-    },
+    open_position: Object.assign(
+      {
+        collateral,
+        collateral_ratio: div(ratio, 100),
+        asset_info: toAssetInfo(token2),
+      },
+      short && { short_params: { belief_price: belief, max_spread: slippage } }
+    ),
   }
 
   const deposit = {
@@ -455,7 +462,10 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   }
 
   const withdraw = {
-    withdraw: { position_idx: position?.idx, collateral },
+    withdraw: Object.assign(
+      { position_idx: position?.idx },
+      !close && { collateral }
+    ),
   }
 
   const mint = {
@@ -475,25 +485,33 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     lt(amount1, 0)
       ? newContractMsg(contracts["mint"], withdraw)
       : gt(amount1, 0)
-      ? isCollateralUST
+      ? isCollateralNative
         ? newContractMsg(contracts["mint"], deposit, {
             amount: amount1,
-            denom: UUSD,
+            denom: token1,
           })
         : newContractMsg(token1, createSend(deposit, amount1))
       : undefined,
   ]
 
   const data = {
-    [Type.OPEN]: [
-      isCollateralUST
+    [MintType.BORROW]: [
+      isCollateralNative
         ? newContractMsg(contracts["mint"], openPosition, {
             amount: amount1,
-            denom: UUSD,
+            denom: token1,
           })
         : newContractMsg(token1, createSend(openPosition, amount1)),
     ],
-    [Type.CLOSE]: [
+    [MintType.SHORT]: [
+      isCollateralNative
+        ? newContractMsg(contracts["mint"], openPosition, {
+            amount: amount1,
+            denom: token1,
+          })
+        : newContractMsg(token1, createSend(openPosition, amount1)),
+    ],
+    [MintType.CLOSE]: [
       prevAsset && gt(prevAsset.amount, 0)
         ? newContractMsg(token2, createSend(burn, prevAsset?.amount))
         : undefined,
@@ -501,16 +519,16 @@ const MintForm = ({ position, type, tab, message }: Props) => {
         ? undefined
         : newContractMsg(contracts["mint"], withdraw),
     ],
-    [Type.DEPOSIT]: [
-      isCollateralUST
+    [MintType.DEPOSIT]: [
+      isCollateralNative
         ? newContractMsg(contracts["mint"], deposit, {
             amount: amount1,
-            denom: UUSD,
+            denom: token1,
           })
         : newContractMsg(token1, createSend(deposit, amount1)),
     ],
-    [Type.WITHDRAW]: [newContractMsg(contracts["mint"], withdraw)],
-    [Type.CUSTOM]: gt(amount1, 0) ? reverse(customData) : customData,
+    [MintType.WITHDRAW]: [newContractMsg(contracts["mint"], withdraw)],
+    [MintType.CUSTOM]: gt(amount1, 0) ? reverse(customData) : customData,
   }[type]?.filter(Boolean) as MsgExecuteContract[]
 
   const ratioMessages = errors[Key.ratio]
@@ -520,31 +538,11 @@ const MintForm = ({ position, type, tab, message }: Props) => {
     : undefined
 
   const closeMessages =
-    !loading &&
-    prevAsset &&
-    !gte(find(balanceKey, prevAsset?.token), prevAsset.amount)
+    prevAsset && !gte(find(balanceKey, prevAsset?.token), prevAsset.amount)
       ? [`Insufficient ${prevAsset.symbol} balance`]
       : undefined
 
-  const marketClosedMessage = (
-    <p className={styles.message}>
-      Only available during{" "}
-      <ExtLink href={TRADING_HOURS} className={styles.link}>
-        market hours
-      </ExtLink>
-      <Icon name="launch" size={14} />
-    </p>
-  )
-
-  /* latest price */
-  const { isClosed } = useLatest()
-  const isMarketClosed1 = getIsDelisted(token1) ? false : isClosed(symbol1)
-  const isMarketClosed2 = getIsDelisted(token2) ? false : isClosed(symbol2)
-  const isMarketClosed = isMarketClosed1 || isMarketClosed2
-
-  const messages = isMarketClosed
-    ? [marketClosedMessage]
-    : touched[Key.ratio]
+  const messages = touched[Key.ratio]
     ? ratioMessages
     : close
     ? closeMessages
@@ -553,35 +551,47 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   const disabled =
     !!message || isMarketClosed || (!close ? invalid : !!closeMessages)
 
-  const label = open ? MenuKey.MINT : type
+  const label = type
 
   /* result */
   const parseTx = useMintReceipt(type, position)
 
-  const container = { tab, attrs, contents, messages, label, disabled, data }
-  const deduct = type === Type.WITHDRAW || close || (custom && lt(amount1, 0))
-  const tax = { pretax: uusd, deduct }
+  const container = { attrs, contents, messages, label, disabled, data }
+  const deduct =
+    type === MintType.WITHDRAW || close || (custom && lt(amount1, 0))
+  const tax = { pretax: token1 === "uusd" ? amount1 : "0", deduct }
 
-  return type === Type.CLOSE ? (
-    <FormContainer {...container} {...tax} parseTx={parseTx} />
-  ) : (
-    <FormContainer {...container} {...tax} parseTx={parseTx}>
-      {position && (
-        <Dl list={positionInfo} className={styles.dl} align="center" />
+  return (
+    <WithPriceChart token={token2}>
+      {type === MintType.CLOSE ? (
+        <FormContainer {...container} {...tax} parseTx={parseTx} />
+      ) : (
+        <FormContainer {...container} {...tax} parseTx={parseTx}>
+          {(short || position) && (
+            <section className={cx(styles.header, { right: short })}>
+              {short ? (
+                <SetSlippageTolerance />
+              ) : (
+                position && <Dl list={positionInfo} />
+              )}
+            </section>
+          )}
+
+          <FormGroup {...fields[Key.value1]} />
+          <FormGroup {...fields[Key.ratio]} skipFeedback />
+          {open && <FormIcon name="ArrowDown" />}
+          {(open || custom) && <FormGroup {...fields[Key.value2]} />}
+
+          <section className={styles.ratio}>
+            {!custom && <CollateralRatio {...ratioProps} />}
+          </section>
+
+          {open && (
+            <FormFeedback type="warn">{Tooltip.Mint.Caution}</FormFeedback>
+          )}
+        </FormContainer>
       )}
-
-      <FormGroup {...fields[Key.value1]} />
-      {open && <FormIcon name="arrow_downward" />}
-      {(open || custom) && <FormGroup {...fields[Key.value2]} />}
-      <FormGroup {...fields[Key.ratio]} skipFeedback />
-      {!custom && <CollateralRatio {...ratioProps} />}
-
-      {open && (
-        <Caution className={styles.caution}>
-          <strong>Caution</strong>: {Tooltip.Mint.Caution}
-        </Caution>
-      )}
-    </FormContainer>
+    </WithPriceChart>
   )
 }
 

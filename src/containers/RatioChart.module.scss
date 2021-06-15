@@ -1,0 +1,20 @@
+@import "mixins";
+
+.track {
+  @include flex;
+  align-items: flex-start;
+}
+
+.fill {
+  height: 56px;
+}
+
+.list {
+  @include flex(flex-start);
+  flex-wrap: wrap;
+}
+
+.item {
+  margin-top: 16px;
+  margin-right: 28px;
+}

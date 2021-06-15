@@ -1,7 +1,8 @@
+@use "sass:math";
 @import "mixins";
 
 $gutter: 30px;
-$margin: ($gutter / 2);
+$margin: math.div($gutter, 2);
 
 .row {
   @include flex(flex-start);
@@ -20,6 +21,10 @@ $margin: ($gutter / 2);
   & + & {
     margin-top: $margin;
   }
+}
+
+.gutter {
+  margin-top: $gutter;
 }
 
 @include desktop {

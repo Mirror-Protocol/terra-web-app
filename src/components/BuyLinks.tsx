@@ -23,14 +23,14 @@ interface Link {
 interface Props {
   type?: "terra" | "eth"
   action?: ReactNode
-  className: string
+  className?: string
   onClick?: () => void
   links?: Link[]
 }
 
 const BuyLinks = ({ type = "terra", ...props }: Props) => {
   const { action, links = [], className, onClick } = props
-  const arrow = <Icon name="north_east" size={16} />
+  const arrow = <Icon name="External" size={16} />
 
   return (
     <article className={className}>

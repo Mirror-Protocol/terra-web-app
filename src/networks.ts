@@ -29,6 +29,21 @@ const networks: Record<string, MirrorNetworkInfo> = {
     },
     fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
   },
+  moonshine: {
+    name: "moonshine",
+    chainID: "localterra",
+    lcd: "https://moonshine-lcd.terra.dev",
+    contract: "https://whitelist.mirror.finance/moonshine.json",
+    mantle: "https://moonshine-mantle.terra.dev",
+    stats: "https://moonshine-mirror-graph.terra.dev/graphql",
+    shuttle: {
+      ethereum: "",
+      bsc: "",
+    },
+    fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
+  },
 }
+
+export const defaultNetwork = networks.testnet
 
 export default networks

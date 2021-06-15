@@ -3,9 +3,7 @@
 .button {
   @include flex;
   @include transition(color);
-  color: $battleship;
   font-size: 12px;
-  font-weight: 600;
 }
 
 .on {

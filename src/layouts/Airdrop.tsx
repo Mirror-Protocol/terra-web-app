@@ -1,10 +1,9 @@
-import { gt } from "../libs/math"
-import useAirdrops from "../statistics/useAirdrops"
-import AirdropToast from "../airdrop/AirdropToast"
+import useAirdrops from "../data/stats/airdrop"
+import AirdropToast from "../pages/Airdrop/AirdropToast"
 
 const Airdrop = () => {
-  const { amount } = useAirdrops()
-  return !gt(amount, 0) ? null : <AirdropToast />
+  const airdrop = useAirdrops()
+  return !airdrop ? null : <AirdropToast />
 }
 
 export default Airdrop

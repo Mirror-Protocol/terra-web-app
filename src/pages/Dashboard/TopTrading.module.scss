@@ -1,11 +1,40 @@
 @import "mixins";
 
-.rank {
-  color: $battleship;
-  font-size: 21px;
-  font-weight: 600;
+.header {
+  @include flex(space-between);
+  @include mobile {
+    padding: 12px $gutter-horizontal-mobile;
+  }
+
+  @include desktop {
+    padding: 36px 20px;
+  }
+}
+
+.wrapper {
+  @include flex;
+
+  svg {
+    fill: $blue;
+    margin-right: 8px;
+  }
+}
+
+.title {
+  color: $white-92;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
 }
 
 .link {
-  @include link(white, $blue);
+  color: $blue;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+
+  svg {
+    fill: $blue;
+    margin-left: 4px;
+  }
 }

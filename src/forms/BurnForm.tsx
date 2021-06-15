@@ -1,19 +1,23 @@
+import { useParams } from "react-router-dom"
+import { useRecoilValue } from "recoil"
 import { groupBy } from "ramda"
 import BigNumber from "bignumber.js"
 
 import { formatAsset } from "../libs/parse"
-import { sum } from "../libs/math"
+import { gt, sum } from "../libs/math"
 import { toBase64 } from "../libs/formHelpers"
+import useNewContractMsg from "../libs/useNewContractMsg"
+import { BalanceKey, PriceKey } from "../hooks/contractKeys"
+import { cdpsQuery } from "../data/stats/cdps"
+import { useProtocol } from "../data/contract/protocol"
+import { useFind } from "../data/contract/normalize"
 
-import useNewContractMsg from "../terra/useNewContractMsg"
-import { useContractsAddress, useContract } from "../hooks"
-import { PriceKey } from "../hooks/contractKeys"
-
+import Container from "../components/Container"
+import findPositions from "./findPositions"
 import useBurnReceipt from "./receipts/useBurnReceipt"
 import FormContainer from "./FormContainer"
 
 interface Props {
-  tab: Tab
   token: string
   positions: CDP[]
 }
@@ -22,10 +26,10 @@ interface PositionItem extends CDP {
   collateral: string
 }
 
-const BurnForm = ({ tab, token, positions }: Props) => {
+const Component = ({ token, positions }: Props) => {
   /* context */
-  const { contracts, getSymbol, getIsDelisted } = useContractsAddress()
-  const { find } = useContract()
+  const { contracts, getSymbol, getIsDelisted } = useProtocol()
+  const find = useFind()
 
   const list = positions.map((item) => {
     const { mintAmount, collateralToken } = item
@@ -73,10 +77,26 @@ const BurnForm = ({ tab, token, positions }: Props) => {
 
   /* result */
   const parseTx = useBurnReceipt()
-  const container = { contents, data, parseTx }
-  const props = { tab, label: tab.current }
+  const container = { contents, data, parseTx, label: "Burn" }
 
-  return <FormContainer {...container} {...props} />
+  return <FormContainer {...container} />
+}
+
+const BurnForm = () => {
+  const balanceKey = BalanceKey.TOKEN
+
+  const find = useFind()
+  const { token } = useParams<{ token: string }>()
+  const balance = find(balanceKey, token)
+
+  const cdps = useRecoilValue(cdpsQuery(token))
+  const positions = gt(balance, 0) && cdps && findPositions(balance, cdps)
+
+  return (
+    <Container sm>
+      {token && positions && <Component token={token} positions={positions} />}
+    </Container>
+  )
 }
 
 export default BurnForm

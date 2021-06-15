@@ -6,7 +6,10 @@ const FPS = 15
 const INTERVAL = 1000 / FPS
 const DURATION = 300
 
-const Count = ({ children: target = "0", ...props }: CountOptions) => {
+export const AnimatedCount = ({
+  children: target = "0",
+  ...props
+}: CountOptions) => {
   const { symbol, ...config } = props
   const prevRef = useRef<string>(target)
   const timeoutRef = useRef<NodeJS.Timeout>()
@@ -39,6 +42,19 @@ const Count = ({ children: target = "0", ...props }: CountOptions) => {
     count && change()
     return () => clearTimeout(timeoutRef.current!)
   }, [count, current, target])
+
+  return (
+    <>
+      {props.plus && gt(current, 0) && "+"}
+      {props.format?.(current) ?? format(current, symbol, config)}
+      {symbol ? ` ${lookupSymbol(symbol)}` : ""}
+    </>
+  )
+}
+
+export const Count = ({ children: target = "0", ...props }: CountOptions) => {
+  const { symbol, ...config } = props
+  const current = target
 
   return (
     <>

@@ -1,8 +1,20 @@
 @import "mixins";
 
+$padding-caption-mobile: 16px $gutter-horizontal-mobile;
+$padding-th-mobile: 16px 16px;
+$padding-td-mobile: 16px 16px;
+
+$padding-caption-desktop: 20px $gutter-horizontal-desktop;
+$padding-th-desktop: 20px 16px;
+$padding-td-desktop: 24px 16px;
+
 .wrapper {
   width: 100%;
   overflow-x: scroll;
+}
+
+.radius {
+  border-radius: 16px;
 }
 
 .margin {
@@ -10,16 +22,83 @@
 }
 
 .cell {
-  background: $darkblue;
-  padding: 20px;
+  background-color: $gray-18;
+  color: $white-80;
   white-space: nowrap;
 }
 
+.cell,
+.caption {
+  @include mobile {
+    &:first-child {
+      padding-left: $gutter-horizontal-mobile;
+    }
+
+    &:last-child {
+      padding-right: $gutter-horizontal-mobile;
+    }
+  }
+
+  @include desktop {
+    &:first-child {
+      padding-left: $gutter-horizontal-desktop;
+    }
+
+    &:last-child {
+      padding-right: $gutter-horizontal-desktop;
+    }
+  }
+}
+
+.darker,
+.darker .cell {
+  background-color: $gray-14;
+}
+
+.clickable,
+.clickable .cell {
+  @include transition(background-color);
+}
+
+.clickable:hover,
+.clickable:hover .cell {
+  cursor: pointer;
+  background-color: $gray-22;
+}
+
+.caption {
+  background: $gray-14;
+  color: $blue;
+  font-size: 14px;
+  font-weight: 500;
+
+  @include mobile {
+    padding: $padding-caption-mobile;
+  }
+
+  @include desktop {
+    padding: $padding-caption-desktop;
+  }
+
+  &.border {
+    border-bottom: 1px solid $bg;
+  }
+}
+
 .th {
-  color: $battleship;
+  background-color: $gray-14;
+  color: $white-44;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: capitalize;
+
+  @include mobile {
+    padding: $padding-th-mobile;
+  }
+
+  @include desktop {
+    padding: $padding-th-desktop;
+  }
 
   .colspan & {
     font-size: 14px;
@@ -30,7 +109,17 @@
 }
 
 .td {
-  border-top: $border;
+  letter-spacing: -0.3px;
+
+  @include mobile {
+    border-top: 1px solid $bg;
+    padding: $padding-td-mobile;
+  }
+
+  @include desktop {
+    border-top: 2px solid $bg;
+    padding: $padding-td-desktop;
+  }
 }
 
 .text-left {
@@ -69,12 +158,25 @@
 
 /* color */
 .red {
-  background: fade-out($red, 0.92);
+  background-color: fade-out($red, 0.92);
 }
 
 .bold {
   color: white;
   font-weight: 500;
+}
+
+.sub {
+  font-size: 12px;
+  letter-spacing: -0.3px;
+  color: $white-44;
+  margin-top: 2px;
+}
+
+.desktop {
+  @include mobile {
+    display: none;
+  }
 }
 
 /* border */

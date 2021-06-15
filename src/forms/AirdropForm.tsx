@@ -1,43 +1,41 @@
-import { gt } from "../libs/math"
-import useNewContractMsg from "../terra/useNewContractMsg"
-import { MIR } from "../constants"
+import useNewContractMsg from "../libs/useNewContractMsg"
 import { formatAsset } from "../libs/parse"
-import { useContractsAddress } from "../hooks"
-import useAirdrops from "../statistics/useAirdrops"
+import { useProtocol } from "../data/contract/protocol"
+import useAirdrops from "../data/stats/airdrop"
+import Container from "../components/Container"
 import FormContainer from "./FormContainer"
 
 const AirdropForm = () => {
   /* context */
-  const { airdrop, loading, amount } = useAirdrops()
-  const { contracts } = useContractsAddress()
+  const airdrop = useAirdrops()
+  const { contracts } = useProtocol()
 
   /* confirm */
-  const contents = !airdrop?.length
+  const contents = !airdrop
     ? undefined
-    : [{ title: "Amount", content: formatAsset(amount, MIR) }]
+    : [{ title: "Amount", content: formatAsset(airdrop.amount, "MIR") }]
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const data =
-    airdrop?.map(({ amount, proof, stage }) =>
-      newContractMsg(contracts["airdrop"], {
-        claim: { amount, stage, proof: JSON.parse(proof) },
-      })
-    ) ?? []
+  const getMsg = ({ amount, proof, stage }: Airdrop) =>
+    newContractMsg(contracts["airdrop"], {
+      claim: { amount, stage, proof: JSON.parse(proof) },
+    })
 
-  const messages =
-    !loading && !airdrop?.length ? ["Airdrop not found"] : undefined
-  const disabled = !gt(amount, 0)
+  const data = airdrop ? [getMsg(airdrop)] : []
+
+  const messages = !airdrop ? ["Airdrop not found"] : undefined
+  const disabled = !airdrop
 
   /* result */
   const parseTx = undefined
   const container = { contents, messages, disabled, data, parseTx }
-  const props = {
-    tab: { tabs: ["Airdrop"], current: "Airdrop" },
-    label: "Claim",
-  }
 
-  return <FormContainer {...container} {...props} />
+  return (
+    <Container sm>
+      <FormContainer {...container} label="Claim" />
+    </Container>
+  )
 }
 
 export default AirdropForm

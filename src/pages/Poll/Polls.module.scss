@@ -11,13 +11,12 @@
 
 .title {
   color: white;
-  font-size: 16px;
 }
 
 .wrapper {
   position: relative;
 
-  i {
+  svg {
     position: absolute;
     top: 50%;
     right: 6px;
@@ -28,7 +27,7 @@
 
 .select {
   appearance: none;
-  border: 1px solid $slate;
+  border: 1px solid $gray-34;
   border-radius: 3px;
   font-size: 12px;
   padding: 6px 10px;

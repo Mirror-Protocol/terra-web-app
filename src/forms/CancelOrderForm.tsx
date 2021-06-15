@@ -1,8 +1,9 @@
-import useNewContractMsg from "../terra/useNewContractMsg"
+import useNewContractMsg from "../libs/useNewContractMsg"
 import { minus } from "../libs/math"
-import { useContractsAddress } from "../hooks"
+import { useProtocol } from "../data/contract/protocol"
 import Count from "../components/Count"
-import { MenuKey } from "../pages/LimitOrder"
+import Container from "../components/Container"
+import { MenuKey } from "../pages/Txs/LimitOrder"
 import FormContainer from "./FormContainer"
 import useCancelOrderReceipt from "./receipts/useCancelOrderReceipt"
 
@@ -15,7 +16,7 @@ const CancelOrderForm = ({ order, contract }: Props) => {
   const { order_id, offer_asset, filled_offer_amount } = order
 
   /* context */
-  const { parseToken } = useContractsAddress()
+  const { parseToken } = useProtocol()
   const { amount, symbol } = parseToken(offer_asset)
 
   /* confirm */
@@ -42,10 +43,12 @@ const CancelOrderForm = ({ order, contract }: Props) => {
 
   /* result */
   const container = { contents, disabled: false, data, parseTx }
-  const label = MenuKey.CANCEL
-  const props = { tab: { tabs: [label], current: label }, label }
 
-  return <FormContainer {...container} {...props} />
+  return (
+    <Container sm>
+      <FormContainer {...container} label={MenuKey.CANCEL} />
+    </Container>
+  )
 }
 
 export default CancelOrderForm

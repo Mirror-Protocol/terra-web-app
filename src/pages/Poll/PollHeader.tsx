@@ -1,57 +1,35 @@
-import { useParams, useRouteMatch } from "react-router-dom"
-import classNames from "classnames"
-import { useContract, useRefetch } from "../../hooks"
-import { BalanceKey } from "../../hooks/contractKeys"
-import LinkButton from "../../components/LinkButton"
+import classNames from "classnames/bind"
 import Icon from "../../components/Icon"
-import { useGov } from "../../graphql/useGov"
 import { PollStatus } from "./Poll"
 import styles from "./PollHeader.module.scss"
+
+const cx = classNames.bind(styles)
 
 interface Props extends Poll {
   titleClassName?: string
 }
 
 const PollHeader = ({ titleClassName, ...props }: Props) => {
-  const { id, type, title, status, end_height } = props
+  const { id, type, title, status, end_time } = props
 
-  const icons: Record<PollStatus, string> = {
-    [PollStatus.InProgress]: "how_to_vote",
-    [PollStatus.Passed]: "check_circle",
-    [PollStatus.Rejected]: "cancel",
-    [PollStatus.Executed]: "verified",
+  const icons: Record<PollStatus, IconNames> = {
+    [PollStatus.InProgress]: "PollSolid",
+    [PollStatus.Passed]: "ArrowRightCircleSolid",
+    [PollStatus.Rejected]: "CloseCircleSolid",
+    [PollStatus.Executed]: "VerifiedSolid",
   }
 
-  const { url } = useRouteMatch()
-  const params = useParams<{ id: string }>()
-  const { parsed } = useContract()
-  const { polls } = useGov()
-  const { height } = polls
-  const end = height && height > end_height
-
-  useRefetch([BalanceKey.MIRGOVSTAKED])
-
-  const alreadyVoted = parsed[BalanceKey.MIRGOVSTAKED]?.locked_balance.some(
-    ([lockedId]: LockedBalance) => id === lockedId
-  )
+  const end = end_time * 1000 < Date.now()
 
   return (
     <header className={styles.header}>
-      <section className={styles.wrapper}>
-        <section className={styles.meta}>
-          <span className={styles.id}>ID: {id}</span>
-          <span className={styles.type}>{type}</span>
-        </section>
-
-        {params.id && !end && (
-          <LinkButton to={url + "/vote"} disabled={alreadyVoted}>
-            {alreadyVoted ? "Voted" : "Vote"}
-          </LinkButton>
-        )}
+      <section className={styles.meta}>
+        <span className={styles.id}>ID: {id}</span>
+        <span className={styles.type}>{type}</span>
       </section>
 
       <section
-        className={classNames(styles.status, {
+        className={cx(styles.status, {
           blue: status === PollStatus.Passed,
           red: status === PollStatus.Rejected,
           strike: status === PollStatus.InProgress && end,

@@ -3,9 +3,6 @@
 .component {
   @include flex(space-between);
 
-  line-height: 1;
-  padding: 20px 0;
-
   &,
   &:hover {
     text-decoration: none;
@@ -21,43 +18,35 @@
 }
 
 .main {
-  @include flex(flex-start);
   @include link(white, white);
   white-space: pre;
 }
 
 .badge {
-  margin-right: 10px;
-  text-transform: capitalize;
-
-  @include mobile {
-    display: none;
-  }
+  color: $white-44;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.3px;
+  margin-bottom: 2px;
 }
 
-.muted {
-  color: $brown;
+.link {
+  @include flex(flex-start);
+  color: $white-92;
+  letter-spacing: -0.3px;
 }
 
 .hash {
   @include flex;
-  color: $slate;
-  margin-left: 5px;
+  margin-left: 4px;
 }
 
 .footer {
   @include flex(flex-end);
-
-  color: $slate;
   flex: none;
+
+  color: $white-80;
   font-size: 12px;
-  font-weight: 500;
-
-  i {
-    margin-right: 5px;
-  }
-
-  @include mobile {
-    display: none;
-  }
+  letter-spacing: -0.22px;
+  text-align: right;
 }

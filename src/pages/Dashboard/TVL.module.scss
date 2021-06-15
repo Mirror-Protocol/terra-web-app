@@ -1,0 +1,11 @@
+@import "mixins";
+
+.chart {
+  @include mobile {
+    margin-top: 32px;
+  }
+
+  @include desktop {
+    margin-top: 56px;
+  }
+}

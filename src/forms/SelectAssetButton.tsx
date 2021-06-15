@@ -2,8 +2,9 @@ import { FC } from "react"
 import MESSAGE from "../lang/MESSAGE.json"
 import { lookupSymbol } from "../libs/parse"
 import Icon from "../components/Icon"
+import AssetIcon from "../components/AssetIcon"
 import { Config } from "./useSelectAsset"
-import styles from "./SelectAsset.module.scss"
+import styles from "./SelectAssetButton.module.scss"
 
 interface Props extends Config {
   isOpen: boolean
@@ -11,14 +12,26 @@ interface Props extends Config {
   onClick: () => void
 }
 
-const SelectAsset: FC<Props> = ({ isOpen, symbol, onClick, ...props }) => {
+const SelectAssetButton: FC<Props> = ({
+  isOpen,
+  symbol,
+  onClick,
+  ...props
+}) => {
   const { formatTokenName = lookupSymbol } = props
+  const renderAsset = (symbol: string) => (
+    <>
+      <AssetIcon symbol={symbol} className={styles.icon} small />
+      {formatTokenName(symbol)}
+    </>
+  )
+
   return (
     <button type="button" className={styles.button} onClick={onClick}>
-      {symbol ? formatTokenName(symbol) : MESSAGE.Form.Button.SelectAsset}
-      <Icon name={isOpen ? "arrow_drop_up" : "arrow_drop_down"} size={24} />
+      {symbol ? renderAsset(symbol) : MESSAGE.Form.Button.SelectAsset}
+      <Icon name={isOpen ? "ChevronUp" : "ChevronDown"} size={8} />
     </button>
   )
 }
 
-export default SelectAsset
+export default SelectAssetButton

@@ -5,6 +5,7 @@ interface Content {
 
 /* Header */
 interface MenuItem {
+  icon: IconNames
   attrs: { to: string; children: string }
   desktopOnly?: boolean
 }
@@ -40,8 +41,10 @@ interface FormGroup {
   assets?: ReactNode
   focused?: boolean
   error?: string
+  warn?: ReactNode
   type?: 1 | 2
   skipFeedback?: boolean
+  unitAfterValue?: boolean
 }
 
 /* Buttons */
@@ -53,7 +56,6 @@ interface ButtonProps {
   block?: boolean
 
   loading?: boolean
-  submit?: boolean
 
   disabled?: boolean
   className?: string
@@ -68,7 +70,7 @@ interface Tab {
   tabs: string[]
   tooltips?: string[]
   current?: string
-  shadow?: boolean
+  onClick?: (tab: string) => void
 }
 
 /* Modal */
@@ -89,6 +91,7 @@ interface CountOptions extends FormatConfig {
   children?: string
   /** As a unit. */
   symbol?: string
+  unit?: string
   /** Plus on positive */
   plus?: boolean
   /** Custom formatter */
@@ -100,11 +103,62 @@ interface Confirm {
   warning?: string
 }
 
-interface AssetItem {
-  symbol: string
-  token: string
-  name: string
+interface AssetItemProps extends DefaultListedItem {
+  name?: string
   status?: ListedItemStatus
   price?: string
   balance?: string
 }
+
+/* icons */
+type IconNames =
+  | "ArrowDown"
+  | "ArrowRightCircleSolid"
+  | "Borrow"
+  | "Chart"
+  | "Chat"
+  | "Check"
+  | "CheckDouble"
+  | "ChevronDown"
+  | "ChevronDownThin"
+  | "ChevronRight"
+  | "ChevronUp"
+  | "ChevronUpThin"
+  | "Claim"
+  | "Clock"
+  | "Close"
+  | "CloseCircleSolid"
+  | "CloseCircleSolidBlue"
+  | "Completed"
+  | "Desktop"
+  | "Discord"
+  | "Docs"
+  | "DownSolid"
+  | "Download"
+  | "ExclamationCircle"
+  | "ExclamationCircleSolid"
+  | "ExclamationTriangleSolid"
+  | "External"
+  | "Farm"
+  | "Github"
+  | "Governance"
+  | "GridViewSolid"
+  | "InfoCircle"
+  | "ListView"
+  | "Medium"
+  | "Mirror"
+  | "Mobile"
+  | "Mode"
+  | "MoreCircle"
+  | "Plus"
+  | "Poll"
+  | "PollSolid"
+  | "Search"
+  | "Send"
+  | "Settings"
+  | "Telegram"
+  | "Trade"
+  | "Twitter"
+  | "UpSolid"
+  | "VerifiedSolid"
+  | "Wallet"

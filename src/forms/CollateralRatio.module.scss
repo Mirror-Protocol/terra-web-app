@@ -1,3 +1,13 @@
-.progress {
-  margin-top: 20px;
+@import "mixins";
+
+.component {
+  @include flex;
+}
+
+.compact {
+  display: inline-flex;
+}
+
+.percent {
+  margin-right: 12px;
 }

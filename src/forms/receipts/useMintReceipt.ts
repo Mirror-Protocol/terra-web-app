@@ -1,21 +1,26 @@
+import { useRecoilValue } from "recoil"
 import { div, minus, plus, times } from "../../libs/math"
 import { formatAsset, lookupSymbol } from "../../libs/parse"
 import { percent } from "../../libs/num"
-import { useContract, useContractsAddress, useRefetch } from "../../hooks"
-import { PriceKey } from "../../hooks/contractKeys"
-import { Type } from "../../pages/Mint"
-import { findValue, splitTokenText } from "./receiptHelpers"
+import { useProtocol } from "../../data/contract/protocol"
+import { MintType } from "../../types/Types"
+import { useFindPrice } from "../../data/contract/normalize"
+import { getMintPriceKeyQuery } from "../../data/contract/collateral"
+import { findValueFromLogs, splitTokenText } from "./receiptHelpers"
 
-export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
-  const open = type === Type.OPEN
-  const close = type === Type.CLOSE
-  const custom = type === Type.CUSTOM
-  useRefetch([PriceKey.ORACLE, PriceKey.END])
+export default (type: MintType, prev?: MintPosition) => (logs: TxLog[]) => {
+  const borrow = type === MintType.BORROW
+  const short = type === MintType.SHORT
+  const open = borrow || short
+  const close = type === MintType.CLOSE
+  const custom = type === MintType.CUSTOM
 
   /* context */
-  const { getSymbol, parseToken, getIsDelisted } = useContractsAddress()
-  const { find } = useContract()
-  const val = findValue(logs)
+  const { getSymbol, parseToken } = useProtocol()
+  const find = useFindPrice()
+  const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
+
+  const val = findValueFromLogs(logs)
 
   /* prev position */
   const prevCollateral = prev && parseToken(prev.collateral)
@@ -32,26 +37,30 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
   const protocolFee = splitTokenText(val("protocol_fee", Number(custom)))
 
   const nextCollateral = {
-    [Type.OPEN]: {
+    [MintType.BORROW]: {
       amount: collateral.amount,
       token: collateral.token,
     },
-    [Type.DEPOSIT]: {
+    [MintType.SHORT]: {
+      amount: collateral.amount,
+      token: collateral.token,
+    },
+    [MintType.DEPOSIT]: {
       amount: plus(prevCollateral?.amount, deposit.amount),
       token: prevCollateral?.token,
     },
-    [Type.WITHDRAW]: {
+    [MintType.WITHDRAW]: {
       amount: minus(
         minus(prevCollateral?.amount, withdraw.amount),
         protocolFee.amount
       ),
       token: prevCollateral?.token,
     },
-    [Type.CLOSE]: {
+    [MintType.CLOSE]: {
       amount: minus(prevCollateral?.amount, protocolFee.amount),
       token: prevCollateral?.token,
     },
-    [Type.CUSTOM]: {
+    [MintType.CUSTOM]: {
       amount: deposit.amount
         ? plus(prevCollateral?.amount, deposit.amount)
         : withdraw.amount
@@ -77,9 +86,6 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
     ? { amount: mint.amount, token: mint.token }
     : { amount: prevAsset?.amount, token: prevAsset?.token }
 
-  const getPriceKey = (token: string) =>
-    getIsDelisted(token) ? PriceKey.END : PriceKey.ORACLE
-
   const collateralPrice =
     nextCollateral.token &&
     find(getPriceKey(nextCollateral.token), nextCollateral.token)
@@ -98,11 +104,11 @@ export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
           content: percent(ratio),
         },
         {
-          title: "Minted Assets",
+          title: "Borrowed Assets",
           content: formatAsset(nextAsset.amount, getSymbol(nextAsset.token)),
         },
         {
-          title: "Collaterals",
+          title: "Collateral",
           content: formatAsset(
             nextCollateral.amount,
             getSymbol(nextCollateral.token)

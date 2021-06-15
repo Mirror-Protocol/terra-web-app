@@ -1,12 +1,12 @@
 import { useRouteMatch } from "react-router-dom"
-import { GovKey, usePoll, useRefetchGov } from "../../graphql/useGov"
 import Page from "../../components/Page"
-import { MenuKey } from "../Gov"
+import { usePoll } from "../../data/gov/poll"
+import { MenuKey } from "../Gov/Gov"
 import PollDetails from "./PollDetails"
 
 export enum Type {
-  "END" = "end",
-  "EXECUTE" = "execute",
+  END = "end",
+  EXECUTE = "execute",
 }
 
 export enum PollStatus {
@@ -20,9 +20,7 @@ const Poll = () => {
   const { params } = useRouteMatch<{ id: string }>()
   const id = Number(params.id)
 
-  useRefetchGov([GovKey.POLLS])
-
-  const { poll } = usePoll(id)
+  const poll = usePoll(id)
 
   return !poll ? null : (
     <Page title={MenuKey.POLL}>

@@ -1,33 +1,41 @@
-import Button from "../../components/Button"
-import Card from "../../components/Card"
-import useTxs from "../../statistics/useTxs"
+import Button, { Submit } from "../../components/Button"
+import Caption from "../../components/Caption"
+import Table from "../../components/Table"
 import DownloadCSV from "./DownloadCSV"
 import HistoryItem from "./HistoryItem"
-import styles from "./HistoryList.module.scss"
 
-const HistoryList = () => {
-  const { txs, loading, more } = useTxs()
+interface Props {
+  data: Tx[]
+  loading: boolean
+  more?: () => void
+}
 
-  return !txs.length ? null : (
-    <Card
-      title="Transaction History"
-      loading={loading}
-      action={<DownloadCSV txs={txs} />}
-    >
-      <ul className={styles.list}>
-        {txs.map((item, index) => (
-          <li className={styles.item} key={index}>
-            <HistoryItem {...item} />
-          </li>
-        ))}
-      </ul>
+const HistoryList = ({ data, loading, more }: Props) => {
+  return !data.length ? null : (
+    <>
+      <Table
+        caption={
+          <Caption
+            title="Transaction History"
+            description={<DownloadCSV txs={data} />}
+            loading={loading}
+          />
+        }
+        columns={[
+          { key: "id", render: (id, item) => <HistoryItem {...item} /> },
+        ]}
+        dataSource={data}
+        config={{ hideHeader: true }}
+      />
 
       {more && (
-        <Button onClick={more} block outline submit>
-          More
-        </Button>
+        <Submit>
+          <Button color="secondary" onClick={more} block loading={loading}>
+            More
+          </Button>
+        </Submit>
       )}
-    </Card>
+    </>
   )
 }
 

@@ -1,14 +1,24 @@
+@use "sass:math";
 @import "mixins";
 
+$height: 15px;
+
 .badge {
-  $height: 21px;
   @include flex;
-  display: inline-flex;
-  height: $height;
-  border-radius: ($height / 2);
+
   background: fade-out(white, 0.9);
-  color: white;
+  border-radius: 4px;
+  color: $gray-08;
+  display: inline-flex;
   font-size: 10px;
   font-weight: 500;
-  min-width: 90px;
+  height: $height;
+  padding: 0 4px;
+  text-transform: uppercase;
+}
+
+@each $name, $color in $colors {
+  .bg-#{$name} {
+    background: $color;
+  }
 }

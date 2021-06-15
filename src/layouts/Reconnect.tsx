@@ -1,6 +1,6 @@
 import MESSAGE from "../lang/MESSAGE.json"
 
-const Reconnect = ({ name }: Network) => (
+const Reconnect = ({ name }: { name: string }) => (
   <div className="empty">
     <p>{MESSAGE.Network.NoContract}</p>
     <p>Current network: {name}</p>

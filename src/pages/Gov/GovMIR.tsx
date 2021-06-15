@@ -1,21 +1,20 @@
 import { useRouteMatch } from "react-router-dom"
 import Tooltip from "../../lang/Tooltip.json"
-import { MIR } from "../../constants"
-import { ReactComponent as Logo } from "../../images/MIR.svg"
+import { ReactComponent as Logo } from "../../styles/images/MIR.svg"
 import { percent } from "../../libs/num"
 import { useAddress } from "../../hooks"
+import { useDashboard } from "../../data/stats/statistic"
 import Count from "../../components/Count"
 import LinkButton from "../../components/LinkButton"
 import { TooltipIcon } from "../../components/Tooltip"
 import GovMIRFooter from "./GovMIRFooter"
 import styles from "./GovMIR.module.scss"
-import useDashboard from "../../statistics/useDashboard"
 
 const GovMIR = () => {
   const address = useAddress()
 
   /* apr */
-  const { dashboard } = useDashboard()
+  const dashboard = useDashboard()
 
   /* link */
   const { url } = useRouteMatch()
@@ -27,7 +26,7 @@ const GovMIR = () => {
         <Logo height={24} />
       </div>
 
-      <h1 className={styles.title}>Mirror ({MIR})</h1>
+      <h1 className={styles.title}>Mirror (MIR)</h1>
 
       <section>
         <span className={styles.apr}>
@@ -38,6 +37,7 @@ const GovMIR = () => {
           <TooltipIcon content={Tooltip.Gov.APR}>
             Annual percentage rate (APR)
           </TooltipIcon>
+          <p>(if voted to all polls)</p>
         </section>
       </section>
 

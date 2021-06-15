@@ -1,12 +1,7 @@
 @import "mixins";
 
-.header {
-  padding-bottom: 30px;
-  text-align: center;
-}
-
-.title {
-  color: white;
-  font-size: 18px;
-  font-weight: 500;
+.nav {
+  @include desktop {
+    max-width: 360px;
+  }
 }

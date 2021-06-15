@@ -1,13 +1,11 @@
-import classNames from "classnames/bind"
 import { format as formatDate } from "date-fns"
+import { FMT } from "../../constants"
+import classNames from "classnames"
 import { useNetwork } from "../../hooks"
 import ExtLink from "../../components/ExtLink"
-import Badge from "../../components/Badge"
 import Icon from "../../components/Icon"
 import useParseTx, { getBadge } from "./useParseTx"
 import styles from "./HistoryItem.module.scss"
-
-const cx = classNames.bind(styles)
 
 const HistoryItem = (tx: Tx) => {
   const { txHash, type, datetime } = tx
@@ -16,22 +14,26 @@ const HistoryItem = (tx: Tx) => {
 
   return (
     <ExtLink href={finder(txHash, "tx")} className={styles.component}>
-      <section className={styles.main}>
-        <Badge className={styles.badge}>{getBadge(type).toLowerCase()}</Badge>
+      <header className={styles.main}>
+        <section className={styles.badge}>{getBadge(type)}</section>
 
-        {!!parsedTx.length &&
-          parsedTx.map((word, index) => (
-            <span className={cx({ muted: !(index % 2) })} key={index}>
-              {word}{" "}
-            </span>
-          ))}
+        <section className={styles.link}>
+          {!!parsedTx.length &&
+            parsedTx.map((word, index) => {
+              const strong = index % 2
+              return strong ? (
+                <strong key={index}>{word} </strong>
+              ) : (
+                <span key={index}>{word} </span>
+              )
+            })}
 
-        <Icon name="launch" size={16} className={styles.hash} />
-      </section>
+          <Icon name="External" size={14} className={styles.hash} />
+        </section>
+      </header>
 
-      <footer className={styles.footer}>
-        <Icon name="calendar_today" size={16} />
-        {formatDate(new Date(datetime), "LLL dd, yyyy, HH:mm aa")}
+      <footer className={classNames(styles.footer, "desktop")}>
+        {formatDate(new Date(datetime), FMT.HHmm)}
       </footer>
     </ExtLink>
   )

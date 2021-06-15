@@ -3,40 +3,51 @@
 
 $radius: 10px;
 
+.wrapper {
+  background: $gray-14;
+  border-radius: $border-radius;
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+
 .tabs {
-  @include flex;
+  @include flex(flex-start);
 }
 
 .tab {
   @include flex;
   @include link;
 
-  flex: 1;
+  color: $gray-34;
+  font-size: 14px;
+  letter-spacing: -0.2px;
 
-  font-size: 18px;
-  font-weight: 500;
-  height: 60px;
-  text-transform: capitalize;
+  white-space: nowrap;
+  width: 112px;
 
-  &:only-child {
-    height: unset;
-    margin-top: 30px;
+  @include mobile {
+    height: 52px;
+  }
+
+  @include desktop {
+    height: 60px;
   }
 
   &.active {
-    border-bottom: 1px solid $darkblue;
+    background: $gray-18;
+    color: $white-80;
   }
 
-  &:not(.active) {
-    background: $saturated-blue;
-    border-bottom: 1px solid $bg;
+  @include mobile {
+    flex: 1;
+    padding: 0 16px;
+
+    &:not(:first-child) {
+      border-left: 1px solid $bg;
+    }
   }
 
-  & + & {
-    border-left: 1px solid $bg;
+  @include desktop {
+    border-right: 1px solid $bg;
   }
-}
-
-.content {
-  padding: 30px 25px;
 }

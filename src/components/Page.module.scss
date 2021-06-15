@@ -1,11 +1,17 @@
 @import "mixins";
 
 .article {
-  padding: 30px 0;
+  @include mobile {
+    padding: 25px 0;
+  }
+
+  @include desktop {
+    padding: 64px 0;
+  }
 }
 
 .header {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 
   @include desktop {
     @include flex(space-between);
@@ -17,9 +23,18 @@
 }
 
 .title {
-  color: white;
-  font-size: 24px;
-  font-weight: 500;
+  color: $white-92;
+
+  @include mobile {
+    font-size: 24px;
+    font-weight: 500;
+  }
+
+  @include desktop {
+    font-size: 40px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+  }
 }
 
 .select {
@@ -27,35 +42,23 @@
 
   select {
     appearance: none;
-    border: solid 1px fade-out($slate, 0.5);
-    border-radius: 3px;
+    border: solid 1px fade-out($gray-34, 0.5);
+    border-radius: 6px;
+    color: $white-64;
     font-size: 12px;
-    margin-left: 10px;
-    padding: 5px 10px;
+    margin-left: 12px;
+    letter-spacing: -0.3px;
+    padding: 10px 12px;
     padding-right: 30px;
   }
 
-  i {
+  svg {
+    fill: $blue;
     position: absolute;
     top: 50%;
-    right: 10px;
+    right: 12px;
     transform: translate(0, -50%);
     pointer-events: none;
-  }
-}
-
-.doc {
-  @include flex(flex-start);
-  @include link($slate, white);
-  border-left: $border;
-  font-size: 12px;
-  font-weight: 500;
-  margin-left: 20px;
-  padding-left: 15px;
-  text-transform: uppercase;
-
-  &:hover {
-    text-decoration: none;
   }
 }
 

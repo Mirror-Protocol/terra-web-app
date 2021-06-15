@@ -2,7 +2,13 @@
 @import "variables";
 
 .group + .group {
-  margin-top: 20px;
+  @include mobile {
+    margin-top: 32px;
+  }
+
+  @include desktop {
+    margin-top: 32px;
+  }
 }
 
 .component {
@@ -16,19 +22,19 @@
   }
 }
 
-$padding: 10px 20px;
+$padding: 18px 24px;
 
 .border {
   @include transition(border-color);
-  border-radius: 5px;
+  border-radius: 8px;
   border-width: 1px;
   border-style: solid;
-  border-color: fade-out($slate, 0.5);
+  border-color: $gray-34;
   padding: $padding;
   position: relative;
 
   &.readOnly {
-    $bg: fade-out($slate, 0.9);
+    $bg: fade-out($gray-34, 0.9);
     border-color: $bg;
     background: $bg;
   }
@@ -37,14 +43,13 @@ $padding: 10px 20px;
     border-color: $blue;
   }
 
+  &.warn {
+    border-color: $orange;
+  }
+
   &.error {
     border-color: $red;
   }
-}
-
-.select > button {
-  @include flex(space-between);
-  width: 100%;
 }
 
 /* field */
@@ -66,28 +71,56 @@ $padding: 10px 20px;
 }
 
 .header {
-  color: $battleship;
+  color: $white-44;
   font-size: 12px;
-  margin-bottom: 10px;
+  font-weight: 500;
+  margin-bottom: 15px;
 }
 
 .wrapper {
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 2;
+  @include mobile {
+    font-size: 16px;
+  }
+
+  @include desktop {
+    font-size: 18px;
+  }
 }
 
 .label > label {
   display: block;
-  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .help {
   white-space: pre;
+
+  svg {
+    fill: $blue;
+    margin-right: 6px;
+  }
+}
+
+.clickable {
+  color: $blue;
+  cursor: pointer;
 }
 
 .max {
   margin-right: 10px;
+}
+
+.icon {
+  margin-right: 12px;
+}
+
+.type-1 .field,
+.type-1 .field input {
+  text-align: right;
+}
+
+.unit:last-child {
+  margin-left: 4px;
 }
 
 /* assets */
@@ -99,5 +132,14 @@ $padding: 10px 20px;
 .feedback {
   color: $red;
   font-size: 12px;
-  margin-top: 10px;
+  margin-top: 8px;
+  text-align: right;
+
+  &.warn {
+    color: $orange;
+
+    svg {
+      fill: $orange;
+    }
+  }
 }

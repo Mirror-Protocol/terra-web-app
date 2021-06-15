@@ -3,8 +3,9 @@
 
 .wrapper {
   @include flex;
+  margin: 20px 0;
 
-  color: $blue;
-  margin: 10px 0;
-  text-align: center;
+  svg {
+    fill: $blue;
+  }
 }

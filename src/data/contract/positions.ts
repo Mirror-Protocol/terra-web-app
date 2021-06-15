@@ -1,0 +1,53 @@
+import { selector, useRecoilValue } from "recoil"
+import { getContractQueryQuery } from "../utils/query"
+import { iterateAllPageQuery } from "../utils/pagination"
+import { addressState } from "../wallet"
+import { protocolQuery } from "./protocol"
+
+export const LIMIT = 30
+
+export const mintPositionsQuery = selector({
+  key: "mintPositions",
+  get: async ({ get }) => {
+    const address = get(addressState)
+
+    if (address) {
+      const { contracts } = get(protocolQuery)
+      const getContractQuery = get(getContractQueryQuery)
+      const iterateAllPage = get(iterateAllPageQuery)
+
+      const query = async (offset?: string) => {
+        const response = await getContractQuery<MintPositions>(
+          {
+            contract: contracts["mint"],
+            msg: {
+              positions: Object.assign(
+                { owner_addr: address, limit: LIMIT },
+                offset && { start_after: offset }
+              ),
+            },
+          },
+          ["mintPositions", offset].filter(Boolean).join("-")
+        )
+
+        return response?.positions ?? []
+      }
+
+      return await iterateAllPage(query, (data) => data?.idx, LIMIT)
+    }
+
+    return []
+  },
+})
+
+export const shortPositionsQuery = selector({
+  key: "shortPositions",
+  get: ({ get }) => {
+    const positions = get(mintPositionsQuery)
+    return positions.filter(({ is_short }) => is_short)
+  },
+})
+
+export const useMintPositions = () => {
+  return useRecoilValue(mintPositionsQuery)
+}

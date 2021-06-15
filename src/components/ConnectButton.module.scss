@@ -1,29 +1,48 @@
 @import "mixins";
 @import "variables";
 
-.button {
-  @include flex;
-  @include button;
-  @include transition(background-color);
+.component {
+  @include flex(space-between);
 
-  background-color: transparent;
-  border-radius: 17px;
-  border-width: 2px;
-  border-style: solid;
-  border-color: $blue;
-  color: white;
-  font-size: 13px;
-  font-weight: 600;
-  height: 34px;
-  padding: 0 20px;
+  color: $blue;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
 
   &:hover {
-    background-color: fade-out($blue, 0.9);
     text-decoration: none;
   }
 
-  i {
-    margin-right: 5px;
+  svg {
+    fill: $blue;
+    margin-left: 4px;
+  }
+
+  @include desktop {
+    @include transition(background-color);
+
+    background-color: $gray-22;
+    border-radius: 17px;
+    padding: 8px 14px;
+    width: 100%;
+
+    &:hover {
+      background-color: fade-out($blue, 0.9);
+    }
+  }
+}
+
+.wrapper {
+  @include flex;
+
+  svg {
+    @include mobile {
+      margin-right: 4px;
+    }
+
+    @include desktop {
+      margin-right: 8px;
+    }
   }
 }
 

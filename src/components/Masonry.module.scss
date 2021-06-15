@@ -1,0 +1,39 @@
+@import "mixins";
+
+.masonry {
+  @include desktop {
+    @include flex;
+    align-items: stretch;
+  }
+}
+
+.column {
+  @include desktop {
+    @include flex;
+
+    flex-direction: column;
+    flex: 1;
+
+    & + & {
+      margin-left: $gutter-horizontal-desktop;
+    }
+  }
+}
+
+.row {
+  @include desktop {
+    width: 100%;
+
+    & + & {
+      margin-top: $gutter-vertical-desktop;
+    }
+
+    > * {
+      height: 100%;
+    }
+  }
+
+  @include mobile {
+    margin-bottom: $gutter-vertical-desktop;
+  }
+}

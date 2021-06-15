@@ -1,6 +1,5 @@
 import { FC } from "react"
 import classNames from "classnames/bind"
-import Icon from "./Icon"
 import LoadingTitle from "./LoadingTitle"
 import { Props } from "./Card"
 import styles from "./CardHeader.module.scss"
@@ -10,24 +9,17 @@ const cx = classNames.bind(styles)
 enum HeaderType {
   /** (align:left) title + description + loading + action */
   DEFAULT,
-  /** (align:center) goBack */
-  GOBACK,
   /** (align:center) */
   ICON,
 }
 
 const CardHeader: FC<Props> = ({ header, title, ...props }) => {
-  const { icon, description, goBack, action, loading, center } = props
+  const { icon, description, action, loading, center } = props
 
-  const headerType = icon
-    ? HeaderType.ICON
-    : goBack
-    ? HeaderType.GOBACK
-    : HeaderType.DEFAULT
+  const headerType = icon ? HeaderType.ICON : HeaderType.DEFAULT
 
   const className = {
     [HeaderType.DEFAULT]: styles.default,
-    [HeaderType.GOBACK]: styles.goback,
     [HeaderType.ICON]: styles.icon,
   }[headerType]
 
@@ -49,18 +41,6 @@ const CardHeader: FC<Props> = ({ header, title, ...props }) => {
         </section>
 
         {action && <section className={styles.action}>{action}</section>}
-      </>
-    ),
-
-    [HeaderType.GOBACK]: (
-      <>
-        {goBack && (
-          <button type="button" className={styles.action} onClick={goBack}>
-            <Icon name="arrow_back_ios" size={24} />
-          </button>
-        )}
-
-        <h1 className={styles.title}>{title}</h1>
       </>
     ),
 

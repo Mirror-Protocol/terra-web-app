@@ -1,65 +1,36 @@
 @import "mixins";
-@import "variables";
 
 .header {
-  background: $darkblue;
-  box-shadow: 0 10px 10px 0 fade-out($bg, 0.5);
-  position: sticky;
-  top: 0;
-  z-index: $zindex-sticky;
-}
-
-@include mobile {
-  .header {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
-
-  .collapsed {
-    position: sticky;
-  }
-}
-
-.container {
-  @include desktop {
-    @include flex(space-between);
-  }
-}
-
-.wrapper {
-  @include flex(space-between);
-}
-
-.logo {
   @include flex;
-  height: $nav-height;
-}
-
-.toggle {
-  @include desktop {
-    display: none;
-  }
-}
-
-.support {
-  @include desktop {
-    @include flex;
-  }
 
   @include mobile {
-    .collapsed & {
-      display: none;
-    }
+    justify-content: space-between;
+  }
+
+  @include desktop {
+    justify-content: flex-end;
   }
 }
 
-.connect {
-  padding-left: 15px;
+.network {
+  flex: 1;
+  text-align: right;
+}
+
+.item {
+  @include flex;
 
   @include mobile {
-    display: none;
+    height: $header-height-mobile;
+    padding: 0 $container-gutter-horizontal-mobile;
   }
+
+  @include desktop {
+    height: $header-height-desktop;
+    padding: 0 $container-gutter-horizontal-desktop;
+  }
+}
+
+.docs svg {
+  fill: $white-52;
 }

@@ -6,7 +6,7 @@ interface ReceiptRow {
 
 type ResultParser = (logs: TxLog[], txInfo: TxInfo) => ReceiptRow[]
 
-interface FromContract extends Dict<string> {
+interface FromContract extends Dictionary {
   contract_address?: string
   amount?: string
 }

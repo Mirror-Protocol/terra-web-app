@@ -1,15 +1,17 @@
 @import "mixins";
 
-.dl {
-  margin-bottom: 30px;
-}
+.header {
+  @include flex;
+  margin-bottom: 24px;
 
-.caution {
-  margin-top: 30px;
+  &.right {
+    justify-content: flex-end;
+  }
 }
 
 .message {
   @include flex(flex-start);
+  display: inline-flex;
   white-space: pre;
 
   i {
@@ -23,4 +25,8 @@
     color: inherit;
     text-decoration: underline;
   }
+}
+
+.ratio {
+  margin-top: 20px;
 }

@@ -1,0 +1,11 @@
+@import "mixins";
+
+.footer {
+  @include mobile {
+    margin-top: $gutter-vertical-mobile;
+  }
+
+  @include desktop {
+    margin-top: 32px;
+  }
+}

@@ -1,9 +1,9 @@
 import { useState } from "react"
 import classNames from "classnames/bind"
-import { UST, UUSD } from "../constants"
 import { gt } from "../libs/math"
-import { insertIf } from "../libs/utils"
-import { useContractsAddress, useContract, useCombineKeys } from "../hooks"
+import { useProtocol } from "../data/contract/protocol"
+import { BalanceKey, PriceKey } from "../hooks/contractKeys"
+import { useFind } from "../data/contract/normalize"
 import Icon from "../components/Icon"
 import { Config } from "./useSelectAsset"
 import Asset from "./Asset"
@@ -17,35 +17,54 @@ interface Props extends Config {
 }
 
 const Assets = ({ selected, onSelect, ...props }: Props) => {
-  const { priceKey, balanceKey } = props
-  const { useUST, skip, dim, formatTokenName, showDelisted } = props
+  const { native = [], showDelisted, showExternal } = props
+  const { getPriceKey, priceKey, balanceKey } = props
+  const { validate, dim, formatTokenName } = props
 
-  const { listedAll } = useContractsAddress()
-  const { uusd, find } = useContract()
-  const { loading } = useCombineKeys([priceKey, balanceKey])
+  const { listedAll, listedAllExternal, getIsDelisted } = useProtocol()
+  const find = useFind()
 
   /* search */
   const [value, setValue] = useState("")
 
+  const nativeDenoms: Dictionary<AssetItemProps> = {
+    uusd: {
+      token: "uusd",
+      symbol: "uusd",
+      name: "UST",
+      price:
+        priceKey || getPriceKey ? find(PriceKey.NATIVE, "uusd") : undefined,
+      balance: balanceKey ? find(BalanceKey.NATIVE, "uusd") : undefined,
+    },
+    uluna: {
+      token: "uluna",
+      symbol: "uluna",
+      name: "Luna",
+      price:
+        priceKey || getPriceKey ? find(PriceKey.NATIVE, "uluna") : undefined,
+      balance: balanceKey ? find(BalanceKey.NATIVE, "uluna") : undefined,
+    },
+  }
+
   /* list */
-  const list: AssetItem[] = [
-    ...insertIf(useUST, {
-      token: UUSD,
-      symbol: UUSD,
-      name: UST,
-      price: "1",
-      balance: uusd,
-    }),
-    ...listedAll
-      .filter(({ token, status }) =>
+  const list: AssetItemProps[] = [
+    ...native.map((denom) => nativeDenoms[denom]),
+    ...[
+      ...listedAllExternal.filter(() => !!showExternal),
+      ...listedAll.filter(({ token }) =>
         showDelisted && balanceKey
-          ? status === "LISTED" || gt(find(balanceKey, token), 0)
-          : status === "LISTED"
-      )
-      .filter(({ symbol }) => !skip?.includes(symbol))
+          ? !getIsDelisted(token) || gt(find(balanceKey, token), 0)
+          : !getIsDelisted(token)
+      ),
+    ]
+      .filter((item) => !validate || validate?.(item))
       .map((item) => ({
         ...item,
-        price: priceKey && find(priceKey, item.token),
+        price: getPriceKey
+          ? find(getPriceKey(item.token), item.token)
+          : priceKey
+          ? find(priceKey, item.token)
+          : undefined,
         balance: balanceKey && find(balanceKey, item.token),
       })),
   ]
@@ -54,7 +73,7 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
     <div className={styles.component}>
       <section className={styles.search}>
         <label htmlFor="search">
-          <Icon name="search" size={16} />
+          <Icon name="Search" size={16} />
         </label>
 
         <input
@@ -66,12 +85,12 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
         />
       </section>
 
-      <ul className={classNames(styles.list, { loading })}>
+      <ul className={styles.list}>
         {list
           .filter(({ symbol, name }) =>
             // search result
             [symbol, name].some((text) =>
-              text.toLowerCase().includes(value.toLowerCase())
+              text?.toLowerCase().includes(value.toLowerCase())
             )
           )
           .sort(({ token: a }, { token: b }) => {

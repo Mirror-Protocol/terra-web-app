@@ -4,7 +4,7 @@ import Page from "../../components/Page"
 import LinkButton from "../../components/LinkButton"
 import ExtLinkButton from "../../components/ExtLinkButton"
 import Polls from "../Poll/Polls"
-import { menu, MenuKey as GovMenuKey } from "../Gov"
+import { menu, MenuKey as GovMenuKey } from "./Gov"
 import GovHomeHeader from "./GovHomeHeader"
 
 const GovHome = () => {
@@ -12,13 +12,14 @@ const GovHome = () => {
   const forumLink = {
     href: "https://forum.mirror.finance",
     children: "Join Forum",
-    color: "secondary",
+    size: "xs" as const,
     outline: true,
   }
 
   const createLink = {
     to: url + menu[GovMenuKey.CREATE].path,
     children: GovMenuKey.CREATE,
+    size: "xs" as const,
     outline: true,
   }
 
@@ -32,7 +33,6 @@ const GovHome = () => {
           <LinkButton {...createLink} />
         </>
       }
-      noBreak
     >
       <GovHomeHeader />
       <Polls title="Polls" />

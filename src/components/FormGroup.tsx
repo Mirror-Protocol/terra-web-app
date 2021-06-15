@@ -1,13 +1,14 @@
 import { useRef } from "react"
 import classNames from "classnames/bind"
-import Button from "./Button"
+import Icon from "./Icon"
+import AssetIcon from "./AssetIcon"
 import styles from "./FormGroup.module.scss"
 
 const cx = classNames.bind(styles)
 
 const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
-  const { label, help, unit, max, assets, focused, error, type = 1 } = props
-  const { skipFeedback } = props
+  const { label, help, unit, max, assets, focused, error, warn } = props
+  const { type = 1, skipFeedback } = props
 
   const inputRef = useRef<HTMLInputElement>()
   const inputAttrs = {
@@ -17,19 +18,21 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
     ref: inputRef,
   }
 
-  const border = cx(styles.border, { focused, error, readOnly: value })
-  const maxProps = {
-    type: "button",
-    className: styles.max,
-    onClick: max,
-    color: "secondary",
-    size: "xs",
-    outline: true,
-    children: "Max",
-  }
+  const border = cx(styles.border, { focused, error, warn, readOnly: value })
+  const unitAfterValue = unit === "%" || props.unitAfterValue
+
+  const renderUnit = () => (
+    <section className={styles.unit}>
+      {typeof unit === "string" && (
+        <AssetIcon symbol={unit} className={styles.icon} small />
+      )}
+
+      {unit}
+    </section>
+  )
 
   return (
-    <div className={classNames(styles.group, styles.component)}>
+    <div className={cx(styles.group, styles.component, `type-${type}`)}>
       <div className={cx(type === 1 && border)}>
         {label && (
           <header className={styles.header}>
@@ -38,8 +41,17 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
             </section>
 
             {help && (
-              <section className={styles.help}>
-                {help.title}: <strong>{help.content}</strong>
+              <section
+                className={cx(styles.help, { clickable: max })}
+                onClick={max}
+              >
+                {help.title === "Balance" ? (
+                  <Icon name="Wallet" />
+                ) : (
+                  `${help.title}: `
+                )}
+
+                <strong>{help.content}</strong>
               </section>
             )}
           </header>
@@ -47,6 +59,8 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
 
         <section className={cx(type === 2 && border)}>
           <section className={styles.wrapper}>
+            {!unitAfterValue && renderUnit()}
+
             <section className={styles.field}>
               {input ? (
                 <input {...inputAttrs} />
@@ -59,15 +73,18 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
               )}
             </section>
 
-            {max && <Button {...maxProps} />}
-            <section className={styles.unit}>{unit}</section>
+            {unitAfterValue && renderUnit()}
           </section>
 
           {assets && <section className={styles.assets}>{assets}</section>}
         </section>
       </div>
 
-      {error && !skipFeedback && <p className={styles.feedback}>{error}</p>}
+      {!skipFeedback && (error || warn) && (
+        <section className={cx(styles.feedback, { warn })}>
+          {error || warn}
+        </section>
+      )}
     </div>
   )
 }
