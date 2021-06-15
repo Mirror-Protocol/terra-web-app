@@ -18,6 +18,7 @@ import TVL from "./TVL"
 import LiquidityHistoryChart from "./LiquidityHistoryChart"
 import VolumeHistoryChart from "./VolumeHistoryChart"
 import DashboardFooter from "./DashboardFooter"
+import TVLTotal from "./TVLTotal"
 import styles from "./Dashboard.module.scss"
 
 const Dashboard = () => {
@@ -43,6 +44,10 @@ const Dashboard = () => {
       select={select}
       doc={"/user-guide/getting-started"}
     >
+      <section className={styles.tvl}>
+        <TVLTotal {...dashboard.totalValueLocked} />
+      </section>
+
       <Masonry>
         {[
           [

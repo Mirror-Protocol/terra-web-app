@@ -1,5 +1,11 @@
 @import "mixins";
 
+.tvl {
+  @include mobile {
+    margin-bottom: $gutter-vertical-mobile;
+  }
+}
+
 .footer {
   @include mobile {
     margin-top: $gutter-vertical-mobile;
