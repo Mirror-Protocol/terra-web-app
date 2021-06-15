@@ -22,7 +22,7 @@ const Borrowing = () => {
     useMyBorrowing()
 
   const renderTooltip = (value: string, tooltip: string) => (
-    <TooltipIcon content={tooltip}>{formatAsset(value, "uusd")}</TooltipIcon>
+    <TooltipIcon content={tooltip}>≈ {formatAsset(value, "uusd")}</TooltipIcon>
   )
 
   const dataExists = !!dataSource.length
@@ -30,14 +30,14 @@ const Borrowing = () => {
     <CaptionData
       list={[
         {
-          title: "Borrowed Value",
+          title: "Borrowed",
           content: renderTooltip(
             totalMintedValue,
             Tooltips.My.TotalBorrowedValue
           ),
         },
         {
-          title: "Collateral Value",
+          title: "Collateral",
           content: renderTooltip(
             totalCollateralValue,
             Tooltips.My.TotalCollateralValue

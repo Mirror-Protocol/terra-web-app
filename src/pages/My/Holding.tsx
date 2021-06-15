@@ -18,18 +18,17 @@ const Holding = () => {
   const { totalValue, dataSource } = useMyHolding()
   const { getIsDelisted } = useProtocol()
 
-  const renderTooltip = (value: string, tooltip: string) => (
-    <TooltipIcon content={tooltip}>{formatAsset(value, "uusd")}</TooltipIcon>
-  )
-
   const dataExists = !!dataSource.length
 
   const description = dataExists && (
     <CaptionData
       list={[
         {
-          title: "Holding Value",
-          content: renderTooltip(totalValue, Tooltip.My.TotalHoldingValue),
+          content: (
+            <TooltipIcon content={Tooltip.My.TotalHoldingValue}>
+              ≈ {formatAsset(totalValue, "uusd")}
+            </TooltipIcon>
+          ),
         },
       ]}
     />

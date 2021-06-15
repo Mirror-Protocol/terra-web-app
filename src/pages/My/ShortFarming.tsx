@@ -25,11 +25,12 @@ const ShortFarming = () => {
         list={[
           {
             title: "Reward",
-            content: formatAsset(totalRewards, "MIR"),
-          },
-          {
-            title: "Reward Value",
-            content: formatAsset(totalRewardsValue, "uusd"),
+            content: (
+              <>
+                {formatAsset(totalRewards, "MIR")} (≈{" "}
+                {formatAsset(totalRewardsValue, "uusd")})
+              </>
+            ),
           },
         ]}
       />
