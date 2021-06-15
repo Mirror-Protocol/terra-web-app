@@ -17,7 +17,7 @@ const HistoryList = ({ data, loading, more }: Props) => {
         caption={
           <Caption
             title="Transaction History"
-            description={<DownloadCSV txs={data} />}
+            action={<DownloadCSV txs={data} />}
             loading={loading}
           />
         }
