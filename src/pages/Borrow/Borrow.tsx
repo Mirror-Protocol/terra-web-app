@@ -4,7 +4,7 @@ import Page from "../../components/Page"
 
 const Borrow = () => {
   return (
-    <Page title="Borrow">
+    <Page title="Borrow (Mint)">
       <MintForm type={MintType.BORROW} />
     </Page>
   )
