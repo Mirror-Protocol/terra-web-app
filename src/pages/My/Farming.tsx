@@ -27,8 +27,10 @@ const Farming = () => {
           title: "Reward",
           content: (
             <>
-              {formatAsset(totalRewards, "MIR")} (≈{" "}
-              {formatAsset(totalRewardsValue, "uusd")})
+              {formatAsset(totalRewards, "MIR")}{" "}
+              <span className="muted">
+                ≈ {formatAsset(totalRewardsValue, "uusd")}
+              </span>
             </>
           ),
         },
