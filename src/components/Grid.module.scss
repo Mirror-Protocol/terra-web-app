@@ -55,11 +55,11 @@ $negative-margin-desktop: (-$margin-vertical-desktop)
 
 .gutter {
   @include mobile {
-    margin-top: $margin-vertical-mobile;
+    margin-top: $gutter-vertical-mobile;
   }
 
   @include desktop {
-    margin-top: $margin-vertical-desktop;
+    margin-top: $gutter-vertical-desktop;
   }
 }
 
