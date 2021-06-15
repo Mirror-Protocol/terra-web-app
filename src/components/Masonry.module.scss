@@ -2,13 +2,10 @@
 
 .masonry {
   @include flex;
+  align-items: stretch;
 
   @include mobile {
     flex-direction: column;
-  }
-
-  @include desktop {
-    align-items: stretch;
   }
 }
 
