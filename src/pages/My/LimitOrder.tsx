@@ -23,7 +23,7 @@ const LimitOrder = () => {
     <CaptionData
       list={[
         {
-          title: "Locked Value",
+          title: "Locked",
           content: renderTooltip(
             formatAsset(totalValue, "uusd"),
             Tooltip.My.TotalLockedValue

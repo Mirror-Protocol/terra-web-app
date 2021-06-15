@@ -34,11 +34,11 @@ const ShortFarming = () => {
           ),
         },
         {
-          title: "Locked UST",
+          title: "Locked",
           content: formatAsset(totalLockedUST, "uusd"),
         },
         {
-          title: "Unlocked UST",
+          title: "Unlocked",
           content: formatAsset(totalUnlockedUST, "uusd"),
         },
         {

@@ -18,7 +18,7 @@ const Gov = () => {
     <CaptionData
       list={[
         {
-          title: "Staked MIR",
+          title: "Staked",
           content: formatAsset(staked, "MIR"),
         },
         {

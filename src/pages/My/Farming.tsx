@@ -68,7 +68,7 @@ const Farming = () => {
           key: "withdrawable",
           title: (
             <TooltipIcon content={Tooltip.My.Withdrawable}>
-              Withdrawable Asset
+              Withdrawable
             </TooltipIcon>
           ),
           render: (withdrawable) =>
