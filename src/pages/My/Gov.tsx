@@ -22,7 +22,7 @@ const Gov = () => {
           content: formatAsset(staked, "MIR"),
         },
         {
-          title: "Accumulated Staking Rewards",
+          title: "Accumulated Rewards",
           content: formatAsset(accReward, "MIR"),
         },
         {
