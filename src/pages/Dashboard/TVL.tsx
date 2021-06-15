@@ -13,20 +13,18 @@ const TVL = ({ total, liquidity, collateral, stakedMir }: TVL) => {
   ].sort(({ value: a }, { value: b }) => b - a)
 
   return (
-    <div className="desktop">
-      <Card title="Total Value Locked" lg>
-        <Formatted symbol="uusd" config={{ integer: true }} big>
-          {total}
-        </Formatted>
+    <Card title="Total Value Locked" lg>
+      <Formatted symbol="uusd" config={{ integer: true }} big>
+        {total}
+      </Formatted>
 
-        <section className={styles.chart}>
-          <RatioChart
-            list={list}
-            format={(value) => formatAsset(String(value), "uusd")}
-          />
-        </section>
-      </Card>
-    </div>
+      <section className={styles.chart}>
+        <RatioChart
+          list={list}
+          format={(value) => formatAsset(String(value), "uusd")}
+        />
+      </section>
+    </Card>
   )
 }
 

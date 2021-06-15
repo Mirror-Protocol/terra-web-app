@@ -44,7 +44,7 @@ const Dashboard = () => {
       select={select}
       doc={"/user-guide/getting-started"}
     >
-      <section className={styles.tvl}>
+      <section className={styles.mobile}>
         <TVLTotal {...dashboard.totalValueLocked} />
       </section>
 
@@ -73,6 +73,10 @@ const Dashboard = () => {
           ],
         ]}
       </Masonry>
+
+      <section className={styles.mobile}>
+        <MIRPrice />
+      </section>
 
       <footer className={styles.footer}>
         <DashboardFooter {...dashboard} />

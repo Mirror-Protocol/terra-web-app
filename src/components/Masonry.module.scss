@@ -12,7 +12,7 @@
 .column {
   @include mobile {
     &:first-child {
-      order: 1;
+      display: none;
     }
   }
 

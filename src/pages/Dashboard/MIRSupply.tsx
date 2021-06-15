@@ -12,20 +12,16 @@ const MIRSupply = ({ circulating, liquidity, staked }: MIRSupply) => {
   ]
 
   return (
-    <div className="desktop">
-      <Card title="MIR Circulating Supply" lg>
-        <Formatted symbol="MIR" big>
-          {circulating}
-        </Formatted>
+    <Card title="MIR Circulating Supply" lg>
+      <Formatted symbol="MIR" big>
+        {circulating}
+      </Formatted>
 
-        <DoughnutChart
-          list={list}
-          format={(value) =>
-            formatAsset(String(value), "MIR", { integer: true })
-          }
-        />
-      </Card>
-    </div>
+      <DoughnutChart
+        list={list}
+        format={(value) => formatAsset(String(value), "MIR", { integer: true })}
+      />
+    </Card>
   )
 }
 
