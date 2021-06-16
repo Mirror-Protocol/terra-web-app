@@ -21,7 +21,7 @@ export const myHoldingQuery = selector({
         const balance = find(balanceKey, token)
         const price = find(priceKey, token)
         const value = times(balance, price)
-        const change = findChange(PriceKey.PAIR)(token, price)
+        const change = findChange(PriceKey.PAIR, token)
 
         return { ...item, balance, price, value, change }
       })

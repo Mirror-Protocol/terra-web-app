@@ -60,7 +60,6 @@ interface AssetDataItem {
 
   statistic: {
     liquidity: string
-    shortValue: string
     volume: string
     apr: APR
   }

@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { minus, max, number } from "../../libs/math"
+import { PriceKey } from "../../hooks/contractKeys"
 import { useProtocol } from "../../data/contract/protocol"
+import { useGetChange } from "../../data/stats/assets"
 import { Item, useAssetList } from "../../data/stats/list"
 import Table from "../../components/Table"
 import Percent from "../../components/Percent"
@@ -40,18 +42,23 @@ const Sorters: Dictionary<Sorter> = {
 const FarmList = () => {
   const { getSymbol } = useProtocol()
   const list = useAssetList()
+  const getChange = useGetChange()
 
   const [input, setInput] = useState("")
   const [sorter, setSorter] = useState("APR")
 
-  const dataSource = list
-    .filter(({ symbol, name }) =>
-      [symbol, name].some((text) =>
-        text.toLocaleLowerCase().includes(input.toLocaleLowerCase())
+  const dataSource =
+    list
+      ?.filter(({ symbol, name }) =>
+        [symbol, name].some((text) =>
+          text.toLocaleLowerCase().includes(input.toLocaleLowerCase())
+        )
       )
-    )
-    .sort(Sorters[sorter].compare)
-    .sort((a, b) => Number(b.symbol === "MIR") - Number(a.symbol === "MIR"))
+      .map((item) => ({ ...item, change: getChange?.(item.token) }))
+      .sort(Sorters[sorter].compare)
+      .sort(
+        (a, b) => Number(b.symbol === "MIR") - Number(a.symbol === "MIR")
+      ) ?? []
 
   return (
     <>
@@ -130,7 +137,7 @@ const FarmList = () => {
             align: "left",
           },
           {
-            key: "terraswap.price",
+            key: PriceKey.PAIR,
             title: "Terraswap Price",
             render: (value) => <Formatted unit="UST">{value}</Formatted>,
             align: "right",

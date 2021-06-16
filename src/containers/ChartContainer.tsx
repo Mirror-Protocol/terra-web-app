@@ -17,7 +17,7 @@ const $gray34 = "#555557"
 const $gray22 = "#373738"
 
 interface Props {
-  change?: string
+  change?: number
   datasets: ScatterDataPoint[]
   fmt?: { t: string }
   compact?: boolean

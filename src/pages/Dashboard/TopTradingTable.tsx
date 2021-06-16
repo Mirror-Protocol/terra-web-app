@@ -1,8 +1,10 @@
+import { useRecoilValue } from "recoil"
 import { sort } from "ramda"
 import { gt } from "../../libs/math"
 import { useProtocol } from "../../data/contract/protocol"
 import { useFindPairPrice } from "../../data/contract/normalize"
 import { useAssetsHelpers } from "../../data/stats/assets"
+import { dashboardNetworkState } from "../../data/stats/statistic"
 import Table from "../../components/Table"
 import Formatted from "../../components/Formatted"
 import AssetItem from "../../components/AssetItem"
@@ -12,7 +14,8 @@ import styles from "./TopTradingTable.module.scss"
 
 const TopTradingTable = () => {
   const { listed } = useProtocol()
-  const { volume } = useAssetsHelpers()
+  const network = useRecoilValue(dashboardNetworkState)
+  const { volume } = useAssetsHelpers(network)
   const findPrice = useFindPairPrice()
 
   const dataSource = sort(

@@ -1,58 +1,52 @@
 import { atom, selector } from "recoil"
-import { div, gt, minus } from "../../libs/math"
-import { findPriceQuery } from "../contract/normalize"
-import { protocolQuery } from "../contract/protocol"
 import { PriceKey } from "../../hooks/contractKeys"
+import { div, gt, minus } from "../../libs/math"
+import { protocolQuery } from "../contract/protocol"
 import { useStoreLoadable } from "../utils/loadable"
-import { assetsHelpersQuery, findChangeQuery } from "./assets"
+import { assetsHelpersQuery } from "./assets"
 import { StatsNetwork } from "./statistic"
 
 type FarmingType = "long" | "short"
 
-export interface Item extends ListedItem {
-  terraswap: { price: string; change?: string }
-  oracle: { price: string; change?: string }
+export interface DefaultItem extends ListedItem {
+  [PriceKey.PAIR]: string
+  [PriceKey.ORACLE]?: string
   premium?: string
 
   liquidity: string
-  shortValue?: string
   volume: string
-  apr: { long?: string; short?: string }
+  apr: { long: string; short?: string }
 
   recommended: FarmingType
+}
+
+export interface Item extends DefaultItem {
+  change?: { [PriceKey.PAIR]?: number; [PriceKey.ORACLE]?: number }
 }
 
 export const getAssetItemQuery = selector({
   key: "getAssetItem",
   get: ({ get }) => {
-    const findPrice = get(findPriceQuery)
-    const findChange = get(findChangeQuery)
-    const { volume, liquidity, shortValue, longAPR, shortAPR } = get(
-      assetsHelpersQuery(StatsNetwork.TERRA)
-    )
+    const helpers = get(assetsHelpersQuery(StatsNetwork.TERRA))
 
-    return (item: ListedItem): Item => {
+    return (item: ListedItem): DefaultItem => {
+      const { [PriceKey.PAIR]: getPair, [PriceKey.ORACLE]: getOracle } = helpers
+      const { volume, liquidity, longAPR, shortAPR } = helpers
       const { token } = item
-      const terraswap = findPrice(PriceKey.PAIR, token)
-      const oracle = findPrice(PriceKey.ORACLE, token)
-      const premium = oracle ? minus(div(terraswap, oracle), 1) : undefined
+      const pairPrice = getPair(token)
+      const oraclePrice = getOracle(token)
       const long = longAPR(token)
       const short = shortAPR(token)
 
       return {
         ...item,
-        terraswap: {
-          price: terraswap,
-          change: findChange(PriceKey.PAIR)(token, terraswap),
-        },
-        oracle: {
-          price: oracle,
-          change: findChange(PriceKey.ORACLE)(token, oracle),
-        },
-        premium,
+        [PriceKey.PAIR]: pairPrice,
+        [PriceKey.ORACLE]: oraclePrice,
+        premium: oraclePrice
+          ? minus(div(pairPrice, oraclePrice), 1)
+          : undefined,
         volume: volume(token),
         liquidity: liquidity(token),
-        shortValue: shortValue(token),
         apr: { long, short },
         recommended: long && short && gt(short, long) ? "short" : "long",
       }
@@ -65,14 +59,17 @@ export const assetListQuery = selector({
   get: ({ get }) => {
     const { listed } = get(protocolQuery)
     const getAssetItem = get(getAssetItemQuery)
-    return listed.map(getAssetItem).filter(({ liquidity }) => gt(liquidity, 0))
+
+    return listed
+      .map(getAssetItem)
+      .filter(({ liquidity }) => !liquidity || gt(liquidity, 0))
   },
 })
 
 /* state */
-export const assetListState = atom<Item[]>({
+export const assetListState = atom<DefaultItem[] | undefined>({
   key: "assetListState",
-  default: [],
+  default: undefined,
 })
 
 export const useAssetList = () => {

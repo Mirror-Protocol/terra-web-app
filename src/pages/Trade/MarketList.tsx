@@ -1,10 +1,9 @@
 import { useState } from "react"
-import { useRecoilValueLoadable } from "recoil"
 
 import { lt, gt, number } from "../../libs/math"
+import { PriceKey } from "../../hooks/contractKeys"
 import { Item, useAssetList } from "../../data/stats/list"
-import { StatsNetwork } from "../../data/stats/statistic"
-import { assetsHistoryQuery } from "../../data/stats/assets"
+import { useAssetsHistory, useGetChange } from "../../data/stats/assets"
 
 import Table from "../../components/Table"
 import Change from "../../components/Change"
@@ -28,12 +27,16 @@ const Sorters: Dictionary<Sorter> = {
   TOPGAINER: {
     label: "Top Gainer",
     compare: (a, b) =>
-      lt(a.terraswap.change ?? 0, b.terraswap.change ?? 0) ? 1 : -1,
+      lt(a.change?.[PriceKey.PAIR] ?? 0, b.change?.[PriceKey.PAIR] ?? 0)
+        ? 1
+        : -1,
   },
   TOPLOSER: {
     label: "Top Loser",
     compare: (a, b) =>
-      lt(a.terraswap.change ?? 0, b.terraswap.change ?? 0) ? -1 : 1,
+      lt(a.change?.[PriceKey.PAIR] ?? 0, b.change?.[PriceKey.PAIR] ?? 0)
+        ? -1
+        : 1,
   },
 }
 
@@ -41,13 +44,18 @@ const MarketList = () => {
   const list = useAssetList()
   const [input, setInput] = useState("")
   const [sorter, setSorter] = useState("TOPTRADING")
-  const history = useRecoilValueLoadable(assetsHistoryQuery(StatsNetwork.TERRA))
+  const getChange = useGetChange()
+  const history = useAssetsHistory()
 
-  const dataSource = list
-    .filter(({ name, symbol }) =>
-      [name, symbol].some((l) => l.toLowerCase().includes(input.toLowerCase()))
-    )
-    .sort(Sorters[sorter].compare)
+  const dataSource =
+    list
+      ?.filter(({ name, symbol }) =>
+        [name, symbol].some((l) =>
+          l.toLowerCase().includes(input.toLowerCase())
+        )
+      )
+      .map((item) => ({ ...item, change: getChange?.(item.token) }))
+      .sort(Sorters[sorter].compare) ?? []
 
   return (
     <>
@@ -74,29 +82,28 @@ const MarketList = () => {
             bold: true,
           },
           {
-            key: "terraswap",
+            key: PriceKey.PAIR,
             title: "Terraswap Price",
-            render: ({ price }, { terraswap: { change } }) =>
+            render: (price, { change }) =>
               gt(price, 0) && [
                 <Formatted unit="UST">{price}</Formatted>,
-                <Change align="right">{change}</Change>,
+                <Change align="right">{change?.[PriceKey.PAIR]}</Change>,
               ],
             align: "right",
           },
           {
             key: "history",
             title: "24h Chart",
-            render: (_, { token }) =>
-              history.state === "hasValue" && (
-                <ChartContainer
-                  datasets={history.contents[token]?.map(
-                    ({ timestamp, price }) => {
-                      return { x: timestamp, y: number(price) }
-                    }
-                  )}
-                  compact
-                />
-              ),
+            render: (_, { token }) => (
+              <ChartContainer
+                datasets={
+                  history?.[token]?.map(({ timestamp, price }) => {
+                    return { x: timestamp, y: number(price) }
+                  }) ?? []
+                }
+                compact
+              />
+            ),
             align: "right",
             desktop: true,
           },

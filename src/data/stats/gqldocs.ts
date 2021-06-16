@@ -72,14 +72,32 @@ export const ASSETS = {
         token
         description
 
+        prices {
+          price
+          oraclePrice
+        }
+
         statistic {
           liquidity(network: $network)
-          shortValue(network: $network)
           volume(network: $network)
           apr {
             long
             short
           }
+        }
+      }
+    }
+  `,
+
+  CHANGE: gql`
+    query assets($timestamp: Float!) {
+      assets {
+        token
+        prices {
+          price
+          priceAt(timestamp: $timestamp)
+          oraclePrice
+          oraclePriceAt(timestamp: $timestamp)
         }
       }
     }
@@ -94,18 +112,6 @@ export const ASSETS = {
             timestamp
             price
           }
-        }
-      }
-    }
-  `,
-
-  YESTERDAY: gql`
-    query assets($timestamp: Float!) {
-      assets {
-        token
-        prices {
-          priceAt(timestamp: $timestamp)
-          oraclePriceAt(timestamp: $timestamp)
         }
       }
     }

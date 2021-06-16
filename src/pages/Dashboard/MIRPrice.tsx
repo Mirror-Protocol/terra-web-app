@@ -12,7 +12,7 @@ const MIRPrice = () => {
 
   const findChange = useFindChange()
   const price = useMIRPrice()
-  const change = findChange(PriceKey.PAIR)(token, price)
+  const change = findChange?.(PriceKey.PAIR, token)
 
   return (
     <Card title="MIR Price" lg>

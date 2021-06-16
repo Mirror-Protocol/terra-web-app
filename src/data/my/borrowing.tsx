@@ -28,9 +28,9 @@ export const myBorrowingQuery = selector({
         const collateralDelisted = getIsDelisted(collateral.token)
         const collateralPrice = find(collateralPriceKey, collateral.token)
         const collateralValue = times(collateral.amount, collateralPrice)
-        const collateralChange = findChange(collateralPriceKey)(
-          collateral.token,
-          collateralPrice
+        const collateralChange = findChange(
+          collateralPriceKey,
+          collateral.token
         )
 
         /* asset */
@@ -39,7 +39,7 @@ export const myBorrowingQuery = selector({
         const assetDelisted = getIsDelisted(asset.token)
         const assetPrice = find(assetPriceKey, asset.token)
         const assetValue = times(asset.amount, assetPrice)
-        const assetChange = findChange(assetPriceKey)(asset.token, assetPrice)
+        const assetChange = findChange(assetPriceKey, asset.token)
 
         /* ratio */
         const minRatio = getMinRatio(collateral.token, asset.token)

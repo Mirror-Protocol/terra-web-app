@@ -7,15 +7,15 @@ import styles from "./Change.module.scss"
 const cx = classNames.bind(styles)
 
 interface Props {
-  children?: string
+  children?: number
   align?: "left" | "center" | "right"
   inline?: boolean
 }
 
 const Change = ({ children, align = "left", inline }: Props) => {
-  const change = children && (gte(abs(children), 0.0001) ? children : "0")
+  const change = children && (gte(abs(children), 0.0001) ? children : 0)
 
-  const render = (change: string) => {
+  const render = (change: number) => {
     const up = gt(change, 0)
     const down = lt(change, 0)
     const icon: IconNames | "" = up ? "UpSolid" : down ? "DownSolid" : ""
