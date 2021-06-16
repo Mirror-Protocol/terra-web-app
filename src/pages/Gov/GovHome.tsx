@@ -3,6 +3,7 @@ import { MenuKey } from "../../routes"
 import Page from "../../components/Page"
 import LinkButton from "../../components/LinkButton"
 import ExtLinkButton from "../../components/ExtLinkButton"
+import { bound } from "../../components/Boundary"
 import Polls from "../Poll/Polls"
 import { menu, MenuKey as GovMenuKey } from "./Gov"
 import GovHomeHeader from "./GovHomeHeader"
@@ -35,7 +36,7 @@ const GovHome = () => {
       }
     >
       <GovHomeHeader />
-      <Polls title="Polls" />
+      {bound(<Polls title="Polls" />)}
     </Page>
   )
 }
