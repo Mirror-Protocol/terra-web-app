@@ -10,6 +10,7 @@ import Page from "../../components/Page"
 import Masonry from "../../components/Masonry"
 import { bound } from "../../components/Boundary"
 import ChartContainer from "../../containers/ChartContainer"
+import Card from "../../components/Card"
 import { MenuKey } from "../../routes"
 
 import MIRPrice from "./MIRPrice"
@@ -20,6 +21,8 @@ import VolumeHistoryChart from "./VolumeHistoryChart"
 import DashboardFooter from "./DashboardFooter"
 import TVLTotal from "./TVLTotal"
 import styles from "./Dashboard.module.scss"
+
+const fallback = <Card lg />
 
 const Dashboard = () => {
   const [network, setNetwork] = useRecoilState(dashboardNetworkState)
@@ -48,13 +51,13 @@ const Dashboard = () => {
       <Masonry>
         {[
           [
-            { flex: 6, component: bound(<TVL />) },
-            { flex: 3, component: bound(<MIRPrice />) },
-            { flex: 7, component: bound(<MIRSupply />) },
+            { flex: 6, component: bound(<TVL />, fallback) },
+            { flex: 3, component: bound(<MIRPrice />, fallback) },
+            { flex: 7, component: bound(<MIRSupply />, fallback) },
           ],
           [
-            { component: bound(<LiquidityHistoryChart />) },
-            { component: bound(<VolumeHistoryChart />) },
+            { component: bound(<LiquidityHistoryChart />, fallback) },
+            { component: bound(<VolumeHistoryChart />, fallback) },
           ],
         ]}
       </Masonry>
