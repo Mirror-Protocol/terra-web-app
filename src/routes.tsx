@@ -21,6 +21,7 @@ import LimitOrder from "./pages/Txs/LimitOrder" // Cancel limit order
 /* Informations */
 import Info from "./pages/Info"
 import Tool from "./pages/Tools/Tool"
+import GraphQL from "./pages/Tools/GraphQL"
 import Data from "./pages/Tools/Data"
 import Auth from "./pages/Auth"
 import Receipt from "./pages/Tools/Receipt"
@@ -65,6 +66,7 @@ export const menu: Dictionary<RouteProps> = {
 
   info: { path: "/info", component: Info },
   tool: { path: "/tool", component: Tool },
+  gql: { path: "/gql", component: GraphQL },
   data: { path: "/data", component: Data },
   auth: { path: "/auth", component: Auth },
   receipt: { path: "/receipt", component: Receipt },
