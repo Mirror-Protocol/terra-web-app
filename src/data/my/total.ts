@@ -1,44 +1,38 @@
-import { selector } from "recoil"
 import { minus, plus, sum } from "../../libs/math"
-import { uusdBalanceQuery } from "../native/balance"
-import { myHoldingQuery } from "./holding"
-import { myLimitOrderQuery } from "./limit"
-import { myBorrowingQuery } from "./borrowing"
-import { myFarmingQuery } from "./farming"
-import { myLockedUSTQuery } from "./locked"
-import { myShortFarmingQuery } from "./short"
-import { myGovQuery } from "./gov"
+import { useUusdBalance } from "../native/balance"
+import { useMyHolding } from "./holding"
+import { useMyLimitOrder } from "./limit"
+import { useMyBorrowing } from "./borrowing"
+import { useMyFarming } from "./farming"
+import { useMyShortFarming } from "./short"
+import { useMyGov } from "./gov"
 
-export const myTotalQuery = selector({
-  key: "myTotal",
-  get: ({ get }) => {
-    const uusd = get(uusdBalanceQuery)
-    const holding = get(myHoldingQuery)
-    const limitOrder = get(myLimitOrderQuery)
-    const borrowing = get(myBorrowingQuery)
-    const farming = get(myFarmingQuery)
-    const short = get(myShortFarmingQuery)
-    const locked = get(myLockedUSTQuery)
-    const gov = get(myGovQuery)
+export const useMyTotal = () => {
+  const uusd = useUusdBalance()
+  const holding = useMyHolding()
+  const limitOrder = useMyLimitOrder()
+  const borrowing = useMyBorrowing()
+  const farming = useMyFarming()
+  const short = useMyShortFarming()
+  const gov = useMyGov()
 
-    const list = {
-      uusd,
-      holding: holding.totalValue,
-      limitOrder: limitOrder.totalValue,
-      borrowing: minus(
-        borrowing.totalCollateralValue,
-        borrowing.totalMintedValue
-      ),
-      farming: sum([
-        farming.totalWithdrawableValue,
-        farming.totalRewardsValue,
-        short.totalRewardsValue,
-        locked.totalLockedUST,
-        locked.totalUnlockedUST,
-      ]),
-      gov: plus(gov.stakedValue, gov.votingRewardsValue),
-    }
+  const list = {
+    uusd,
+    holding: holding.totalValue,
+    limitOrder: limitOrder.totalValue,
+    borrowing: minus(
+      borrowing.totalCollateralValue,
+      borrowing.totalMintedValue
+    ),
+    farming: sum([
+      farming.totalWithdrawableValue,
+      farming.totalRewardsValue,
+      short.totalRewardsValue,
+      short.totalLockedUST,
+      short.totalUnlockedUST,
+    ]),
+    gov: plus(gov.stakedValue, gov.votingRewardsValue),
+  }
 
-    return { list, total: sum(Object.values(list)) }
-  },
-})
+  return { list, total: sum(Object.values(list)) }
+}

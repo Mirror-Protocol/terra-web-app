@@ -1,11 +1,10 @@
-import { useRecoilValue } from "recoil"
 import { Link } from "react-router-dom"
 import classNames from "classnames"
 
 import { gt, times } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
 import { BalanceKey } from "../../hooks/contractKeys"
-import { myTotalQuery } from "../../data/my/total"
+import { useMyTotal } from "../../data/my/total"
 import { useFind, useMIRPrice, useRewards } from "../../data/contract/normalize"
 
 import { getPath, MenuKey } from "../../routes"
@@ -23,7 +22,7 @@ const TotalValue = () => {
   const shouldBuyUST = useShouldBuyUST()
 
   /* Total value */
-  const { list, total } = useRecoilValue(myTotalQuery)
+  const { list, total } = useMyTotal()
   const { uusd, holding, limitOrder, borrowing, farming, gov } = list
 
   /* Claim */
