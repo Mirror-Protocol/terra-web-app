@@ -7,6 +7,7 @@ import { useDashboard } from "../../data/stats/statistic"
 import Count from "../../components/Count"
 import LinkButton from "../../components/LinkButton"
 import { TooltipIcon } from "../../components/Tooltip"
+import { bound } from "../../components/Boundary"
 import GovMIRFooter from "./GovMIRFooter"
 import styles from "./GovMIR.module.scss"
 
@@ -45,7 +46,7 @@ const GovMIR = () => {
         Stake
       </LinkButton>
 
-      {address && <GovMIRFooter />}
+      {address && bound(<GovMIRFooter />)}
     </article>
   )
 }

@@ -1,10 +1,12 @@
 import BigNumber from "bignumber.js"
-import { useRecoilValue } from "recoil"
+import { useRecoilValueLoadable } from "recoil"
 import { taxQuery } from "../data/native/tax"
+import { getLoadableContents } from "../data/utils/loadable"
 import useFee from "./useFee"
 
 export default () => {
-  const data = useRecoilValue(taxQuery)
+  const taxLoadable = useRecoilValueLoadable(taxQuery)
+  const data = getLoadableContents(taxLoadable)
   const fee = useFee()
 
   const rate = data?.TreasuryTaxRate.Result

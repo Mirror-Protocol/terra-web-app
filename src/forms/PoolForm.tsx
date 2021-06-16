@@ -1,5 +1,6 @@
 import { useRef } from "react"
 import { Link, useLocation } from "react-router-dom"
+import { useRecoilValue } from "recoil"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
 import Tooltip from "../lang/Tooltip.json"
@@ -10,9 +11,10 @@ import useForm from "../libs/useForm"
 import { validate as v, placeholder, step, toBase64 } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import getLpName from "../libs/getLpName"
-import { useProtocol } from "../data/contract/protocol"
 import { usePolling } from "../hooks"
 import { PriceKey, BalanceKey, StakingKey } from "../hooks/contractKeys"
+import { tokenBalanceQuery } from "../data/contract/contract"
+import { useProtocol } from "../data/contract/protocol"
 import { useFind, useFindStaking } from "../data/contract/normalize"
 
 import { getPath, MenuKey } from "../routes"
@@ -39,6 +41,7 @@ enum Key {
 }
 
 const PoolForm = ({ type, poolOnly }: Props) => {
+  useRecoilValue(tokenBalanceQuery) // To determine to show "Buy or Borrow"
   const priceKey = PriceKey.PAIR
 
   /* context */

@@ -20,13 +20,13 @@ import styles from "./Polls.module.scss"
 const cx = classNames.bind(styles)
 
 const Polls = ({ title }: { title: string }) => {
+  const { url } = useRouteMatch()
+  const { idle, data, more } = usePolls()
   const parsePoll = useParsePoll()
+
   const [filter, setFilter] = useState<PollStatus | "">("")
 
-  const { url } = useRouteMatch()
-  const { data, more } = usePolls()
-
-  return (
+  return idle ? null : (
     <article className={styles.component}>
       <header className={styles.header}>
         <LoadingTitle className={styles.title}>
@@ -53,27 +53,21 @@ const Polls = ({ title }: { title: string }) => {
         </div>
       </header>
 
-      {!data.length ? (
-        <Card>
-          <p className="empty">No polls found</p>
-        </Card>
-      ) : (
-        <Grid wrap={2}>
-          {data
-            .filter(({ status }) => !filter || status === filter)
-            .map(parsePoll)
-            .map((poll) => {
-              const { id } = poll
-              const dim = !filter && !isEmphasizedPoll(poll)
+      <Grid wrap={2}>
+        {data
+          .filter(({ status }) => !filter || status === filter)
+          .map(parsePoll)
+          .map((poll) => {
+            const { id } = poll
+            const dim = !filter && !isEmphasizedPoll(poll)
 
-              return (
-                <Card to={`${url}/poll/${id}`} className={cx({ dim })} key={id}>
-                  <PollItem {...poll} />
-                </Card>
-              )
-            })}
-        </Grid>
-      )}
+            return (
+              <Card to={`${url}/poll/${id}`} className={cx({ dim })} key={id}>
+                <PollItem {...poll} />
+              </Card>
+            )
+          })}
+      </Grid>
 
       {more && (
         <Submit>

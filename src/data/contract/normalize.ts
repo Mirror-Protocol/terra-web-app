@@ -169,8 +169,9 @@ export const findPriceQuery = selector({
     const { getIsDelisted, getIsPreIPO } = get(protocolQuery)
 
     const dictionary = {
-      [PriceKey.PAIR]: get(pairPricesQuery),
-      [PriceKey.ORACLE]: get(oraclePricesQuery),
+      [PriceKey.PAIR]: getLoadableContents(get(noWait(pairPricesQuery))) ?? {},
+      [PriceKey.ORACLE]:
+        getLoadableContents(get(noWait(oraclePricesQuery))) ?? {},
       [PriceKey.NATIVE]:
         getLoadableContents(get(noWait(nativePricesQuery))) ?? {},
       [PriceKey.PRE]: getLoadableContents(get(noWait(prePricesQuery))) ?? {},
@@ -224,8 +225,10 @@ export const findBalanceQuery = selector({
   get: ({ get }) => {
     const { getIsExternal } = get(protocolQuery)
     const dictionary = {
-      [BalanceKey.NATIVE]: get(nativeBalancesQuery),
-      [BalanceKey.TOKEN]: get(tokenBalancesQuery),
+      [BalanceKey.NATIVE]:
+        getLoadableContents(get(noWait(nativeBalancesQuery))) ?? {},
+      [BalanceKey.TOKEN]:
+        getLoadableContents(get(noWait(tokenBalancesQuery))) ?? {},
       [BalanceKey.EXTERNAL]:
         getLoadableContents(get(noWait(externalBalancesQuery))) ?? {},
     }
@@ -276,12 +279,11 @@ export const findStakingQuery = selector({
 export const findAssetInfoQuery = selector({
   key: "findAssetInfo",
   get: ({ get }) => {
-    const minCollateralRatio = get(minCollateralRatioQuery)
-    const multiplier = get(multiplierQuery)
-
     const dictionary = {
-      [AssetInfoKey.MINCOLLATERALRATIO]: minCollateralRatio,
-      [AssetInfoKey.MULTIPLIER]: multiplier,
+      [AssetInfoKey.MINCOLLATERALRATIO]:
+        getLoadableContents(get(noWait(minCollateralRatioQuery))) ?? {},
+      [AssetInfoKey.MULTIPLIER]:
+        getLoadableContents(get(noWait(multiplierQuery))) ?? {},
     }
 
     return (key: AssetInfoKey, token: string) => dictionary[key][token]

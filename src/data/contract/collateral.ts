@@ -1,4 +1,5 @@
 import { selector } from "recoil"
+import { DEFAULT_MIN_RATIO, DEFAULT_MULTIPLIER } from "../../constants"
 import { times } from "../../libs/math"
 import { decimal } from "../../libs/parse"
 import { AssetInfoKey, PriceKey } from "../../hooks/contractKeys"
@@ -32,16 +33,19 @@ export const getMinRatioQuery = selector({
     const { getIsDelisted } = get(protocolQuery)
     const findAssetInfo = get(findAssetInfoQuery)
 
-    return (collateralToken: string, assetToken: string) =>
-      getIsDelisted(assetToken)
-        ? findAssetInfo(AssetInfoKey.MINCOLLATERALRATIO, assetToken)
-        : decimal(
-            times(
-              findAssetInfo(AssetInfoKey.MINCOLLATERALRATIO, assetToken),
-              findAssetInfo(AssetInfoKey.MULTIPLIER, collateralToken)
-            ),
-            4
-          )
+    return (collateralToken: string, assetToken: string) => {
+      const minRatio =
+        findAssetInfo(AssetInfoKey.MINCOLLATERALRATIO, assetToken) ??
+        String(DEFAULT_MIN_RATIO)
+
+      const multiplier =
+        findAssetInfo(AssetInfoKey.MULTIPLIER, collateralToken) ??
+        String(DEFAULT_MULTIPLIER)
+
+      return getIsDelisted(assetToken)
+        ? minRatio
+        : decimal(times(minRatio, multiplier), 4)
+    }
   },
 })
 

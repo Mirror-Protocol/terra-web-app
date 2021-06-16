@@ -8,7 +8,7 @@ import { MsgExecuteContract } from "@terra-money/terra.js"
 import useNewContractMsg from "../libs/useNewContractMsg"
 import MESSAGE from "../lang/MESSAGE.json"
 import Tooltip from "../lang/Tooltip.json"
-import { TRADING_HOURS } from "../constants"
+import { DEFAULT_MIN_RATIO, TRADING_HOURS } from "../constants"
 import { plus, minus, times, div, floor, max, abs } from "../libs/math"
 import { gt, gte, lt, isFinite } from "../libs/math"
 import { capitalize } from "../libs/utils"
@@ -24,6 +24,7 @@ import { slippageQuery } from "../data/tx/slippage"
 import { AssetInfoKey } from "../hooks/contractKeys"
 import { BalanceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
+import { tokenBalanceQuery } from "../data/contract/contract"
 import { useFind, useFindAssetInfo } from "../data/contract/normalize"
 import { getMinRatioQuery } from "../data/contract/collateral"
 import { getMintPriceKeyQuery } from "../data/contract/collateral"
@@ -63,6 +64,7 @@ interface Props {
 }
 
 const MintForm = ({ position, type, message }: Props) => {
+  useRecoilValue(tokenBalanceQuery) // To determine to show "Buy or Borrow"
   const balanceKey = BalanceKey.TOKEN
 
   /* context */
@@ -352,7 +354,9 @@ const MintForm = ({ position, type, message }: Props) => {
 
   /* render:ratio */
   const getMinRatio = useRecoilValue(getMinRatioQuery)
-  const minRatio = token2 ? getMinRatio(token1, token2) : "1.5"
+  const minRatio = token2
+    ? getMinRatio(token1, token2)
+    : String(DEFAULT_MIN_RATIO)
 
   const safeRatio = plus(minRatio, 0.5)
   const nextRatio = div(ratio, 100)

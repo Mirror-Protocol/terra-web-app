@@ -99,6 +99,10 @@ $padding: 18px 24px;
     fill: $blue;
     margin-right: 6px;
   }
+
+  .hidden {
+    fill: transparent;
+  }
 }
 
 .clickable {

@@ -16,8 +16,7 @@ import useLocalStorage from "../libs/useLocalStorage"
 import { useAddress } from "../hooks"
 import useTax from "../hooks/useTax"
 import useFee from "../hooks/useFee"
-import { BalanceKey } from "../hooks/contractKeys"
-import { useFind } from "../data/contract/normalize"
+import { useUusdBalance } from "../data/native/balance"
 
 import { useModal } from "../containers/Modal"
 import ConnectListModal from "../layouts/ConnectListModal"
@@ -80,8 +79,7 @@ export const Component = ({ data: msgs, memo, ...props }: Props) => {
     submit()
   }
 
-  const find = useFind()
-  const uusd = find(BalanceKey.NATIVE, "uusd")
+  const uusd = useUusdBalance()
   const address = useAddress()
 
   /* tax */

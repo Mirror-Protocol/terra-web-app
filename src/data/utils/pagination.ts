@@ -24,12 +24,14 @@ export const usePagination = <T, Offset = number>(
   limit: number
 ) => {
   const [offset, setOffset] = useState<Offset>()
+  const [idle, setIdle] = useState(true)
   const [done, setDone] = useState(false)
   const [data, setData] = useState<T[]>([])
   const { state, contents } = useRecoilValueLoadable(query(offset))
 
   useEffect(() => {
     if (state === "hasValue" && contents) {
+      setIdle(false)
       setData((prev) => [...prev, ...contents])
       setDone(contents.length < limit)
     }
@@ -44,6 +46,7 @@ export const usePagination = <T, Offset = number>(
   }, [])
 
   return {
+    idle,
     loading: state === "loading",
     data,
     more: !done

@@ -31,6 +31,8 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
     </section>
   )
 
+  const isBalance = help?.title === "Balance"
+
   return (
     <div className={cx(styles.group, styles.component, `type-${type}`)}>
       <div className={cx(type === 1 && border)}>
@@ -40,20 +42,14 @@ const FormGroup = ({ input, textarea, select, value, ...props }: FormGroup) => {
               <label htmlFor={input?.id}>{label}</label>
             </section>
 
-            {help && (
-              <section
-                className={cx(styles.help, { clickable: max })}
-                onClick={max}
-              >
-                {help.title === "Balance" ? (
-                  <Icon name="Wallet" />
-                ) : (
-                  `${help.title}: `
-                )}
-
-                <strong>{help.content}</strong>
-              </section>
-            )}
+            <section
+              className={cx(styles.help, { clickable: max })}
+              onClick={max}
+            >
+              <Icon name="Wallet" className={cx({ hidden: !isBalance })} />
+              {help && !isBalance && `${help.title}: `}
+              <strong>{help?.content}</strong>
+            </section>
           </header>
         )}
 
