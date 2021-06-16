@@ -54,7 +54,7 @@ const Dashboard = () => {
           ],
           [
             { component: bound(<LiquidityHistoryChart />), flex: "none" },
-            { component: bound(<VolumeHistoryChart />), flex: "none" },
+            { component: bound(<VolumeHistoryChart />), flex: 1 },
           ],
         ]}
       </Masonry>
