@@ -122,6 +122,7 @@ export const STATISTIC = {
   DASHBOARD: gql`
     query statistic($network: Network) {
       statistic(network: $network) {
+        mirPrice
         assetMarketCap
         govAPR
 

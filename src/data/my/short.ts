@@ -4,7 +4,7 @@ import { PriceKey, StakingKey } from "../../hooks/contractKeys"
 import { protocolQuery } from "../contract/protocol"
 import { findQuery, findStakingQuery } from "../contract/normalize"
 import { rewardsQuery } from "../contract/normalize"
-import { assetsHelpersQuery } from "../stats/assets"
+import { assetsByNetworkState, getAssetsHelpers } from "../stats/assets"
 import { StatsNetwork } from "../stats/statistic"
 import { myLockedUSTQuery } from "./locked"
 
@@ -14,7 +14,8 @@ export const myShortFarmingQuery = selector({
     const priceKey = PriceKey.PAIR
 
     const { listedAll, getToken } = get(protocolQuery)
-    const { shortAPR } = get(assetsHelpersQuery(StatsNetwork.TERRA))
+    const assets = get(assetsByNetworkState(StatsNetwork.TERRA))
+    const { shortAPR } = getAssetsHelpers(assets)
     const mir = getToken("MIR")
 
     const find = get(findQuery)

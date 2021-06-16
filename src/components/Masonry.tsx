@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 import styles from "./Masonry.module.scss"
 
 interface Item {
-  flex?: number
+  flex: number | "none"
   component: ReactNode
 }
 

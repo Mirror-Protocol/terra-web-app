@@ -3,7 +3,7 @@ import { gt, sum, times } from "../../libs/math"
 import { PriceKey, BalanceKey } from "../../hooks/contractKeys"
 import { protocolQuery } from "../contract/protocol"
 import { findQuery } from "../contract/normalize"
-import { findChangeQuery } from "../stats/assets"
+import { changesQuery } from "../stats/assets"
 
 export const myHoldingQuery = selector({
   key: "myHolding",
@@ -11,7 +11,7 @@ export const myHoldingQuery = selector({
     const balanceKey = BalanceKey.TOKEN
     const { listedAll, getIsDelisted } = get(protocolQuery)
     const find = get(findQuery)
-    const findChange = get(findChangeQuery)
+    const changes = get(changesQuery)
 
     const dataSource = listedAll
       .map((item) => {
@@ -21,7 +21,7 @@ export const myHoldingQuery = selector({
         const balance = find(balanceKey, token)
         const price = find(priceKey, token)
         const value = times(balance, price)
-        const change = findChange(PriceKey.PAIR, token)
+        const change = changes[token]?.[PriceKey.PAIR]
 
         return { ...item, balance, price, value, change }
       })

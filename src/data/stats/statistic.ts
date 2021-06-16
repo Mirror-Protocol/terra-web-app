@@ -1,6 +1,7 @@
-import { atom, selectorFamily, useRecoilValue } from "recoil"
+import { atom, atomFamily, selectorFamily, useRecoilValue } from "recoil"
 import { request } from "graphql-request"
 import { getTime, startOfMinute, subDays } from "date-fns"
+import { useStoreLoadable } from "../utils/loadable"
 import { locationKeyState } from "../app"
 import { statsURLQuery } from "../network"
 import { STATISTIC } from "./gqldocs"
@@ -16,8 +17,8 @@ export const dashboardNetworkState = atom({
   default: StatsNetwork.COMBINE,
 })
 
-export const statisticQuery = selectorFamily({
-  key: "statistic",
+export const statisticByNetworkQuery = selectorFamily({
+  key: "statisticByNetwork",
   get:
     (network: StatsNetwork) =>
     async ({ get }) => {
@@ -35,8 +36,13 @@ export const statisticQuery = selectorFamily({
     },
 })
 
-export const statisticHistoryQuery = selectorFamily({
-  key: "statisticHistory",
+const statisticByNetworkState = atomFamily({
+  key: "statisticByNetworkState",
+  default: statisticByNetworkQuery,
+})
+
+export const statisticHistoryByNetworkQuery = selectorFamily({
+  key: "statisticHistoryByNetwork",
   get:
     (network: StatsNetwork) =>
     async ({ get }) => {
@@ -58,7 +64,24 @@ export const statisticHistoryQuery = selectorFamily({
     },
 })
 
+const statisticHistoryByNetworkState = atomFamily({
+  key: "statisticHistoryByNetworkState",
+  default: statisticHistoryByNetworkQuery,
+})
+
+/* hooks */
 export const useDashboard = () => {
   const network = useRecoilValue(dashboardNetworkState)
-  return useRecoilValue(statisticQuery(network))
+  return useStoreLoadable(
+    statisticByNetworkQuery(network),
+    statisticByNetworkState(network)
+  )
+}
+
+export const useDashboardCharts = () => {
+  const network = useRecoilValue(dashboardNetworkState)
+  return useStoreLoadable(
+    statisticHistoryByNetworkQuery(network),
+    statisticHistoryByNetworkState(network)
+  )
 }

@@ -1,17 +1,17 @@
-import { selector, selectorFamily } from "recoil"
-import { useRecoilValue, useRecoilValueLoadable } from "recoil"
+import { atom, atomFamily, selector, selectorFamily } from "recoil"
 import { request } from "graphql-request"
 import { path } from "ramda"
 import { getTime, startOfMinute, subDays } from "date-fns"
 import { minus, div, gt, isFinite, number } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
+import { useStoreLoadable } from "../utils/loadable"
 import { locationKeyState } from "../app"
 import { statsURLQuery } from "../network"
 import { StatsNetwork } from "./statistic"
 import { ASSETS } from "./gqldocs"
 
-export const assetsQuery = selectorFamily({
-  key: "assets",
+export const assetsByNetworkQuery = selectorFamily({
+  key: "assetsByNetwork",
   get:
     (network: StatsNetwork) =>
     async ({ get }) => {
@@ -29,6 +29,11 @@ export const assetsQuery = selectorFamily({
         {}
       )
     },
+})
+
+export const assetsByNetworkState = atomFamily({
+  key: "assetsByNetworkState",
+  default: assetsByNetworkQuery,
 })
 
 export const assetsHistoryQuery = selector({
@@ -51,8 +56,17 @@ export const assetsHistoryQuery = selector({
   },
 })
 
-export const getChangesQuery = selector({
-  key: "getChange",
+const assetsHistoryState = atom<Dictionary<PriceHistoryItem[]>>({
+  key: "assetsHistoryState",
+  default: {},
+})
+
+type Changes =
+  | { [PriceKey.PAIR]?: number; [PriceKey.ORACLE]?: number }
+  | undefined
+
+export const changesQuery = selector({
+  key: "changes",
   get: async ({ get }) => {
     interface Asset {
       token: string
@@ -68,17 +82,16 @@ export const getChangesQuery = selector({
     const url = get(statsURLQuery)
     const yesterday = getTime(subDays(startOfMinute(new Date()), 1))
     const { assets } = await request<{ assets: Asset[] }>(
-      url + "?assetsChange",
+      url + "?assetsChanges",
       ASSETS.CHANGE,
       { timestamp: yesterday }
     )
 
-    return (token: string) => {
-      const asset = assets.find((asset) => asset.token === token)
-      if (asset) {
-        const { price, priceAt, oraclePrice, oraclePriceAt } = asset.prices
-
-        return {
+    return assets.reduce<Dictionary<Changes>>((acc, { token, prices }) => {
+      const { price, priceAt, oraclePrice, oraclePriceAt } = prices
+      return {
+        ...acc,
+        [token]: {
           [PriceKey.PAIR]: calcChange({
             today: price,
             yesterday: priceAt ?? undefined,
@@ -87,72 +100,65 @@ export const getChangesQuery = selector({
             today: oraclePrice,
             yesterday: oraclePriceAt ?? undefined,
           }),
-        }
-      } else {
-        return {
-          [PriceKey.PAIR]: undefined,
-          [PriceKey.ORACLE]: undefined,
-        }
+        },
       }
-    }
+    }, {})
   },
 })
 
-/* helpers */
-export const assetsHelpersQuery = selectorFamily({
-  key: "assetsHelpers",
-  get:
-    (network: StatsNetwork) =>
-    ({ get }) => {
-      get(locationKeyState)
-      const assets = get(assetsQuery(network))
-
-      const getValueFromAsset = (key: string) => (token: string) =>
-        path(key.split("."), assets[token]) as string
-
-      return {
-        [PriceKey.PAIR]: getValueFromAsset("prices.price"),
-        [PriceKey.ORACLE]: getValueFromAsset("prices.oraclePrice"),
-        description: getValueFromAsset("description"),
-        liquidity: getValueFromAsset("statistic.liquidity"),
-        volume: getValueFromAsset("statistic.volume"),
-        longAPR: getValueFromAsset("statistic.apr.long"),
-        shortAPR: getValueFromAsset("statistic.apr.short"),
-      }
-    },
-})
-
-export const findChangeQuery = selector({
-  key: "findChange",
-  get: ({ get }) => {
-    const change = get(getChangesQuery)
-
-    return (key: string, token: string) => {
-      if (!(key === PriceKey.PAIR || key === PriceKey.ORACLE)) return
-
-      return change(token)[key]
-    }
-  },
+const changesState = atom<Dictionary<Changes>>({
+  key: "changesState",
+  default: {},
 })
 
 /* hooks */
-export const useAssetsHelpers = (network = StatsNetwork.TERRA) => {
-  return useRecoilValue(assetsHelpersQuery(network))
+export const useAssetsByNetwork = (network = StatsNetwork.TERRA) => {
+  return useStoreLoadable(
+    assetsByNetworkQuery(network),
+    assetsByNetworkState(network)
+  )
 }
 
-export const useGetChange = () => {
-  const loadable = useRecoilValueLoadable(getChangesQuery)
-  return loadable.state === "hasValue" ? loadable.contents : undefined
+export const useAssetsHelpersByNetwork = (network = StatsNetwork.TERRA) => {
+  const assets = useAssetsByNetwork(network)
+  return getAssetsHelpers(assets)
+}
+
+export const getAssetsHelpers = (assets: Dictionary<AssetDataItem>) => {
+  const getValueFromAsset = (key: string) => (token: string) =>
+    path(key.split("."), assets[token]) as string
+
+  return {
+    [PriceKey.PAIR]: getValueFromAsset("prices.price"),
+    [PriceKey.ORACLE]: getValueFromAsset("prices.oraclePrice"),
+    description: getValueFromAsset("description"),
+    liquidity: getValueFromAsset("statistic.liquidity"),
+    volume: getValueFromAsset("statistic.volume"),
+    longAPR: getValueFromAsset("statistic.apr.long"),
+    shortAPR: getValueFromAsset("statistic.apr.short"),
+  }
+}
+
+export const useChanges = () => {
+  return useStoreLoadable(changesQuery, changesState)
+}
+
+export const useFindChanges = () => {
+  const changes = useChanges()
+  return (token: string) => changes[token] ?? {}
 }
 
 export const useFindChange = () => {
-  const loadable = useRecoilValueLoadable(findChangeQuery)
-  return loadable.state === "hasValue" ? loadable.contents : undefined
+  const findChanges = useFindChanges()
+  return (key: PriceKey, token: string) => {
+    if (!hasChanges(key)) return
+    const changes = findChanges(token)
+    return changes[key]
+  }
 }
 
 export const useAssetsHistory = () => {
-  const loadable = useRecoilValueLoadable(assetsHistoryQuery)
-  return loadable.state === "hasValue" ? loadable.contents : undefined
+  return useStoreLoadable(assetsHistoryQuery, assetsHistoryState)
 }
 
 /* utils */
@@ -163,3 +169,8 @@ export const calcChange = ({ yesterday, today }: Params) => {
     ? result
     : undefined
 }
+
+export const hasChanges = (
+  key: PriceKey
+): key is PriceKey.PAIR | PriceKey.ORACLE =>
+  key === PriceKey.PAIR || key === PriceKey.ORACLE

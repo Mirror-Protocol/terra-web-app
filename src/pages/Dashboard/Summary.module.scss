@@ -21,12 +21,10 @@
   font-weight: 500;
 
   @include mobile {
-    margin-top: 24px;
     margin-bottom: 4px;
   }
 
   @include desktop {
-    margin-top: 32px;
     margin-bottom: 8px;
   }
 
@@ -38,9 +36,11 @@
 
   @include mobile {
     font-size: 18px;
+    margin-bottom: 24px;
   }
 
   @include desktop {
     font-size: 28px;
+    margin-bottom: 32px;
   }
 }

@@ -1,8 +1,9 @@
-import { selector, useRecoilValue } from "recoil"
+import { atom, selector, useRecoilValue } from "recoil"
 import { div, gt, sum } from "../../libs/math"
 import { getIsTokenNative } from "../../libs/parse"
 import { PriceKey, BalanceKey, StakingKey } from "../../hooks/contractKeys"
 import { AssetInfoKey } from "../../hooks/contractKeys"
+import { useStoreLoadable } from "../utils/loadable"
 import { exchangeRatesQuery } from "../native/exchange"
 import { bankBalanceQuery } from "../native/balance"
 import { externalBalancesQuery } from "../external/external"
@@ -190,7 +191,7 @@ export const findPairPriceQuery = selector({
   },
 })
 
-export const MIRPriceQuery = selector({
+const MIRPriceQuery = selector({
   key: "MIRPrice",
   get: ({ get }) => {
     const { getToken } = get(protocolQuery)
@@ -199,6 +200,11 @@ export const MIRPriceQuery = selector({
     const findPrice = get(findPairPriceQuery)
     return findPrice(token)
   },
+})
+
+export const MIRPriceState = atom({
+  key: "MIRPriceState",
+  default: MIRPriceQuery,
 })
 
 export const findBalanceQuery = selector({
@@ -280,7 +286,7 @@ export const useFindPrice = () => {
 }
 
 export const useMIRPrice = () => {
-  return useRecoilValue(MIRPriceQuery)
+  return useStoreLoadable(MIRPriceQuery, MIRPriceState)
 }
 
 export const useFindBalance = () => {

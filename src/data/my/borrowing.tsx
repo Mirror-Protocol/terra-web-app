@@ -1,7 +1,7 @@
 import { selector, useRecoilValue } from "recoil"
 import { gte, lt, lte, minus, sum, times } from "../../libs/math"
 import calc from "../../libs/calc"
-import { findChangeQuery } from "../stats/assets"
+import { changesQuery, hasChanges } from "../stats/assets"
 import { protocolQuery } from "../contract/protocol"
 import { findQuery } from "../contract/normalize"
 import { mintPositionsQuery } from "../contract/positions"
@@ -15,7 +15,7 @@ export const myBorrowingQuery = selector({
   get: ({ get }) => {
     const { getIsDelisted, parseToken } = get(protocolQuery)
     const find = get(findQuery)
-    const findChange = get(findChangeQuery)
+    const changes = get(changesQuery)
     const positions = get(mintPositionsQuery)
     const getMinRatio = get(getMinRatioQuery)
     const getPriceKey = get(getMintPriceKeyQuery)
@@ -28,10 +28,9 @@ export const myBorrowingQuery = selector({
         const collateralDelisted = getIsDelisted(collateral.token)
         const collateralPrice = find(collateralPriceKey, collateral.token)
         const collateralValue = times(collateral.amount, collateralPrice)
-        const collateralChange = findChange(
-          collateralPriceKey,
-          collateral.token
-        )
+        const collateralChange = hasChanges(collateralPriceKey)
+          ? changes[collateral.token]?.[collateralPriceKey]
+          : undefined
 
         /* asset */
         const asset = parseToken(position.asset)
@@ -39,7 +38,9 @@ export const myBorrowingQuery = selector({
         const assetDelisted = getIsDelisted(asset.token)
         const assetPrice = find(assetPriceKey, asset.token)
         const assetValue = times(asset.amount, assetPrice)
-        const assetChange = findChange(assetPriceKey, asset.token)
+        const assetChange = hasChanges(assetPriceKey)
+          ? changes[asset.token]?.[assetPriceKey]
+          : undefined
 
         /* ratio */
         const minRatio = getMinRatio(collateral.token, asset.token)

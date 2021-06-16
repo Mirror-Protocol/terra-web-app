@@ -2,8 +2,8 @@ import { useState } from "react"
 
 import { lt, gt, number } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
-import { Item, useAssetList } from "../../data/stats/list"
-import { useAssetsHistory, useGetChange } from "../../data/stats/assets"
+import { Item, useTerraAssetList } from "../../data/stats/list"
+import { useAssetsHistory, useFindChanges } from "../../data/stats/assets"
 
 import Table from "../../components/Table"
 import Change from "../../components/Change"
@@ -42,23 +42,20 @@ const Sorters: Dictionary<Sorter> = {
 }
 
 const MarketList = () => {
-  const list = useAssetList()
-  const getChange = useGetChange()
+  const list = useTerraAssetList()
+  const findChanges = useFindChanges()
   const history = useAssetsHistory()
 
   /* sort */
   const [input, setInput] = useState("")
   const [sorter, setSorter] = useState("TOPTRADING")
 
-  const dataSource =
-    list
-      ?.filter(({ name, symbol }) =>
-        [name, symbol].some((l) =>
-          l.toLowerCase().includes(input.toLowerCase())
-        )
-      )
-      .map((item) => ({ ...item, change: getChange?.(item.token) }))
-      .sort(Sorters[sorter].compare) ?? []
+  const dataSource = list
+    .filter(({ name, symbol }) =>
+      [name, symbol].some((l) => l.toLowerCase().includes(input.toLowerCase()))
+    )
+    .map((item) => ({ ...item, change: findChanges(item.token) }))
+    .sort(Sorters[sorter].compare)
 
   return (
     <>
@@ -72,7 +69,7 @@ const MarketList = () => {
         </select>
       </Search>
 
-      {!list ? (
+      {!list.length ? (
         <AssetsIdleTable />
       ) : (
         <Table

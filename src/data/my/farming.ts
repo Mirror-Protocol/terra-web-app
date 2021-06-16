@@ -1,7 +1,7 @@
 import { selector, useRecoilValue } from "recoil"
 import { gt, sum, times } from "../../libs/math"
 import { PriceKey, StakingKey } from "../../hooks/contractKeys"
-import { assetsHelpersQuery } from "../stats/assets"
+import { assetsByNetworkState, getAssetsHelpers } from "../stats/assets"
 import { StatsNetwork } from "../stats/statistic"
 import { protocolQuery } from "../contract/protocol"
 import { findQuery, findStakingQuery } from "../contract/normalize"
@@ -15,7 +15,8 @@ export const myFarmingQuery = selector({
     const priceKey = PriceKey.PAIR
 
     const { listedAll, getToken } = get(protocolQuery)
-    const { longAPR } = get(assetsHelpersQuery(StatsNetwork.TERRA))
+    const assets = get(assetsByNetworkState(StatsNetwork.TERRA))
+    const { longAPR } = getAssetsHelpers(assets)
     const getPool = get(poolQuery)
     const mir = getToken("MIR")
 

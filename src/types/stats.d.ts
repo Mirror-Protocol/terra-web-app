@@ -2,6 +2,7 @@ interface Dashboard {
   assetMarketCap: string
   govAPR: string
 
+  mirPrice: string
   mirSupply: MIRSupply
   totalValueLocked: TVL
 

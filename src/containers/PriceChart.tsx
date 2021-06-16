@@ -7,7 +7,7 @@ import { format, formatAsset } from "../libs/parse"
 import { div, minus } from "../libs/math"
 import { percent } from "../libs/num"
 import { getAssetQuery } from "../data/stats/asset"
-import { calcChange, useAssetsHelpers } from "../data/stats/assets"
+import { calcChange, useAssetsHelpersByNetwork } from "../data/stats/assets"
 import Change from "../components/Change"
 import AssetItem from "../components/AssetItem"
 import { CardMain } from "../components/Card"
@@ -21,7 +21,7 @@ const cx = classNames.bind(styles)
 const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
   const now = startOfMinute(new Date())
   const yesterday = subDays(now, 1).getTime()
-  const { description } = useAssetsHelpers()
+  const { description } = useAssetsHelpersByNetwork()
 
   const ranges = [
     {

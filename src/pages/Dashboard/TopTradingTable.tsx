@@ -1,9 +1,8 @@
 import { useRecoilValue } from "recoil"
-import { sort } from "ramda"
-import { gt } from "../../libs/math"
+import { minus, number } from "../../libs/math"
+import { PriceKey } from "../../hooks/contractKeys"
 import { useProtocol } from "../../data/contract/protocol"
-import { useFindPairPrice } from "../../data/contract/normalize"
-import { useAssetsHelpers } from "../../data/stats/assets"
+import { useAssetsHelpersByNetwork } from "../../data/stats/assets"
 import { dashboardNetworkState } from "../../data/stats/statistic"
 import Table from "../../components/Table"
 import Formatted from "../../components/Formatted"
@@ -15,13 +14,17 @@ import styles from "./TopTradingTable.module.scss"
 const TopTradingTable = () => {
   const { listed } = useProtocol()
   const network = useRecoilValue(dashboardNetworkState)
-  const { volume } = useAssetsHelpers(network)
-  const findPrice = useFindPairPrice()
+  const { [PriceKey.PAIR]: findPrice, volume } =
+    useAssetsHelpersByNetwork(network)
 
-  const dataSource = sort(
-    (a, b) => (gt(volume(b.token), volume(a.token)) ? 1 : -1),
-    listed
-  )
+  const dataSource = listed
+    .map((item) => ({
+      ...item,
+      price: findPrice(item.token),
+      volume: volume(item.token),
+    }))
+    .sort(({ volume: a }, { volume: b }) => number(minus(b, a)))
+    .slice(0, 4)
 
   return (
     <Table
@@ -40,16 +43,15 @@ const TopTradingTable = () => {
         },
         {
           key: "price",
-          dataIndex: "token",
-          render: (token) => (
+          render: (price) => (
             <Formatted className={styles.price} unit="UST">
-              {findPrice(token)}
+              {price}
             </Formatted>
           ),
           align: "right",
         },
       ]}
-      dataSource={dataSource.slice(0, 4)}
+      dataSource={dataSource}
       config={{ hideHeader: true, noRadius: true, darker: true }}
     />
   )

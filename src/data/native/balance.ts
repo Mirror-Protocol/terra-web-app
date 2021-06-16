@@ -26,18 +26,18 @@ export const bankBalanceQuery = selector({
   },
 })
 
-/* state */
-export const uusdBalanceState = atom({
-  key: "uusdBalanceState",
-  default: "0",
-})
-
+/* uusd balance */
 export const uusdBalanceQuery = selector({
   key: "uusdBalanceQuery",
   get: ({ get }) => {
     const { uusd } = get(nativeBalancesQuery)
     return uusd
   },
+})
+
+export const uusdBalanceState = atom({
+  key: "uusdBalanceState",
+  default: uusdBalanceQuery,
 })
 
 export const useUusdBalance = () => {

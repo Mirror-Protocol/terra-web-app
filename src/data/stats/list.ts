@@ -3,7 +3,7 @@ import { PriceKey } from "../../hooks/contractKeys"
 import { div, gt, minus } from "../../libs/math"
 import { protocolQuery } from "../contract/protocol"
 import { useStoreLoadable } from "../utils/loadable"
-import { assetsHelpersQuery } from "./assets"
+import { assetsByNetworkState, getAssetsHelpers } from "./assets"
 import { StatsNetwork } from "./statistic"
 
 type FarmingType = "long" | "short"
@@ -24,10 +24,11 @@ export interface Item extends DefaultItem {
   change?: { [PriceKey.PAIR]?: number; [PriceKey.ORACLE]?: number }
 }
 
-export const getAssetItemQuery = selector({
-  key: "getAssetItem",
+export const getTerraAssetItemQuery = selector({
+  key: "getTerraAssetItem",
   get: ({ get }) => {
-    const helpers = get(assetsHelpersQuery(StatsNetwork.TERRA))
+    const assets = get(assetsByNetworkState(StatsNetwork.TERRA))
+    const helpers = getAssetsHelpers(assets)
 
     return (item: ListedItem): DefaultItem => {
       const { [PriceKey.PAIR]: getPair, [PriceKey.ORACLE]: getOracle } = helpers
@@ -54,11 +55,11 @@ export const getAssetItemQuery = selector({
   },
 })
 
-export const assetListQuery = selector({
-  key: "assetList",
+export const TerraAssetListQuery = selector({
+  key: "TerraAssetList",
   get: ({ get }) => {
     const { listed } = get(protocolQuery)
-    const getAssetItem = get(getAssetItemQuery)
+    const getAssetItem = get(getTerraAssetItemQuery)
 
     return listed
       .map(getAssetItem)
@@ -67,11 +68,11 @@ export const assetListQuery = selector({
 })
 
 /* state */
-export const assetListState = atom<DefaultItem[] | undefined>({
-  key: "assetListState",
-  default: undefined,
+export const TerraAssetListState = atom<DefaultItem[]>({
+  key: "TerraAssetListState",
+  default: [], // idle
 })
 
-export const useAssetList = () => {
-  return useStoreLoadable(assetListQuery, assetListState)
+export const useTerraAssetList = () => {
+  return useStoreLoadable(TerraAssetListQuery, TerraAssetListState)
 }

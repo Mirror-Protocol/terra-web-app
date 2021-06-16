@@ -1,18 +1,19 @@
+import { isNil } from "ramda"
 import { useProtocol } from "../../data/contract/protocol"
 import { PriceKey } from "../../hooks/contractKeys"
-import { useMIRPrice } from "../../data/contract/normalize"
 import { useFindChange } from "../../data/stats/assets"
+import { useDashboard } from "../../data/stats/statistic"
 import Card from "../../components/Card"
 import Formatted from "../../components/Formatted"
 import Change from "../../components/Change"
 
 const MIRPrice = () => {
   const { getToken } = useProtocol()
+  const { mirPrice: price } = useDashboard()
   const token = getToken("MIR")
 
   const findChange = useFindChange()
-  const price = useMIRPrice()
-  const change = findChange?.(PriceKey.PAIR, token)
+  const change = findChange(PriceKey.PAIR, token)
 
   return (
     <Card title="MIR Price" lg>
@@ -21,7 +22,7 @@ const MIRPrice = () => {
       </Formatted>
 
       <footer>
-        <Change>{change}</Change>
+        <Change idle={isNil(change)}>{change}</Change>
       </footer>
     </Card>
   )
