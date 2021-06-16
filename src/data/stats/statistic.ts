@@ -23,12 +23,10 @@ export const statisticQuery = selectorFamily({
     async ({ get }) => {
       get(locationKeyState)
       const url = get(statsURLQuery)
-      const variables = {
-        network: network.toUpperCase(),
-      }
+      const variables = { network: network.toUpperCase() }
 
       const { statistic } = await request<{ statistic: Dashboard }>(
-        url + "?dashboard",
+        `${url}?dashboard:${network.toUpperCase()}`,
         STATISTIC.DASHBOARD,
         variables
       )
@@ -51,7 +49,7 @@ export const statisticHistoryQuery = selectorFamily({
       }
 
       const { statistic } = await request<{ statistic: DashboardHistory }>(
-        url + "?history",
+        `${url}?history:${network.toUpperCase()}`,
         STATISTIC.HISTORY,
         variables
       )

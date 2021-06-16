@@ -19,7 +19,7 @@ export const assetsQuery = selectorFamily({
       const url = get(statsURLQuery)
 
       const { assets } = await request<{ assets: AssetDataItem[] }>(
-        url + "?assetsStats",
+        `${url}?assetsStats:${network.toUpperCase()}`,
         ASSETS.STATS,
         { network: network.toUpperCase() }
       )
