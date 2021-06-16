@@ -61,27 +61,8 @@ export const useContractsAddressState = (): ContractsAddress | undefined => {
         lpToken: "",
       }
 
-    // const getSymbol = (key?: string) =>
-    //   key === UUSD ? key : getListedItem(key).symbol
-
-    // const toAssetInfo = (symbol: string) => {
-    //   symbol === 'Luna'
-    //     ? { native_token: { denom: symbol } }
-    //     : { token: { contract_addr: getListedItem(symbol)["token"] } }
-    //   }
-
-    // const isNativeToken: boolean = (key: string) => {
-    // const isNativeToken = (key: string): boolean =>
     const isNativeToken = (key: string) =>
       NATIVE_TOKENS.indexOf(key) > -1 ? true : false
-
-    // const getContractAddr = (key: string) => {
-    //   const retVal: { [key: string]: string } = {
-    //     LABS: "terra1xt8efpfkyka8807t9kd29zs5mfcmt4rzhqfw8c",
-    //     DELIGHT: "terra18sl63stqew9kd9g0f2ngw0cdxud7236xt7ydh9",
-    //   }
-    //   return retVal[key]
-    // }
 
     const toAssetInfo = (key: string) =>
       NATIVE_TOKENS.indexOf(key) > -1

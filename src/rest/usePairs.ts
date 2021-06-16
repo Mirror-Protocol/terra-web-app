@@ -74,6 +74,7 @@ interface TokenResult {
   symbol: string
   decimals: number
   total_supply: string
+  contract_addr: string
 }
 
 export let tokenInfos: Map<string, TokenInfo> = new Map<string, TokenInfo>([
@@ -121,13 +122,24 @@ export let InitLP = ""
 export default () => {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<Pairs>({ pairs: [] })
-  const { loadPairs, loadTokenInfo } = useAPI()
+  const { loadPairs, loadTokenInfo, loadTokensInfo } = useAPI()
   const { name } = useNetwork()
 
   useEffect(() => {
+    try {
+      loadTokensInfo().then((res: TokenResult[]) => {
+        res.forEach((tokenInfo: TokenResult) => {
+          tokenInfos.set(tokenInfo.contract_addr, tokenInfo)
+        })
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
     if (name === "testnet") {
       testnetTokens.forEach((token) => {
-        if (token !== undefined && token.symbol) {
+        tokenInfos.get(token.contract_addr)
+        if (token !== undefined && token.symbol && !tokenInfos.has(token.contract_addr)) {
           tokenInfos.set(token.contract_addr, {
             contract_addr: token.contract_addr,
             symbol: token.symbol,
@@ -135,16 +147,19 @@ export default () => {
           })
         }
       })
-      return
-    }
-    mainnetTokens.forEach((token) => {
-      tokenInfos.set(token.contract_addr, {
-        contract_addr: token.contract_addr,
-        symbol: token.symbol,
-        name: token.name,
+    } else {
+      mainnetTokens.forEach((token) => {
+        if(token !== undefined && token.symbol && !tokenInfos.has(token.contract_addr)) {
+          tokenInfos.set(token.contract_addr, {
+            contract_addr: token.contract_addr,
+            symbol: token.symbol,
+            name: token.name,
+          })
+        }
       })
-    })
-  }, [name])
+    }
+
+  }, [name, loadTokensInfo])
   const getTokenInfo = useCallback(
     async (info: NativeInfo | AssetInfo) => {
       let tokenInfo: TokenInfo | undefined
