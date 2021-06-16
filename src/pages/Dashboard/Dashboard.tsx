@@ -56,8 +56,8 @@ const Dashboard = () => {
             { flex: 7, component: bound(<MIRSupply />, fallback) },
           ],
           [
-            { component: bound(<LiquidityHistoryChart />, fallback) },
-            { component: bound(<VolumeHistoryChart />, fallback) },
+            { component: bound(<LiquidityHistoryChart />) },
+            { component: bound(<VolumeHistoryChart />) },
           ],
         ]}
       </Masonry>
