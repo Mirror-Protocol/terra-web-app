@@ -62,6 +62,11 @@ export const tokenBalancesQuery = selector({
   },
 })
 
+const tokenBalancesState = atom<Dictionary>({
+  key: "tokenBalancesState",
+  default: {},
+})
+
 export const lpStakableBalancesQuery = selector({
   key: "lpStakableBalances",
   get: ({ get }) => {
@@ -277,16 +282,17 @@ export const findAssetInfoQuery = selector({
 })
 
 /* hooks */
+export const useTokenBalances = () => {
+  return useStoreLoadable(tokenBalancesQuery, tokenBalancesState)
+}
+
+/* hooks:find */
 export const useFindPairPrice = () => {
   return useRecoilValue(findPairPriceQuery)
 }
 
 export const useFindPrice = () => {
   return useRecoilValue(findPriceQuery)
-}
-
-export const useMIRPrice = () => {
-  return useStoreLoadable(MIRPriceQuery, MIRPriceState)
 }
 
 export const useFindBalance = () => {
@@ -307,6 +313,10 @@ export const useFindAssetInfo = () => {
 
 export const useRewards = () => {
   return useRecoilValue(rewardsQuery)
+}
+
+export const useMIRPrice = () => {
+  return useStoreLoadable(MIRPriceQuery, MIRPriceState)
 }
 
 /* utils */

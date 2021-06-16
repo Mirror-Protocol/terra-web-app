@@ -1,7 +1,8 @@
-import { selector, useRecoilValue } from "recoil"
+import { atom, selector } from "recoil"
 import { locationKeyState } from "../app"
 import { getContractQueryQuery } from "../utils/query"
-import { iterateAllPageQuery } from "../utils/pagination"
+import { useStoreLoadable } from "../utils/loadable"
+import { iterateAllPage } from "../utils/pagination"
 import { addressState } from "../wallet"
 import { protocolQuery } from "./protocol"
 
@@ -16,7 +17,6 @@ export const limitOrdersQuery = selector({
     if (address) {
       const { contracts } = get(protocolQuery)
       const getContractQuery = get(getContractQueryQuery)
-      const iterateAllPage = get(iterateAllPageQuery)
 
       const query = async (offset?: number) => {
         const response = await getContractQuery<{ orders: Order[] }>(
@@ -43,6 +43,11 @@ export const limitOrdersQuery = selector({
   },
 })
 
+const limitOrdersState = atom<Order[]>({
+  key: "limitOrdersState",
+  default: [],
+})
+
 export const useLimitOrders = () => {
-  return useRecoilValue(limitOrdersQuery)
+  return useStoreLoadable(limitOrdersQuery, limitOrdersState)
 }

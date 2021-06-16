@@ -1,4 +1,5 @@
-import { selector } from "recoil"
+import { atom, selector } from "recoil"
+import { useStoreLoadable } from "../utils/loadable"
 import { getListedContractQueriesQuery } from "../utils/queries"
 import { getContractQueryQuery } from "../utils/query"
 import { addressState } from "../wallet"
@@ -100,6 +101,11 @@ export const stakingRewardInfoQuery = selector({
   },
 })
 
+export const stakingRewardInfoState = atom<StakingRewardInfo | undefined>({
+  key: "stakingRewardInfoState",
+  default: undefined,
+})
+
 export const govStakerQuery = selector({
   key: "govStaker",
   get: async ({ get }) => {
@@ -115,3 +121,8 @@ export const govStakerQuery = selector({
     }
   },
 })
+
+/* hooks */
+export const useStakingRewardInfo = () => {
+  return useStoreLoadable(stakingRewardInfoQuery, stakingRewardInfoState)
+}

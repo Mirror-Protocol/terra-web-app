@@ -1,6 +1,7 @@
-import { selector, useRecoilValue } from "recoil"
+import { atom, selector } from "recoil"
 import { getContractQueryQuery } from "../utils/query"
-import { iterateAllPageQuery } from "../utils/pagination"
+import { useStoreLoadable } from "../utils/loadable"
+import { iterateAllPage } from "../utils/pagination"
 import { addressState } from "../wallet"
 import { protocolQuery } from "./protocol"
 
@@ -14,7 +15,6 @@ export const mintPositionsQuery = selector({
     if (address) {
       const { contracts } = get(protocolQuery)
       const getContractQuery = get(getContractQueryQuery)
-      const iterateAllPage = get(iterateAllPageQuery)
 
       const query = async (offset?: string) => {
         const response = await getContractQuery<MintPositions>(
@@ -40,6 +40,11 @@ export const mintPositionsQuery = selector({
   },
 })
 
+const mintPositionsState = atom<MintPosition[]>({
+  key: "mintPositions",
+  default: [],
+})
+
 export const shortPositionsQuery = selector({
   key: "shortPositions",
   get: ({ get }) => {
@@ -48,6 +53,7 @@ export const shortPositionsQuery = selector({
   },
 })
 
+/* hooks */
 export const useMintPositions = () => {
-  return useRecoilValue(mintPositionsQuery)
+  return useStoreLoadable(mintPositionsQuery, mintPositionsState)
 }
