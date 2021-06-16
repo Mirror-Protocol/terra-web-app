@@ -39,7 +39,7 @@ export const anchorMarketEpochStateQuery = selector({
   },
 })
 
-export const anchorPricesQuery = selector({
+export const anchorPricesQuery = selector<Dictionary>({
   key: "anchorPrices",
   get: async ({ get }) => {
     const getPairPrices = get(getPairPricesQuery("anchorPairPrices"))

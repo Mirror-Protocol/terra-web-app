@@ -1,7 +1,7 @@
-import { selector, useRecoilValue } from "recoil"
+import { atom, noWait, selector } from "recoil"
 import { gte, lt, lte, minus, sum, times } from "../../libs/math"
 import calc from "../../libs/calc"
-import { changesQuery, hasChanges } from "../stats/assets"
+import { getLoadableContents, useStoreLoadable } from "../utils/loadable"
 import { protocolQuery } from "../contract/protocol"
 import { findQuery } from "../contract/normalize"
 import { mintPositionsQuery } from "../contract/positions"
@@ -14,11 +14,12 @@ export const myBorrowingQuery = selector({
   key: "myBorrowing",
   get: ({ get }) => {
     const { getIsDelisted, parseToken } = get(protocolQuery)
-    const find = get(findQuery)
-    const changes = get(changesQuery)
     const positions = get(mintPositionsQuery)
-    const getMinRatio = get(getMinRatioQuery)
+
+    const find = get(findQuery)
     const getPriceKey = get(getMintPriceKeyQuery)
+    const getMinRatioLoadable = get(noWait(getMinRatioQuery))
+    const getMinRatio = getLoadableContents(getMinRatioLoadable)
 
     const dataSource = positions
       .map((position) => {
@@ -28,9 +29,6 @@ export const myBorrowingQuery = selector({
         const collateralDelisted = getIsDelisted(collateral.token)
         const collateralPrice = find(collateralPriceKey, collateral.token)
         const collateralValue = times(collateral.amount, collateralPrice)
-        const collateralChange = hasChanges(collateralPriceKey)
-          ? changes[collateral.token]?.[collateralPriceKey]
-          : undefined
 
         /* asset */
         const asset = parseToken(position.asset)
@@ -38,12 +36,9 @@ export const myBorrowingQuery = selector({
         const assetDelisted = getIsDelisted(asset.token)
         const assetPrice = find(assetPriceKey, asset.token)
         const assetValue = times(asset.amount, assetPrice)
-        const assetChange = hasChanges(assetPriceKey)
-          ? changes[asset.token]?.[assetPriceKey]
-          : undefined
 
         /* ratio */
-        const minRatio = getMinRatio(collateral.token, asset.token)
+        const minRatio = getMinRatio?.(collateral.token, asset.token)
 
         const { ratio } = calc.mint({
           collateral: { ...collateral, price: collateralPrice },
@@ -64,14 +59,12 @@ export const myBorrowingQuery = selector({
             ...collateral,
             price: collateralPrice,
             value: collateralValue,
-            change: collateralChange,
             delisted: collateralDelisted,
           },
           mintedAsset: {
             ...asset,
             price: assetPrice,
             value: assetValue,
-            change: assetChange,
             delisted: assetDelisted,
           },
           ratio,
@@ -99,6 +92,11 @@ export const myBorrowingQuery = selector({
   },
 })
 
+const myBorrowingState = atom({
+  key: "myBorrowingState",
+  default: myBorrowingQuery,
+})
+
 export const useMyBorrowing = () => {
-  return useRecoilValue(myBorrowingQuery)
+  return useStoreLoadable(myBorrowingQuery, myBorrowingState)
 }

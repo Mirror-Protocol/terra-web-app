@@ -41,7 +41,7 @@ export const mintPositionsQuery = selector({
 })
 
 const mintPositionsState = atom<MintPosition[]>({
-  key: "mintPositions",
+  key: "mintPositionsState",
   default: [],
 })
 

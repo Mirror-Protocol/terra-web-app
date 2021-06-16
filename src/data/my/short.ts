@@ -1,6 +1,7 @@
-import { selector, useRecoilValue } from "recoil"
+import { atom, noWait, selector } from "recoil"
 import { gt, max, number, sum, times } from "../../libs/math"
 import { PriceKey, StakingKey } from "../../hooks/contractKeys"
+import { getLoadableContents, useStoreLoadable } from "../utils/loadable"
 import { protocolQuery } from "../contract/protocol"
 import { findQuery, findStakingQuery } from "../contract/normalize"
 import { rewardsQuery } from "../contract/normalize"
@@ -12,17 +13,19 @@ export const myShortFarmingQuery = selector({
   key: "myShortFarming",
   get: ({ get }) => {
     const priceKey = PriceKey.PAIR
-
     const { listedAll, getToken } = get(protocolQuery)
-    const assets = get(assetsByNetworkState(StatsNetwork.TERRA))
-    const { shortAPR } = getAssetsHelpers(assets)
     const mir = getToken("MIR")
 
-    const find = get(findQuery)
     const findStaking = get(findStakingQuery)
+    const find = get(findQuery)
     const rewards = get(rewardsQuery)
-
     const myLockedUST = get(myLockedUSTQuery)
+
+    const assets = getLoadableContents(
+      get(noWait(assetsByNetworkState(StatsNetwork.TERRA)))
+    )
+
+    const shortAPR = assets ? getAssetsHelpers(assets).shortAPR : undefined
 
     const dataSource = listedAll
       .map((item: ListedItem) => {
@@ -33,7 +36,7 @@ export const myShortFarmingQuery = selector({
 
         return {
           ...item,
-          apr: shortAPR(token),
+          apr: shortAPR?.(token),
           locked: sum(lockedInfo.map(({ locked }) => locked)),
           unlocked: sum(lockedInfo.map(({ unlocked }) => unlocked)),
           unlock_time: number(
@@ -57,6 +60,11 @@ export const myShortFarmingQuery = selector({
   },
 })
 
+const myShortFarmingState = atom({
+  key: "myShortFarmingState",
+  default: myShortFarmingQuery,
+})
+
 export const useMyShortFarming = () => {
-  return useRecoilValue(myShortFarmingQuery)
+  return useStoreLoadable(myShortFarmingQuery, myShortFarmingState)
 }

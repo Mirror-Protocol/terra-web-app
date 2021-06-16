@@ -60,7 +60,7 @@ const Farming = () => {
               {status === "DELISTED" && <Delisted />}
               {getLpName(symbol)}
             </>,
-            <Percent>{apr}</Percent>,
+            apr && <Percent>{apr}</Percent>,
           ],
           bold: true,
         },

@@ -1,6 +1,7 @@
-import { selector, useRecoilValue } from "recoil"
+import { atom, selector } from "recoil"
 import { div, minus, sum, times } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
+import { useStoreLoadable } from "../utils/loadable"
 import { protocolQuery } from "../contract/protocol"
 import { findPriceQuery } from "../contract/normalize"
 import { limitOrdersQuery } from "../contract/orders"
@@ -78,6 +79,11 @@ export const myLimitOrderQuery = selector({
   },
 })
 
+const myLimitOrderState = atom({
+  key: "myLimitOrderState",
+  default: myLimitOrderQuery,
+})
+
 export const useMyLimitOrder = () => {
-  return useRecoilValue(myLimitOrderQuery)
+  return useStoreLoadable(myLimitOrderQuery, myLimitOrderState)
 }

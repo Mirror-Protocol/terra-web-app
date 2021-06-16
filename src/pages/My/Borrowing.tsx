@@ -149,14 +149,15 @@ const Borrowing = () => {
                 Collateral Ratio
               </TooltipIcon>
             ),
-            render: (value, { minRatio }) => (
-              <CollateralRatio
-                min={minRatio}
-                safe={plus(minRatio, 0.5)}
-                ratio={decimal(value, 2)}
-                compact
-              />
-            ),
+            render: (value, { minRatio }) =>
+              minRatio && (
+                <CollateralRatio
+                  min={minRatio}
+                  safe={plus(minRatio, 0.5)}
+                  ratio={decimal(value, 2)}
+                  compact
+                />
+              ),
             align: "right",
           },
           {

@@ -1,6 +1,7 @@
-import { selector, useRecoilValue } from "recoil"
+import { atom, noWait, selector } from "recoil"
 import { gt, sum, times } from "../../libs/math"
 import { PriceKey, StakingKey } from "../../hooks/contractKeys"
+import { getLoadableContents, useStoreLoadable } from "../utils/loadable"
 import { assetsByNetworkState, getAssetsHelpers } from "../stats/assets"
 import { StatsNetwork } from "../stats/statistic"
 import { protocolQuery } from "../contract/protocol"
@@ -10,19 +11,21 @@ import { poolQuery } from "../../forms/usePool"
 
 export const myFarmingQuery = selector({
   key: "myFarming",
-
   get: ({ get }) => {
     const priceKey = PriceKey.PAIR
-
     const { listedAll, getToken } = get(protocolQuery)
-    const assets = get(assetsByNetworkState(StatsNetwork.TERRA))
-    const { longAPR } = getAssetsHelpers(assets)
-    const getPool = get(poolQuery)
     const mir = getToken("MIR")
 
-    const find = get(findQuery)
     const findStaking = get(findStakingQuery)
+    const find = get(findQuery)
     const rewards = get(rewardsQuery)
+
+    const getPool = get(poolQuery)
+    const assets = getLoadableContents(
+      get(noWait(assetsByNetworkState(StatsNetwork.TERRA)))
+    )
+
+    const longAPR = assets ? getAssetsHelpers(assets).longAPR : undefined
 
     const dataSource = listedAll
       .map((item: ListedItem) => {
@@ -32,7 +35,7 @@ export const myFarmingQuery = selector({
 
         return {
           ...item,
-          apr: longAPR(token),
+          apr: longAPR?.(token),
           staked: findStaking(StakingKey.LPSTAKED, token),
           reward: findStaking(StakingKey.LPREWARD, token),
           withdrawable: fromLP,
@@ -58,6 +61,11 @@ export const myFarmingQuery = selector({
   },
 })
 
+const myFarmingState = atom({
+  key: "myFarmingState",
+  default: myFarmingQuery,
+})
+
 export const useMyFarming = () => {
-  return useRecoilValue(myFarmingQuery)
+  return useStoreLoadable(myFarmingQuery, myFarmingState)
 }

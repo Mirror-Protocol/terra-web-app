@@ -11,7 +11,7 @@ const CaptionData = ({ list }: Props) => {
         <li className={styles.item} key={index}>
           <article className={styles.article}>
             {title && <h1 className={styles.title}>{title}</h1>}
-            {content && <p className={styles.content}>{content}</p>}
+            {content && <section className={styles.content}>{content}</section>}
           </article>
         </li>
       ))}

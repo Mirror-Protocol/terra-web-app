@@ -1,6 +1,7 @@
-import { selector, useRecoilValue } from "recoil"
+import { atom, noWait, selector } from "recoil"
 import { gt, times } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
+import { getLoadableContents, useStoreLoadable } from "../utils/loadable"
 import { protocolQuery } from "../contract/protocol"
 import { govStakerQuery } from "../contract/contract"
 import { findQuery, govStakedQuery } from "../contract/normalize"
@@ -67,7 +68,9 @@ export const myGovQuery = selector({
 
     const find = get(findQuery)
     const govStaked = get(govStakedQuery)
-    const govStaker = get(govStakerQuery)
+    const govStaker = getLoadableContents(get(noWait(govStakerQuery)))
+    const accReward = getLoadableContents(get(noWait(accGovRewardQuery)))
+    const dataSource = getLoadableContents(get(noWait(voteHistoryQuery))) ?? []
 
     const price = find(priceKey, mir)
     const valid = gt(govStaked, 1)
@@ -77,9 +80,6 @@ export const myGovQuery = selector({
 
     const votingRewards = govStaker?.pending_voting_rewards ?? "0"
     const votingRewardsValue = times(votingRewards, price)
-
-    const accReward = get(accGovRewardQuery)
-    const dataSource = get(voteHistoryQuery)
 
     return {
       dataSource,
@@ -92,6 +92,11 @@ export const myGovQuery = selector({
   },
 })
 
+const myGovState = atom({
+  key: "myGovState",
+  default: myGovQuery,
+})
+
 export const useMyGov = () => {
-  return useRecoilValue(myGovQuery)
+  return useStoreLoadable(myGovQuery, myGovState)
 }

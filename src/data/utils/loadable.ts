@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { RecoilState, RecoilValue } from "recoil"
+import { Loadable, RecoilState, RecoilValue } from "recoil"
 import { useRecoilState, useRecoilValueLoadable } from "recoil"
 
 export const useStoreLoadable = <T>(
@@ -15,3 +15,6 @@ export const useStoreLoadable = <T>(
 
   return state
 }
+
+export const getLoadableContents = <T>(query: Loadable<T>) =>
+  query.state === "hasValue" ? query.contents : undefined

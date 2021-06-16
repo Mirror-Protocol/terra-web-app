@@ -1,9 +1,9 @@
-import { atom, selector, useRecoilValue } from "recoil"
+import { atom, noWait, selector, useRecoilValue } from "recoil"
 import { div, gt, sum } from "../../libs/math"
 import { getIsTokenNative } from "../../libs/parse"
 import { PriceKey, BalanceKey, StakingKey } from "../../hooks/contractKeys"
 import { AssetInfoKey } from "../../hooks/contractKeys"
-import { useStoreLoadable } from "../utils/loadable"
+import { getLoadableContents, useStoreLoadable } from "../utils/loadable"
 import { exchangeRatesQuery } from "../native/exchange"
 import { bankBalanceQuery } from "../native/balance"
 import { externalBalancesQuery } from "../external/external"
@@ -136,6 +136,11 @@ export const rewardsQuery = selector({
   },
 })
 
+const rewardsState = atom({
+  key: "rewardsState",
+  default: rewardsQuery,
+})
+
 /* protocol - asset info */
 export const minCollateralRatioQuery = selector({
   key: "minCollateralRatio",
@@ -164,12 +169,14 @@ export const findPriceQuery = selector({
     const { getIsDelisted, getIsPreIPO } = get(protocolQuery)
 
     const dictionary = {
-      [PriceKey.NATIVE]: get(nativePricesQuery),
       [PriceKey.PAIR]: get(pairPricesQuery),
       [PriceKey.ORACLE]: get(oraclePricesQuery),
-      [PriceKey.PRE]: get(prePricesQuery),
-      [PriceKey.END]: get(endPricesQuery),
-      [PriceKey.EXTERNAL]: get(externalPricesQuery),
+      [PriceKey.NATIVE]:
+        getLoadableContents(get(noWait(nativePricesQuery))) ?? {},
+      [PriceKey.PRE]: getLoadableContents(get(noWait(prePricesQuery))) ?? {},
+      [PriceKey.END]: getLoadableContents(get(noWait(endPricesQuery))) ?? {},
+      [PriceKey.EXTERNAL]:
+        getLoadableContents(get(noWait(externalPricesQuery))) ?? {},
     }
 
     return (key: PriceKey, token: string) => {
@@ -219,7 +226,8 @@ export const findBalanceQuery = selector({
     const dictionary = {
       [BalanceKey.NATIVE]: get(nativeBalancesQuery),
       [BalanceKey.TOKEN]: get(tokenBalancesQuery),
-      [BalanceKey.EXTERNAL]: get(externalBalancesQuery),
+      [BalanceKey.EXTERNAL]:
+        getLoadableContents(get(noWait(externalBalancesQuery))) ?? {},
     }
 
     return (token: string) => {
@@ -248,18 +256,17 @@ export const findQuery = selector({
 export const findStakingQuery = selector({
   key: "findStaking",
   get: ({ get }) => {
-    const lpStakableBalances = get(lpStakableBalancesQuery)
-    const lpStakedBalances = get(lpStakedBalancesQuery)
-    const slpStakedBalances = get(slpStakedBalancesQuery)
-    const lpRewardBalances = get(lpRewardBalancesQuery)
-    const slpRewardBalances = get(slpRewardBalancesQuery)
-
     const dictionary = {
-      [StakingKey.LPSTAKABLE]: lpStakableBalances,
-      [StakingKey.LPSTAKED]: lpStakedBalances,
-      [StakingKey.SLPSTAKED]: slpStakedBalances,
-      [StakingKey.LPREWARD]: lpRewardBalances,
-      [StakingKey.SLPREWARD]: slpRewardBalances,
+      [StakingKey.LPSTAKABLE]:
+        getLoadableContents(get(noWait(lpStakableBalancesQuery))) ?? {},
+      [StakingKey.LPSTAKED]:
+        getLoadableContents(get(noWait(lpStakedBalancesQuery))) ?? {},
+      [StakingKey.SLPSTAKED]:
+        getLoadableContents(get(noWait(slpStakedBalancesQuery))) ?? {},
+      [StakingKey.LPREWARD]:
+        getLoadableContents(get(noWait(lpRewardBalancesQuery))) ?? {},
+      [StakingKey.SLPREWARD]:
+        getLoadableContents(get(noWait(slpRewardBalancesQuery))) ?? {},
     }
 
     return (key: StakingKey, token: string) => dictionary[key][token]
@@ -312,7 +319,7 @@ export const useFindAssetInfo = () => {
 }
 
 export const useRewards = () => {
-  return useRecoilValue(rewardsQuery)
+  return useStoreLoadable(rewardsQuery, rewardsState)
 }
 
 export const useMIRPrice = () => {

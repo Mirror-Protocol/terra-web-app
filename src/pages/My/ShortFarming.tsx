@@ -68,7 +68,7 @@ const ShortFarming = () => {
               {status === "DELISTED" && <Delisted />}
               {symbol}
             </>,
-            <Percent>{apr}</Percent>,
+            apr && <Percent>{apr}</Percent>,
           ],
           bold: true,
         },
