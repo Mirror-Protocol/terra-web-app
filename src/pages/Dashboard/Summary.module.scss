@@ -1,0 +1,46 @@
+@import "mixins";
+
+.content {
+  @include mobile {
+    margin-bottom: $card-padding-vertical-mobile;
+  }
+}
+
+.title {
+  color: $white-92;
+  font-weight: 500;
+
+  @include desktop {
+    margin-bottom: 56px;
+  }
+}
+
+.section .title {
+  color: $white-44;
+  font-size: 12px;
+  font-weight: 500;
+
+  @include mobile {
+    margin-top: 24px;
+    margin-bottom: 4px;
+  }
+
+  @include desktop {
+    margin-top: 32px;
+    margin-bottom: 8px;
+  }
+
+  text-transform: uppercase;
+}
+
+.number {
+  font-weight: 500;
+
+  @include mobile {
+    font-size: 18px;
+  }
+
+  @include desktop {
+    font-size: 28px;
+  }
+}

@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom"
 import { getPath, MenuKey } from "../../routes"
 import Icon from "../../components/Icon"
-import { bound } from "../../components/Boundary"
 import TopTradingTable from "./TopTradingTable"
 import styles from "./TopTrading.module.scss"
 
@@ -20,7 +19,7 @@ const TopTrading = () => {
         </Link>
       </header>
 
-      {bound(<TopTradingTable />)}
+      <TopTradingTable />
     </article>
   )
 }
