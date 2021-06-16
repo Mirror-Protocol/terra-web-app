@@ -1,28 +1,32 @@
-import classNames from "classnames"
+import classNames from "classnames/bind"
 import { useState } from "react"
 import { useProtocol } from "../data/contract/protocol"
 import styles from "./AssetIcon.module.scss"
 
+const cx = classNames.bind(styles)
+
 interface Props {
   symbol: string
   small?: boolean
+  idle?: boolean
   className?: string
 }
 
-const AssetIcon = ({ symbol, small, className }: Props) => {
+const AssetIcon = ({ symbol, small, idle, className }: Props) => {
   const { getToken, getIcon } = useProtocol()
+  const [error, setError] = useState(false)
+
+  const attrs = {
+    className: cx(small ? styles.small : styles.default, { idle }, className),
+  }
+
+  if (idle) return <div {...attrs} />
+
   const token = getToken(symbol)
   const icon = getIcon(token)
 
-  const [error, setError] = useState(false)
-
   return !icon || error ? null : (
-    <img
-      src={icon}
-      className={classNames(small ? styles.small : styles.default, className)}
-      onError={() => setError(true)}
-      alt=""
-    />
+    <img {...attrs} src={icon} onError={() => setError(true)} alt="" />
   )
 }
 

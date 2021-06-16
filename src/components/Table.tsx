@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import { useHistory } from "react-router-dom"
 import classNames from "classnames/bind"
-import { path } from "ramda"
+import { isNil, path } from "ramda"
 import { LocationDescriptor } from "history"
 import styles from "./Table.module.scss"
 
@@ -121,7 +121,7 @@ function Table<T extends DefaultRecordType>(props: Props<T>) {
         style={{ width }}
         key={key}
       >
-        {title ? (
+        {!isNil(title) ? (
           Array.isArray(title) ? (
             <ul>
               {title.map((title, index) => (

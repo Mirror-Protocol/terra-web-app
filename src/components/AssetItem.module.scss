@@ -4,7 +4,11 @@
   @include flex(flex-start);
 }
 
-.title {
+.header {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+
   @include mobile {
     margin-left: 12px;
   }
@@ -41,5 +45,15 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     display: block;
+  }
+}
+
+/* idle */
+.idle {
+  .symbol,
+  .content {
+    @include idle;
+    display: inline-block;
+    color: transparent;
   }
 }

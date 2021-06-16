@@ -10,6 +10,7 @@ import AssetItem from "../../components/AssetItem"
 import Icon from "../../components/Icon"
 import Formatted from "../../components/Formatted"
 import Search from "../../components/Search"
+import AssetsIdleTable from "../../containers/AssetsIdleTable"
 import { FarmType } from "../../types/Types"
 import styles from "./FarmList.module.scss"
 
@@ -44,6 +45,7 @@ const FarmList = () => {
   const list = useAssetList()
   const getChange = useGetChange()
 
+  /* sort */
   const [input, setInput] = useState("")
   const [sorter, setSorter] = useState("APR")
 
@@ -72,53 +74,31 @@ const FarmList = () => {
         </select>
       </Search>
 
-      <Table
-        rows={({ token }) =>
-          getSymbol(token) === "MIR" ? { background: "darker" } : {}
-        }
-        columns={[
-          {
-            key: "token",
-            title: "Ticker",
-            render: (token) => <AssetItem token={token} />,
-            width: "25%",
-            bold: true,
-          },
-          {
-            key: "apr.long",
-            title: "Long",
-            render: (value, { recommended }) => (
-              <>
-                <Percent color={recommended === "long" ? "blue" : undefined}>
-                  {value}
-                </Percent>
-                <p className={styles.link}>
-                  Long <span className="desktop">Farm</span>
-                  <Icon
-                    name="ChevronRight"
-                    size={8}
-                    className={styles.chevron}
-                  />
-                </p>
-              </>
-            ),
-            cell: (_, { token, recommended }) => ({
-              background: recommended === "long" ? "darker" : undefined,
-              to: { hash: FarmType.LONG, state: { token } },
-            }),
-            align: "left",
-          },
-          {
-            key: "apr.short",
-            title: "Short",
-            render: (value, { token, recommended }) =>
-              getSymbol(token) !== "MIR" && (
+      {!list ? (
+        <AssetsIdleTable />
+      ) : (
+        <Table
+          rows={({ token }) =>
+            getSymbol(token) === "MIR" ? { background: "darker" } : {}
+          }
+          columns={[
+            {
+              key: "token",
+              title: "Ticker",
+              render: (token) => <AssetItem token={token} />,
+              width: "25%",
+              bold: true,
+            },
+            {
+              key: "apr.long",
+              title: "Long",
+              render: (value, { recommended }) => (
                 <>
-                  <Percent color={recommended === "short" ? "red" : undefined}>
+                  <Percent color={recommended === "long" ? "blue" : undefined}>
                     {value}
                   </Percent>
                   <p className={styles.link}>
-                    Short <span className="desktop">Farm</span>
+                    Long <span className="desktop">Farm</span>
                     <Icon
                       name="ChevronRight"
                       size={8}
@@ -127,32 +107,61 @@ const FarmList = () => {
                   </p>
                 </>
               ),
-            cell: (_, { token, recommended }) =>
-              getSymbol(token) !== "MIR"
-                ? {
-                    background: recommended === "short" ? "darker" : undefined,
-                    to: { hash: FarmType.SHORT, state: { token } },
-                  }
-                : {},
-            align: "left",
-          },
-          {
-            key: PriceKey.PAIR,
-            title: "Terraswap Price",
-            render: (value) => <Formatted unit="UST">{value}</Formatted>,
-            align: "right",
-            desktop: true,
-          },
-          {
-            key: "premium",
-            title: "Premium",
-            render: (value) => <Percent>{value}</Percent>,
-            align: "right",
-            desktop: true,
-          },
-        ]}
-        dataSource={dataSource}
-      />
+              cell: (_, { token, recommended }) => ({
+                background: recommended === "long" ? "darker" : undefined,
+                to: { hash: FarmType.LONG, state: { token } },
+              }),
+              align: "left",
+            },
+            {
+              key: "apr.short",
+              title: "Short",
+              render: (value, { token, recommended }) =>
+                getSymbol(token) !== "MIR" && (
+                  <>
+                    <Percent
+                      color={recommended === "short" ? "red" : undefined}
+                    >
+                      {value}
+                    </Percent>
+                    <p className={styles.link}>
+                      Short <span className="desktop">Farm</span>
+                      <Icon
+                        name="ChevronRight"
+                        size={8}
+                        className={styles.chevron}
+                      />
+                    </p>
+                  </>
+                ),
+              cell: (_, { token, recommended }) =>
+                getSymbol(token) !== "MIR"
+                  ? {
+                      background:
+                        recommended === "short" ? "darker" : undefined,
+                      to: { hash: FarmType.SHORT, state: { token } },
+                    }
+                  : {},
+              align: "left",
+            },
+            {
+              key: PriceKey.PAIR,
+              title: "Terraswap Price",
+              render: (value) => <Formatted unit="UST">{value}</Formatted>,
+              align: "right",
+              desktop: true,
+            },
+            {
+              key: "premium",
+              title: "Premium",
+              render: (value) => <Percent>{value}</Percent>,
+              align: "right",
+              desktop: true,
+            },
+          ]}
+          dataSource={dataSource}
+        />
+      )}
     </>
   )
 }

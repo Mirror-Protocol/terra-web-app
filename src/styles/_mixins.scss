@@ -32,6 +32,24 @@
   transition: $property $transition-duration;
 }
 
+@mixin idle {
+  animation: load 1s ease-out;
+  background: linear-gradient(to right, $gray-22, $gray-22, $gray-22);
+  background-position: left;
+  background-size: 200%;
+  border-radius: 3px;
+}
+
+@keyframes load {
+  0% {
+    background-position: right;
+  }
+
+  100% {
+    background-position: left;
+  }
+}
+
 /* app */
 @mixin app {
   @include mobile {
