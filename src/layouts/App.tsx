@@ -5,23 +5,25 @@ import { ContractProvider, useContractState } from "../hooks/useContract"
 import useConnectGraph from "../hooks/useConnectGraph"
 import useAddress from "../hooks/useAddress"
 import { StatsProvider, useStatsState } from "../statistics/useStats"
-import { useRedirectByNetwork } from "./init"
+import { useAlertByNetwork } from "./init"
 import DelistAlert from "./DelistAlert"
+import AlertNetwork from "./AlertNetwork"
 import Airdrop from "./Airdrop"
 import Header from "./Header"
 import Footer from "./Footer"
 import "./App.scss"
 
 const App = () => {
-  useRedirectByNetwork()
-
+  const alert = useAlertByNetwork()
   const address = useAddress()
   const settings = useSettingsState()
   const contract = useContractState(address)
   const stats = useStatsState()
   useConnectGraph(address)
 
-  return (
+  return alert ? (
+    <AlertNetwork />
+  ) : (
     <SettingsProvider value={settings}>
       <ContractProvider value={contract}>
         <StatsProvider value={stats}>
