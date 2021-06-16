@@ -2,7 +2,7 @@ import routes from "../routes"
 import { MenuKey, getPath, gnb } from "../routes"
 import { useAddress } from "../hooks"
 import Menu from "../components/Menu"
-import Boundary from "../components/Boundary"
+import Boundary, { bound } from "../components/Boundary"
 import { useAlertByNetwork } from "./init"
 import { useInitAddress, useInitNetwork, useLocationKey } from "./init"
 import Airdrop from "./Airdrop"
@@ -46,8 +46,8 @@ const App = () => {
         <Boundary>{routes()}</Boundary>
       </Layout>
 
-      <Boundary>{address && <Airdrop />}</Boundary>
-      <Boundary>{address && <DelistAlert />}</Boundary>
+      {address && bound(<Airdrop />)}
+      {address && bound(<DelistAlert />)}
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { FC, Suspense } from "react"
+import { FC, ReactNode, Suspense } from "react"
 import ErrorBoundary from "./ErrorBoundary"
 import Card from "./Card"
 
@@ -15,3 +15,6 @@ const Boundary: FC = ({ children }) => {
 }
 
 export default Boundary
+
+/* utils */
+export const bound = (children: ReactNode) => <Boundary>{children}</Boundary>

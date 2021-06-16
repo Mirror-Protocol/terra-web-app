@@ -3,7 +3,7 @@ import Page from "../../components/Page"
 import Container from "../../components/Container"
 import Grid from "../../components/Grid"
 import List from "../../components/List"
-import Boundary from "../../components/Boundary"
+import { bound } from "../../components/Boundary"
 import CreatePollForm from "../../forms/CreatePollForm"
 import ForumLink from "./ForumLink"
 import styles from "./CreatePoll.module.scss"
@@ -114,11 +114,10 @@ const CreatePoll = () => {
             />
           </section>
 
-          {type && (
-            <Boundary>
+          {type &&
+            bound(
               <CreatePollForm headings={polls[type]} type={type} key={type} />
-            </Boundary>
-          )}
+            )}
         </Grid>
       </Container>
     </Page>
