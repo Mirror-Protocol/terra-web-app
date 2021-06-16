@@ -1,4 +1,5 @@
-import { selector, selectorFamily, useRecoilValue } from "recoil"
+import { selector, selectorFamily } from "recoil"
+import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 import { request } from "graphql-request"
 import { getTime, startOfMinute, subDays } from "date-fns"
 import { minus, div, gt, isFinite } from "../../libs/math"
@@ -111,7 +112,10 @@ export const findChangeQuery = selector({
 })
 
 export const useFindChange = () => {
-  return useRecoilValue(findChangeQuery)
+  const findChange = useRecoilValueLoadable(findChangeQuery)
+  return findChange.state === "hasValue"
+    ? findChange.contents
+    : () => () => undefined
 }
 
 /* docs */
