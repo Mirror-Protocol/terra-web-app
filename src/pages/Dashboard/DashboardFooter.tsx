@@ -1,9 +1,12 @@
+import { useDashboard } from "../../data/stats/statistic"
 import Formatted from "../../components/Formatted"
 import Card, { CardMain } from "../../components/Card"
 import TopTrading from "./TopTrading"
 import styles from "./DashboardFooter.module.scss"
 
-const DashboardFooter = ({ latest24h, assetMarketCap }: Dashboard) => {
+const DashboardFooter = () => {
+  const { assetMarketCap, latest24h } = useDashboard()
+
   return (
     <Card className={styles.card} full lg>
       <CardMain className={styles.content}>

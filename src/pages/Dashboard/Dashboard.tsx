@@ -4,11 +4,11 @@ import { sort } from "ramda"
 import { number } from "../../libs/math"
 import { lookup } from "../../libs/parse"
 import { StatsNetwork } from "../../data/stats/statistic"
-import { useDashboard, dashboardNetworkState } from "../../data/stats/statistic"
+import { dashboardNetworkState } from "../../data/stats/statistic"
 
 import Page from "../../components/Page"
 import Masonry from "../../components/Masonry"
-import Boundary from "../../components/Boundary"
+import { bound } from "../../components/Boundary"
 import ChartContainer from "../../containers/ChartContainer"
 import { MenuKey } from "../../routes"
 
@@ -23,7 +23,6 @@ import styles from "./Dashboard.module.scss"
 
 const Dashboard = () => {
   const [network, setNetwork] = useRecoilState(dashboardNetworkState)
-  const dashboard = useDashboard()
 
   const select = (
     <select
@@ -44,43 +43,24 @@ const Dashboard = () => {
       select={select}
       doc={"/user-guide/getting-started"}
     >
-      <section className={styles.mobile}>
-        <TVLTotal {...dashboard.totalValueLocked} />
-      </section>
+      <section className={styles.mobile}>{bound(<TVLTotal />)}</section>
 
       <Masonry>
         {[
           [
-            { flex: 6, component: <TVL {...dashboard.totalValueLocked} /> },
-            { flex: 3, component: <MIRPrice /> },
-            { flex: 7, component: <MIRSupply {...dashboard.mirSupply} /> },
+            { flex: 6, component: bound(<TVL />) },
+            { flex: 3, component: bound(<MIRPrice />) },
+            { flex: 7, component: bound(<MIRSupply />) },
           ],
           [
-            {
-              component: (
-                <Boundary>
-                  <LiquidityHistoryChart />
-                </Boundary>
-              ),
-            },
-            {
-              component: (
-                <Boundary>
-                  <VolumeHistoryChart />
-                </Boundary>
-              ),
-            },
+            { component: bound(<LiquidityHistoryChart />) },
+            { component: bound(<VolumeHistoryChart />) },
           ],
         ]}
       </Masonry>
 
-      <section className={styles.mobile}>
-        <MIRPrice />
-      </section>
-
-      <footer className={styles.footer}>
-        <DashboardFooter {...dashboard} />
-      </footer>
+      <section className={styles.mobile}>{bound(<MIRPrice />)}</section>
+      <footer className={styles.footer}>{bound(<DashboardFooter />)}</footer>
     </Page>
   )
 }
