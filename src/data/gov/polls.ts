@@ -51,5 +51,5 @@ export const pollsByIdsQuery = selectorFamily({
 })
 
 export const usePolls = () => {
-  return usePagination(govPollsQuery, ({ data }) => last(data)?.id, LIMIT)
+  return usePagination(govPollsQuery, ({ data }) => last(data)?.id, LIMIT, "id")
 }

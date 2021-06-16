@@ -21,7 +21,8 @@ export const iterateAllPage = async <T, Offset>(
 export const usePagination = <T, Offset = number>(
   query: (offset?: Offset) => RecoilValueReadOnly<T[] | undefined>,
   next: (params: { offset?: Offset; data: T[] }) => Offset | undefined,
-  limit: number
+  limit: number,
+  key: keyof T
 ) => {
   const [offset, setOffset] = useState<Offset>()
   const [idle, setIdle] = useState(true)
@@ -30,12 +31,18 @@ export const usePagination = <T, Offset = number>(
   const { state, contents } = useRecoilValueLoadable(query(offset))
 
   useEffect(() => {
+    const byKey = (list: T[]) =>
+      list.reduce<T[]>((acc, item) => {
+        const exists = acc.some((prev) => prev[key] === item[key])
+        return exists ? acc : [...acc, item]
+      }, [])
+
     if (state === "hasValue" && contents) {
       setIdle(false)
-      setData((prev) => [...prev, ...contents])
+      setData((prev) => byKey([...prev, ...contents]))
       setDone(contents.length < limit)
     }
-  }, [state, contents, limit])
+  }, [state, contents, limit, key])
 
   useEffect(() => {
     return () => {

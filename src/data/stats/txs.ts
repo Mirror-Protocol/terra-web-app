@@ -43,7 +43,8 @@ const txsQuery = selectorFamily({
 })
 
 const useTxs = () => {
-  return usePagination(txsQuery, ({ offset = 0 }) => offset + LIMIT, LIMIT)
+  const next = ({ offset = 0 }) => offset + LIMIT
+  return usePagination(txsQuery, next, LIMIT, "id")
 }
 
 export default useTxs
