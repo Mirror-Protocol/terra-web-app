@@ -1,20 +1,9 @@
 import { atom, selector } from "recoil"
-import { gql } from "graphql-request"
 import { useStoreLoadable } from "../utils/loadable"
 import { getNativeQueryQuery } from "../utils/query"
 import { nativeBalancesQuery } from "../contract/normalize"
 import { addressState } from "../wallet"
-
-const BANK_BALANCES_ADDRESS = gql`
-  query BankBalancesAddress($address: String) {
-    BankBalancesAddress(Address: $address) {
-      Result {
-        Amount
-        Denom
-      }
-    }
-  }
-`
+import { BANK_BALANCES_ADDRESS } from "./gqldocs"
 
 export const bankBalanceIndexState = atom({
   key: "bankBalanceIndexState",

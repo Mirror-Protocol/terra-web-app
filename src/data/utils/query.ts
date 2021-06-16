@@ -1,23 +1,11 @@
 import { selector } from "recoil"
-import { gql, request } from "graphql-request"
+import { request } from "graphql-request"
 import { RequestDocument, Variables } from "graphql-request/dist/types"
 import { WASMQUERY } from "../../constants"
 import { locationKeyState } from "../app"
 import { mantleURLQuery } from "../network"
 import { parseResult } from "./parse"
-
-/* docs */
-export const WASM = gql`
-  query WasmContractsContractAddressStore($contract: String, $msg: String) {
-    WasmContractsContractAddressStore(
-      ContractAddress: $contract
-      QueryMsg: $msg
-    ) {
-      Height
-      Result
-    }
-  }
-`
+import { WASM } from "../native/gqldocs"
 
 /* native */
 export const getNativeQueryQuery = selector({

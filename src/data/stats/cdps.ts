@@ -1,21 +1,8 @@
 import { selectorFamily } from "recoil"
-import { gql, request } from "graphql-request"
+import { request } from "graphql-request"
 import { statsURLQuery } from "../network"
 import { locationKeyState } from "../app"
-
-const CDPS = gql`
-  query cdps($tokens: [String!]) {
-    cdps(maxRatio: 9999, tokens: $tokens) {
-      id
-      address
-      token
-      mintAmount
-      collateralToken
-      collateralAmount
-      collateralRatio
-    }
-  }
-`
+import { CDPS } from "./gqldocs"
 
 export const cdpsQuery = selectorFamily({
   key: "cdps",

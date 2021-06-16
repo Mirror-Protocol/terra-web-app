@@ -1,6 +1,5 @@
 interface Dashboard {
   assetMarketCap: string
-  collateralRatio: string
   govAPR: string
 
   mirSupply: MIRSupply
@@ -10,7 +9,6 @@ interface Dashboard {
     transactions: string
     volume: string
     feeVolume: string
-    mirVolume: string
   }
 }
 

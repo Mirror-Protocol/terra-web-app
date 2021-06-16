@@ -1,21 +1,9 @@
 import { selector } from "recoil"
-import { gql, request } from "graphql-request"
+import { request } from "graphql-request"
 import { locationKeyState } from "../app"
 import { statsURLQuery } from "../network"
 import { addressState } from "../wallet"
-
-const ACCOUNT = gql`
-  query account($address: String!) {
-    account(address: $address) {
-      accumulatedGovReward
-      voteHistory {
-        pollId
-        amount
-        voteOption
-      }
-    }
-  }
-`
+import { ACCOUNT } from "./gqldocs"
 
 export const statsAccountQuery = selector({
   key: "statsAccount",

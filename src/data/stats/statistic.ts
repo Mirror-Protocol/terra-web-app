@@ -1,8 +1,9 @@
 import { atom, selectorFamily, useRecoilValue } from "recoil"
-import { gql, request } from "graphql-request"
+import { request } from "graphql-request"
 import { getTime, startOfMinute, subDays } from "date-fns"
 import { locationKeyState } from "../app"
 import { statsURLQuery } from "../network"
+import { STATISTIC } from "./gqldocs"
 
 export enum StatsNetwork {
   COMBINE = "COMBINE",
@@ -27,8 +28,8 @@ export const statisticQuery = selectorFamily({
       }
 
       const { statistic } = await request<{ statistic: Dashboard }>(
-        url + "?statistic",
-        STATISTIC,
+        url + "?dashboard",
+        STATISTIC.DASHBOARD,
         variables
       )
 
@@ -51,7 +52,7 @@ export const statisticHistoryQuery = selectorFamily({
 
       const { statistic } = await request<{ statistic: DashboardHistory }>(
         url + "?history",
-        STATISTIC_HISTORY,
+        STATISTIC.HISTORY,
         variables
       )
 
@@ -63,50 +64,3 @@ export const useDashboard = () => {
   const network = useRecoilValue(dashboardNetworkState)
   return useRecoilValue(statisticQuery(network))
 }
-
-/* docs */
-const STATISTIC = gql`
-  query statistic($network: Network) {
-    statistic(network: $network) {
-      assetMarketCap
-      collateralRatio
-      govAPR
-
-      mirSupply {
-        circulating
-        liquidity
-        staked
-      }
-
-      totalValueLocked {
-        total
-        liquidity
-        collateral
-        stakedMir
-      }
-
-      latest24h {
-        transactions
-        volume
-        feeVolume
-        mirVolume
-      }
-    }
-  }
-`
-
-const STATISTIC_HISTORY = gql`
-  query statistic($from: Float!, $to: Float!, $network: Network) {
-    statistic(network: $network) {
-      liquidityHistory(from: $from, to: $to) {
-        timestamp
-        value
-      }
-
-      tradingVolumeHistory(from: $from, to: $to) {
-        timestamp
-        value
-      }
-    }
-  }
-`

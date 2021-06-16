@@ -1,18 +1,7 @@
 import { selector } from "recoil"
-import { gql, request } from "graphql-request"
+import { request } from "graphql-request"
 import { mantleURLQuery } from "../network"
-
-export const TAX = gql`
-  query tax {
-    TreasuryTaxRate {
-      Result
-    }
-
-    TreasuryTaxCapDenom(Denom: "uusd") {
-      Result
-    }
-  }
-`
+import { TAX } from "./gqldocs"
 
 export const taxQuery = selector({
   key: "tax",

@@ -1,29 +1,12 @@
 import { selectorFamily } from "recoil"
-import { gql, request } from "graphql-request"
+import { request } from "graphql-request"
 import { usePagination } from "../utils/pagination"
 import { locationKeyState } from "../app"
 import { statsURLQuery } from "../network"
 import { addressState } from "../wallet"
+import { TXS } from "./gqldocs"
 
 const LIMIT = 30
-
-const TXS = gql`
-  query txs($account: String!, $offset: Float, $limit: Float) {
-    txs(account: $account, offset: $offset, limit: $limit) {
-      createdAt
-      id
-      height
-      txHash
-      address
-      type
-      data
-      token
-      datetime
-      fee
-      memo
-    }
-  }
-`
 
 const txsQuery = selectorFamily({
   key: "txs",

@@ -1,11 +1,12 @@
 import { selector, selectorFamily, useRecoilValue } from "recoil"
-import { gql, request } from "graphql-request"
+import { request } from "graphql-request"
 import { getTime, startOfMinute, subDays } from "date-fns"
 import { minus, div, gt, isFinite } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { locationKeyState } from "../app"
 import { statsURLQuery } from "../network"
 import { StatsNetwork } from "./statistic"
+import { ASSETS } from "./gqldocs"
 
 export const assetsQuery = selectorFamily({
   key: "assets",
@@ -16,8 +17,8 @@ export const assetsQuery = selectorFamily({
       const url = get(statsURLQuery)
 
       const { assets } = await request<{ assets: AssetDataItem[] }>(
-        url + "?assets",
-        ASSETSTATS,
+        url + "?assetsStats",
+        ASSETS.STATS,
         { network: network.toUpperCase() }
       )
 
@@ -39,7 +40,7 @@ export const assetsHistoryQuery = selectorFamily({
 
       const { assets } = await request<{ assets: AssetHistoryItem[] }>(
         url + "?assetsHistory",
-        ASSETS_HISTORY,
+        ASSETS.HISTORY,
         { interval: 60 / 4, from: subDays(now, 1).getTime(), to: now.getTime() }
       )
 
@@ -80,8 +81,8 @@ export const yesterdayQuery = selector({
     const url = get(statsURLQuery)
     const yesterday = getTime(subDays(startOfMinute(new Date()), 1))
     const { assets } = await request<{ assets: Asset[] }>(
-      url + "?yesterday",
-      YESTERDAY,
+      url + "?assetsYesterday",
+      ASSETS.YESTERDAY,
       { timestamp: yesterday }
     )
 
@@ -114,39 +115,6 @@ export const useFindChange = () => {
 }
 
 /* docs */
-const ASSETSTATS = gql`
-  query assets($network: Network) {
-    assets {
-      token
-      description
-
-      statistic {
-        liquidity(network: $network)
-        shortValue(network: $network)
-        volume(network: $network)
-        apr {
-          long
-          short
-        }
-      }
-    }
-  }
-`
-const ASSETS_HISTORY = gql`
-  query assets($interval: Float!, $from: Float!, $to: Float!) {
-    assets {
-      token
-
-      prices {
-        history(interval: $interval, from: $from, to: $to) {
-          timestamp
-          price
-        }
-      }
-    }
-  }
-`
-
 interface Asset {
   token: string
   prices: {
@@ -154,18 +122,6 @@ interface Asset {
     oraclePriceAt: string | null
   }
 }
-
-const YESTERDAY = gql`
-  query assets($timestamp: Float!) {
-    assets {
-      token
-      prices {
-        priceAt(timestamp: $timestamp)
-        oraclePriceAt(timestamp: $timestamp)
-      }
-    }
-  }
-`
 
 /* helper */
 type Params = { yesterday?: string; today?: string }

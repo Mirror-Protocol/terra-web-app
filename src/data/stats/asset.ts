@@ -1,35 +1,8 @@
-import { gql, request } from "graphql-request"
+import { request } from "graphql-request"
 import { selector } from "recoil"
 import { locationKeyState } from "../app"
 import { statsURLQuery } from "../network"
-
-export const ASSET = gql`
-  query asset(
-    $token: String!
-    $interval: Float!
-    $from: Float!
-    $to: Float!
-    $yesterday: Float!
-  ) {
-    asset(token: $token) {
-      prices {
-        price
-        priceAt(timestamp: $yesterday)
-        history(interval: $interval, from: $from, to: $to) {
-          timestamp
-          price
-        }
-
-        oraclePrice
-      }
-
-      statistic {
-        liquidity
-        volume
-      }
-    }
-  }
-`
+import { ASSET } from "./gqldocs"
 
 interface Variables {
   token: string

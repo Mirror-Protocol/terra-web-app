@@ -1,15 +1,10 @@
 import { selector, useRecoilValue } from "recoil"
-import { gql, request } from "graphql-request"
+import { request } from "graphql-request"
 import { gt } from "../../libs/math"
 import { addressState } from "../wallet"
 import { statsURLQuery } from "../network"
 import { locationKeyState } from "../app"
-
-const AIRDROP = gql`
-  query airdrop($address: String!, $network: String = "TERRA") {
-    airdrop(address: $address, network: $network)
-  }
-`
+import { AIRDROP } from "./gqldocs"
 
 const airdropQuery = selector({
   key: "airdrop",
