@@ -4,6 +4,7 @@ import { useWallet } from "@terra-money/wallet-provider"
 import { WalletProvider } from "@terra-money/wallet-provider"
 import networks, { defaultNetwork } from "../networks"
 import Reconnect from "./Reconnect"
+import MobileSplash from "./MobileSplash"
 
 const walletConnectChainIds: Record<number, NetworkInfo> = {
   0: networks.testnet,
@@ -16,7 +17,9 @@ const WithInitialized: FC = ({ children }) => {
   const initialized = status !== WalletStatus.INITIALIZING
   const invalidNetwork = !networks[network.name]
 
-  return !initialized ? null : invalidNetwork ? (
+  return !initialized ? (
+    <MobileSplash />
+  ) : invalidNetwork ? (
     <Reconnect {...network} />
   ) : (
     <>{children}</>
