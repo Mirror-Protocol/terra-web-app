@@ -76,5 +76,5 @@ export const assetListState = atom<Item[]>({
 })
 
 export const useAssetList = () => {
-  return useStoreLoadable(assetListState, assetListQuery)
+  return useStoreLoadable(assetListQuery, assetListState)
 }

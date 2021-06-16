@@ -41,5 +41,5 @@ export const uusdBalanceQuery = selector({
 })
 
 export const useUusdBalance = () => {
-  return useStoreLoadable(uusdBalanceState, uusdBalanceQuery)
+  return useStoreLoadable(uusdBalanceQuery, uusdBalanceState)
 }

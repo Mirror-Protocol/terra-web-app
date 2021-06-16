@@ -3,8 +3,8 @@ import { RecoilState, RecoilValue } from "recoil"
 import { useRecoilState, useRecoilValueLoadable } from "recoil"
 
 export const useStoreLoadable = <T>(
-  recoilState: RecoilState<T>,
-  recoilValue: RecoilValue<T>
+  recoilValue: RecoilValue<T>,
+  recoilState: RecoilState<T>
 ) => {
   const [state, setState] = useRecoilState(recoilState)
   const query = useRecoilValueLoadable(recoilValue)
