@@ -1,7 +1,8 @@
 import React, { ReactNode, useRef } from "react"
 import classNames from "classnames"
 import { truncate } from "../libs/text"
-import { useNetwork, useWallet } from "../hooks"
+import { useAddress, useNetwork } from "../hooks"
+import { useWallet } from "@terra-money/wallet-provider"
 import styles from "./Connected.module.scss"
 import Icon from "../components/Icon"
 
@@ -19,7 +20,8 @@ const Connected = ({ className, icon }: Props) => {
   const { name } = useNetwork()
 
   /* close wallet on click outside */
-  const { address, disconnect } = useWallet()
+  const { disconnect } = useWallet()
+  const address = useAddress()
   // useOnClickOutside(ref, close);
   // useEffect(() => {
   //   close();

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useContractsAddress, useWallet } from "../hooks"
+import { useAddress, useContractsAddress } from "../hooks"
 import useAPI from "./useAPI"
 
 interface DenomBalanceResponse {
@@ -22,7 +22,7 @@ interface ContractBalance {
 }
 
 export default (contract_addr: string, symbol: string) => {
-  const { address } = useWallet()
+  const address = useAddress()
   const { getSymbol } = useContractsAddress()
 
   const { loadDenomBalance, loadContractBalance } = useAPI()

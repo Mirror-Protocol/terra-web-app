@@ -8,7 +8,8 @@ import { useLocation } from "react-router-dom"
 import { isNil } from "ramda"
 import useNewContractMsg from "terra/useNewContractMsg"
 import { LP, LUNA, MAX_SPREAD, ULUNA } from "constants/constants"
-import { useNetwork, useWallet, useContractsAddress, useContract } from "hooks"
+import { useNetwork, useContractsAddress, useContract, useAddress } from "hooks"
+import { ConnectType, useWallet } from "@terra-money/wallet-provider"
 import { format, lookup } from "libs/parse"
 import { decimal } from "libs/parse"
 import { toAmount } from "libs/parse"
@@ -107,11 +108,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
   const { state } = useLocation<{ symbol: string }>()
   const { fee } = useNetwork()
   const { find } = useContract()
-  const {
-    installed: isWalletInstalled,
-    address: walletAddress,
-    connect,
-  } = useWallet()
+  const walletAddress = useAddress()
+  const { connect, availableConnectTypes } = useWallet()
+  const isWalletInstalled = useMemo(() => {
+    return availableConnectTypes.includes(ConnectType.CHROME_EXTENSION)
+  }, [availableConnectTypes])
   const modal = useModal()
 
   const { pairs } = usePairs()
@@ -707,6 +708,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
 
   return (
     <Wrapper>
+      {availableConnectTypes.join()}
       <Container sm>
         {formState.isSubmitted && result && (
           <Result
@@ -902,7 +904,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
                     }
                   : {
                       onClick: () =>
-                        isWalletInstalled ? connect() : modal.open(),
+                        isWalletInstalled
+                          ? connect(ConnectType.CHROME_EXTENSION)
+                          : modal.open(),
                       type: "button",
                       children: MESSAGE.Form.Button.ConnectWallet,
                     })}

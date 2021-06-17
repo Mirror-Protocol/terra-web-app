@@ -1,4 +1,4 @@
-import { useContractsAddress, useNetwork, useWallet } from "hooks"
+import { useAddress, useContractsAddress, useNetwork } from "hooks"
 import {
   UAUD,
   UCAD,
@@ -155,7 +155,7 @@ export function isNativeInfo(object: any): object is NativeInfo {
 
 export default () => {
   const { fcd, factory, service } = useNetwork()
-  const { address } = useWallet()
+  const address = useAddress()
   const { getSymbol } = useContractsAddress()
   const getURL = useURL()
 

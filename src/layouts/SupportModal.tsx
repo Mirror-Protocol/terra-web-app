@@ -1,16 +1,12 @@
 import React from "react"
 import { CHROME, EXTENSION } from "constants/constants"
-import { useWallet } from "hooks"
 import Modal from "components/Modal"
 import Card from "components/Card"
 import ExtLinkButton from "components/ExtLinkButton"
 import styles from "./SupportModal.module.scss"
 
 const SupportModal = (modal: Modal) => {
-  const { install } = useWallet()
-
   const handleInstalled = () => {
-    install()
     window.location.reload()
   }
 
