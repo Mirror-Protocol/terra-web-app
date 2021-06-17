@@ -57,7 +57,7 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   const balanceKey = BalanceKey.TOKEN
 
   /* context */
-  const { contracts, delist, getIsDelisted, ...helpers } = useContractsAddress()
+  const { contracts, getIsDelisted, ...helpers } = useContractsAddress()
   const { getSymbol, parseToken, toToken, toAssetInfo } = helpers
   const { find } = useContract()
   const { loading } = useRefetch([PriceKey.ORACLE, PriceKey.END, balanceKey])
@@ -103,8 +103,9 @@ const MintForm = ({ position, type, tab, message }: Props) => {
   /* form:hook */
   const prevCollateral = position && parseToken(position.collateral)
   const prevAsset = position && parseToken(position.asset)
-  const prevCollateralDelisted = prevCollateral && delist[prevCollateral.token]
-  const prevAssetDelisted = prevAsset && delist[prevAsset.token]
+  const prevCollateralDelisted =
+    prevCollateral && getIsDelisted(prevCollateral.token)
+  const prevAssetDelisted = prevAsset && getIsDelisted(prevAsset.token)
   const priceKey1 = prevCollateralDelisted ? PriceKey.END : PriceKey.ORACLE
   const priceKey2 = prevAssetDelisted ? PriceKey.END : PriceKey.ORACLE
 
