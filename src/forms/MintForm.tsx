@@ -299,7 +299,7 @@ const MintForm = ({ position, type, message }: Props) => {
       ) : (
         "Collateral Ratio (%)"
       ),
-      prev: edit ? (prevRatio ? percentage(prevRatio) : "") : undefined,
+      prev: edit ? (prevRatio ? percentage(prevRatio) : "0") : undefined,
       input: { type: "number", step: step(), placeholder: "200" },
       unit: open ? "%" : "",
     },
