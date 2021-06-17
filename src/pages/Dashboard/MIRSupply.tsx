@@ -1,3 +1,4 @@
+import Tooltips from "../../lang/Tooltips"
 import { minus, plus } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
 import { useDashboard } from "../../data/stats/statistic"
@@ -10,9 +11,21 @@ const MIRSupply = () => {
   const { circulating, liquidity, staked } = mirSupply
 
   const list = [
-    { label: "Liquidity", value: liquidity },
-    { label: "Staked", value: staked },
-    { label: "Others", value: minus(circulating, plus(liquidity, staked)) },
+    {
+      label: "Liquidity",
+      value: liquidity,
+      tooltip: Tooltips.Dashboard.MIRCirculatingSupply.Liquidity,
+    },
+    {
+      label: "Staked",
+      value: staked,
+      tooltip: Tooltips.Dashboard.MIRCirculatingSupply.Staked,
+    },
+    {
+      label: "Others",
+      value: minus(circulating, plus(liquidity, staked)),
+      tooltip: Tooltips.Dashboard.MIRCirculatingSupply.Others,
+    },
   ]
 
   return (

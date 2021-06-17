@@ -8,7 +8,7 @@ import { UserDenied, CreateTxFailed } from "@terra-money/wallet-provider"
 import { TxFailed, TxUnspecifiedError } from "@terra-money/wallet-provider"
 
 import MESSAGE from "../lang/MESSAGE.json"
-import Tooltip from "../lang/Tooltip.json"
+import Tooltips from "../lang/Tooltips"
 import { gt, plus, sum } from "../libs/math"
 import { capitalize } from "../libs/utils"
 import useHash from "../libs/useHash"
@@ -152,7 +152,7 @@ export const Component = ({ data: msgs, memo, ...props }: Props) => {
         }
 
     const txFeeTitle = (
-      <TooltipIcon content={Tooltip.Forms.TxFee}>Tx Fee</TooltipIcon>
+      <TooltipIcon content={Tooltips.Forms.TxFee}>Tx Fee</TooltipIcon>
     )
 
     const txFee = (

@@ -1,3 +1,4 @@
+import Tooltips from "../../lang/Tooltips"
 import useHash from "../../libs/useHash"
 import Page from "../../components/Page"
 import Tab from "../../components/Tab"
@@ -19,7 +20,11 @@ const Farm = () => {
       {!hash ? (
         <FarmList />
       ) : (
-        <Tab tabs={[FarmType.LONG, FarmType.SHORT]} current={hash}>
+        <Tab
+          tabs={[FarmType.LONG, FarmType.SHORT]}
+          tooltips={[Tooltips.Farm.Long, Tooltips.Farm.Short]}
+          current={hash}
+        >
           {render[hash]()}
         </Tab>
       )}

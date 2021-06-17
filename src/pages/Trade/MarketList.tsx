@@ -1,5 +1,5 @@
 import { useState } from "react"
-
+import Tooltips from "../../lang/Tooltips"
 import { lt, gt, number } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { Item, useTerraAssetList } from "../../data/stats/list"
@@ -11,6 +11,7 @@ import Formatted from "../../components/Formatted"
 import Percent from "../../components/Percent"
 import Search from "../../components/Search"
 import AssetItem from "../../components/AssetItem"
+import { TooltipIcon } from "../../components/Tooltip"
 import ChartContainer from "../../containers/ChartContainer"
 import AssetsIdleTable from "../../containers/AssetsIdleTable"
 import { MarketType } from "../../types/Types"
@@ -96,7 +97,11 @@ const MarketList = () => {
             },
             {
               key: "history",
-              title: "24h Chart",
+              title: (
+                <TooltipIcon content={Tooltips.Trade.Chart}>
+                  24h Chart
+                </TooltipIcon>
+              ),
               render: (_, { token }) => (
                 <ChartContainer
                   datasets={
@@ -112,7 +117,11 @@ const MarketList = () => {
             },
             {
               key: "premium",
-              title: "Premium",
+              title: (
+                <TooltipIcon content={Tooltips.Trade.Premium}>
+                  Premium
+                </TooltipIcon>
+              ),
               render: (value) => <Percent>{value}</Percent>,
               align: "right",
               desktop: true,

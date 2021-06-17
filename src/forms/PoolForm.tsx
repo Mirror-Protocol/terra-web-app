@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
-import Tooltip from "../lang/Tooltip.json"
+import Tooltips from "../lang/Tooltips"
 import { DEFAULT_SLIPPAGE } from "../constants"
 import { gt } from "../libs/math"
 import { format, lookup, toAmount } from "../libs/parse"
@@ -150,11 +150,9 @@ const PoolForm = ({ type, poolOnly }: Props) => {
       [Key.value]: {
         label: {
           [PoolType.PROVIDE]: (
-            <TooltipIcon content={Tooltip.Pool.InputAsset}>Asset</TooltipIcon>
+            <TooltipIcon content={Tooltips.Farm.InputAsset}>Asset</TooltipIcon>
           ),
-          [PoolType.WITHDRAW]: (
-            <TooltipIcon content={Tooltip.Pool.LP}>LP</TooltipIcon>
-          ),
+          [PoolType.WITHDRAW]: "LP",
         }[type],
         input: {
           type: "number",
@@ -176,14 +174,14 @@ const PoolForm = ({ type, poolOnly }: Props) => {
 
     estimated: {
       [PoolType.PROVIDE]: {
-        label: <TooltipIcon content={Tooltip.Pool.InputUST}>UST</TooltipIcon>,
+        label: <TooltipIcon content={Tooltips.Farm.InputUST}>UST</TooltipIcon>,
         value: toLP?.text,
         help: renderBalance(find(BalanceKey.NATIVE, "uusd"), "uusd"),
         unit: "UST",
       },
       [PoolType.WITHDRAW]: {
         label: (
-          <TooltipIcon content={Tooltip.Pool.Output}>Received</TooltipIcon>
+          <TooltipIcon content={Tooltips.Farm.Output}>Received</TooltipIcon>
         ),
         value: fromLP?.text,
       },
@@ -201,7 +199,7 @@ const PoolForm = ({ type, poolOnly }: Props) => {
     : [
         {
           title: (
-            <TooltipIcon content={Tooltip.Pool.PoolPrice}>
+            <TooltipIcon content={Tooltips.Farm.PoolPrice}>
               {gt(pairPrice, 0) ? "Terraswap" : "Oracle"} Price
             </TooltipIcon>
           ),

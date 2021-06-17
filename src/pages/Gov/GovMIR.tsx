@@ -1,5 +1,5 @@
 import { useRouteMatch } from "react-router-dom"
-import Tooltip from "../../lang/Tooltip.json"
+import Tooltips from "../../lang/Tooltips"
 import { ReactComponent as Logo } from "../../styles/images/MIR.svg"
 import { percent } from "../../libs/num"
 import { useAddress } from "../../hooks"
@@ -35,7 +35,7 @@ const GovMIR = () => {
         </span>
 
         <section className={styles.desc}>
-          <TooltipIcon content={Tooltip.Gov.APR}>
+          <TooltipIcon content={Tooltips.Gov.APR}>
             Annual percentage rate (APR)
           </TooltipIcon>
           <p>(if voted to all polls)</p>

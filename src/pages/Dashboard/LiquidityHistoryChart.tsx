@@ -1,9 +1,11 @@
 import { last } from "ramda"
+import Tooltips from "../../lang/Tooltips"
+import { calcChange } from "../../data/stats/assets"
+import { useDashboardCharts } from "../../data/stats/statistic"
 import Card, { CardMain } from "../../components/Card"
 import Formatted from "../../components/Formatted"
 import Change from "../../components/Change"
-import { calcChange } from "../../data/stats/assets"
-import { useDashboardCharts } from "../../data/stats/statistic"
+import { TooltipIcon } from "../../components/Tooltip"
 import { renderChart, sortByTimestamp } from "./Dashboard"
 
 const LiquidityHistoryChart = () => {
@@ -18,9 +20,12 @@ const LiquidityHistoryChart = () => {
       : undefined
 
   const chart = renderChart(liquidityHistory)
+  const title = (
+    <TooltipIcon content={Tooltips.Dashboard.Liquidity}>Liquidity</TooltipIcon>
+  )
 
   return (
-    <Card title="Liquidity" full lg footer={chart}>
+    <Card title={title} full lg footer={chart}>
       <CardMain>
         <Formatted symbol="uusd" config={{ integer: true }} big>
           {last(sortByTimestamp(liquidityHistory))?.value}

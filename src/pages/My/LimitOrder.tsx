@@ -1,4 +1,4 @@
-import Tooltip from "../../lang/Tooltip.json"
+import Tooltips from "../../lang/Tooltips"
 import { formatAsset } from "../../libs/parse"
 import { capitalize } from "../../libs/utils"
 import { useMyLimitOrder } from "../../data/my/limit"
@@ -26,7 +26,7 @@ const LimitOrder = () => {
           title: "Locked",
           content: renderTooltip(
             formatAsset(totalValue, "uusd"),
-            Tooltip.My.TotalLockedValue
+            Tooltips.My.TotalLockedValue
           ),
         },
       ]}
@@ -38,7 +38,7 @@ const LimitOrder = () => {
       <Table
         caption={
           <Caption
-            title={renderTooltip("Limit Order", Tooltip.My.LimitOrder)}
+            title={renderTooltip("Limit Order", Tooltips.My.LimitOrder)}
             description={description}
           />
         }
@@ -63,7 +63,7 @@ const LimitOrder = () => {
           },
           {
             key: "limitPrice",
-            title: renderTooltip("Limit Price", Tooltip.My.LimitPrice),
+            title: renderTooltip("Limit Price", Tooltips.My.LimitPrice),
             render: (value) => <Formatted unit="UST">{value}</Formatted>,
             align: "right",
           },

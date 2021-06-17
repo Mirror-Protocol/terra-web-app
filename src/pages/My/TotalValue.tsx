@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import classNames from "classnames"
 
+import Tooltips from "../../lang/Tooltips"
 import { gt, times } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
 import { BalanceKey } from "../../hooks/contractKeys"
@@ -16,6 +17,7 @@ import DoughnutChart from "../../containers/DoughnutChart"
 import BuyLinks from "../../components/BuyLinks"
 import Icon from "../../components/Icon"
 import { Submit } from "../../components/Button"
+import { TooltipIcon } from "../../components/Tooltip"
 import styles from "./TotalValue.module.scss"
 
 const TotalValue = () => {
@@ -48,7 +50,11 @@ const TotalValue = () => {
   return (
     <Grid>
       <Card
-        title="Total Value"
+        title={
+          <TooltipIcon content={Tooltips.My.TotalValue}>
+            Total Value
+          </TooltipIcon>
+        }
         footer={
           shouldBuyUST && (
             <CardMain>
@@ -70,19 +76,50 @@ const TotalValue = () => {
         {!shouldBuyUST && (
           <DoughnutChart
             list={[
-              { label: "UST", value: uusd },
-              { label: "Limit Order", value: limitOrder },
-              { label: "Holding", value: holding },
-              { label: "Borrowing", value: borrowing },
-              { label: "Farming", value: farming },
-              { label: "Govern", value: gov },
+              {
+                label: "UST",
+                value: uusd,
+                tooltip: Tooltips.My.Total.UST,
+              },
+              {
+                label: "Limit",
+                value: limitOrder,
+                tooltip: Tooltips.My.Total.LimitOrder,
+              },
+              {
+                label: "Holding",
+                value: holding,
+                tooltip: Tooltips.My.Total.Holding,
+              },
+              {
+                label: "Borrowing",
+                value: borrowing,
+                tooltip: Tooltips.My.Total.Borrowing,
+              },
+              {
+                label: "Farming",
+                value: farming,
+                tooltip: Tooltips.My.Total.Farming,
+              },
+              {
+                label: "Govern",
+                value: gov,
+                tooltip: Tooltips.My.Total.Gov,
+              },
             ]}
             format={(value) => formatAsset(value, "uusd")}
           />
         )}
       </Card>
 
-      <Card title="Total Claimable Rewards" footer={claimAll}>
+      <Card
+        title={
+          <TooltipIcon content={Tooltips.My.TotalRewards}>
+            Total Claimable Rewards
+          </TooltipIcon>
+        }
+        footer={claimAll}
+      >
         <p>
           <Formatted symbol="MIR" big>
             {rewards.total}

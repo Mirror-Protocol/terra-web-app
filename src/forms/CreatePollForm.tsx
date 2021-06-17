@@ -1,7 +1,7 @@
 import { useRecoilValue } from "recoil"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
-import Tooltip from "../lang/Tooltip.json"
+import Tooltips from "../lang/Tooltips"
 import { MAX_MSG_LENGTH } from "../constants"
 import { div, gte, number, times } from "../libs/math"
 import { record, getLength } from "../libs/utils"
@@ -369,7 +369,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
   const fields = {
     deposit: {
       help: renderBalance(find(balanceKey, getToken("MIR")), "MIR"),
-      label: <TooltipIcon content={Tooltip.Gov.Deposit}>Deposit</TooltipIcon>,
+      label: <TooltipIcon content={Tooltips.Gov.Deposit}>Deposit</TooltipIcon>,
       value: <Formatted symbol="MIR">{deposit}</Formatted>,
     },
 
@@ -407,12 +407,12 @@ const CreatePollForm = ({ type, headings }: Props) => {
         },
       },
       [Key.ticker]: {
-        label: <TooltipIcon content={Tooltip.Gov.Ticker}>Ticker</TooltipIcon>,
+        label: <TooltipIcon content={Tooltips.Gov.Ticker}>Ticker</TooltipIcon>,
         input: { placeholder: "AAPL" },
       },
       [Key.listed]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.ListedExchange}>
+          <TooltipIcon content={Tooltips.Gov.ListedExchange}>
             Listed Exchange
           </TooltipIcon>
         ),
@@ -420,7 +420,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
       },
       [Key.suggestedOracle]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.SuggestedOracle}>
+          <TooltipIcon content={Tooltips.Gov.SuggestedOracle}>
             Suggested Oracle (Optional)
           </TooltipIcon>
         ),
@@ -443,7 +443,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
 
       // Type.INFLATION
       [Key.weight]: {
-        label: <TooltipIcon content={Tooltip.Gov.Weight}>Weight</TooltipIcon>,
+        label: <TooltipIcon content={Tooltips.Gov.Weight}>Weight</TooltipIcon>,
         input: {
           type: "number",
           step: step(),
@@ -460,7 +460,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
       },
       [Key.auctionDiscount]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.AuctionDiscount}>
+          <TooltipIcon content={Tooltips.Gov.AuctionDiscount}>
             Auction Discount
           </TooltipIcon>
         ),
@@ -473,7 +473,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
       },
       [Key.minCollateralRatio]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.MinimumCollateralRatio}>
+          <TooltipIcon content={Tooltips.Gov.MinimumCollateralRatio}>
             Minimum Collateral Ratio before IPO
           </TooltipIcon>
         ),
@@ -485,13 +485,21 @@ const CreatePollForm = ({ type, headings }: Props) => {
         unit: "%",
       },
       [Key.mintPeriod]: {
-        label: "Mint Period",
+        label: (
+          <TooltipIcon content={Tooltips.Gov.MintPeriod}>
+            Mint Period
+          </TooltipIcon>
+        ),
         input: { placeholder: mintPlaceholders[Key.mintPeriod] },
         unit: "Second(s)",
         unitAfterValue: true,
       },
       [Key.minCollateralRatioAfterIPO]: {
-        label: "Minimum collateral ratio after IPO",
+        label: (
+          <TooltipIcon content={Tooltips.Gov.MinimumCollateralRatioAfterIPO}>
+            Minimum collateral ratio after IPO
+          </TooltipIcon>
+        ),
         input: {
           type: "number",
           step: step(),
@@ -500,7 +508,14 @@ const CreatePollForm = ({ type, headings }: Props) => {
         unit: "%",
       },
       [Key.price]: {
-        label: type === PollType.PREIPO ? "Pre-IPO Price" : "End Price",
+        label:
+          type === PollType.PREIPO ? (
+            <TooltipIcon content={Tooltips.Gov.PreIpoPrice}>
+              Pre-IPO Price
+            </TooltipIcon>
+          ) : (
+            "End Price"
+          ),
         input: {
           type: "number",
           step: step(),
@@ -517,7 +532,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
       },
       [Key.quorum]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.Quorum}>
+          <TooltipIcon content={Tooltips.Gov.Quorum}>
             Quorum (Optional)
           </TooltipIcon>
         ),
@@ -530,7 +545,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
       },
       [Key.threshold]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.Threshold}>
+          <TooltipIcon content={Tooltips.Gov.Threshold}>
             Threshold (Optional)
           </TooltipIcon>
         ),
@@ -543,7 +558,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
       },
       [Key.votingPeriod]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.VotingPeriod}>
+          <TooltipIcon content={Tooltips.Gov.VotingPeriod}>
             Voting Period (Optional)
           </TooltipIcon>
         ),
@@ -553,7 +568,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
       },
       [Key.effectiveDelay]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.EffectiveDelay}>
+          <TooltipIcon content={Tooltips.Gov.EffectiveDelay}>
             Effective Delay (Optional)
           </TooltipIcon>
         ),
@@ -563,7 +578,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
       },
       [Key.expirationPeriod]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.ExpirationPeriod}>
+          <TooltipIcon content={Tooltips.Gov.ExpirationPeriod}>
             Expiration Period (Optional)
           </TooltipIcon>
         ),
@@ -573,7 +588,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
       },
       [Key.proposalDeposit]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.ProposalDeposit}>
+          <TooltipIcon content={Tooltips.Gov.ProposalDeposit}>
             Proposal Deposit (Optional)
           </TooltipIcon>
         ),
@@ -582,7 +597,11 @@ const CreatePollForm = ({ type, headings }: Props) => {
         unitAfterValue: true,
       },
       [Key.voterWeight]: {
-        label: "Voter weight (Optional)",
+        label: (
+          <TooltipIcon content={Tooltips.Gov.VoterWeight}>
+            Voter weight (Optional)
+          </TooltipIcon>
+        ),
         input: {
           type: "number",
           step: step(),
@@ -592,7 +611,11 @@ const CreatePollForm = ({ type, headings }: Props) => {
 
       // Type.COLLATERAL
       [Key.multiplier]: {
-        label: "Multiplier",
+        label: (
+          <TooltipIcon content={Tooltips.Gov.Multiplier}>
+            Multiplier
+          </TooltipIcon>
+        ),
         input: {
           type: "number",
           step: step(),
@@ -603,12 +626,12 @@ const CreatePollForm = ({ type, headings }: Props) => {
       // Type.COMMUNITY_SPEND
       [Key.recipient]: {
         label: (
-          <TooltipIcon content={Tooltip.Gov.Recipient}>Recipient</TooltipIcon>
+          <TooltipIcon content={Tooltips.Gov.Recipient}>Recipient</TooltipIcon>
         ),
         input: { placeholder: "Terra address" },
       },
       [Key.amount]: {
-        label: <TooltipIcon content={Tooltip.Gov.Amount}>Amount</TooltipIcon>,
+        label: <TooltipIcon content={Tooltips.Gov.Amount}>Amount</TooltipIcon>,
         input: { placeholder: placeholder("MIR") },
         help: renderBalance(spend_limit, "MIR"),
         unit: "MIR",

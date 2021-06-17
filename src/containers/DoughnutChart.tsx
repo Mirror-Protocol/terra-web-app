@@ -1,11 +1,12 @@
 import { ChartData, ChartOptions } from "chart.js"
 import { Doughnut } from "react-chartjs-2"
 import { gt, minus, number } from "../libs/math"
+import { TooltipIcon } from "../components/Tooltip"
 import Legend, { colors } from "./Legend"
 import styles from "./DoughnutChart.module.scss"
 
 interface Props {
-  list: { label: string; value: string }[]
+  list: { label: string; value: string; tooltip: string }[]
   format: (value: string) => string
 }
 
@@ -39,9 +40,12 @@ const DoughnutChart = ({ format, ...props }: Props) => {
   return (
     <div className={styles.wrapper}>
       <ul>
-        {list.map(({ label, value }, index) => (
-          <li className={styles.item} key={label}>
-            <Legend label={label} index={index}>
+        {list.map(({ label, tooltip, value }, index) => (
+          <li className={styles.item} key={index}>
+            <Legend
+              label={<TooltipIcon content={tooltip}>{label}</TooltipIcon>}
+              index={index}
+            >
               {format(value)}
             </Legend>
           </li>

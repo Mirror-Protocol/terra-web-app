@@ -1,6 +1,6 @@
 import { format as formatDate } from "date-fns"
 import { FMT } from "../../constants"
-import Tooltip from "../../lang/Tooltip.json"
+import Tooltips from "../../lang/Tooltips"
 import { gt } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
 import { useMyShortFarming } from "../../data/my/short"
@@ -34,11 +34,19 @@ const ShortFarming = () => {
           ),
         },
         {
-          title: "Locked",
+          title: (
+            <TooltipIcon content={Tooltips.My.TotalLockedUST}>
+              Locked
+            </TooltipIcon>
+          ),
           content: formatAsset(totalLockedUST, "uusd"),
         },
         {
-          title: "Unlocked",
+          title: (
+            <TooltipIcon content={Tooltips.My.TotalUnlockedUST}>
+              Unlocked
+            </TooltipIcon>
+          ),
           content: formatAsset(totalUnlockedUST, "uusd"),
         },
         {
@@ -61,7 +69,7 @@ const ShortFarming = () => {
           key: "symbol",
           title: [
             "Ticker",
-            <TooltipIcon content={Tooltip.My.APR}>APR</TooltipIcon>,
+            <TooltipIcon content={Tooltips.My.APR}>APR</TooltipIcon>,
           ],
           render: (symbol, { status, apr }) => [
             <>
@@ -82,7 +90,12 @@ const ShortFarming = () => {
         },
         {
           key: "locked",
-          title: ["Locked UST", "Last Unlock Time"],
+          title: [
+            <TooltipIcon content={Tooltips.My.LockedUST}>
+              Locked UST
+            </TooltipIcon>,
+            "Last Unlock Time",
+          ],
           render: (amount, { unlock_time }) => {
             const formatted = <Formatted symbol="uusd">{amount}</Formatted>
             return gt(amount, 0)
@@ -93,14 +106,18 @@ const ShortFarming = () => {
         },
         {
           key: "unlocked",
-          title: "Unlocked UST",
+          title: (
+            <TooltipIcon content={Tooltips.My.UnlockedUST}>
+              Unlocked UST
+            </TooltipIcon>
+          ),
           render: (amount) => <Formatted symbol="uusd">{amount}</Formatted>,
           align: "right",
         },
         {
           key: "reward",
           title: (
-            <TooltipIcon content={Tooltip.My.FarmReward}>Reward</TooltipIcon>
+            <TooltipIcon content={Tooltips.My.FarmReward}>Reward</TooltipIcon>
           ),
           render: (value) => <Formatted symbol="MIR">{value}</Formatted>,
           align: "right",

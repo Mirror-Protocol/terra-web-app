@@ -5,7 +5,7 @@ import { isNil } from "ramda"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
 import { COMMISSION } from "../constants"
-import Tooltip from "../lang/Tooltip.json"
+import Tooltips from "../lang/Tooltips"
 import { div, gt, times } from "../libs/math"
 import { usePolling } from "../hooks"
 import { dp, format, lookup, lookupSymbol } from "../libs/parse"
@@ -283,7 +283,7 @@ const TradeForm = ({ type }: { type: TradeType }) => {
     : [
         {
           title: (
-            <TooltipIcon content={Tooltip.Trade.Price}>
+            <TooltipIcon content={Tooltips.Trade.Price}>
               Expected Price
             </TooltipIcon>
           ),
@@ -295,7 +295,7 @@ const TradeForm = ({ type }: { type: TradeType }) => {
         },
         {
           title: (
-            <TooltipIcon content={Tooltip.Trade.MinimumReceived}>
+            <TooltipIcon content={Tooltips.Trade.MinimumReceived}>
               Minimum Received
             </TooltipIcon>
           ),

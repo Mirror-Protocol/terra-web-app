@@ -1,5 +1,5 @@
 import classNames from "classnames"
-import Tooltips from "../../lang/Tooltip.json"
+import Tooltips from "../../lang/Tooltips"
 import { plus } from "../../libs/math"
 import { decimal, formatAsset, lookupSymbol } from "../../libs/parse"
 import { getPath, MenuKey } from "../../routes"

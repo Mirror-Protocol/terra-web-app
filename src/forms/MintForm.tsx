@@ -7,7 +7,7 @@ import { MsgExecuteContract } from "@terra-money/terra.js"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
 import MESSAGE from "../lang/MESSAGE.json"
-import Tooltip from "../lang/Tooltip.json"
+import Tooltips from "../lang/Tooltips"
 import { DEFAULT_MIN_RATIO, TRADING_HOURS } from "../constants"
 import { plus, minus, times, div, floor, max, abs } from "../libs/math"
 import { gt, gte, lt, isFinite } from "../libs/math"
@@ -300,9 +300,11 @@ const MintForm = ({ position, type, message }: Props) => {
       },
 
       [Key.value2]: {
-        label: (
-          <TooltipIcon content={Tooltip.Mint.ExpectedMintedAsset}>
-            {short ? "Shorted" : "Borrowed"}
+        label: short ? (
+          <TooltipIcon content={Tooltips.Farm.Shorted}>Shorted</TooltipIcon>
+        ) : (
+          <TooltipIcon content={Tooltips.Mint.ExpectedMintedAsset}>
+            Borrowed
           </TooltipIcon>
         ),
         input: {
@@ -319,7 +321,7 @@ const MintForm = ({ position, type, message }: Props) => {
 
       [Key.ratio]: {
         label: (
-          <TooltipIcon content={Tooltip.Mint.CollateralRatio}>
+          <TooltipIcon content={Tooltips.Mint.CollateralRatio}>
             Collateral Ratio
           </TooltipIcon>
         ),
@@ -337,7 +339,7 @@ const MintForm = ({ position, type, message }: Props) => {
     {
       title: "Collateral",
       content: (
-        <TooltipIcon content={Tooltip.Mint.Collateral}>
+        <TooltipIcon content={Tooltips.Mint.Collateral}>
           {formatAsset(prevCollateral?.amount, prevCollateral?.symbol)}
         </TooltipIcon>
       ),
@@ -345,7 +347,7 @@ const MintForm = ({ position, type, message }: Props) => {
     {
       title: "Borrowed",
       content: (
-        <TooltipIcon content={Tooltip.Mint.Asset}>
+        <TooltipIcon content={Tooltips.Mint.Asset}>
           {formatAsset(prevAsset?.amount, prevAsset?.symbol)}
         </TooltipIcon>
       ),
@@ -382,7 +384,7 @@ const MintForm = ({ position, type, message }: Props) => {
   const price = div(find(priceKey2, token2), find(priceKey1, token1))
 
   const priceContents = {
-    title: <TooltipIcon content={Tooltip.Mint.Price}>Price</TooltipIcon>,
+    title: <TooltipIcon content={Tooltips.Mint.Price}>Price</TooltipIcon>,
     content: (
       <Count
         format={(value) => `1 ${lookupSymbol(symbol2)} ≈ ${format(value)}`}
@@ -591,7 +593,7 @@ const MintForm = ({ position, type, message }: Props) => {
           </section>
 
           {open && (
-            <FormFeedback type="warn">{Tooltip.Mint.Caution}</FormFeedback>
+            <FormFeedback type="warn">{Tooltips.Mint.Caution}</FormFeedback>
           )}
         </FormContainer>
       )}

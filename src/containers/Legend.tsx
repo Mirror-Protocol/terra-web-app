@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, ReactNode } from "react"
 import styles from "./Legend.module.scss"
 
 const $blue = "#66adff"
@@ -12,7 +12,7 @@ export const colors = [$blue, $blue62, $blue38, $gray24, $gray14, $gray08]
 
 interface Props {
   index: number
-  label: string
+  label: ReactNode
 }
 
 const Legend: FC<Props> = ({ index, label, children }) => {

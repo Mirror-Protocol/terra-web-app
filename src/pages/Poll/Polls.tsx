@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useRouteMatch } from "react-router-dom"
 import classNames from "classnames/bind"
 
-import Tooltip from "../../lang/Tooltip.json"
+import Tooltips from "../../lang/Tooltips"
 import { usePolls } from "../../data/gov/polls"
 import { useParsePoll } from "../../data/gov/parse"
 import Card from "../../components/Card"
@@ -30,7 +30,7 @@ const Polls = ({ title }: { title: string }) => {
     <article className={styles.component}>
       <header className={styles.header}>
         <LoadingTitle className={styles.title}>
-          <TooltipIcon content={Tooltip.Gov.Polls}>
+          <TooltipIcon content={Tooltips.Gov.Polls}>
             <h1>{title}</h1>
           </TooltipIcon>
         </LoadingTitle>

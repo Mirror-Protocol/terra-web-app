@@ -1,5 +1,5 @@
 import classNames from "classnames/bind"
-import Tooltip from "../lang/Tooltip.json"
+import Tooltips from "../lang/Tooltips"
 import { times, div, gt, gte, lt } from "../libs/math"
 import { percent, percentage } from "../libs/num"
 import Progress from "../components/Progress"
@@ -31,7 +31,7 @@ const CollateralRatio = ({ min, safe, ratio, compact, onClick }: Props) => {
     label: compact ? (
       minText
     ) : (
-      <TooltipIcon content={Tooltip.Mint.MinCollateralRatio}>
+      <TooltipIcon content={Tooltips.Mint.MinCollateralRatio}>
         {minText}
       </TooltipIcon>
     ),
@@ -42,7 +42,7 @@ const CollateralRatio = ({ min, safe, ratio, compact, onClick }: Props) => {
     label: compact ? (
       safeText
     ) : (
-      <TooltipIcon content={Tooltip.Mint.SafeCollateralRatio}>
+      <TooltipIcon content={Tooltips.Mint.SafeCollateralRatio}>
         {safeText}
       </TooltipIcon>
     ),

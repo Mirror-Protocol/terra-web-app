@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useRecoilState, useRecoilValue } from "recoil"
 import Tippy from "@tippyjs/react"
 import classNames from "classnames/bind"
-import Tooltip from "../lang/Tooltip.json"
+import Tooltips from "../lang/Tooltips"
 import { gt, gte, isFinite, lt, lte } from "../libs/math"
 import * as slippage from "../data/tx/slippage"
 import { DropdownTippyProps, TooltipIcon } from "../components/Tooltip"
@@ -39,7 +39,7 @@ const SlippageTolerance = () => {
   return (
     <div className={styles.card}>
       <header className={styles.header}>
-        <TooltipIcon content={Tooltip.Trade.SlippageTolerance}>
+        <TooltipIcon content={Tooltips.Trade.SlippageTolerance}>
           <h1 className={styles.title}>Slippage tolerance</h1>
         </TooltipIcon>
       </header>

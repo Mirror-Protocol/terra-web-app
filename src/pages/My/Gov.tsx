@@ -1,8 +1,8 @@
+import Tooltips from "../../lang/Tooltips"
 import { gt } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
 import { capitalize } from "../../libs/utils"
 import { useMyGov } from "../../data/my/gov"
-
 import { getPath, MenuKey } from "../../routes"
 import Table from "../../components/Table"
 import Caption from "../../components/Caption"
@@ -18,15 +18,23 @@ const Gov = () => {
     <CaptionData
       list={[
         {
-          title: "Staked",
+          title: <TooltipIcon content={Tooltips.My.Staked}>Staked</TooltipIcon>,
           content: formatAsset(staked, "MIR"),
         },
         {
-          title: "Accumulated Rewards",
+          title: (
+            <TooltipIcon content={Tooltips.My.AccRewards}>
+              Accumulated Rewards
+            </TooltipIcon>
+          ),
           content: formatAsset(accReward, "MIR"),
         },
         {
-          title: "Voting Rewards",
+          title: (
+            <TooltipIcon content={Tooltips.My.VotingRewards}>
+              Voting Rewards
+            </TooltipIcon>
+          ),
           content: formatAsset(votingRewards, "MIR"),
         },
       ]}
@@ -37,7 +45,7 @@ const Gov = () => {
     <Table
       caption={
         <Caption
-          title={<TooltipIcon>Govern</TooltipIcon>}
+          title={<TooltipIcon content={Tooltips.My.Govern}>Govern</TooltipIcon>}
           description={description}
         />
       }

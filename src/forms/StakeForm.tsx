@@ -1,6 +1,6 @@
 import { useRecoilValue } from "recoil"
 import { useLocation } from "react-router-dom"
-import Tooltip from "../lang/Tooltip.json"
+import Tooltips from "../lang/Tooltips"
 import { toBase64 } from "../libs/formHelpers"
 import useNewContractMsg from "../libs/useNewContractMsg"
 import { gt, minus, max as findMax } from "../libs/math"
@@ -102,7 +102,9 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
   const locked = getLocked()
   const fields = getFields({
     [Key.value]: {
-      label: "Amount",
+      label: (
+        <TooltipIcon content={Tooltips.Farm.UnstakeAmount}>Amount</TooltipIcon>
+      ),
       input: {
         type: "number",
         step: step(symbol),
@@ -118,7 +120,7 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
   })
 
   const estimatedField = {
-    label: <TooltipIcon content={Tooltip.Pool.Output}>Received</TooltipIcon>,
+    label: <TooltipIcon content={Tooltips.Farm.Output}>Received</TooltipIcon>,
     value: fromLP?.text,
   }
 
@@ -204,7 +206,7 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
 
         {gov && type === StakeType.STAKE && (
           <FormFeedback type="help" full>
-            {Tooltip.My.GovReward}
+            {Tooltips.My.GovReward}
           </FormFeedback>
         )}
       </FormContainer>

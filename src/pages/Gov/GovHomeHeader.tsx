@@ -1,6 +1,6 @@
 import { useRecoilValue } from "recoil"
 
-import Tooltip from "../../lang/Tooltip.json"
+import Tooltips from "../../lang/Tooltips"
 import { div, minus, isFinite } from "../../libs/math"
 import { percent } from "../../libs/num"
 import { useDashboard } from "../../data/stats/statistic"
@@ -22,7 +22,7 @@ const TotalStaked = () => {
   return (
     <Summary
       title={
-        <TooltipIcon content={Tooltip.Gov.TotalStaked}>
+        <TooltipIcon content={Tooltips.Gov.TotalStaked}>
           Total Staked
         </TooltipIcon>
       }
@@ -46,7 +46,7 @@ const StakingRatio = () => {
   return (
     <Summary
       title={
-        <TooltipIcon content={Tooltip.Gov.StakingRatio}>
+        <TooltipIcon content={Tooltips.Gov.StakingRatio}>
           Staking Ratio
         </TooltipIcon>
       }

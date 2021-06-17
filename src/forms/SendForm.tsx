@@ -4,7 +4,7 @@ import { AccAddress, MsgSend } from "@terra-money/terra.js"
 import { ethers } from "ethers"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
-import Tooltip from "../lang/Tooltip.json"
+import Tooltips from "../lang/Tooltips"
 import { div, gt, max, minus, times } from "../libs/math"
 import { formatAsset, lookup, lookupSymbol, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
@@ -197,7 +197,7 @@ const SendForm = ({ tab, shuttleList }: Props) => {
     ? [
         {
           title: (
-            <TooltipIcon content={Tooltip.Send.ShuttleFee}>
+            <TooltipIcon content={Tooltips.Send.ShuttleFee}>
               Shuttle fee (estimated)
             </TooltipIcon>
           ),

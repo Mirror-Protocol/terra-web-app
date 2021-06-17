@@ -1,4 +1,4 @@
-import Tooltip from "../../lang/Tooltip.json"
+import Tooltips from "../../lang/Tooltips"
 import { formatAsset } from "../../libs/parse"
 import { useMyHolding } from "../../data/my/holding"
 import { useProtocol } from "../../data/contract/protocol"
@@ -25,7 +25,7 @@ const Holding = () => {
       list={[
         {
           content: (
-            <TooltipIcon content={Tooltip.My.TotalHoldingValue}>
+            <TooltipIcon content={Tooltips.My.TotalHoldingValue}>
               ≈ {formatAsset(totalValue, "uusd")}
             </TooltipIcon>
           ),
@@ -39,7 +39,7 @@ const Holding = () => {
       caption={
         <Caption
           title={
-            <TooltipIcon content={Tooltip.My.Holding}>Holding</TooltipIcon>
+            <TooltipIcon content={Tooltips.My.Holding}>Holding</TooltipIcon>
           }
           description={description}
         />
@@ -69,7 +69,7 @@ const Holding = () => {
         {
           key: "balance",
           title: (
-            <TooltipIcon content={Tooltip.My.Balance}>Balance</TooltipIcon>
+            <TooltipIcon content={Tooltips.My.Balance}>Balance</TooltipIcon>
           ),
           render: (value, { symbol }) => (
             <Formatted symbol={symbol} noUnit>
@@ -80,7 +80,7 @@ const Holding = () => {
         },
         {
           key: "value",
-          title: <TooltipIcon content={Tooltip.My.Value}>Value</TooltipIcon>,
+          title: <TooltipIcon content={Tooltips.My.Value}>Value</TooltipIcon>,
           render: (value) => <Formatted symbol="uusd">{value}</Formatted>,
           align: "right",
         },

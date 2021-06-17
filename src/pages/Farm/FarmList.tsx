@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Tooltips from "../../lang/Tooltips"
 import { minus, max, number } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useProtocol } from "../../data/contract/protocol"
@@ -10,6 +11,7 @@ import AssetItem from "../../components/AssetItem"
 import Icon from "../../components/Icon"
 import Formatted from "../../components/Formatted"
 import Search from "../../components/Search"
+import { TooltipIcon } from "../../components/Tooltip"
 import AssetsIdleTable from "../../containers/AssetsIdleTable"
 import { FarmType } from "../../types/Types"
 import styles from "./FarmList.module.scss"
@@ -88,7 +90,9 @@ const FarmList = () => {
             },
             {
               key: "apr.long",
-              title: "Long",
+              title: (
+                <TooltipIcon content={Tooltips.Farm.LongAPR}>Long</TooltipIcon>
+              ),
               render: (value, { recommended }) => (
                 <>
                   <Percent color={recommended === "long" ? "blue" : undefined}>
@@ -112,7 +116,11 @@ const FarmList = () => {
             },
             {
               key: "apr.short",
-              title: "Short",
+              title: (
+                <TooltipIcon content={Tooltips.Farm.ShortAPR}>
+                  Short
+                </TooltipIcon>
+              ),
               render: (value, { token, recommended }) =>
                 getSymbol(token) !== "MIR" && (
                   <>
@@ -150,7 +158,11 @@ const FarmList = () => {
             },
             {
               key: "premium",
-              title: "Premium",
+              title: (
+                <TooltipIcon content={Tooltips.Farm.Premium}>
+                  Premium
+                </TooltipIcon>
+              ),
               render: (value) => <Percent>{value}</Percent>,
               align: "right",
               desktop: true,

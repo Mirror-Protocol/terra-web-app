@@ -1,4 +1,4 @@
-import Tooltip from "../../lang/Tooltip.json"
+import Tooltips from "../../lang/Tooltips"
 import { formatAsset } from "../../libs/parse"
 import getLpName from "../../libs/getLpName"
 import { useProtocol } from "../../data/contract/protocol"
@@ -43,7 +43,7 @@ const Farming = () => {
       caption={
         <Caption
           title={
-            <TooltipIcon content={Tooltip.My.Farming}>Farming</TooltipIcon>
+            <TooltipIcon content={Tooltips.My.Farming}>Farming</TooltipIcon>
           }
           description={description}
         />
@@ -53,7 +53,7 @@ const Farming = () => {
           key: "symbol",
           title: [
             "Pool Name",
-            <TooltipIcon content={Tooltip.My.APR}>APR</TooltipIcon>,
+            <TooltipIcon content={Tooltips.My.APR}>APR</TooltipIcon>,
           ],
           render: (symbol, { status, apr }) => [
             <>
@@ -67,7 +67,7 @@ const Farming = () => {
         {
           key: "withdrawable",
           title: (
-            <TooltipIcon content={Tooltip.My.Withdrawable}>
+            <TooltipIcon content={Tooltips.My.Withdrawable}>
               Withdrawable
             </TooltipIcon>
           ),
@@ -87,7 +87,7 @@ const Farming = () => {
         {
           key: "reward",
           title: (
-            <TooltipIcon content={Tooltip.My.FarmReward}>Reward</TooltipIcon>
+            <TooltipIcon content={Tooltips.My.FarmReward}>Reward</TooltipIcon>
           ),
           render: (value) => <Formatted symbol="MIR">{value}</Formatted>,
           align: "right",
