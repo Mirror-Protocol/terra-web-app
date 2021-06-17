@@ -93,6 +93,7 @@ $axis-height: 25px;
 /* dnd */
 .cursor {
   cursor: crosshair;
+  touch-action: none;
 }
 
 .dragging {

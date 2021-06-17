@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode, useRef, useState } from "react"
+import { ReactNode, useRef, useState } from "react"
 import classNames from "classnames/bind"
 import { div } from "../libs/math"
 import { percent } from "../libs/num"
@@ -26,15 +26,15 @@ const Progress = ({ data, axis, className, onPosition, ...props }: Props) => {
   const componentRef = useRef<HTMLDivElement>(null!)
   const [dragging, setDragging] = useState(false)
 
-  const handlePosition = (e: MouseEvent) => {
+  const handlePosition = (clientX: number) => {
     const { left, width } = componentRef.current.getBoundingClientRect()
-    const x = div(e.clientX - left, width)
+    const x = div(clientX - left, width)
     onPosition?.(x)
   }
 
   const handleClick = handlePosition
-  const handleDrag = (e: MouseEvent) => {
-    dragging && handlePosition(e)
+  const handleDrag = (clientX: number) => {
+    dragging && handlePosition(clientX)
   }
 
   return (
@@ -44,11 +44,13 @@ const Progress = ({ data, axis, className, onPosition, ...props }: Props) => {
         dragging,
         compact,
       })}
-      onClick={handleClick}
       ref={componentRef}
-      onMouseMove={handleDrag}
+      onClick={(e) => handleClick(e.clientX)}
+      onMouseMove={(e) => handleDrag(e.clientX)}
+      onTouchMove={(e) => handleDrag(e.touches[0].clientX)}
       onMouseUp={() => setDragging(false)}
       onMouseLeave={() => setDragging(false)}
+      onTouchEnd={() => setDragging(false)}
     >
       {axis && (
         <div className={styles.axis}>
@@ -81,6 +83,7 @@ const Progress = ({ data, axis, className, onPosition, ...props }: Props) => {
             className={styles.thumb}
             style={{ left: percent(data[0].value) }}
             onMouseDown={() => setDragging(true)}
+            onTouchStart={() => setDragging(true)}
             onClick={(e) => e.stopPropagation()}
           >
             <Thumb />
