@@ -1,6 +1,7 @@
 import classNames from "classnames/bind"
 import Tooltips from "../lang/Tooltips"
 import { times, div, gt, gte, lt } from "../libs/math"
+import { decimal } from "../libs/parse"
 import { percent, percentage } from "../libs/num"
 import Progress from "../components/Progress"
 import { TooltipIcon } from "../components/Tooltip"
@@ -14,7 +15,7 @@ interface Props {
   safe: string
   ratio: string
   compact?: boolean
-  onClick?: (ratio: string) => void
+  onRatio?: (ratio: string) => void
 }
 
 const getX = (ratio: string, min: string) => {
@@ -22,7 +23,7 @@ const getX = (ratio: string, min: string) => {
   return lt(x, 0) ? "0" : gt(x, 1) ? "1" : x
 }
 
-const CollateralRatio = ({ min, safe, ratio, compact, onClick }: Props) => {
+const CollateralRatio = ({ min, safe, ratio, compact, onRatio }: Props) => {
   const minText = `Min: ${percent(min)}`
   const safeText = `Safe: ${percent(safe)}`
 
@@ -67,8 +68,9 @@ const CollateralRatio = ({ min, safe, ratio, compact, onClick }: Props) => {
           },
         ]}
         axis={compact ? [minX] : [minX, safeX]}
-        onClick={
-          onClick ? (value) => onClick(times(value, times(min, 2))) : undefined
+        onPosition={
+          onRatio &&
+          ((value) => onRatio(decimal(times(value, times(min, 2)), 4)))
         }
         noLabel={compact}
         compact={compact}

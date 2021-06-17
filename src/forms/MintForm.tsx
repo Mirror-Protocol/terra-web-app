@@ -368,7 +368,7 @@ const MintForm = ({ position, type, message }: Props) => {
     safe: safeRatio,
     ratio: nextRatio,
     prev: prevRatio,
-    onClick: (ratio: string) => {
+    onRatio: (ratio: string) => {
       form.setChanged(Key.ratio)
       setValue(Key.ratio, floor(times(ratio, 100)))
     },

@@ -11,10 +11,6 @@
   width: 80px;
 }
 
-.cursor {
-  cursor: crosshair;
-}
-
 /* axis */
 $axis-height: 25px;
 .axis {
@@ -74,11 +70,40 @@ $axis-height: 25px;
   @include flex(flex-start, stretch);
   background: $gray-34;
   height: 8px;
-  overflow: hidden;
+  position: relative;
 }
 
-.item {
-  @include transition;
+.thumb {
+  @include flex;
+
+  background-color: white;
+  border-radius: 50%;
+  border: 1px solid #101010;
+  box-shadow: 0 0 3px 0 rgba(black, 0.4);
+  cursor: grab;
+  transform: translate(-50%, -50%);
+
+  position: absolute;
+  top: 50%;
+
+  width: 24px;
+  height: 24px;
+}
+
+/* dnd */
+.cursor {
+  cursor: crosshair;
+}
+
+.dragging {
+  cursor: grabbing;
+}
+
+.component:not(.dragging) {
+  .item,
+  .ratio {
+    @include transition;
+  }
 }
 
 /* feedback */
@@ -94,7 +119,6 @@ $axis-height: 25px;
 
 /* feedback:ratio */
 .ratio {
-  @include transition;
   transform: translate(-50%, 0);
 }
 
