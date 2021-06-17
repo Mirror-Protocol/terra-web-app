@@ -39,11 +39,18 @@ const Progress = ({ data, axis, className, onClick, ...props }: Props) => {
     >
       {axis && (
         <div className={styles.axis}>
-          {axis.map(({ x, label }, index) => (
-            <div className={styles.x} style={{ left: percent(x) }} key={index}>
-              <span className={styles.text}>{label}</span>
-            </div>
-          ))}
+          {axis.map(({ x, label }, index) => {
+            const position = index ? styles.right : styles.left
+            return (
+              <div
+                className={classNames(styles.x, axis.length === 2 && position)}
+                style={{ left: percent(x) }}
+                key={index}
+              >
+                <span className={styles.text}>{label}</span>
+              </div>
+            )
+          })}
         </div>
       )}
 

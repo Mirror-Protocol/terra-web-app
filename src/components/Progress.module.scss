@@ -51,6 +51,22 @@ $axis-height: 25px;
     bottom: 0;
     transform: translate(-50%, 0);
   }
+
+  &.left {
+    transform: translate(-100%, 0);
+
+    &:after {
+      left: 100%;
+    }
+  }
+
+  &.right {
+    transform: translate(0, 0);
+
+    &:after {
+      left: 0;
+    }
+  }
 }
 
 /* track */
