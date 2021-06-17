@@ -23,6 +23,8 @@ import { slippageQuery } from "../data/tx/slippage"
 import { BalanceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
 import { tokenBalanceQuery } from "../data/contract/contract"
+import { nativePricesQuery } from "../data/contract/normalize"
+import { oraclePricesQuery } from "../data/contract/normalize"
 import { useFind } from "../data/contract/normalize"
 import { getMinRatioQuery } from "../data/contract/collateral"
 import { getMintPriceKeyQuery } from "../data/contract/collateral"
@@ -64,6 +66,8 @@ interface Props {
 
 const MintForm = ({ position, type, message }: Props) => {
   useRecoilValue(tokenBalanceQuery) // To determine to show balance
+  useRecoilValue(nativePricesQuery) // To calculate collateral ratio
+  useRecoilValue(oraclePricesQuery) // To calculate collateral ratio
   const balanceKey = BalanceKey.TOKEN
 
   /* context */
