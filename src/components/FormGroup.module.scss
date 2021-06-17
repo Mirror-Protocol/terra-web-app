@@ -34,7 +34,7 @@ $padding: 18px 24px;
   position: relative;
 
   &.readOnly {
-    $bg: fade-out($gray-34, 0.9);
+    $bg: $gray-22;
     border-color: $bg;
     background: $bg;
   }
@@ -55,11 +55,14 @@ $padding: 18px 24px;
 /* field */
 .header,
 .wrapper {
-  @include flex(space-between);
+  .type-1 &,
+  .type-2 & {
+    @include flex(space-between);
 
-  .label,
-  .field {
-    flex: 1;
+    .label,
+    .field {
+      flex: 1;
+    }
   }
 
   .help,
@@ -70,6 +73,26 @@ $padding: 18px 24px;
   }
 }
 
+.grid {
+  @include flex;
+
+  .border {
+    flex: 1;
+  }
+
+  &,
+  input {
+    text-align: right;
+  }
+}
+
+.arrow {
+  flex: none;
+  fill: $blue;
+  transform: rotate(-90deg);
+  margin: 16px;
+}
+
 .header {
   color: $white-44;
   font-size: 12px;
@@ -77,7 +100,31 @@ $padding: 18px 24px;
   margin-bottom: 15px;
 }
 
-.wrapper {
+.type-3 .header {
+  margin-bottom: 12px;
+
+  @include desktop {
+    @include flex(flex-start);
+  }
+}
+
+.type-3 .meta {
+  @include flex(space-between);
+  @include desktop {
+    flex: 1;
+    border-left: 1px solid $gray-34;
+    margin-left: 12px;
+    padding-left: 12px;
+  }
+
+  .unit {
+    color: $white-64;
+    font-size: 14px;
+  }
+}
+
+.type-1 .wrapper,
+.type-2 .wrapper {
   @include mobile {
     font-size: 16px;
   }
@@ -89,7 +136,20 @@ $padding: 18px 24px;
 
 .label > label {
   display: block;
-  text-transform: uppercase;
+
+  .type-1 &,
+  .type-2 & {
+    text-transform: uppercase;
+  }
+
+  .type-3 & {
+    font-size: 14px;
+    color: $white-92;
+
+    @include mobile {
+      margin-bottom: 12px;
+    }
+  }
 }
 
 .help {
@@ -115,7 +175,7 @@ $padding: 18px 24px;
 }
 
 .icon {
-  margin-right: 12px;
+  margin-right: 4px;
 }
 
 .type-1 .field,

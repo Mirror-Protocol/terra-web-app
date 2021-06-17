@@ -21,7 +21,7 @@ const SelectAssetButton: FC<Props> = ({
   const { formatTokenName = lookupSymbol } = props
   const renderAsset = (symbol: string) => (
     <>
-      <AssetIcon symbol={symbol} className={styles.icon} small />
+      <AssetIcon symbol={symbol} className={styles.icon} size="sm" />
       {formatTokenName(symbol)}
     </>
   )

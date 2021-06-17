@@ -11,9 +11,9 @@ import { findValueFromLogs, splitTokenText } from "./receiptHelpers"
 export default (type: MintType, prev?: MintPosition) => (logs: TxLog[]) => {
   const borrow = type === MintType.BORROW
   const short = type === MintType.SHORT
-  const open = borrow || short
+  const edit = type === MintType.EDIT
   const close = type === MintType.CLOSE
-  const custom = type === MintType.CUSTOM
+  const open = borrow || short
 
   /* context */
   const { getSymbol, parseToken } = useProtocol()
@@ -27,14 +27,12 @@ export default (type: MintType, prev?: MintPosition) => (logs: TxLog[]) => {
   const prevAsset = prev && parseToken(prev.asset)
 
   const collateral = splitTokenText(val("collateral_amount"))
-  const deposit = splitTokenText(val("deposit_amount", Number(custom)))
-  const withdraw = splitTokenText(
-    val("withdraw_amount", Number(custom || close))
-  )
+  const deposit = splitTokenText(val("deposit_amount", Number(edit)))
+  const withdraw = splitTokenText(val("withdraw_amount", Number(edit || close)))
 
   const mint = splitTokenText(val("mint_amount"))
   const burn = splitTokenText(val("burn_amount"))
-  const protocolFee = splitTokenText(val("protocol_fee", Number(custom)))
+  const protocolFee = splitTokenText(val("protocol_fee", Number(edit)))
 
   const nextCollateral = {
     [MintType.BORROW]: {
@@ -45,22 +43,11 @@ export default (type: MintType, prev?: MintPosition) => (logs: TxLog[]) => {
       amount: collateral.amount,
       token: collateral.token,
     },
-    [MintType.DEPOSIT]: {
-      amount: plus(prevCollateral?.amount, deposit.amount),
-      token: prevCollateral?.token,
-    },
-    [MintType.WITHDRAW]: {
-      amount: minus(
-        minus(prevCollateral?.amount, withdraw.amount),
-        protocolFee.amount
-      ),
-      token: prevCollateral?.token,
-    },
     [MintType.CLOSE]: {
       amount: minus(prevCollateral?.amount, protocolFee.amount),
       token: prevCollateral?.token,
     },
-    [MintType.CUSTOM]: {
+    [MintType.EDIT]: {
       amount: deposit.amount
         ? plus(prevCollateral?.amount, deposit.amount)
         : withdraw.amount
@@ -73,7 +60,7 @@ export default (type: MintType, prev?: MintPosition) => (logs: TxLog[]) => {
     },
   }[type]
 
-  const nextAsset = custom
+  const nextAsset = edit
     ? {
         amount: mint.amount
           ? plus(prevAsset?.amount, mint.amount)

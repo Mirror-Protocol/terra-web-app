@@ -30,6 +30,7 @@ type Select = DetailedHTMLProps<
 >
 
 interface FormGroup {
+  prev?: string
   input?: Input
   textarea?: TextArea
   select?: Select
@@ -43,7 +44,8 @@ interface FormGroup {
   error?: string
   warn?: ReactNode
   info?: ReactNode
-  type?: 1 | 2
+  type?: 1 | 2 | 3
+  size?: "default" | "sm" | "xs"
   skipFeedback?: boolean
   unitAfterValue?: boolean
 }

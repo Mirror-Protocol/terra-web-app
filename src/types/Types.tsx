@@ -17,10 +17,8 @@ export enum TradeType {
 export enum MintType {
   BORROW = "borrow",
   SHORT = "short",
+  EDIT = "edit",
   CLOSE = "close",
-  DEPOSIT = "deposit",
-  WITHDRAW = "withdraw",
-  CUSTOM = "custom",
 }
 
 export enum PoolType {

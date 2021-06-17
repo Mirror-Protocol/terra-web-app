@@ -7,18 +7,16 @@ const cx = classNames.bind(styles)
 
 interface Props {
   symbol: string
-  small?: boolean
+  size?: "default" | "sm" | "xs"
   idle?: boolean
   className?: string
 }
 
-const AssetIcon = ({ symbol, small, idle, className }: Props) => {
+const AssetIcon = ({ symbol, size = "default", idle, className }: Props) => {
   const { getToken, getIcon } = useProtocol()
   const [error, setError] = useState(false)
 
-  const attrs = {
-    className: cx(small ? styles.small : styles.default, { idle }, className),
-  }
+  const attrs = { className: cx(size, { idle }, className) }
 
   if (idle) return <div {...attrs} />
 

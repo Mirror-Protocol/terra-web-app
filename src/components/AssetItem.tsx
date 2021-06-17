@@ -10,12 +10,12 @@ const cx = classNames.bind(styles)
 
 interface Props {
   token: string
-  small?: boolean
+  size?: "default" | "sm" | "xs"
   idle?: boolean
   formatTokenName?: (symbol: string) => string
 }
 
-const AssetItem: FC<Props> = ({ token, small, idle, children, ...props }) => {
+const AssetItem: FC<Props> = ({ token, size, idle, children, ...props }) => {
   const { whitelist, getSymbol, getIsDelisted } = useProtocol()
   const symbol = getSymbol(token)
   const ticker = props.formatTokenName?.(symbol) ?? lookupSymbol(symbol)
@@ -23,7 +23,7 @@ const AssetItem: FC<Props> = ({ token, small, idle, children, ...props }) => {
 
   return (
     <article className={cx(styles.asset, { idle })}>
-      <AssetIcon symbol={symbol} small={small} idle={idle} />
+      <AssetIcon symbol={symbol} size={size} idle={idle} />
 
       <header className={styles.header}>
         {getIsDelisted(token) && <Delisted />}

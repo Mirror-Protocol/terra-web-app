@@ -12,7 +12,7 @@ const Asset = ({ symbol, name, status, price, balance, ...props }: Props) => {
   return (
     <article className={styles.asset}>
       <header className={styles.header}>
-        <AssetItem {...props} small />
+        <AssetItem {...props} size="sm" />
       </header>
 
       <footer className={styles.footer}>

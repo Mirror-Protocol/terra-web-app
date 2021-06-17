@@ -168,7 +168,7 @@ const Borrowing = () => {
                 to={{
                   pathname: getPath(MenuKey.MINT),
                   search: `idx=${idx}`,
-                  hash: MintType.CLOSE,
+                  hash: MintType.EDIT,
                 }}
                 size="xs"
                 outline

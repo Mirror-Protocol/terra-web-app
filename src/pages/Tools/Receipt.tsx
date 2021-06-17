@@ -31,10 +31,8 @@ const Receipt = () => {
   const parseCancelOrder = useCancelOrderReceipt()
   const parseMintSHORT = useMintReceipt(MintType.SHORT)
   const parseMintBORROW = useMintReceipt(MintType.BORROW)
-  const parseMintDEPOSIT = useMintReceipt(MintType.DEPOSIT)
-  const parseMintWITHDRAW = useMintReceipt(MintType.WITHDRAW)
+  const parseMintEDIT = useMintReceipt(MintType.EDIT)
   const parseMintCLOSE = useMintReceipt(MintType.CLOSE)
-  const parseMintCUSTOM = useMintReceipt(MintType.CUSTOM)
   const parsePollPROVIDE = usePoolReceipt(PoolType.PROVIDE)
   const parsePoolWITHDRAW = usePoolReceipt(PoolType.WITHDRAW)
   const parseStakeSTAKE = useStakeReceipt(StakeType.STAKE, false)
@@ -55,10 +53,8 @@ const Receipt = () => {
     "Cancel Order": parseCancelOrder,
     "Mint → SHORT": parseMintSHORT,
     "Mint → BORROW": parseMintBORROW,
-    "Mint → DEPOSIT": parseMintDEPOSIT,
-    "Mint → WITHDRAW": parseMintWITHDRAW,
+    "Mint → EDIT": parseMintEDIT,
     "Mint → CLOSE": parseMintCLOSE,
-    "Mint → CUSTOM": parseMintCUSTOM,
     "Poll → PROVIDE": parsePollPROVIDE,
     "Pool → WITHDRAW": parsePoolWITHDRAW,
     "Stake → STAKE ": parseStakeSTAKE,
