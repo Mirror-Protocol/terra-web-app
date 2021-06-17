@@ -94,7 +94,7 @@
   },
   "Mint": {
     "Open": "New assets will be borrowed when collateral is deposited. Any price change of either the collateral or the borrowed assets may lead to liquidation.",
-    "Caution": "When the position drops below the minimum collateral ratio, any user may immediately liquidate the position.",
+    "Caution": "Your position can be liquidated when it falls below the minimum collateral ratio",
 
     "Collateral": "Current amount of collateral",
     "Asset": "Current amount of borrowed asset",
