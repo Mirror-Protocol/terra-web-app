@@ -1,13 +1,13 @@
-import { Fragment, useEffect, useMemo, useState } from "react"
-import { useRecoilValue } from "recoil"
+import { Fragment, useMemo, useState } from "react"
 import classNames from "classnames/bind"
 import { startOfMinute, subDays, subMonths, subWeeks, subYears } from "date-fns"
 
 import { format, formatAsset } from "../libs/parse"
 import { div, minus } from "../libs/math"
 import { percent } from "../libs/num"
-import { getAssetQuery } from "../data/stats/asset"
-import { calcChange, useAssetsHelpersByNetwork } from "../data/stats/assets"
+import { PriceKey } from "../hooks/contractKeys"
+import { useAssetHistory } from "../data/stats/asset"
+import { useAssetsHelpersByNetwork, useFindChange } from "../data/stats/assets"
 import Change from "../components/Change"
 import AssetItem from "../components/AssetItem"
 import { CardMain } from "../components/Card"
@@ -20,8 +20,8 @@ const cx = classNames.bind(styles)
 
 const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
   const now = startOfMinute(new Date())
-  const yesterday = subDays(now, 1).getTime()
-  const { description } = useAssetsHelpersByNetwork()
+  const findChange = useFindChange()
+  const helpers = useAssetsHelpersByNetwork()
 
   const ranges = [
     {
@@ -52,33 +52,24 @@ const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
 
   /* request */
   const [range, setRange] = useState(ranges[2])
-  const [data, setData] = useState<AssetData>()
   const { interval, from } = range
   const to = now.getTime()
   const params = useMemo(
-    () => ({ token, interval, from, to, yesterday }),
-    [token, interval, from, to, yesterday]
+    () => ({ token, interval, from, to }),
+    [token, interval, from, to]
   )
 
-  const getAsset = useRecoilValue(getAssetQuery)
-  useEffect(() => {
-    const load = async () => {
-      const data = await getAsset(params)
-      setData(data)
-    }
-
-    load()
-  }, [params, getAsset])
+  const history = useAssetHistory(params)
 
   /* render */
-  if (!data) return null
-
-  const { prices, statistic } = data
-  const { price, priceAt, history, oraclePrice } = prices
-  const { volume, liquidity } = statistic
+  const price = helpers.pair(token)
+  const oraclePrice = helpers.oracle(token)
+  const volume = helpers.volume(token)
+  const liquidity = helpers.liquidity(token)
+  const description = helpers.description(token)
   const premium = oraclePrice ? minus(div(price, oraclePrice), 1) : undefined
+  const change = findChange(PriceKey.PAIR, token)
 
-  const change = calcChange({ today: price, yesterday: priceAt })
   const details = [
     {
       title: "Oracle Price",
@@ -135,9 +126,7 @@ const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
       </section>
 
       <section className={styles.footer}>
-        <PriceChartDescription key={token}>
-          {description(token)}
-        </PriceChartDescription>
+        <PriceChartDescription key={token}>{description}</PriceChartDescription>
       </section>
     </div>
   )

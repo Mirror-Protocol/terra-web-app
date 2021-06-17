@@ -38,28 +38,13 @@ export const AIRDROP = gql`
 `
 
 export const ASSET = gql`
-  query asset(
-    $token: String!
-    $interval: Float!
-    $from: Float!
-    $to: Float!
-    $yesterday: Float!
-  ) {
+  query asset($token: String!, $from: Float!, $to: Float!, $interval: Float!) {
     asset(token: $token) {
       prices {
-        price
-        priceAt(timestamp: $yesterday)
         history(interval: $interval, from: $from, to: $to) {
           timestamp
           price
         }
-
-        oraclePrice
-      }
-
-      statistic {
-        liquidity
-        volume
       }
     }
   }

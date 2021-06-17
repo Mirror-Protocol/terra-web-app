@@ -74,11 +74,8 @@ interface AssetHistoryItem {
   }
 }
 
-interface AssetData extends AssetDataItem {
+interface AssetHistoryData {
   prices: {
-    price: string
-    priceAt: string
-    oraclePrice: string
     history: PriceHistoryItem[]
   }
 }

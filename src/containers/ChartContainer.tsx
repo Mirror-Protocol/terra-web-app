@@ -117,18 +117,18 @@ const ChartContainer = ({ change, datasets = [], ...props }: Props) => {
   }
 
   const chartProps = { data, options, height: compact ? 24 : undefined }
+  const render = () =>
+    bar ? (
+      <Bar type="bar" {...chartProps} />
+    ) : (
+      <Line type="line" {...chartProps} />
+    )
 
   return (
     <article className={cx({ compact })}>
-      {datasets.length > 1 && (
-        <section className={styles.chart}>
-          {bar ? (
-            <Bar type="bar" {...chartProps} />
-          ) : (
-            <Line type="line" {...chartProps} />
-          )}
-        </section>
-      )}
+      <section className={styles.chart}>
+        {datasets.length > 1 && render()}
+      </section>
     </article>
   )
 }
