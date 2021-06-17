@@ -5,6 +5,7 @@ import useLocalStorage from "../../libs/useLocalStorage"
 import { useMyHolding } from "../../data/my/holding"
 import { useMyLimitOrder } from "../../data/my/limit"
 import { useMyBorrowing } from "../../data/my/borrowing"
+import { useMyPool } from "../../data/my/pool"
 import { useMyFarming } from "../../data/my/farming"
 import { useMyGov } from "../../data/my/gov"
 import { useMyShortFarming } from "../../data/my/short"
@@ -16,6 +17,7 @@ import { Gutter } from "../../components/Grid"
 import TotalValue from "./TotalValue"
 import Holding from "./Holding"
 import Borrowing from "./Borrowing"
+import Pool from "./Pool"
 import Farming from "./Farming"
 import ShortFarming from "./ShortFarming"
 import LimitOrder from "./LimitOrder"
@@ -29,6 +31,7 @@ enum Tabs {
   HOLDING = "Holding",
   LIMITORDER = "Limit Order",
   BORROWING = "Borrowing",
+  POOL = "Pool",
   FARMING = "Farming",
   GOVERN = "Govern",
   HISTORY = "History",
@@ -41,6 +44,7 @@ const MyConnected = () => {
   const holding = useMyHolding()
   const limitOrder = useMyLimitOrder()
   const borrowing = useMyBorrowing()
+  const pool = useMyPool()
   const farming = useMyFarming()
   const short = useMyShortFarming()
   const gov = useMyGov()
@@ -54,6 +58,7 @@ const MyConnected = () => {
   const hasHolding = !!holding.dataSource.length
   const hasLimitOrder = !!limitOrder.dataSource.length
   const hasBorrowing = !!borrowing.dataSource.length
+  const hasPool = !!pool.dataSource.length
   const hasFarming = !!farming.dataSource.length || !!short.dataSource.length
   const hasGov = !!gov.dataSource.length || gt(gov.staked, 0)
   const hasTxs = !!txs.data.length
@@ -73,6 +78,11 @@ const MyConnected = () => {
       label: Tabs.BORROWING,
       hidden: !hasBorrowing,
       component: <Borrowing />,
+    },
+    {
+      label: Tabs.POOL,
+      hidden: !hasPool,
+      component: <Pool />,
     },
     {
       label: Tabs.FARMING,

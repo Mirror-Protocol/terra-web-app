@@ -12,7 +12,7 @@ import Gov from "./pages/Gov/Gov"
 import Send from "./pages/Txs/Send"
 import Burn from "./pages/Txs/Burn"
 import Mint from "./pages/Mint/Mint"
-import Unstake from "./pages/Stake/Unstake"
+import Stake from "./pages/Stake/Stake"
 import ClaimRewards from "./pages/Txs/ClaimRewards"
 import ClaimUST from "./pages/Txs/ClaimUST"
 import Airdrop from "./pages/Txs/Airdrop"
@@ -38,7 +38,7 @@ export enum MenuKey {
   SEND = "Send",
   BURN = "Burn",
   MINT = "Mint",
-  UNSTAKE = "Unstake",
+  STAKE = "Stake",
   CLAIMREWARDS = "Claim Rewards",
   CLAIMUST = "Claim UST",
   AIRDROP = "Airdrop",
@@ -58,7 +58,7 @@ export const menu: Dictionary<RouteProps> = {
   [MenuKey.SEND]: { path: "/send", component: Send },
   [MenuKey.BURN]: { path: "/burn/:token", component: Burn },
   [MenuKey.MINT]: { path: "/Mint", component: Mint },
-  [MenuKey.UNSTAKE]: { path: "/unstake", component: Unstake },
+  [MenuKey.STAKE]: { path: "/stake", component: Stake },
   [MenuKey.CLAIMREWARDS]: { path: "/claim/rewards", component: ClaimRewards },
   [MenuKey.CLAIMUST]: { path: "/claim/ust", component: ClaimUST },
   [MenuKey.AIRDROP]: { path: "/airdrop", component: Airdrop },

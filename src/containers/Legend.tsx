@@ -7,8 +7,17 @@ const $blue38 = "#4a5460"
 const $gray24 = "#3d3d3d"
 const $gray14 = "#242424"
 const $gray08 = "#141414"
+const $white44 = "#707070"
 
-export const colors = [$blue, $blue62, $blue38, $gray24, $gray14, $gray08]
+export const colors = [
+  $blue,
+  $blue62,
+  $blue38,
+  $gray24,
+  $gray14,
+  $gray08,
+  $white44,
+]
 
 interface Props {
   index: number

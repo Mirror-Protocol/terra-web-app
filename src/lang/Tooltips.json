@@ -35,6 +35,7 @@
       "Holding": "Total value of all assets held",
       "LimitOrder": "Total value of assets locked in unfilled limit orders",
       "Borrowing": "Total collateral value minus total borrowed value",
+      "Pool": "Total value of all mAssets and UST withdrawable from liquidity pools",
       "Farming": "Total value of all mAssets and UST withdrawable from farming pools",
       "Gov": "Total value of staked MIR and unclaimed voting rewards"
     },
@@ -43,6 +44,7 @@
 
     "Holding": "List of mAssets held",
     "Borrowing": "List of borrowing and short positions",
+    "Pool": "List of liquidity provider positions",
     "Farming": "List of long and short farming positions",
     "Govern": "List of voted polls",
     "History": "List of transaction history",

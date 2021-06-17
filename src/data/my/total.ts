@@ -3,6 +3,7 @@ import { useUusdBalance } from "../native/balance"
 import { useMyHolding } from "./holding"
 import { useMyLimitOrder } from "./limit"
 import { useMyBorrowing } from "./borrowing"
+import { useMyPool } from "./pool"
 import { useMyFarming } from "./farming"
 import { useMyShortFarming } from "./short"
 import { useMyGov } from "./gov"
@@ -12,6 +13,7 @@ export const useMyTotal = () => {
   const holding = useMyHolding()
   const limitOrder = useMyLimitOrder()
   const borrowing = useMyBorrowing()
+  const pool = useMyPool()
   const farming = useMyFarming()
   const short = useMyShortFarming()
   const gov = useMyGov()
@@ -24,6 +26,7 @@ export const useMyTotal = () => {
       borrowing.totalCollateralValue,
       borrowing.totalMintedValue
     ),
+    pool: pool.totalWithdrawableValue,
     farming: sum([
       farming.totalWithdrawableValue,
       farming.totalRewardsValue,

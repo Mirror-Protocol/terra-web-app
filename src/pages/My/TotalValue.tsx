@@ -25,7 +25,7 @@ const TotalValue = () => {
 
   /* Total value */
   const { list, total } = useMyTotal()
-  const { uusd, holding, limitOrder, borrowing, farming, gov } = list
+  const { uusd, holding, limitOrder, borrowing, pool, farming, gov } = list
 
   /* Claim */
   const MIRPrice = useMIRPrice()
@@ -82,7 +82,7 @@ const TotalValue = () => {
                 tooltip: Tooltips.My.Total.UST,
               },
               {
-                label: "Limit",
+                label: "Limit Order",
                 value: limitOrder,
                 tooltip: Tooltips.My.Total.LimitOrder,
               },
@@ -95,6 +95,11 @@ const TotalValue = () => {
                 label: "Borrowing",
                 value: borrowing,
                 tooltip: Tooltips.My.Total.Borrowing,
+              },
+              {
+                label: "Pool",
+                value: pool,
+                tooltip: Tooltips.My.Total.Pool,
               },
               {
                 label: "Farming",

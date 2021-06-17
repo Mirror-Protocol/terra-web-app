@@ -32,7 +32,6 @@ import styles from "./PoolForm.module.scss"
 
 interface Props {
   type: PoolType
-  poolOnly?: boolean
 }
 
 enum Key {
@@ -40,12 +39,14 @@ enum Key {
   value = "value",
 }
 
-const PoolForm = ({ type, poolOnly }: Props) => {
+const PoolForm = ({ type }: Props) => {
   useRecoilValue(tokenBalanceQuery) // To determine to show "Buy or Borrow"
   const priceKey = PriceKey.PAIR
 
   /* context */
-  const { state } = useLocation<{ token: string }>()
+  const { state, search } = useLocation<{ token: string }>()
+  const sp = new URLSearchParams(search)
+  const autoStake = sp.get("pool") === null
   const { contracts, whitelist, getSymbol, toToken } = useProtocol()
   const find = useFind()
   const findStaking = useFindStaking()
@@ -121,27 +122,28 @@ const PoolForm = ({ type, poolOnly }: Props) => {
     state: { token },
   }
 
+  const linkToBuy = (
+    <Link className={styles.link} to={toBuy}>
+      Buy
+    </Link>
+  )
+
   const toBorrow = {
     pathname: getPath(MenuKey.BORROW),
     hash: MintType.BORROW,
     state: { token },
   }
 
+  const linkToBorrow = (
+    <Link className={styles.link} to={toBorrow}>
+      Borrow
+    </Link>
+  )
+
   const info = gt(balance, 0) ? undefined : (
     <p>
-      <Link className={styles.link} to={toBuy}>
-        Buy
-      </Link>
-      {symbol !== "MIR" && (
-        <>
-          {" "}
-          or{" "}
-          <Link className={styles.link} to={toBorrow}>
-            Borrow
-          </Link>
-        </>
-      )}{" "}
-      {symbol} to farm with
+      {linkToBuy}
+      {symbol !== "MIR" && <> or {linkToBorrow}</>} {symbol} to farm with
     </p>
   )
 
@@ -220,13 +222,13 @@ const PoolForm = ({ type, poolOnly }: Props) => {
           newContractMsg(token, {
             increase_allowance: {
               amount,
-              spender: poolOnly ? pair : contracts["staking"],
+              spender: autoStake ? contracts["staking"] : pair,
             },
           }),
           newContractMsg(
-            poolOnly ? pair : contracts["staking"],
+            autoStake ? contracts["staking"] : pair,
             {
-              [poolOnly ? "provide_liquidity" : "auto_stake"]: {
+              [autoStake ? "auto_stake" : "provide_liquidity"]: {
                 slippage_tolerance: String(DEFAULT_SLIPPAGE),
                 assets: [
                   toToken({ amount, token }),
@@ -254,8 +256,8 @@ const PoolForm = ({ type, poolOnly }: Props) => {
 
   /* result */
   const parseTx = usePoolReceipt(type)
-
-  const container = { attrs, contents, disabled, data, parseTx }
+  const label = autoStake ? undefined : "Provide liquidity"
+  const container = { attrs, contents, disabled, data, parseTx, label }
   const tax = { pretax: uusd, deduct: type === PoolType.WITHDRAW }
 
   return (

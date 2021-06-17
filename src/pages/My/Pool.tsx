@@ -1,9 +1,7 @@
 import Tooltips from "../../lang/Tooltips"
-import { formatAsset } from "../../libs/parse"
-import { capitalize } from "../../libs/utils"
 import getLpName from "../../libs/getLpName"
 import { useProtocol } from "../../data/contract/protocol"
-import { useMyFarming } from "../../data/my/farming"
+import { useMyPool } from "../../data/my/pool"
 import { getPath, MenuKey } from "../../routes"
 
 import Table from "../../components/Table"
@@ -12,58 +10,43 @@ import { TooltipIcon } from "../../components/Tooltip"
 import Delisted from "../../components/Delisted"
 import LinkButton from "../../components/LinkButton"
 import Formatted from "../../components/Formatted"
-import Percent from "../../components/Percent"
 import { StakeType } from "../../types/Types"
 import CaptionData from "./CaptionData"
 
-const Farming = () => {
-  const { dataSource, totalRewards, totalRewardsValue } = useMyFarming()
+const Pool = () => {
+  const { dataSource } = useMyPool()
   const { getSymbol } = useProtocol()
 
   const dataExists = !!dataSource.length
-  const description = dataExists && (
-    <CaptionData
-      list={[
-        {
-          title: "Reward",
-          content: (
-            <>
-              {formatAsset(totalRewards, "MIR")}{" "}
-              <span className="muted">
-                ≈ {formatAsset(totalRewardsValue, "uusd")}
-              </span>
-            </>
-          ),
-        },
-      ]}
-    />
-  )
+  const description = dataExists && <CaptionData list={[]} />
 
   return !dataExists ? null : (
     <Table
       caption={
         <Caption
-          title={
-            <TooltipIcon content={Tooltips.My.Farming}>Farming</TooltipIcon>
-          }
+          title={<TooltipIcon content={Tooltips.My.Pool}>Pool</TooltipIcon>}
           description={description}
         />
       }
       columns={[
         {
           key: "symbol",
-          title: [
-            "Pool Name",
-            <TooltipIcon content={Tooltips.My.APR}>APR</TooltipIcon>,
-          ],
-          render: (symbol, { status, apr }) => [
+          title: "Pool Name",
+          render: (symbol, { status }) => (
             <>
               {status === "DELISTED" && <Delisted />}
               {getLpName(symbol)}
-            </>,
-            apr && <Percent>{apr}</Percent>,
-          ],
+            </>
+          ),
           bold: true,
+        },
+        {
+          key: "balance",
+          title: "Balance",
+          render: (value, { symbol }) => (
+            <Formatted symbol={getLpName(symbol)}>{value}</Formatted>
+          ),
+          align: "right",
         },
         {
           key: "withdrawable",
@@ -86,27 +69,19 @@ const Farming = () => {
           align: "right",
         },
         {
-          key: "reward",
-          title: (
-            <TooltipIcon content={Tooltips.My.FarmReward}>Reward</TooltipIcon>
-          ),
-          render: (value) => <Formatted symbol="MIR">{value}</Formatted>,
-          align: "right",
-        },
-        {
           key: "actions",
           dataIndex: "token",
           render: (token) => (
             <LinkButton
               to={{
                 pathname: getPath(MenuKey.STAKE),
-                hash: StakeType.UNSTAKE,
+                hash: StakeType.STAKE,
                 state: { token },
               }}
               size="xs"
               outline
             >
-              {capitalize(StakeType.UNSTAKE)}
+              {MenuKey.STAKE}
             </LinkButton>
           ),
           align: "right",
@@ -118,4 +93,4 @@ const Farming = () => {
   )
 }
 
-export default Farming
+export default Pool
