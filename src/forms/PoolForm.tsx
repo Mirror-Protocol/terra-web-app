@@ -215,10 +215,23 @@ const PoolForm = ({ type }: Props) => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const data = !estimated
-    ? []
-    : {
-        [PoolType.PROVIDE]: [
+
+  const provideMsg = Object.assign(
+    {},
+    estimated && {
+      assets: [
+        toToken({ amount, token }),
+        toToken({ amount: estimated, token: "uusd" }),
+      ],
+    },
+    gt(pairPrice, 0) && {
+      slippage_tolerance: String(DEFAULT_SLIPPAGE),
+    }
+  )
+
+  const data = {
+    [PoolType.PROVIDE]: estimated
+      ? [
           newContractMsg(token, {
             increase_allowance: {
               amount,
@@ -227,28 +240,21 @@ const PoolForm = ({ type }: Props) => {
           }),
           newContractMsg(
             autoStake ? contracts["staking"] : pair,
-            {
-              [autoStake ? "auto_stake" : "provide_liquidity"]: {
-                slippage_tolerance: String(DEFAULT_SLIPPAGE),
-                assets: [
-                  toToken({ amount, token }),
-                  toToken({ amount: estimated, token: "uusd" }),
-                ],
-              },
-            },
+            { [autoStake ? "auto_stake" : "provide_liquidity"]: provideMsg },
             { amount: estimated, denom: "uusd" }
           ),
-        ],
-        [PoolType.WITHDRAW]: [
-          newContractMsg(lpToken, {
-            send: {
-              amount,
-              contract: pair,
-              msg: toBase64({ withdraw_liquidity: {} }),
-            },
-          }),
-        ],
-      }[type]
+        ]
+      : [],
+    [PoolType.WITHDRAW]: [
+      newContractMsg(lpToken, {
+        send: {
+          amount,
+          contract: pair,
+          msg: toBase64({ withdraw_liquidity: {} }),
+        },
+      }),
+    ],
+  }[type]
 
   const insufficient =
     !!estimated && gt(estimated, find(BalanceKey.NATIVE, "uusd"))
