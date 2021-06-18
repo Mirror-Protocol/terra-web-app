@@ -57,7 +57,7 @@ export const menu: Dictionary<RouteProps> = {
 
   [MenuKey.SEND]: { path: "/send", component: Send },
   [MenuKey.BURN]: { path: "/burn/:token", component: Burn },
-  [MenuKey.MINT]: { path: "/Mint", component: Mint },
+  [MenuKey.MINT]: { path: "/mint", component: Mint },
   [MenuKey.STAKE]: { path: "/stake", component: Stake },
   [MenuKey.CLAIMREWARDS]: { path: "/claim/rewards", component: ClaimRewards },
   [MenuKey.CLAIMUST]: { path: "/claim/ust", component: ClaimUST },
