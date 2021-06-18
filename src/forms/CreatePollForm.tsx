@@ -288,7 +288,9 @@ const CreatePollForm = ({ type, headings }: Props) => {
           : v.amount(voterWeight, {}, "Weight"),
 
         // Type.COLLATERAL
-        [Key.multiplier]: !multiplier ? "" : v.amount(multiplier, {}, "Weight"),
+        [Key.multiplier]: !multiplier
+          ? ""
+          : v.amount(multiplier, { dp: 6 }, "Weight"),
 
         // Type.COMMUNITY_SPEND
         [Key.recipient]: v.address(recipient),

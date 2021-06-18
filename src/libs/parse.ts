@@ -15,8 +15,10 @@ const rm = BigNumber.ROUND_DOWN
 export const dp = (symbol?: string) =>
   !symbol || lookupSymbol(symbol) === "UST" ? 2 : 6
 
-export const validateDp = (value: string, symbol?: string) =>
-  new BigNumber(value).times(new BigNumber(10).pow(dp(symbol))).isInteger()
+export const validateDp = (value: string, symbol?: string, decimal?: number) =>
+  new BigNumber(value)
+    .times(new BigNumber(10).pow(decimal ?? dp(symbol)))
+    .isInteger()
 
 export const decimal = (value = "0", dp = 6) =>
   new BigNumber(value).decimalPlaces(dp, rm).toString()
