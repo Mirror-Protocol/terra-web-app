@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { useLocation } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 import { reverse } from "ramda"
 import classNames from "classnames/bind"
@@ -36,7 +36,8 @@ import FormFeedback from "../components/FormFeedback"
 import ExtLink from "../components/ExtLink"
 import Icon from "../components/Icon"
 import WithPriceChart from "../containers/WithPriceChart"
-import { MintType } from "../types/Types"
+import { MintType, TradeType } from "../types/Types"
+import { getPath, MenuKey } from "../routes"
 import useMintReceipt from "./receipts/useMintReceipt"
 import FormContainer from "./FormContainer"
 import useSelectAsset from "./useSelectAsset"
@@ -510,9 +511,21 @@ const MintForm = ({ position, type, message }: Props) => {
     ? [MESSAGE.Form.Validate.CollateralRatio.Safe]
     : undefined
 
+  const toBuy = {
+    pathname: getPath(MenuKey.TRADE),
+    hash: TradeType.BUY,
+    state: { token: token2 },
+  }
+
+  const linkToBuy = (
+    <Link className={styles.link} to={toBuy}>
+      Buy {symbol2}
+    </Link>
+  )
+
   const closeMessages =
     prevAsset && !gte(getBalance(token2), prevAsset.amount)
-      ? [`Insufficient ${symbol2} balance`]
+      ? [<>{linkToBuy} to close position</>]
       : undefined
 
   const messages = touched[Key.ratio]
