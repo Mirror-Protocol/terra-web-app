@@ -182,6 +182,7 @@ const PoolForm = ({ type }: Props) => {
         value: toLP?.text,
         help: renderBalance(find(BalanceKey.NATIVE, "uusd"), "uusd"),
         unit: "UST",
+        unitAfterValue: true,
       },
       [PoolType.WITHDRAW]: {
         label: (
