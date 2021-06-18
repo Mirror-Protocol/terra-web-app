@@ -134,10 +134,6 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
     : gt(staked, 0)
     ? [
         {
-          title: "Staked",
-          content: formatAsset(staked, !gov ? getLpName(symbol) : "MIR"),
-        },
-        {
           title: "Staked after tx",
           content: formatAsset(afterTx, !gov ? getLpName(symbol) : "MIR"),
         },
