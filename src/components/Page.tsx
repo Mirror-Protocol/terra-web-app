@@ -1,20 +1,24 @@
 import { FC, ReactNode } from "react"
 import Boundary from "./Boundary"
 import Container from "./Container"
-import Icon from "./Icon"
+import Select, { Props as SelectProps } from "./Select"
 import styles from "./Page.module.scss"
 
 interface Props {
   title?: ReactNode
   description?: ReactNode
   action?: ReactNode
-  select?: ReactNode
+  select?: SelectProps
   doc?: string
   sm?: boolean
 }
 
 const Page: FC<Props> = ({ title, description, children, ...props }) => {
   const { action, select, sm } = props
+  const getSelectAttrs = (select: SelectProps) => ({
+    ...select,
+    attrs: { ...select.attrs, className: styles.select },
+  })
 
   return (
     <article className={styles.article}>
@@ -23,12 +27,7 @@ const Page: FC<Props> = ({ title, description, children, ...props }) => {
           <section className={styles.heading}>
             <h1 className={styles.title}>{title}</h1>
 
-            {select && (
-              <div className={styles.select}>
-                {select}
-                <Icon name="ChevronDown" size={8} />
-              </div>
-            )}
+            {select && <Select {...getSelectAttrs(select)} />}
           </section>
 
           {action && <section className={styles.action}>{action}</section>}

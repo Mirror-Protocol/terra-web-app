@@ -44,28 +44,12 @@
 }
 
 .select {
-  position: relative;
-
-  select {
-    appearance: none;
-    border: solid 1px fade-out($gray-34, 0.5);
-    border-radius: 6px;
-    color: $white-64;
-    font-size: 12px;
-    margin-left: 12px;
-    letter-spacing: -0.3px;
-    padding: 10px 12px;
-    padding-right: 30px;
-  }
-
-  svg {
-    fill: $blue;
-    position: absolute;
-    top: 50%;
-    right: 12px;
-    transform: translate(0, -50%);
-    pointer-events: none;
-  }
+  border: solid 1px fade-out($gray-34, 0.5);
+  border-radius: 6px;
+  color: $white-64;
+  margin-left: 12px;
+  letter-spacing: -0.3px;
+  padding: 10px 12px;
 }
 
 .icon {

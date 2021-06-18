@@ -1,3 +1,4 @@
+import { ChangeEvent } from "react"
 import { useRecoilState } from "recoil"
 import { sort } from "ramda"
 
@@ -24,23 +25,22 @@ import styles from "./Dashboard.module.scss"
 const Dashboard = () => {
   const [network, setNetwork] = useRecoilState(dashboardNetworkState)
 
-  const select = (
-    <select
-      value={network}
-      onChange={(e) => setNetwork(e.target.value as StatsNetwork)}
-    >
-      {Object.entries(StatsNetwork).map(([key, value]) => (
-        <option value={value} key={key}>
-          {value === StatsNetwork.COMBINE ? "Terra + ETH" : value}
-        </option>
-      ))}
-    </select>
-  )
+  const selectAttrs = {
+    attrs: {
+      value: network,
+      onChange: (e: ChangeEvent<HTMLSelectElement>) =>
+        setNetwork(e.target.value as StatsNetwork),
+    },
+    options: Object.entries(StatsNetwork).map(([key, value]) => ({
+      value,
+      children: value === StatsNetwork.COMBINE ? "Terra + ETH" : value,
+    })),
+  }
 
   return (
     <Page
       title={MenuKey.DASHBOARD}
-      select={select}
+      select={selectAttrs}
       doc={"/user-guide/getting-started"}
     >
       <section className={styles.mobile}>{bound(<TVLTotal />)}</section>

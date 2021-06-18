@@ -1,25 +1,19 @@
-import { useState } from "react"
 import Tooltips from "../../lang/Tooltips"
 import { minus, max, number } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useProtocol } from "../../data/contract/protocol"
 import { useFindChanges } from "../../data/stats/assets"
-import { Item, useTerraAssetList } from "../../data/stats/list"
+import { useTerraAssetList } from "../../data/stats/list"
 import Table from "../../components/Table"
 import Percent from "../../components/Percent"
 import AssetItem from "../../components/AssetItem"
 import Icon from "../../components/Icon"
 import Formatted from "../../components/Formatted"
-import Search from "../../components/Search"
 import { TooltipIcon } from "../../components/Tooltip"
 import AssetsIdleTable from "../../containers/AssetsIdleTable"
+import useListFilter, { Sorter } from "../../components/useListFilter"
 import { FarmType } from "../../types/Types"
 import styles from "./FarmList.module.scss"
-
-interface Sorter {
-  label: string
-  compare: (a: Item, b: Item) => number
-}
 
 const Sorters: Dictionary<Sorter> = {
   APR: {
@@ -46,33 +40,17 @@ const FarmList = () => {
   const { getSymbol } = useProtocol()
   const list = useTerraAssetList()
   const findChanges = useFindChanges()
-
-  /* sort */
-  const [input, setInput] = useState("")
-  const [sorter, setSorter] = useState("APR")
+  const { filter, compare, renderSearch } = useListFilter("APR", Sorters)
 
   const dataSource = list
-    .filter(({ symbol, name }) =>
-      [symbol, name].some((text) =>
-        text.toLocaleLowerCase().includes(input.toLocaleLowerCase())
-      )
-    )
+    .filter(({ symbol, name }) => [symbol, name].some(filter))
     .map((item) => ({ ...item, change: findChanges(item.token) }))
-    .sort(Sorters[sorter].compare)
+    .sort(compare)
     .sort((a, b) => Number(b.symbol === "MIR") - Number(a.symbol === "MIR"))
 
   return (
     <>
-      <Search value={input} onChange={(e) => setInput(e.target.value)}>
-        <select value={sorter} onChange={(e) => setSorter(e.target.value)}>
-          {Object.entries(Sorters).map(([key, { label }]) => (
-            <option value={key} key={key}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </Search>
-
+      {renderSearch()}
       {!list.length ? (
         <AssetsIdleTable />
       ) : (

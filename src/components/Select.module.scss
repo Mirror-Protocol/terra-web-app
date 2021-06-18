@@ -1,0 +1,20 @@
+@import "mixins";
+
+.select {
+  position: relative;
+
+  select {
+    appearance: none;
+    font-size: 12px;
+    padding-right: 30px;
+  }
+
+  svg {
+    fill: $blue;
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translate(0, -50%);
+    pointer-events: none;
+  }
+}

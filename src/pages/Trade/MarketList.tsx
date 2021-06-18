@@ -1,25 +1,19 @@
-import { useState } from "react"
 import Tooltips from "../../lang/Tooltips"
 import { lt, gt, number } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
-import { Item, useTerraAssetList } from "../../data/stats/list"
+import { useTerraAssetList } from "../../data/stats/list"
 import { useAssetsHistory, useFindChanges } from "../../data/stats/assets"
 
 import Table from "../../components/Table"
 import Change from "../../components/Change"
 import Formatted from "../../components/Formatted"
 import Percent from "../../components/Percent"
-import Search from "../../components/Search"
 import AssetItem from "../../components/AssetItem"
 import { TooltipIcon } from "../../components/Tooltip"
+import useListFilter, { Sorter } from "../../components/useListFilter"
 import ChartContainer from "../../containers/ChartContainer"
 import AssetsIdleTable from "../../containers/AssetsIdleTable"
 import { MarketType } from "../../types/Types"
-
-interface Sorter {
-  label: string
-  compare: (a: Item, b: Item) => number
-}
 
 const Sorters: Dictionary<Sorter> = {
   TOPTRADING: {
@@ -46,30 +40,16 @@ const MarketList = () => {
   const list = useTerraAssetList()
   const findChanges = useFindChanges()
   const history = useAssetsHistory()
-
-  /* sort */
-  const [input, setInput] = useState("")
-  const [sorter, setSorter] = useState("TOPTRADING")
+  const { filter, compare, renderSearch } = useListFilter("TOPTRADING", Sorters)
 
   const dataSource = list
-    .filter(({ name, symbol }) =>
-      [name, symbol].some((l) => l.toLowerCase().includes(input.toLowerCase()))
-    )
+    .filter(({ name, symbol }) => [name, symbol].some(filter))
     .map((item) => ({ ...item, change: findChanges(item.token) }))
-    .sort(Sorters[sorter].compare)
+    .sort(compare)
 
   return (
     <>
-      <Search value={input} onChange={(e) => setInput(e.target.value)}>
-        <select value={sorter} onChange={(e) => setSorter(e.target.value)}>
-          {Object.entries(Sorters).map(([key, { label }]) => (
-            <option value={key} key={key}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </Search>
-
+      {renderSearch()}
       {!list.length ? (
         <AssetsIdleTable />
       ) : (
