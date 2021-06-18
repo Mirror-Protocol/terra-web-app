@@ -110,7 +110,7 @@
     "ProtocolFee": "Paid from withdrawn collateral"
   },
   "Farm": {
-    "LongAPR": "Annualized MIR reward return from providing the asset's liquidity",
+    "LongAPR": "Annualized MIR reward return from providing the asset's liquidity.\nThe APR based on premium is updated once every hour.",
     "ShortAPR": "Annualized MIR reward return from depositing collateral to create short position.\nThe APR based on premium is updated once every hour.",
     "Premium": "Percentage difference between Terraswap and Oracle price",
 
