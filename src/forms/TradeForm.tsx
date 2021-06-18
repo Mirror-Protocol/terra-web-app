@@ -190,7 +190,7 @@ const TradeForm = ({ type }: { type: TradeType }) => {
   const targetLabel = { [TradeType.BUY]: "Bid", [TradeType.SELL]: "Ask" }[type]
   const fields = getFields({
     [Key.target]: {
-      label: `${targetLabel} Price`,
+      label: "at",
       input: {
         type: "number",
         step: step("uusd"),
@@ -205,8 +205,8 @@ const TradeForm = ({ type }: { type: TradeType }) => {
     },
     [Key.value1]: {
       label: !isLimitOrder
-        ? "From"
-        : { [TradeType.BUY]: "Order Value", [TradeType.SELL]: "Order Amount" }[
+        ? { [TradeType.BUY]: "Pay", [TradeType.SELL]: "Sell" }[type]
+        : { [TradeType.BUY]: "and pay", [TradeType.SELL]: "Order to sell" }[
             type
           ],
       input:
@@ -236,8 +236,8 @@ const TradeForm = ({ type }: { type: TradeType }) => {
 
     [Key.value2]: {
       label: !isLimitOrder
-        ? "To"
-        : { [TradeType.BUY]: "Order Amount", [TradeType.SELL]: "Order Value" }[
+        ? { [TradeType.BUY]: "to buy", [TradeType.SELL]: "to get" }[type]
+        : { [TradeType.BUY]: "Order to buy", [TradeType.SELL]: "and get" }[
             type
           ],
       input:
@@ -394,15 +394,15 @@ const TradeForm = ({ type }: { type: TradeType }) => {
           {
             [TradeType.BUY]: (
               <>
-                <FormGroup {...fields[Key.target]} />
                 <FormGroup {...fields[Key.value2]} />
+                <FormGroup {...fields[Key.target]} />
                 <FormGroup {...fields[Key.value1]} />
               </>
             ),
             [TradeType.SELL]: (
               <>
-                <FormGroup {...fields[Key.target]} />
                 <FormGroup {...fields[Key.value1]} />
+                <FormGroup {...fields[Key.target]} />
                 <FormGroup {...fields[Key.value2]} />
               </>
             ),

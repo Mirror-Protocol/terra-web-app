@@ -266,7 +266,7 @@ const MintForm = ({ position, type }: Props) => {
   const fields = getFields({
     [Key.value1]: {
       label: open ? (
-        "Collateral"
+        "Collateralize"
       ) : (
         <TooltipIcon content={Tooltips.Mint.Collateral}>Collateral</TooltipIcon>
       ),
@@ -287,10 +287,10 @@ const MintForm = ({ position, type }: Props) => {
 
     [Key.value2]: {
       label: short ? (
-        <TooltipIcon content={Tooltips.Farm.Shorted}>Shorted</TooltipIcon>
+        <TooltipIcon content={Tooltips.Farm.Shorted}>to short</TooltipIcon>
       ) : open ? (
         <TooltipIcon content={Tooltips.Mint.ExpectedMintedAsset}>
-          Borrowed
+          to borrow
         </TooltipIcon>
       ) : (
         <TooltipIcon content={Tooltips.Mint.Asset}>Borrowed</TooltipIcon>
@@ -315,7 +315,7 @@ const MintForm = ({ position, type }: Props) => {
     [Key.ratio]: {
       label: open ? (
         <TooltipIcon content={Tooltips.Mint.CollateralRatio}>
-          Collateral Ratio
+          at collateral ratio
         </TooltipIcon>
       ) : (
         "Collateral Ratio (%)"

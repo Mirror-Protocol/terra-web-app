@@ -152,7 +152,9 @@ const PoolForm = ({ type }: Props) => {
       [Key.value]: {
         label: {
           [PoolType.PROVIDE]: (
-            <TooltipIcon content={Tooltips.Farm.InputAsset}>Asset</TooltipIcon>
+            <TooltipIcon content={Tooltips.Farm.InputAsset}>
+              Provide
+            </TooltipIcon>
           ),
           [PoolType.WITHDRAW]: "LP",
         }[type],
@@ -176,7 +178,7 @@ const PoolForm = ({ type }: Props) => {
 
     estimated: {
       [PoolType.PROVIDE]: {
-        label: <TooltipIcon content={Tooltips.Farm.InputUST}>UST</TooltipIcon>,
+        label: <TooltipIcon content={Tooltips.Farm.InputUST}>and</TooltipIcon>,
         value: toLP?.text,
         help: renderBalance(find(BalanceKey.NATIVE, "uusd"), "uusd"),
         unit: "UST",
