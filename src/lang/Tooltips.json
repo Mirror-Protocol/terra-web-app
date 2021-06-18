@@ -107,6 +107,7 @@
     "SafeCollateralRatio": "(Minimum collateral ratio) + 50%",
 
     "Price": "Price of the corresponding asset that is determined by the oracle feeder",
+    "ExpectedUST": "UST from shorting mAsset will be locked for 15 days",
     "ProtocolFee": "Paid from withdrawn collateral"
   },
   "Farm": {

@@ -20,7 +20,7 @@ import { renderBalance } from "../libs/formHelpers"
 import calc from "../libs/calc"
 import { useProtocol } from "../data/contract/protocol"
 import { slippageQuery } from "../data/tx/slippage"
-import { BalanceKey } from "../hooks/contractKeys"
+import { BalanceKey, PriceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
 import { tokenBalanceQuery } from "../data/contract/contract"
 import { nativePricesQuery } from "../data/contract/normalize"
@@ -351,6 +351,17 @@ const MintForm = ({ position, type, message }: Props) => {
     ),
   }
 
+  const uusdContents = {
+    title: (
+      <TooltipIcon content={Tooltips.Mint.ExpectedUST}>
+        Expected locked UST
+      </TooltipIcon>
+    ),
+    content: (
+      <Count symbol="uusd">{times(amount2, find(PriceKey.PAIR, token2))}</Count>
+    ),
+  }
+
   const burnContents = {
     title: "Burn Amount",
     content: <Count symbol={symbol2}>{prevAsset?.amount}</Count>,
@@ -383,7 +394,7 @@ const MintForm = ({ position, type, message }: Props) => {
 
   const contents = {
     [MintType.BORROW]: !gt(price, 0) ? undefined : [priceContents],
-    [MintType.SHORT]: !gt(price, 0) ? undefined : [priceContents],
+    [MintType.SHORT]: !gt(price, 0) ? undefined : [priceContents, uusdContents],
 
     [MintType.CLOSE]: closeDelistedAsset
       ? [burnContents]
