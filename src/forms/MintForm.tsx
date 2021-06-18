@@ -60,12 +60,9 @@ enum Key {
 interface Props {
   position?: MintPosition
   type: MintType
-  message?: string
 }
 
-/* TODO: isAssetDelisted ? Can not deposit more */
-
-const MintForm = ({ position, type, message }: Props) => {
+const MintForm = ({ position, type }: Props) => {
   useRecoilValue(tokenBalanceQuery) // To determine to show balance
   useRecoilValue(nativePricesQuery) // To calculate collateral ratio
   useRecoilValue(oraclePricesQuery) // To calculate collateral ratio
@@ -90,7 +87,6 @@ const MintForm = ({ position, type, message }: Props) => {
   /* form:validate */
   const validate = ({ token1, token2, value1, value2, ratio }: Values<Key>) => {
     const symbol1 = getSymbol(token1)
-    const symbol2 = getSymbol(token2)
     const nextRatio = div(ratio, 100)
 
     return {
@@ -100,7 +96,7 @@ const MintForm = ({ position, type, message }: Props) => {
           ? plus(prevCollateral?.amount, getBalance(token1))
           : getBalance(token1),
       }),
-      [Key.value2]: edit ? v.amount(value2, { symbol: symbol2 }) : "",
+      [Key.value2]: "",
       [Key.token1]: v.required(token1),
       [Key.token2]: v.required(token2),
       [Key.ratio]: !gte(nextRatio, getMinRatio(token1, token2))
@@ -251,6 +247,22 @@ const MintForm = ({ position, type, message }: Props) => {
     </p>
   )
 
+  const toBuy = {
+    pathname: getPath(MenuKey.TRADE),
+    hash: TradeType.BUY,
+    state: { token: token2 },
+  }
+
+  const linkToBuy = (
+    <Link className={styles.link} to={toBuy}>
+      Buy {symbol2}
+    </Link>
+  )
+
+  const diffCollateral = minus(amount1, prevCollateral?.amount)
+  const diffAsset = minus(amount2, prevAsset?.amount)
+  const invalidRepay = edit && gt(times(diffAsset, -1), getBalance(token2))
+
   const fields = getFields({
     [Key.value1]: {
       label: open ? (
@@ -293,7 +305,11 @@ const MintForm = ({ position, type, message }: Props) => {
       assets: select2.assets,
       help: renderBalance(getBalance(token2), symbol2),
       focused: select2.isOpen,
-      warn: isMarketClosed ? marketClosedMessage : undefined,
+      warn: invalidRepay ? (
+        <>{linkToBuy} to repay</>
+      ) : isMarketClosed ? (
+        marketClosedMessage
+      ) : undefined,
     },
 
     [Key.ratio]: {
@@ -337,8 +353,6 @@ const MintForm = ({ position, type, message }: Props) => {
 
   /* confirm */
   const price = div(find(priceKey2, token2), find(priceKey1, token1))
-  const diffCollateral = minus(amount1, prevCollateral?.amount)
-  const diffAsset = minus(amount2, prevAsset?.amount)
 
   const priceContents = {
     title: <TooltipIcon content={Tooltips.Mint.Price}>Price</TooltipIcon>,
@@ -511,18 +525,6 @@ const MintForm = ({ position, type, message }: Props) => {
     ? [MESSAGE.Form.Validate.CollateralRatio.Safe]
     : undefined
 
-  const toBuy = {
-    pathname: getPath(MenuKey.TRADE),
-    hash: TradeType.BUY,
-    state: { token: token2 },
-  }
-
-  const linkToBuy = (
-    <Link className={styles.link} to={toBuy}>
-      Buy {symbol2}
-    </Link>
-  )
-
   const closeMessages =
     prevAsset && !gte(getBalance(token2), prevAsset.amount)
       ? [<>{linkToBuy} to close position</>]
@@ -535,7 +537,7 @@ const MintForm = ({ position, type, message }: Props) => {
     : undefined
 
   const disabled =
-    !!message || isMarketClosed || (!close ? invalid : !!closeMessages)
+    isMarketClosed || invalidRepay || (!close ? invalid : !!closeMessages)
 
   const label = type
 
@@ -545,7 +547,7 @@ const MintForm = ({ position, type, message }: Props) => {
   const container = { attrs, contents, messages, label, disabled, data }
   const deduct = close || (edit && lt(diffCollateral, 0))
   const tax = {
-    pretax: token1 === "uusd" ? (edit ? amount1 : diffCollateral) : "0",
+    pretax: token1 === "uusd" ? (edit ? diffCollateral : amount1) : "0",
     deduct,
   }
 
