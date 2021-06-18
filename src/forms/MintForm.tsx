@@ -367,12 +367,12 @@ const MintForm = ({ position, type, message }: Props) => {
   }
 
   const collateralContents = {
-    title: lookupSymbol(symbol1),
+    title: "Collateral",
     content: formatWithSign(diffCollateral, symbol1),
   }
 
   const mintedContents = {
-    title: lookupSymbol(symbol2),
+    title: position?.is_short ? "Shorted" : "Borrowed",
     content: formatWithSign(diffAsset, symbol2),
   }
 

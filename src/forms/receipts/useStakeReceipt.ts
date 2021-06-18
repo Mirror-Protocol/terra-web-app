@@ -22,7 +22,7 @@ export default (type: StakeType, gov: boolean) => (logs: TxLog[]) => {
 
   /* contents */
   const amountContent = {
-    title: "Amount",
+    title: type === StakeType.UNSTAKE ? "Unstaked" : "Amount",
     content: formatAsset(amount, !gov ? getLpName(symbol) : "MIR"),
   }
 
