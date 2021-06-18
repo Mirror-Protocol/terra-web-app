@@ -21,6 +21,7 @@ interface PairPool {
 }
 
 interface MintAssetConfig {
+  auction_discount: string
   min_collateral_ratio: string
   end_price: string
   ipo_params: IPOParams | null

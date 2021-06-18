@@ -1,4 +1,4 @@
-import { useRecoilValue } from "recoil"
+import { useRecoilValue, useRecoilValueLoadable } from "recoil"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
 import Tooltips from "../lang/Tooltips"
@@ -14,6 +14,7 @@ import { useProtocol } from "../data/contract/protocol"
 import { useFind } from "../data/contract/normalize"
 import { useGovConfig } from "../data/gov/config"
 import { communityConfigQuery } from "../data/contract/info"
+import { mintAssetConfigQuery } from "../data/contract/contract"
 import { factoryDistributionInfoQuery } from "../data/contract/info"
 
 import { TooltipIcon } from "../components/Tooltip"
@@ -77,8 +78,17 @@ interface Props {
 const CreatePollForm = ({ type, headings }: Props) => {
   const balanceKey = BalanceKey.TOKEN
   const config = useGovConfig()
-  const communityConfig = useRecoilValue(communityConfigQuery)
-  const spend_limit = communityConfig?.spend_limit
+  const communityConfig = useRecoilValueLoadable(communityConfigQuery)
+  const mintAssetConfig = useRecoilValueLoadable(mintAssetConfigQuery)
+  const spend_limit =
+    communityConfig.state === "hasValue"
+      ? communityConfig.contents?.spend_limit
+      : undefined
+
+  const getMintAssetConfig = (token: string) =>
+    mintAssetConfig.state === "hasValue"
+      ? mintAssetConfig.contents?.[token]
+      : undefined
 
   const getFieldKeys = () => {
     // Determine here which key to use for each type.
@@ -349,9 +359,14 @@ const CreatePollForm = ({ type, headings }: Props) => {
     [Key.weight]: div(getWeight(asset), 100),
   }
 
+  const assetConfig = getMintAssetConfig(asset)
   const mintPlaceholders = {
-    [Key.auctionDiscount]: "20",
-    [Key.minCollateralRatio]: "150",
+    [Key.auctionDiscount]: assetConfig
+      ? times(assetConfig.auction_discount, 100)
+      : "20",
+    [Key.minCollateralRatio]: assetConfig
+      ? times(assetConfig.min_collateral_ratio, 100)
+      : "150",
     [Key.mintPeriod]: "",
     [Key.minCollateralRatioAfterIPO]: "150",
     [Key.price]: "",
