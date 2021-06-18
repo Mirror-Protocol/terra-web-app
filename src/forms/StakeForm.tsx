@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom"
 import Tooltips from "../lang/Tooltips"
 import { toBase64 } from "../libs/formHelpers"
 import useNewContractMsg from "../libs/useNewContractMsg"
-import { gt, minus, max as findMax } from "../libs/math"
+import { gt, minus, max as findMax, plus } from "../libs/math"
 import { formatAsset, lookup, toAmount } from "../libs/parse"
 import useForm from "../libs/useForm"
 import { validate as v, placeholder, step } from "../libs/formHelpers"
@@ -126,6 +126,8 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
 
   /* confirm */
   const staked = !gov ? findStaking(StakingKey.LPSTAKED, token) : govStaked
+  const operate = { [StakeType.STAKE]: plus, [StakeType.UNSTAKE]: minus }[type]
+  const afterTx = operate(staked, amount)
 
   const contents = !value
     ? undefined
@@ -134,6 +136,10 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
         {
           title: "Staked",
           content: formatAsset(staked, !gov ? getLpName(symbol) : "MIR"),
+        },
+        {
+          title: "Staked after tx",
+          content: formatAsset(afterTx, !gov ? getLpName(symbol) : "MIR"),
         },
       ]
     : []
