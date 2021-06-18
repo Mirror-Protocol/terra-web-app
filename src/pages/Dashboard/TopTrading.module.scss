@@ -14,7 +14,7 @@
 .wrapper {
   @include flex;
 
-  svg {
+  > svg {
     fill: $blue;
     margin-right: 8px;
   }
