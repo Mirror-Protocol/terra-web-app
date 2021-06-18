@@ -220,12 +220,12 @@ export default () => {
     let lastPair: (NativeInfo | AssetInfo)[] | null = null
 
     try {
-      const url = service + "pairs"
+      const url = `${service}/pairs`
       const res: PairsResult = (await axios.get(url)).data
 
       if (res.pairs.length !== 0) {
         return res
-      } 
+      }
     } catch (error) {
       console.log(error)
     }
@@ -259,14 +259,11 @@ export default () => {
     return result
   }, [service, factory, getURL])
 
-  const loadTokensInfo = useCallback(
-    async (): Promise<TokenResult[]> => {
-      const url = service + "tokens"
-      const res: TokenResult[] = (await axios.get(url)).data
-      return res
-    },
-    [service]
-  )
+  const loadTokensInfo = useCallback(async (): Promise<TokenResult[]> => {
+    const url = `${service}/tokens`
+    const res: TokenResult[] = (await axios.get(url)).data
+    return res
+  }, [service])
 
   const loadTokenInfo = useCallback(
     async (contract: string): Promise<TokenResult> => {

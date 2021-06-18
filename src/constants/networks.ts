@@ -13,7 +13,8 @@ const networks: Record<string, NetworkConfig> = {
     lcd: { chainID: "columbus-4", URL: "https://fcd.terra.dev/" },
     fee: { gasPrice: "0.00506", amount: "1518", gas: "600000" },
     factory: "terra1ulgw0td86nvs4wtpsc80thv6xelk76ut7a7apj",
-    service: "https://api.terraswap.io/",
+    service:
+      process.env.REACT_APP_MAINNET_SERVICE_URL || "https://api.terraswap.io/",
   },
   testnet: {
     id: "tequila-0004",
@@ -24,7 +25,9 @@ const networks: Record<string, NetworkConfig> = {
     lcd: { chainID: "tequila-0004", URL: "https://tequila-fcd.terra.dev/" },
     fee: { gasPrice: "0.15", amount: "50000", gas: "450000" },
     factory: "terra18qpjm4zkvqnpjpw0zn0tdr8gdzvt8au35v45xf",
-    service: "https://api-tequila.terraswap.io/",
+    service:
+      process.env.REACT_APP_TESTNET_SERVICE_URL ||
+      "https://api-tequila.terraswap.io/",
   },
 }
 

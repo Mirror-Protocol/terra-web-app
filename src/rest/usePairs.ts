@@ -125,41 +125,6 @@ export default () => {
   const { loadPairs, loadTokenInfo, loadTokensInfo } = useAPI()
   const { name } = useNetwork()
 
-  useEffect(() => {
-    try {
-      loadTokensInfo().then((res: TokenResult[]) => {
-        res.forEach((tokenInfo: TokenResult) => {
-          tokenInfos.set(tokenInfo.contract_addr, tokenInfo)
-        })
-      })
-    } catch (error) {
-      console.log(error)
-    }
-
-    if (name === "testnet") {
-      testnetTokens.forEach((token) => {
-        tokenInfos.get(token.contract_addr)
-        if (token !== undefined && token.symbol && !tokenInfos.has(token.contract_addr)) {
-          tokenInfos.set(token.contract_addr, {
-            contract_addr: token.contract_addr,
-            symbol: token.symbol,
-            name: token.name,
-          })
-        }
-      })
-    } else {
-      mainnetTokens.forEach((token) => {
-        if(token !== undefined && token.symbol && !tokenInfos.has(token.contract_addr)) {
-          tokenInfos.set(token.contract_addr, {
-            contract_addr: token.contract_addr,
-            symbol: token.symbol,
-            name: token.name,
-          })
-        }
-      })
-    }
-
-  }, [name, loadTokensInfo])
   const getTokenInfo = useCallback(
     async (info: NativeInfo | AssetInfo) => {
       let tokenInfo: TokenInfo | undefined
@@ -197,10 +162,38 @@ export default () => {
       if (isLoading || result?.pairs.length > 0) {
         return
       }
-
       setIsLoading(true)
-      loadPairs().then((res: PairsResult) => {
-        Promise.all(
+
+      const fetchTokensInfo = async () => {
+        try {
+          const res = await loadTokensInfo()
+          res.forEach((tokenInfo: TokenResult) => {
+            tokenInfos.set(tokenInfo.contract_addr, tokenInfo)
+          })
+        } catch (error) {
+          console.log(error)
+        }
+
+        ;(name === "testnet" ? testnetTokens : mainnetTokens).forEach(
+          (token) => {
+            if (
+              token !== undefined &&
+              token.symbol &&
+              !tokenInfos.has(token.contract_addr)
+            ) {
+              tokenInfos.set(token.contract_addr, {
+                contract_addr: token.contract_addr,
+                symbol: token.symbol,
+                name: token.name,
+              })
+            }
+          }
+        )
+      }
+
+      const fetchPairs = async () => {
+        const res: PairsResult = await loadPairs()
+        const pairs = await Promise.all(
           res.pairs.map(async (pairResult: PairResult) => {
             try {
               const tokenInfo1 = await getTokenInfo(pairResult.asset_infos[0])
@@ -268,20 +261,22 @@ export default () => {
             }
             return undefined
           })
-        ).then((pairs) => {
-          if (pairs) {
-            setResult({
-              pairs: pairs.filter((pair) => !!pair) as Pair[],
-            })
-            setIsLoading(false)
-          }
-        })
-      })
+        )
+
+        if (pairs) {
+          setResult({
+            pairs: pairs.filter((pair) => !!pair) as Pair[],
+          })
+          setIsLoading(false)
+        }
+      }
+
+      fetchTokensInfo().then(() => fetchPairs())
     } catch (error) {
       console.log(error)
       setIsLoading(false)
     }
-  }, [getTokenInfo, isLoading, loadPairs, result])
+  }, [getTokenInfo, isLoading, loadPairs, loadTokensInfo, name, result])
 
   return { ...result, isLoading }
 }
