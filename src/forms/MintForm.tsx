@@ -372,6 +372,13 @@ const MintForm = ({ position, type, message }: Props) => {
     content: <Count symbol={symbol1}>{prevCollateral?.amount}</Count>,
   }
 
+  const PROTOCOL_FEE = 0.015
+  const protocolFee = times(times(price, amount2), PROTOCOL_FEE)
+  const protocolFeeContents = {
+    title: "Protocol Fee",
+    content: <Count symbol={symbol1}>{protocolFee}</Count>,
+  }
+
   const formatWithSign = (amount: string, symbol: string) => {
     const sign = gt(amount, 0) ? "+" : lt(amount, 0) ? "-" : ""
     return sign + formatAsset(abs(amount), symbol)
@@ -387,8 +394,6 @@ const MintForm = ({ position, type, message }: Props) => {
     content: formatWithSign(diffAsset, symbol2),
   }
 
-  // const PROTOCOL_FEE = 0.015
-  // const getProtocolFee = (n = "0") => times(n, PROTOCOL_FEE)
   const closeDelistedAsset =
     prevAsset && getIsDelisted(prevAsset.token) && gt(prevAsset.amount, 0)
 
@@ -398,7 +403,7 @@ const MintForm = ({ position, type, message }: Props) => {
 
     [MintType.CLOSE]: closeDelistedAsset
       ? [burnContents]
-      : [burnContents, withdrawContents],
+      : [burnContents, withdrawContents, protocolFeeContents],
 
     [MintType.EDIT]: [priceContents, collateralContents, mintedContents],
   }[type]
