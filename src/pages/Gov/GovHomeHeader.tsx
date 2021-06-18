@@ -1,18 +1,17 @@
+import { useAddress } from "../../hooks"
+import { bound } from "../../components/Boundary"
 import Grid from "../../components/Grid"
-import styles from "./GovHomeHeader.module.scss"
 import GovInfo from "./GovInfo"
 import GovStakeInfo from "./GovStakeInfo"
+import styles from "./GovHomeHeader.module.scss"
 
 const GovHomeHeader = () => {
-  return (
-    <Grid>
-      <div className={styles.lg}>
-        <GovInfo />
-      </div>
+  const address = useAddress()
 
-      <div className={styles.sm}>
-        <GovStakeInfo />
-      </div>
+  return (
+    <Grid className={styles.grid}>
+      <GovInfo />
+      {address && bound(<GovStakeInfo />)}
     </Grid>
   )
 }

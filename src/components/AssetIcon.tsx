@@ -7,7 +7,7 @@ const cx = classNames.bind(styles)
 
 interface Props {
   symbol: string
-  size?: "default" | "sm" | "xs"
+  size?: AssetSize
   idle?: boolean
   className?: string
 }

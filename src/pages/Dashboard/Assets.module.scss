@@ -15,32 +15,12 @@
   }
 }
 
-.section .title {
-  color: $white-44;
-  font-size: 12px;
-  font-weight: 500;
-
+.item {
   @include mobile {
-    margin-bottom: 4px;
-  }
-
-  @include desktop {
-    margin-bottom: 8px;
-  }
-
-  text-transform: uppercase;
-}
-
-.number {
-  font-weight: 500;
-
-  @include mobile {
-    font-size: 18px;
     margin-bottom: 24px;
   }
 
   @include desktop {
-    font-size: 28px;
     margin-bottom: 32px;
   }
 }

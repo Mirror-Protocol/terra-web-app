@@ -1,9 +1,11 @@
 @import "mixins";
 
-.lg {
-  flex: 3;
-}
+.grid {
+  > :first-child {
+    flex: 3;
+  }
 
-.sm {
-  flex: 2;
+  > :last-child {
+    flex: 2;
+  }
 }

@@ -21,6 +21,16 @@
 .symbol {
   color: $white-92;
   font-weight: 500;
+
+  .lg & {
+    @include mobile {
+      font-size: 18px;
+    }
+
+    @include desktop {
+      font-size: 24px;
+    }
+  }
 }
 
 .content {
@@ -35,6 +45,16 @@
 
   @include desktop {
     font-size: 12px;
+  }
+
+  .lg & {
+    @include mobile {
+      font-size: 12px;
+    }
+
+    @include desktop {
+      font-size: 14px;
+    }
   }
 }
 

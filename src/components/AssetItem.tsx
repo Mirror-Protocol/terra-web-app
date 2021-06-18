@@ -10,7 +10,7 @@ const cx = classNames.bind(styles)
 
 interface Props {
   token: string
-  size?: "default" | "sm" | "xs"
+  size?: AssetSize
   idle?: boolean
   formatTokenName?: (symbol: string) => string
 }
@@ -22,7 +22,7 @@ const AssetItem: FC<Props> = ({ token, size, idle, children, ...props }) => {
   const name = whitelist[token]?.name
 
   return (
-    <article className={cx(styles.asset, { idle })}>
+    <article className={cx(styles.asset, { idle }, size)}>
       <AssetIcon symbol={symbol} size={size} idle={idle} />
 
       <header className={styles.header}>

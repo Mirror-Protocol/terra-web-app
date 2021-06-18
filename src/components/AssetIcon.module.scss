@@ -29,6 +29,18 @@
   height: 16px;
 }
 
+.lg {
+  @include mobile {
+    width: 40px;
+    height: 40px;
+  }
+
+  @include desktop {
+    width: 48px;
+    height: 48px;
+  }
+}
+
 .idle {
   @include idle;
   border-radius: 50%;

@@ -6,6 +6,7 @@ import Card from "../../components/Card"
 import Summary from "../../components/Summary"
 import LinkButton from "../../components/LinkButton"
 import Formatted from "../../components/Formatted"
+import { Submit } from "../../components/Button"
 import styles from "./GovStakeInfo.module.scss"
 
 const GovStakeInfo = () => {
@@ -31,11 +32,13 @@ const GovStakeInfo = () => {
     <Card>
       {contents.map((item, index) => (
         <article className={styles.item} key={index}>
-          <Summary {...item} />
+          <Summary {...item} size="sm" />
         </article>
       ))}
 
-      <LinkButton {...stake}>Stake</LinkButton>
+      <Submit>
+        <LinkButton {...stake}>Stake</LinkButton>
+      </Submit>
     </Card>
   )
 }

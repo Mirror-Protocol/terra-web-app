@@ -2,17 +2,17 @@ import Tooltips from "../../lang/Tooltips"
 import { useDashboard } from "../../data/stats/statistic"
 import Formatted from "../../components/Formatted"
 import { CardMain } from "../../components/Card"
-import { TooltipIcon } from "../../components/Tooltip"
-import styles from "./Summary.module.scss"
+import Summary from "../../components/Summary"
+import styles from "./Assets.module.scss"
 
-const Summary = () => {
+const Assets = () => {
   const { assetMarketCap, latest24h } = useDashboard()
 
   const list = [
     {
       title: "Market Cap",
       tooltip: Tooltips.Dashboard.mAsset.MarketCap,
-      content: (
+      children: (
         <Formatted symbol="uusd" config={{ integer: true }}>
           {assetMarketCap}
         </Formatted>
@@ -21,7 +21,7 @@ const Summary = () => {
     {
       title: "Trading Fee",
       tooltip: Tooltips.Dashboard.mAsset.Fee,
-      content: (
+      children: (
         <Formatted symbol="uusd" config={{ integer: true }}>
           {latest24h.feeVolume}
         </Formatted>
@@ -30,7 +30,7 @@ const Summary = () => {
     {
       title: "Transactions",
       tooltip: Tooltips.Dashboard.mAsset.Transactions,
-      content: (
+      children: (
         <Formatted config={{ integer: true }}>
           {latest24h.transactions}
         </Formatted>
@@ -41,16 +41,15 @@ const Summary = () => {
   return (
     <CardMain className={styles.content}>
       <h1 className={styles.title}>mAsset</h1>
-      {list.map(({ title, content, tooltip }) => (
-        <section className={styles.section} key={title}>
-          <h1 className={styles.title}>
-            <TooltipIcon content={tooltip}>{title}</TooltipIcon>
-          </h1>
-          <p className={styles.number}>{content}</p>
-        </section>
-      ))}
+      <ul>
+        {list.map((item, index) => (
+          <li className={styles.item}>
+            <Summary {...item} key={index} />
+          </li>
+        ))}
+      </ul>
     </CardMain>
   )
 }
 
-export default Summary
+export default Assets

@@ -6,7 +6,7 @@ const CommunityBalance = () => {
   const balance = useCommunityBalance()
 
   return (
-    <Summary title="Community Pool">
+    <Summary title="Community Pool" size="sm">
       <Count symbol="MIR" integer>
         {balance}
       </Count>

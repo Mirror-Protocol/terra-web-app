@@ -45,7 +45,7 @@ interface FormGroup {
   warn?: ReactNode
   info?: ReactNode
   type?: 1 | 2 | 3
-  size?: "default" | "sm" | "xs"
+  size?: AssetSize
   skipFeedback?: boolean
   unitAfterValue?: boolean
 }
@@ -112,6 +112,8 @@ interface AssetItemProps extends DefaultListedItem {
   price?: string
   balance?: string
 }
+
+type AssetSize = "default" | "sm" | "xs" | "lg"
 
 /* icons */
 type IconNames =
