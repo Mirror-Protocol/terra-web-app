@@ -32,7 +32,7 @@ export default (type: MintType, prev?: MintPosition) => (logs: TxLog[]) => {
 
   const mint = splitTokenText(val("mint_amount"))
   const burn = splitTokenText(val("burn_amount"))
-  const protocolFee = splitTokenText(val("protocol_fee", Number(edit)))
+  const protocolFee = splitTokenText(val("protocol_fee"))
 
   const nextCollateral = {
     [MintType.BORROW]: {
@@ -115,6 +115,13 @@ export default (type: MintType, prev?: MintPosition) => (logs: TxLog[]) => {
           content: formatAsset(
             withdraw.amount,
             lookupSymbol(getSymbol(withdraw.token))
+          ),
+        },
+        {
+          title: "Protocol Fee",
+          content: formatAsset(
+            protocolFee.amount,
+            lookupSymbol(getSymbol(protocolFee.token))
           ),
         },
       ]
