@@ -34,9 +34,6 @@ const Result = ({ response, error, parseTx, onFailure, gov }: Props) => {
   const { data: txInfo } = tx
 
   /* status */
-  // TODO
-  // 1. TIMEOUT - When there is no response for 20 seconds
-  // 2. User denied
   const status =
     !success || !hash || tx.error || (txInfo && !txInfo?.Success)
       ? STATUS.FAILURE
