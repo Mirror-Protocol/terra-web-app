@@ -26,6 +26,7 @@ import FormFeedback from "../components/FormFeedback"
 import Button, { Submit } from "../components/Button"
 import Count from "../components/Count"
 import { TooltipIcon } from "../components/Tooltip"
+import { Content } from "../components/componentTypes"
 
 import Caution from "./Caution"
 import Result from "./Result"
@@ -90,7 +91,7 @@ export const Component = ({ data: msgs, memo, ...props }: Props) => {
     ? sum([pretax ?? "0", tax, fee.amount])
     : fee.amount
 
-  const invalid =
+  const invalidMessages =
     address && !gt(uusd, uusdAmount) ? ["Not enough UST"] : undefined
 
   /* confirm */
@@ -101,7 +102,8 @@ export const Component = ({ data: msgs, memo, ...props }: Props) => {
   const [submitted, setSubmitted] = useState(false)
   const [response, setResponse] = useState<TxResult>()
   const [error, setError] = useState<PostError>()
-  const disabled = props.disabled || invalid || submitted || !msgs?.length
+  const disabled =
+    props.disabled || !!invalidMessages || submitted || !msgs?.length
 
   const submit = async () => {
     setSubmitted(true)
@@ -171,7 +173,7 @@ export const Component = ({ data: msgs, memo, ...props }: Props) => {
           {children}
         </Card>
 
-        {(invalid ?? messages)?.map((message, index) => (
+        {(invalidMessages ?? messages)?.map((message, index) => (
           <FormFeedback type="error" key={index}>
             {message}
           </FormFeedback>

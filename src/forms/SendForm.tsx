@@ -7,7 +7,7 @@ import useNewContractMsg from "../libs/useNewContractMsg"
 import Tooltips from "../lang/Tooltips"
 import { div, gt, max, minus, times } from "../libs/math"
 import { formatAsset, lookup, lookupSymbol, toAmount } from "../libs/parse"
-import useForm from "../libs/useForm"
+import useForm, { Values } from "../libs/useForm"
 import { validate as v, placeholder, step } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import { useNetwork } from "../hooks"
@@ -105,7 +105,7 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   }, [isEthereum, isTerra, network, setValues])
 
   /* form:focus input on select asset */
-  const valueRef = useRef<HTMLInputElement>()
+  const valueRef = useRef<HTMLInputElement>(null)
   const onSelect = (token: string) => {
     setValue(Key.token, token)
     !value && valueRef.current?.focus()

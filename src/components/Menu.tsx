@@ -3,6 +3,12 @@ import classNames from "classnames"
 import styles from "./Menu.module.scss"
 import Icon from "./Icon"
 
+interface MenuItem {
+  icon: IconNames
+  attrs: { to: string; children: string }
+  desktopOnly?: boolean
+}
+
 const Menu = ({ list }: { list: MenuItem[] }) => {
   return (
     <ul className={styles.menu}>

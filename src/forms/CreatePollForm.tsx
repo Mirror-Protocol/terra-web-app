@@ -6,7 +6,7 @@ import { MAX_MSG_LENGTH } from "../constants"
 import { div, gte, number, times } from "../libs/math"
 import { record, getLength } from "../libs/utils"
 import { lookup, toAmount } from "../libs/parse"
-import useForm from "../libs/useForm"
+import useForm, { Values } from "../libs/useForm"
 import { validate as v, step, toBase64, placeholder } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import { BalanceKey } from "../hooks/contractKeys"
@@ -380,9 +380,9 @@ const CreatePollForm = ({ type, headings }: Props) => {
     [Key.owner]: config?.owner ?? "",
     [Key.quorum]: times(config?.quorum, 100),
     [Key.threshold]: times(config?.threshold, 100),
-    [Key.votingPeriod]: config?.voting_period ?? "",
-    [Key.effectiveDelay]: config?.effective_delay ?? "",
-    [Key.expirationPeriod]: config?.expiration_period ?? "",
+    [Key.votingPeriod]: String(config?.voting_period) ?? "",
+    [Key.effectiveDelay]: String(config?.effective_delay) ?? "",
+    [Key.expirationPeriod]: String(config?.expiration_period) ?? "",
     [Key.proposalDeposit]: lookup(config?.proposal_deposit, "MIR") ?? "",
     [Key.voterWeight]: config?.voter_weight ?? "",
   }

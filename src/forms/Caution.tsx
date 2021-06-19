@@ -1,14 +1,14 @@
 import { useState } from "react"
 import Contents from "../lang/Caution.json"
 import Card from "../components/Card"
-import Button, { Submit } from "../components/Button"
+import Button, { ButtonProps, Submit } from "../components/Button"
 import Checkbox from "../components/Checkbox"
 import styles from "./Caution.module.scss"
 
 const { title, content, footer } = Contents
 const { introduction, body, conclusion } = content
 
-interface Props extends Button {
+interface Props extends ButtonProps {
   onAgree: () => void
 }
 

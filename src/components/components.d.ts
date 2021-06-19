@@ -1,73 +1,3 @@
-interface Content {
-  title?: ReactNode
-  content?: ReactNode
-}
-
-/* Header */
-interface MenuItem {
-  icon: IconNames
-  attrs: { to: string; children: string }
-  desktopOnly?: boolean
-}
-
-/* Forms */
-type Values<T> = Record<T, string>
-type Touched<T> = Record<T, boolean>
-
-type Input = DetailedHTMLProps<
-  InputHTMLAttributes<HTMLInputElement>,
-  HTMLInputElement
->
-
-type TextArea = DetailedHTMLProps<
-  TextareaHTMLAttributes<HTMLTextAreaElement>,
-  HTMLTextAreaElement
->
-
-type Select = DetailedHTMLProps<
-  SelectHTMLAttributes<HTMLSelectElement>,
-  HTMLSelectElement
->
-
-interface FormGroup {
-  prev?: string
-  input?: Input
-  textarea?: TextArea
-  select?: Select
-  value?: ReactNode
-  label?: ReactNode
-  help?: Content
-  unit?: ReactNode
-  max?: () => void
-  assets?: ReactNode
-  focused?: boolean
-  error?: string
-  warn?: ReactNode
-  info?: ReactNode
-  type?: 1 | 2 | 3
-  size?: AssetSize
-  skipFeedback?: boolean
-  unitAfterValue?: boolean
-}
-
-/* Buttons */
-interface ButtonProps {
-  /** xs: 22px; sm: 26px; md: 36px; lg: 50px */
-  size?: "xs" | "sm" | "md" | "lg"
-  color?: string
-  outline?: boolean
-  block?: boolean
-
-  loading?: boolean
-
-  disabled?: boolean
-  className?: string
-  children?: ReactNode
-}
-
-type ButtonAttrs = ButtonHTMLAttributes<HTMLButtonElement>
-type Button = ButtonProps & ButtonAttrs
-
 /* Tab */
 interface Tab {
   tabs: string[]
@@ -99,18 +29,6 @@ interface CountOptions extends FormatConfig {
   plus?: boolean
   /** Custom formatter */
   format?: (current: string) => string
-}
-
-interface Confirm {
-  contents?: Content[]
-  warning?: string
-}
-
-interface AssetItemProps extends DefaultListedItem {
-  name?: string
-  status?: ListedItemStatus
-  price?: string
-  balance?: string
 }
 
 type AssetSize = "default" | "sm" | "xs" | "lg"

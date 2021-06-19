@@ -7,7 +7,12 @@ import Card from "../../components/Card"
 import Icon from "../../components/Icon"
 import Button from "../../components/Button"
 
-const Item = ({ title, content }: Content) => {
+interface Props {
+  title: string
+  content: string | object
+}
+
+const Item = ({ title, content }: Props) => {
   const { getSymbol } = useProtocol()
   const [verbose, setVerbose] = useState(false)
   const toggle = () => setVerbose(!verbose)

@@ -1,7 +1,7 @@
 import { Link, LinkProps as Props } from "react-router-dom"
-import { getAttrs } from "./Button"
+import { ButtonInterface, getAttrs } from "./Button"
 
-export type LinkProps = ButtonProps & Props
+export type LinkProps = ButtonInterface & Props
 const LinkButton = (props: LinkProps) => {
   const { children, ...attrs } = getAttrs(props)
 

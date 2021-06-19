@@ -6,7 +6,7 @@ import { BalanceKey, PriceKey } from "../hooks/contractKeys"
 import { useFind } from "../data/contract/normalize"
 import Icon from "../components/Icon"
 import { Config } from "./useSelectAsset"
-import Asset from "./Asset"
+import Asset, { AssetItemProps } from "./Asset"
 import styles from "./Assets.module.scss"
 
 const cx = classNames.bind(styles)

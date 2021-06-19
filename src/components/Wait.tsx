@@ -3,7 +3,7 @@ import classNames from "classnames/bind"
 import Card from "./Card"
 import Icon from "./Icon"
 import Loading from "./Loading"
-import Button, { Submit } from "./Button"
+import Button, { ButtonInterface, Submit } from "./Button"
 import LinkButton, { LinkProps } from "./LinkButton"
 import ResultFooter from "./ResultFooter"
 import styles from "./Wait.module.scss"
@@ -20,7 +20,7 @@ interface Props {
   status: STATUS
   hash?: ReactNode
   link?: LinkProps
-  button?: ButtonProps
+  button?: ButtonInterface
 }
 
 const Wait: FC<Props> = ({ status, hash, link, button, children }) => {

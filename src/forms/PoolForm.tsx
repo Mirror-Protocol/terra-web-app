@@ -7,7 +7,7 @@ import Tooltips from "../lang/Tooltips"
 import { DEFAULT_SLIPPAGE } from "../constants"
 import { gt } from "../libs/math"
 import { format, lookup, toAmount } from "../libs/parse"
-import useForm from "../libs/useForm"
+import useForm, { Values } from "../libs/useForm"
 import { validate as v, placeholder, step, toBase64 } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import getLpName from "../libs/getLpName"
@@ -81,7 +81,7 @@ const PoolForm = ({ type }: Props) => {
   const price = gt(pairPrice, 0) ? pairPrice : oraclePrice
 
   /* form:focus input on select asset */
-  const valueRef = useRef<HTMLInputElement>()
+  const valueRef = useRef<HTMLInputElement>(null)
   const onSelect = (token: string) => {
     setValue(Key.token, token)
     !value && valueRef.current?.focus()

@@ -1,5 +1,6 @@
 import { Fragment } from "react"
 import classNames from "classnames/bind"
+import { Content } from "./componentTypes"
 import styles from "./Dl.module.scss"
 
 const cx = classNames.bind(styles)

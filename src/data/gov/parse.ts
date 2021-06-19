@@ -4,6 +4,7 @@ import { percent } from "../../libs/num"
 import { formatAsset } from "../../libs/parse"
 import { fromBase64 } from "../../libs/formHelpers"
 import { protocolQuery } from "../contract/protocol"
+import { Content } from "../../components/componentTypes"
 import { PollType } from "../../pages/Poll/CreatePoll"
 
 const parsePollQuery = selector({

@@ -14,7 +14,7 @@ import { gt, gte, lt, isFinite } from "../libs/math"
 import { percentage } from "../libs/num"
 import { format, formatAsset, lookup, lookupSymbol } from "../libs/parse"
 import { decimal, toAmount, getIsTokenNative } from "../libs/parse"
-import useForm from "../libs/useForm"
+import useForm, { Values } from "../libs/useForm"
 import { validate as v, placeholder, step, toBase64 } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import calc from "../libs/calc"
@@ -141,7 +141,7 @@ const MintForm = ({ position, type }: Props) => {
   const symbol2 = getSymbol(token2)
 
   /* form:focus input on select asset */
-  const valueRef = useRef<HTMLInputElement>()
+  const valueRef = useRef<HTMLInputElement>(null)
   const onSelect = (name: Key) => (token: string) => {
     const next: Partial<Record<Key, Partial<Values<Key>>>> = {
       [Key.token1]: { token2: token === token2 ? "" : token2 },

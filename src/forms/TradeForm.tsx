@@ -11,7 +11,7 @@ import { usePolling } from "../hooks"
 import { dp, format, lookup, lookupSymbol } from "../libs/parse"
 import { decimal } from "../libs/parse"
 import { toAmount } from "../libs/parse"
-import useForm from "../libs/useForm"
+import useForm, { Values } from "../libs/useForm"
 import { placeholder, step } from "../libs/formHelpers"
 import { validate as v } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
@@ -108,8 +108,8 @@ const TradeForm = ({ type }: { type: TradeType }) => {
   const uusd = { [TradeType.BUY]: amount1, [TradeType.SELL]: amount2 }[type]
 
   /* form:focus input on select asset */
-  const value1Ref = useRef<HTMLInputElement>()
-  const value2Ref = useRef<HTMLInputElement>()
+  const value1Ref = useRef<HTMLInputElement>(null)
+  const value2Ref = useRef<HTMLInputElement>(null)
   const onSelect = (token: string) => {
     setValue(Key.token, token)
     !value1 && value1Ref.current?.focus()

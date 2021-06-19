@@ -1,3 +1,4 @@
+import { Content } from "../../components/componentTypes"
 import styles from "./CaptionData.module.scss"
 
 interface Props {

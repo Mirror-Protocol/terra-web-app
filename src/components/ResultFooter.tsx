@@ -1,3 +1,4 @@
+import { Content } from "./componentTypes"
 import styles from "./ResultFooter.module.scss"
 
 const ResultFooter = ({ list }: { list: Content[] }) => {

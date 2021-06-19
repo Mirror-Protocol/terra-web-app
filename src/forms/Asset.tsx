@@ -4,11 +4,16 @@ import { gt } from "../libs/math"
 import { format } from "../libs/parse"
 import styles from "./Asset.module.scss"
 
-interface Props extends AssetItemProps {
+export interface AssetItemProps extends DefaultListedItem {
+  name?: string
+  status?: ListedItemStatus
+  price?: string
+  balance?: string
   formatTokenName?: (symbol: string) => string
 }
 
-const Asset = ({ symbol, name, status, price, balance, ...props }: Props) => {
+const Asset = ({ symbol, name, status, ...props }: AssetItemProps) => {
+  const { price, balance } = props
   return (
     <article className={styles.asset}>
       <header className={styles.header}>

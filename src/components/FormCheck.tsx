@@ -1,6 +1,7 @@
 import { ReactNode } from "react"
 import classNames from "classnames/bind"
 import Checkbox from "./Checkbox"
+import { Input } from "./FormGroup"
 import formStyles from "./FormGroup.module.scss"
 import styles from "./FormCheck.module.scss"
 
@@ -32,8 +33,8 @@ const FormCheck = ({ label, list, horizontal }: Props) => (
         <div className={styles.item} key={attrs.id}>
           <input {...attrs} hidden />
           <Checkbox
-            type={attrs.type}
-            checked={attrs.checked}
+            type={attrs.type === "radio" ? "radio" : "checkbox"}
+            checked={!!attrs.checked}
             htmlFor={attrs.id}
           >
             {label}
