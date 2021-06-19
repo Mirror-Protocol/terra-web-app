@@ -80,7 +80,7 @@ const MintForm = ({ position, type }: Props) => {
 
   /* context:position */
   const open = !position
-  const short = type === MintType.SHORT
+  const short = type === MintType.SHORT || position?.is_short
   const edit = type === MintType.EDIT
   const close = type === MintType.CLOSE
 
@@ -286,14 +286,18 @@ const MintForm = ({ position, type }: Props) => {
     },
 
     [Key.value2]: {
-      label: short ? (
+      label: edit ? (
+        short ? (
+          "Shorted"
+        ) : (
+          <TooltipIcon content={Tooltips.Mint.Asset}>Borrowed</TooltipIcon>
+        )
+      ) : short ? (
         <TooltipIcon content={Tooltips.Farm.Shorted}>to short</TooltipIcon>
-      ) : open ? (
+      ) : (
         <TooltipIcon content={Tooltips.Mint.ExpectedMintedAsset}>
           to borrow
         </TooltipIcon>
-      ) : (
-        <TooltipIcon content={Tooltips.Mint.Asset}>Borrowed</TooltipIcon>
       ),
       prev: edit ? format(prevAsset?.amount, symbol2) : undefined,
       input: {
@@ -405,7 +409,7 @@ const MintForm = ({ position, type }: Props) => {
   }
 
   const mintedContents = {
-    title: position?.is_short ? "Shorted" : "Borrowed",
+    title: short ? "Shorted" : "Borrowed",
     content: formatWithSign(diffAsset, symbol2),
   }
 
@@ -558,8 +562,8 @@ const MintForm = ({ position, type }: Props) => {
       ) : type === MintType.EDIT ? (
         <FormContainer {...container} {...tax} parseTx={parseTx}>
           <FormGroup {...fields[Key.value1]} type={3} size="xs" />
-          <FormGroup {...fields[Key.value2]} type={3} size="xs" />
           <FormGroup {...fields[Key.ratio]} type={3} size="xs" skipFeedback />
+          <FormGroup {...fields[Key.value2]} type={3} size="xs" />
           <section className={styles.ratio}>
             <CollateralRatio {...ratioProps} />
           </section>
