@@ -224,7 +224,14 @@ export default () => {
       const res: PairsResult = (await axios.get(url)).data
 
       if (res.pairs.length !== 0) {
-        return res
+        res.pairs.filter((pair) => 
+          !isBlacklisted(pair?.asset_infos?.[0]) &&
+          !isBlacklisted(pair?.asset_infos?.[1])
+        ).forEach((pair) => {
+          result.pairs.push(pair)
+        })
+
+        return result
       }
     } catch (error) {
       console.log(error)

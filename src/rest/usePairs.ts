@@ -174,7 +174,7 @@ export default () => {
           console.log(error)
         }
 
-        ;(name === "testnet" ? testnetTokens : mainnetTokens).forEach(
+        (name === "testnet" ? testnetTokens : mainnetTokens).forEach(
           (token) => {
             if (
               token !== undefined &&
