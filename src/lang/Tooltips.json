@@ -134,6 +134,7 @@
     "TotalStaked": "Total quantity of MIR tokens staked",
     "StakingRatio": "Ratio of the quantity of staked MIR tokens to the total quantity of MIR",
     "APR": "Annualized MIR staking return based on 15 days average of MIR distribution and staking ratio. \n\nReward is generated from protocol fee which occurs when collateral is withdrawn from borrow or short position.",
+    "CommunityPoolBalance": "Total number of MIR tokens currently in the community pool",
 
     "Polls": "Staked MIR can be used as voting power in polls that are currently in progress",
 
