@@ -3,7 +3,7 @@ import { gt, plus } from "../libs/math"
 import { useProtocol } from "../data/contract/protocol"
 import { BalanceKey } from "../hooks/contractKeys"
 import { useFind, useRewards } from "../data/contract/normalize"
-import Count from "../components/Count"
+import Formatted from "../components/Formatted"
 import Container from "../components/Container"
 import useClaimRewardsReceipt from "./receipts/useClaimRewardsReceipt"
 import FormContainer from "./FormContainer"
@@ -21,11 +21,11 @@ const ClaimRewardsForm = () => {
   const contents = [
     {
       title: "Claiming",
-      content: <Count symbol="MIR">{claiming}</Count>,
+      content: <Formatted symbol="MIR">{claiming}</Formatted>,
     },
     {
       title: "MIR after Tx",
-      content: <Count symbol="MIR">{plus(balance, claiming)}</Count>,
+      content: <Formatted symbol="MIR">{plus(balance, claiming)}</Formatted>,
     },
   ]
 

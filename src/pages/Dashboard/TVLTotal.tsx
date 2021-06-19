@@ -7,7 +7,7 @@ const TVLTotal = () => {
 
   return (
     <Card title="Total Value Locked" lg>
-      <Formatted symbol="uusd" config={{ integer: true }} big>
+      <Formatted symbol="uusd" integer big>
         {totalValueLocked.total}
       </Formatted>
     </Card>

@@ -1,4 +1,4 @@
-import { last } from "ramda"
+import { isNil, last } from "ramda"
 import Tooltips from "../../lang/Tooltips"
 import { calcChange } from "../../data/stats/assets"
 import { useDashboardCharts } from "../../data/stats/statistic"
@@ -20,6 +20,7 @@ const LiquidityHistoryChart = () => {
       : undefined
 
   const chart = renderChart(liquidityHistory)
+  const change = getChange(liquidityHistory)
   const title = (
     <TooltipIcon content={Tooltips.Dashboard.Liquidity}>Liquidity</TooltipIcon>
   )
@@ -27,11 +28,11 @@ const LiquidityHistoryChart = () => {
   return (
     <Card title={title} full lg footer={chart}>
       <CardMain>
-        <Formatted symbol="uusd" config={{ integer: true }} big>
+        <Formatted symbol="uusd" integer big>
           {last(sortByTimestamp(liquidityHistory))?.value}
         </Formatted>
 
-        <Change>{getChange(liquidityHistory)}</Change>
+        <Change idle={isNil(change)}>{change}</Change>
       </CardMain>
     </Card>
   )

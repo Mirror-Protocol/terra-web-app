@@ -3,6 +3,7 @@ import { NetworkInfo, WalletStatus } from "@terra-money/wallet-provider"
 import { useWallet } from "@terra-money/wallet-provider"
 import { WalletProvider } from "@terra-money/wallet-provider"
 import networks, { defaultNetwork } from "../networks"
+import { useProtocol } from "../data/contract/protocol"
 import Reconnect from "./Reconnect"
 import MobileSplash from "./MobileSplash"
 
@@ -13,6 +14,7 @@ const walletConnectChainIds: Record<number, NetworkInfo> = {
 }
 
 const WithInitialized: FC = ({ children }) => {
+  useProtocol()
   const { status, network } = useWallet()
   const initialized = status !== WalletStatus.INITIALIZING
   const invalidNetwork = !networks[network.name]

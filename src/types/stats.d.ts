@@ -1,16 +1,10 @@
 interface Dashboard {
   assetMarketCap: string
   govAPR: string
-
   mirPrice: string
   mirSupply: MIRSupply
   totalValueLocked: TVL
-
-  latest24h: {
-    transactions: string
-    volume: string
-    feeVolume: string
-  }
+  latest24h: Latest24h
 }
 
 interface DashboardHistory {
@@ -29,6 +23,12 @@ interface TVL {
   liquidity: string
   collateral: string
   stakedMir: string
+}
+
+interface Lastest24h {
+  transactions: string
+  volume: string
+  feeVolume: string
 }
 
 interface ChartItem {

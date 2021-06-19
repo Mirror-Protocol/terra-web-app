@@ -1,10 +1,10 @@
-import Count from "../components/Count"
+import Formatted from "../components/Formatted"
 import { useUusdBalance } from "../data/native/balance"
 
 const Balance = () => {
   const uusd = useUusdBalance()
 
-  return <Count symbol="uusd">{uusd}</Count>
+  return <Formatted symbol="uusd">{uusd}</Formatted>
 }
 
 export default Balance

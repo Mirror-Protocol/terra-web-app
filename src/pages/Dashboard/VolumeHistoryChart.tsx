@@ -19,7 +19,7 @@ const VolumeHistoryChart = () => {
   return (
     <Card title={title} full lg footer={chart}>
       <CardMain>
-        <Formatted symbol="uusd" config={{ integer: true }} big>
+        <Formatted symbol="uusd" integer big>
           {latest24h.volume}
         </Formatted>
       </CardMain>

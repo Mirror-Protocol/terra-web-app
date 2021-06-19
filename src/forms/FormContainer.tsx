@@ -24,7 +24,7 @@ import Card from "../components/Card"
 import Confirm from "../components/Confirm"
 import FormFeedback from "../components/FormFeedback"
 import Button, { Submit } from "../components/Button"
-import Count from "../components/Count"
+import Formatted from "../components/Formatted"
 import { TooltipIcon } from "../components/Tooltip"
 import { Content } from "../components/componentTypes"
 
@@ -158,9 +158,9 @@ export const Component = ({ data: msgs, memo, ...props }: Props) => {
     )
 
     const txFee = (
-      <Count symbol="uusd" dp={6}>
+      <Formatted symbol="uusd" dp={6}>
         {plus(tax, fee.amount)}
-      </Count>
+      </Formatted>
     )
 
     const renderConfirm = (contents: Content[]) => (

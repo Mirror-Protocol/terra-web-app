@@ -30,7 +30,7 @@ import { getMinRatioQuery } from "../data/contract/collateral"
 import { getMintPriceKeyQuery } from "../data/contract/collateral"
 
 import FormGroup from "../components/FormGroup"
-import Count from "../components/Count"
+import Formatted from "../components/Formatted"
 import { TooltipIcon } from "../components/Tooltip"
 import FormFeedback from "../components/FormFeedback"
 import ExtLink from "../components/ExtLink"
@@ -361,12 +361,12 @@ const MintForm = ({ position, type }: Props) => {
   const priceContents = {
     title: <TooltipIcon content={Tooltips.Mint.Price}>Price</TooltipIcon>,
     content: (
-      <Count
+      <Formatted
         format={(value) => `1 ${lookupSymbol(symbol2)} ≈ ${format(value)}`}
         symbol={symbol1}
       >
         {price}
-      </Count>
+      </Formatted>
     ),
   }
 
@@ -377,25 +377,27 @@ const MintForm = ({ position, type }: Props) => {
       </TooltipIcon>
     ),
     content: (
-      <Count symbol="uusd">{times(amount2, find(PriceKey.PAIR, token2))}</Count>
+      <Formatted symbol="uusd">
+        {times(amount2, find(PriceKey.PAIR, token2))}
+      </Formatted>
     ),
   }
 
   const burnContents = {
     title: "Burn Amount",
-    content: <Count symbol={symbol2}>{prevAsset?.amount}</Count>,
+    content: <Formatted symbol={symbol2}>{prevAsset?.amount}</Formatted>,
   }
 
   const withdrawContents = {
     title: "Withdraw Amount",
-    content: <Count symbol={symbol1}>{prevCollateral?.amount}</Count>,
+    content: <Formatted symbol={symbol1}>{prevCollateral?.amount}</Formatted>,
   }
 
   const PROTOCOL_FEE = 0.015
   const protocolFee = times(times(price, amount2), PROTOCOL_FEE)
   const protocolFeeContents = {
     title: "Protocol Fee",
-    content: <Count symbol={symbol1}>{protocolFee}</Count>,
+    content: <Formatted symbol={symbol1}>{protocolFee}</Formatted>,
   }
 
   const formatWithSign = (amount: string, symbol: string) => {

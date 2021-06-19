@@ -39,7 +39,7 @@ const TVL = () => {
       }
       lg
     >
-      <Formatted symbol="uusd" config={{ integer: true }} big>
+      <Formatted symbol="uusd" integer big>
         {total}
       </Formatted>
 

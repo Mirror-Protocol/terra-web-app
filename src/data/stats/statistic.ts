@@ -38,7 +38,27 @@ export const statisticByNetworkQuery = selectorFamily({
 
 const statisticByNetworkState = atomFamily({
   key: "statisticByNetworkState",
-  default: statisticByNetworkQuery,
+  default: {
+    assetMarketCap: "0",
+    govAPR: "0",
+    mirPrice: "0",
+    mirSupply: {
+      circulating: "0",
+      liquidity: "0",
+      staked: "0",
+    },
+    totalValueLocked: {
+      total: "0",
+      liquidity: "0",
+      collateral: "0",
+      stakedMir: "0",
+    },
+    latest24h: {
+      transactions: "0",
+      volume: "0",
+      feeVolume: "0",
+    },
+  },
 })
 
 export const statisticHistoryByNetworkQuery = selectorFamily({
@@ -64,9 +84,15 @@ export const statisticHistoryByNetworkQuery = selectorFamily({
     },
 })
 
-const statisticHistoryByNetworkState = atomFamily({
+const statisticHistoryByNetworkState = atomFamily<
+  DashboardHistory,
+  StatsNetwork
+>({
   key: "statisticHistoryByNetworkState",
-  default: statisticHistoryByNetworkQuery,
+  default: {
+    liquidityHistory: [],
+    tradingVolumeHistory: [],
+  },
 })
 
 /* hooks */

@@ -1,7 +1,7 @@
 import useNewContractMsg from "../libs/useNewContractMsg"
 import { minus } from "../libs/math"
 import { useProtocol } from "../data/contract/protocol"
-import Count from "../components/Count"
+import Formatted from "../components/Formatted"
 import Container from "../components/Container"
 import { MenuKey } from "../pages/Txs/LimitOrder"
 import FormContainer from "./FormContainer"
@@ -28,7 +28,9 @@ const CancelOrderForm = ({ order, contract }: Props) => {
     {
       title: "Returned Assets",
       content: (
-        <Count symbol={symbol}>{minus(amount, filled_offer_amount)}</Count>
+        <Formatted symbol={symbol}>
+          {minus(amount, filled_offer_amount)}
+        </Formatted>
       ),
     },
   ]

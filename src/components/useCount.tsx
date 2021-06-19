@@ -1,16 +1,11 @@
 import { useRef, useState, useEffect } from "react"
 import { plus, minus, div, gt, lt } from "../libs/math"
-import { format, lookupSymbol } from "../libs/parse"
 
 const FPS = 15
 const INTERVAL = 1000 / FPS
 const DURATION = 300
 
-export const AnimatedCount = ({
-  children: target = "0",
-  ...props
-}: CountOptions) => {
-  const { symbol, ...config } = props
+export const useCount = (target: string) => {
   const prevRef = useRef<string>(target)
   const timeoutRef = useRef<NodeJS.Timeout>()
 
@@ -43,26 +38,7 @@ export const AnimatedCount = ({
     return () => clearTimeout(timeoutRef.current!)
   }, [count, current, target])
 
-  return (
-    <>
-      {props.plus && gt(current, 0) && "+"}
-      {props.format?.(current) ?? format(current, symbol, config)}
-      {symbol ? ` ${lookupSymbol(symbol)}` : ""}
-    </>
-  )
+  return current
 }
 
-export const Count = ({ children: target = "0", ...props }: CountOptions) => {
-  const { symbol, ...config } = props
-  const current = target
-
-  return (
-    <>
-      {props.plus && gt(current, 0) && "+"}
-      {props.format?.(current) ?? format(current, symbol, config)}
-      {symbol ? ` ${lookupSymbol(symbol)}` : ""}
-    </>
-  )
-}
-
-export default Count
+export default useCount

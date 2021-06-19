@@ -19,7 +19,7 @@ import { useFind, useFindStaking } from "../data/contract/normalize"
 
 import { getPath, MenuKey } from "../routes"
 import FormGroup from "../components/FormGroup"
-import Count from "../components/Count"
+import Formatted from "../components/Formatted"
 import { TooltipIcon } from "../components/Tooltip"
 import WithPriceChart from "../containers/WithPriceChart"
 import { MintType, PoolType, TradeType } from "../types/Types"
@@ -209,9 +209,9 @@ const PoolForm = ({ type }: Props) => {
             </TooltipIcon>
           ),
           content: (
-            <Count format={format} symbol="uusd">
+            <Formatted format={format} symbol="uusd">
               {price}
-            </Count>
+            </Formatted>
           ),
         },
       ]

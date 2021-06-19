@@ -2,7 +2,7 @@ import useNewContractMsg from "../libs/useNewContractMsg"
 import { gt } from "../libs/math"
 import { useProtocol } from "../data/contract/protocol"
 import { useMyLockedUST } from "../data/my/locked"
-import Count from "../components/Count"
+import Formatted from "../components/Formatted"
 import Container from "../components/Container"
 import useClaimUSTReceipt from "./receipts/useClaimUSTReceipt"
 import FormContainer from "./FormContainer"
@@ -16,7 +16,7 @@ const ClaimUSTForm = () => {
   const contents = [
     {
       title: "Claiming",
-      content: <Count symbol="uusd">{totalUnlockedUST}</Count>,
+      content: <Formatted symbol="uusd">{totalUnlockedUST}</Formatted>,
     },
   ]
 

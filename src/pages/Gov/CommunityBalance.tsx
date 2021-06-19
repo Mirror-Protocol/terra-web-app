@@ -1,6 +1,6 @@
 import Tooltips from "../../lang/Tooltips"
 import Summary from "../../components/Summary"
-import Count from "../../components/Count"
+import Formatted from "../../components/Formatted"
 import useCommunityBalance from "../Dashboard/useCommunityBalance"
 
 const CommunityBalance = () => {
@@ -12,9 +12,9 @@ const CommunityBalance = () => {
       tooltip={Tooltips.Gov.CommunityPoolBalance}
       size="sm"
     >
-      <Count symbol="MIR" integer>
+      <Formatted symbol="MIR" integer>
         {balance}
-      </Count>
+      </Formatted>
     </Summary>
   )
 }

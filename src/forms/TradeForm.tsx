@@ -23,7 +23,7 @@ import { useFind } from "../data/contract/normalize"
 import { slippageQuery } from "../data/tx/slippage"
 
 import FormGroup from "../components/FormGroup"
-import Count from "../components/Count"
+import Formatted from "../components/Formatted"
 import { TooltipIcon } from "../components/Tooltip"
 import WithPriceChart from "../containers/WithPriceChart"
 import DelistModal from "../layouts/DelistModal"
@@ -288,9 +288,9 @@ const TradeForm = ({ type }: { type: TradeType }) => {
             </TooltipIcon>
           ),
           content: (
-            <Count format={format} symbol="uusd">
+            <Formatted format={format} symbol="uusd" noCount>
               {simulated?.price}
-            </Count>
+            </Formatted>
           ),
         },
         {
@@ -299,7 +299,7 @@ const TradeForm = ({ type }: { type: TradeType }) => {
               Minimum Received
             </TooltipIcon>
           ),
-          content: <Count symbol={symbol2}>{minimumReceived}</Count>,
+          content: <Formatted symbol={symbol2}>{minimumReceived}</Formatted>,
         },
       ]
 

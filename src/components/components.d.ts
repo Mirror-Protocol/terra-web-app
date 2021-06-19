@@ -19,16 +19,16 @@ interface FormatConfig {
   dp?: number
 }
 
-interface CountOptions extends FormatConfig {
-  /** 0 if undefined */
-  children?: string
-  /** As a unit. */
+interface FormattedOptions extends FormatConfig {
+  children?: string // 0 if undefined
   symbol?: string
   unit?: string
-  /** Plus on positive */
-  plus?: boolean
-  /** Custom formatter */
+  plus?: boolean // display plus sign if positive
   format?: (current: string) => string
+  big?: boolean
+  noUnit?: boolean
+  noCount?: boolean
+  className?: string
 }
 
 type AssetSize = "default" | "sm" | "xs" | "lg"

@@ -13,7 +13,7 @@ const Assets = () => {
       title: "Market Cap",
       tooltip: Tooltips.Dashboard.mAsset.MarketCap,
       children: (
-        <Formatted symbol="uusd" config={{ integer: true }}>
+        <Formatted symbol="uusd" integer>
           {assetMarketCap}
         </Formatted>
       ),
@@ -22,7 +22,7 @@ const Assets = () => {
       title: "Trading Fee",
       tooltip: Tooltips.Dashboard.mAsset.Fee,
       children: (
-        <Formatted symbol="uusd" config={{ integer: true }}>
+        <Formatted symbol="uusd" integer>
           {latest24h.feeVolume}
         </Formatted>
       ),
@@ -30,11 +30,7 @@ const Assets = () => {
     {
       title: "Transactions",
       tooltip: Tooltips.Dashboard.mAsset.Transactions,
-      children: (
-        <Formatted config={{ integer: true }}>
-          {latest24h.transactions}
-        </Formatted>
-      ),
+      children: <Formatted integer>{latest24h.transactions}</Formatted>,
     },
   ]
 
