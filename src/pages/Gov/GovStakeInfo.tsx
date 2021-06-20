@@ -1,7 +1,7 @@
 import { useRouteMatch } from "react-router-dom"
-import { useRecoilValue } from "recoil"
+import { useAddress } from "../../hooks"
 import { useProtocol } from "../../data/contract/protocol"
-import { govStakedQuery, useFindBalance } from "../../data/contract/normalize"
+import { useGovStaked, useTokenBalances } from "../../data/contract/normalize"
 import Card from "../../components/Card"
 import Summary from "../../components/Summary"
 import LinkButton from "../../components/LinkButton"
@@ -11,8 +11,9 @@ import styles from "./GovStakeInfo.module.scss"
 
 const GovStakeInfo = () => {
   const { getToken } = useProtocol()
-  const govStaked = useRecoilValue(govStakedQuery)
-  const find = useFindBalance()
+  const address = useAddress()
+  const govStaked = useGovStaked()
+  const { [getToken("MIR")]: govStakable } = useTokenBalances()
 
   const contents = [
     {
@@ -21,12 +22,17 @@ const GovStakeInfo = () => {
     },
     {
       title: `Stakable MIR`,
-      children: <Formatted symbol="MIR">{find(getToken("MIR"))}</Formatted>,
+      children: <Formatted symbol="MIR">{govStakable}</Formatted>,
     },
   ]
 
   const { url } = useRouteMatch()
-  const stake = { to: url + "/stake", className: styles.button }
+
+  const stake = {
+    to: url + "/stake",
+    className: styles.button,
+    disabled: !address,
+  }
 
   return (
     <Card>

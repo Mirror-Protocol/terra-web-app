@@ -1,7 +1,7 @@
 import Tooltips from "../../lang/Tooltips"
+import { useTotalStaked } from "../../data/gov/store"
 import Summary from "../../components/Summary"
 import Formatted from "../../components/Formatted"
-import { useTotalStaked } from "./useTotalStaked"
 
 const TotalStaked = () => {
   const totalStaked = useTotalStaked()

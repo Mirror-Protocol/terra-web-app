@@ -1,5 +1,4 @@
 import Card, { CardMain } from "../../components/Card"
-import Boundary, { bound } from "../../components/Boundary"
 import AssetItem from "../../components/AssetItem"
 import { useProtocol } from "../../data/contract/protocol"
 import GovAPR from "./GovAPR"
@@ -17,10 +16,8 @@ const GovInfo = () => {
         <GovAPR />
 
         <section className={styles.wrapper}>
-          <Boundary>
-            {bound(<CommunityBalance />)}
-            <TotalStaked />
-          </Boundary>
+          <CommunityBalance />
+          <TotalStaked />
         </section>
       </div>
     </CardMain>

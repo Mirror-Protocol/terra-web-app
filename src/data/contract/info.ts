@@ -1,4 +1,5 @@
-import { selector } from "recoil"
+import { atom, selector } from "recoil"
+import { useStoreLoadable } from "../utils/loadable"
 import { getContractQueryQuery } from "../utils/query"
 import { protocolQuery } from "./protocol"
 
@@ -32,8 +33,13 @@ export const mirrorTokenGovBalanceQuery = selector({
       "mirrorTokenGovBalance"
     )
 
-    return response?.balance
+    return response?.balance ?? "0"
   },
+})
+
+const mirrorTokenGovBalanceState = atom({
+  key: "mirrorTokenGovBalanceState",
+  default: "0",
 })
 
 export const mirrorTokenCommunityBalanceQuery = selector({
@@ -49,8 +55,13 @@ export const mirrorTokenCommunityBalanceQuery = selector({
       "mirrorTokenCommunityBalance"
     )
 
-    return response?.balance
+    return response?.balance ?? "0"
   },
+})
+
+const mirrorTokenCommunityBalanceState = atom({
+  key: "mirrorTokenCommunityBalanceState",
+  default: "0",
 })
 
 export const communityConfigQuery = selector({
@@ -84,3 +95,18 @@ export const factoryDistributionInfoQuery = selector({
       response?.weights.find(([addr]) => addr === token)?.[1]
   },
 })
+
+/* store */
+export const useMirrorTokenGovBalance = () => {
+  return useStoreLoadable(
+    mirrorTokenGovBalanceQuery,
+    mirrorTokenGovBalanceState
+  )
+}
+
+export const useMirrorTokenCommunityBalance = () => {
+  return useStoreLoadable(
+    mirrorTokenCommunityBalanceQuery,
+    mirrorTokenCommunityBalanceState
+  )
+}

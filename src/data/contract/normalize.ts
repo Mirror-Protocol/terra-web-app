@@ -112,6 +112,11 @@ export const govStakedQuery = selector({
   get: ({ get }) => get(govStakerQuery)?.balance ?? "0",
 })
 
+const govStakedState = atom({
+  key: "govStakedState",
+  default: "0",
+})
+
 /* reward */
 export const farmingRewardsQuery = selector({
   key: "farmingRewards",
@@ -318,6 +323,11 @@ export const useFindStaking = () => {
 
 export const useFindAssetInfo = () => {
   return useRecoilValue(findAssetInfoQuery)
+}
+
+/* store */
+export const useGovStaked = () => {
+  return useStoreLoadable(govStakedQuery, govStakedState)
 }
 
 export const useRewards = () => {
