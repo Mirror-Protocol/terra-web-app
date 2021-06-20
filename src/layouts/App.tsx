@@ -1,12 +1,10 @@
 import routes from "../routes"
 import { MenuKey, getPath, gnb } from "../routes"
-import { useAddress } from "../hooks"
+
 import Menu from "../components/Menu"
-import Boundary, { bound } from "../components/Boundary"
+import Boundary from "../components/Boundary"
 import { useAlertByNetwork } from "./init"
 import { useInitAddress, useInitNetwork, useLocationKey } from "./init"
-import Airdrop from "./Airdrop"
-import DelistAlert from "./DelistAlert"
 import AlertNetwork from "./AlertNetwork"
 import Layout from "./Layout"
 import Nav from "./Nav"
@@ -26,7 +24,6 @@ const App = () => {
   useInitAddress()
   useInitNetwork()
   const alert = useAlertByNetwork()
-  const address = useAddress()
 
   const menu = Object.values(gnb).map((key: MenuKey) => ({
     icon: icons[key],
@@ -36,19 +33,14 @@ const App = () => {
   return alert ? (
     <AlertNetwork />
   ) : (
-    <>
-      <Layout
-        nav={<Nav />}
-        menu={<Menu list={menu} />}
-        header={<Header />}
-        footer={<Footer />}
-      >
-        <Boundary>{routes()}</Boundary>
-      </Layout>
-
-      {address && bound(<Airdrop />)}
-      {address && bound(<DelistAlert />)}
-    </>
+    <Layout
+      nav={<Nav />}
+      menu={<Menu list={menu} />}
+      header={<Header />}
+      footer={<Footer />}
+    >
+      <Boundary>{routes()}</Boundary>
+    </Layout>
   )
 }
 

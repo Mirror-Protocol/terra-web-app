@@ -3,6 +3,7 @@ import Boundary from "./Boundary"
 import Container from "./Container"
 import Select, { Props as SelectProps } from "./Select"
 import styles from "./Page.module.scss"
+import Notifications from "../layouts/Notifications"
 
 interface Props {
   title?: ReactNode
@@ -40,6 +41,7 @@ const Page: FC<Props> = ({ title, description, children, ...props }) => {
 
       <Boundary>
         {sm ? <Container sm>{children}</Container> : children}
+        <Notifications />
       </Boundary>
     </article>
   )
