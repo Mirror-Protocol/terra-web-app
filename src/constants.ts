@@ -20,8 +20,6 @@ export const GENESIS = 1607022000000
 export const DEFAULT_SLIPPAGE = 0.01
 export const MAX_MSG_LENGTH = 4096
 export const COMMISSION = 0.003
-export const DEFAULT_MIN_RATIO = 1.5
-export const DEFAULT_MULTIPLIER = 1
 
 /* network:settings */
 export const TX_POLLING_INTERVAL = 1000

@@ -8,7 +8,7 @@ import { MsgExecuteContract } from "@terra-money/terra.js"
 import useNewContractMsg from "../libs/useNewContractMsg"
 import MESSAGE from "../lang/MESSAGE.json"
 import Tooltips from "../lang/Tooltips"
-import { DEFAULT_MIN_RATIO, TRADING_HOURS } from "../constants"
+import { TRADING_HOURS } from "../constants"
 import { plus, times, div, floor, abs, minus } from "../libs/math"
 import { gt, gte, lt, isFinite } from "../libs/math"
 import { percentage } from "../libs/num"
@@ -22,11 +22,8 @@ import { useProtocol } from "../data/contract/protocol"
 import { slippageQuery } from "../data/tx/slippage"
 import { BalanceKey, PriceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
-import { tokenBalanceQuery } from "../data/contract/contract"
-import { nativePricesQuery } from "../data/contract/normalize"
-import { oraclePricesQuery } from "../data/contract/normalize"
-import { useFind } from "../data/contract/normalize"
-import { getMinRatioQuery } from "../data/contract/collateral"
+import { useFindBalance, useFindPrice } from "../data/contract/normalize"
+import { useGetMinRatio } from "../data/contract/collateral"
 import { getMintPriceKeyQuery } from "../data/contract/collateral"
 
 import FormGroup from "../components/FormGroup"
@@ -62,10 +59,14 @@ interface Props {
   type: MintType
 }
 
+/*
+(required)
+minimum collateral ratio & multiplier: collateral ratio on form & component
+price: collateral ratio of the position
+token balance: validate balance on close
+*/
+
 const MintForm = ({ position, type }: Props) => {
-  useRecoilValue(tokenBalanceQuery) // To determine to show balance
-  useRecoilValue(nativePricesQuery) // To calculate collateral ratio
-  useRecoilValue(oraclePricesQuery) // To calculate collateral ratio
   const balanceKey = BalanceKey.TOKEN
 
   /* context */
@@ -73,10 +74,33 @@ const MintForm = ({ position, type }: Props) => {
   const { contracts, listed, ...helpers } = useProtocol()
   const { getSymbol, getIsDelisted, parseToken, toToken, toAssetInfo } = helpers
 
-  const find = useFind()
   const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
-  const getMinRatio = useRecoilValue(getMinRatioQuery)
-  const getBalance = (token: string) => find(balanceKey, token)
+  const getMinRatio = useGetMinRatio()
+  const findPrice = useFindPrice()
+  const findBalance = useFindBalance()
+
+  const { getMax: getMaxAmount } = useTax()
+  const { isClosed } = useLatest()
+
+  const getSafeRatio = (ratio: string) =>
+    gt(ratio, 0) ? plus(ratio, 0.5) : "0"
+
+  const getRatio = (collateral: Asset, asset: Asset) => {
+    const getPrice = (token: string) => findPrice(getPriceKey(token), token)
+
+    const { ratio } = calc.mint({
+      collateral: {
+        amount: collateral.amount,
+        price: getPrice(collateral.token),
+      },
+      asset: {
+        amount: asset.amount,
+        price: getPrice(asset.token),
+      },
+    })
+
+    return ratio
+  }
 
   /* context:position */
   const open = !position
@@ -93,8 +117,8 @@ const MintForm = ({ position, type }: Props) => {
       [Key.value1]: v.amount(value1, {
         symbol: symbol1,
         max: edit
-          ? plus(prevCollateral?.amount, getBalance(token1))
-          : getBalance(token1),
+          ? plus(prevCollateral?.amount, findBalance(token1))
+          : findBalance(token1),
       }),
       [Key.value2]: "",
       [Key.token1]: v.required(token1),
@@ -106,17 +130,16 @@ const MintForm = ({ position, type }: Props) => {
   }
 
   /* form:hook */
-  const getPrice = (token?: string) => token && find(getPriceKey(token), token)
   const prevCollateral = position && parseToken(position.collateral)
   const prevAsset = position && parseToken(position.asset)
-  const prevCollateralPrice = getPrice(prevCollateral?.token)
-  const prevAssetPrice = getPrice(prevAsset?.token)
+
   const prevRatio =
-    !!(prevCollateral && prevAsset && prevCollateralPrice && prevAssetPrice) &&
-    calc.mint({
-      collateral: { amount: prevCollateral.amount, price: prevCollateralPrice },
-      asset: { amount: prevAsset.amount, price: prevAssetPrice },
-    }).ratio
+    prevCollateral && prevAsset && getRatio(prevCollateral, prevAsset)
+
+  const initialToken =
+    state?.token ?? listed.find(({ symbol }) => symbol !== "MIR")?.token
+
+  const initialRatio = getSafeRatio(getMinRatio("uusd", initialToken))
 
   const initial = {
     [Key.value1]: prevCollateral
@@ -124,11 +147,14 @@ const MintForm = ({ position, type }: Props) => {
       : "",
     [Key.value2]: prevAsset ? lookup(prevAsset.amount, prevAsset.token) : "",
     [Key.token1]: prevCollateral?.token ?? "uusd",
-    [Key.token2]:
-      prevAsset?.token ??
-      state?.token ??
-      listed.find(({ symbol }) => symbol !== "MIR")?.token,
-    [Key.ratio]: "",
+    [Key.token2]: prevAsset?.token ?? initialToken,
+    [Key.ratio]: position
+      ? prevRatio
+        ? times(prevRatio, 100)
+        : ""
+      : gt(initialRatio, "0")
+      ? times(initialRatio, 100)
+      : "",
   }
 
   const form = useForm<Key>(initial, validate)
@@ -155,8 +181,8 @@ const MintForm = ({ position, type }: Props) => {
   /* simulation */
   const priceKey1 = getPriceKey(token1)
   const priceKey2 = getPriceKey(token2)
-  const price1 = find(priceKey1, token1)
-  const price2 = find(priceKey2, token2)
+  const price1 = findPrice(priceKey1, token1)
+  const price2 = findPrice(priceKey2, token2)
 
   const updateKey = edit
     ? changed !== Key.ratio
@@ -218,18 +244,16 @@ const MintForm = ({ position, type }: Props) => {
     dim: (token) => (getIsDelisted(token) ? false : isClosed(getSymbol(token))),
   })
 
-  const { getMax: getMaxAmount } = useTax()
   const maxAmountOpen =
     symbol1 === "uusd"
-      ? lookup(getMaxAmount(getBalance(token1)), "uusd")
-      : lookup(getBalance(token1), symbol1)
+      ? lookup(getMaxAmount(findBalance(token1)), "uusd")
+      : lookup(findBalance(token1), symbol1)
 
   const maxAmount = edit
     ? plus(lookup(prevCollateral?.amount, symbol1), maxAmountOpen)
     : maxAmountOpen
 
   /* latest price */
-  const { isClosed } = useLatest()
   const isMarketClosed1 = getIsDelisted(token1) ? false : isClosed(symbol1)
   const isMarketClosed2 = getIsDelisted(token2) ? false : isClosed(symbol2)
   const isMarketClosed = isMarketClosed1 || isMarketClosed2
@@ -261,7 +285,7 @@ const MintForm = ({ position, type }: Props) => {
 
   const diffCollateral = minus(amount1, prevCollateral?.amount)
   const diffAsset = minus(amount2, prevAsset?.amount)
-  const invalidRepay = edit && gt(times(diffAsset, -1), getBalance(token2))
+  const invalidRepay = edit && gt(times(diffAsset, -1), findBalance(token2))
 
   const fields = getFields({
     [Key.value1]: {
@@ -281,7 +305,7 @@ const MintForm = ({ position, type }: Props) => {
       unit: open ? select1.button : symbol1,
       max: gt(maxAmount, 0) ? () => setValue(Key.value1, maxAmount) : undefined,
       assets: select1.assets,
-      help: renderBalance(getBalance(token1), symbol1),
+      help: renderBalance(findBalance(token1), symbol1),
       focused: select1.isOpen,
     },
 
@@ -307,7 +331,7 @@ const MintForm = ({ position, type }: Props) => {
       },
       unit: open ? select2.button : symbol2,
       assets: select2.assets,
-      help: renderBalance(getBalance(token2), symbol2),
+      help: renderBalance(findBalance(token2), symbol2),
       focused: select2.isOpen,
       warn: invalidRepay ? (
         <>{linkToBuy} to repay</>
@@ -325,38 +349,34 @@ const MintForm = ({ position, type }: Props) => {
         "Collateral Ratio (%)"
       ),
       prev: edit ? (prevRatio ? percentage(prevRatio) : "0") : undefined,
-      input: { type: "number", step: step(), placeholder: "200" },
+      input: { type: "number", step: step(), placeholder: "" },
       unit: open ? "%" : "",
     },
   })
 
   /* render:ratio */
-  const minRatio = token2
-    ? getMinRatio(token1, token2)
-    : String(DEFAULT_MIN_RATIO)
-
-  const safeRatio = plus(minRatio, 0.5)
+  const minRatio = getMinRatio(token1, token2)
+  const safeRatio = getSafeRatio(minRatio)
   const nextRatio = div(ratio, 100)
+
+  // Init the collateral ratio based on the minimum collateral ratio
+  useEffect(() => {
+    if (open && gt(safeRatio, 0))
+      setValues((values) => ({ ...values, [Key.ratio]: times(safeRatio, 100) }))
+  }, [safeRatio, setValues, open])
 
   const ratioProps = {
     min: minRatio,
     safe: safeRatio,
     ratio: nextRatio,
-    prev: prevRatio,
     onRatio: (ratio: string) => {
       form.setChanged(Key.ratio)
       setValue(Key.ratio, floor(times(ratio, 100)))
     },
   }
 
-  /* Init the collateral ratio based on the minimum collateral ratio */
-  useEffect(() => {
-    const ratio = times(safeRatio, 100)
-    open && setValues((values) => ({ ...values, [Key.ratio]: ratio }))
-  }, [safeRatio, setValues, open])
-
   /* confirm */
-  const price = div(find(priceKey2, token2), find(priceKey1, token1))
+  const price = div(findPrice(priceKey2, token2), findPrice(priceKey1, token1))
 
   const priceContents = {
     title: <TooltipIcon content={Tooltips.Mint.Price}>Price</TooltipIcon>,
@@ -378,7 +398,7 @@ const MintForm = ({ position, type }: Props) => {
     ),
     content: (
       <Formatted symbol="uusd">
-        {times(amount2, find(PriceKey.PAIR, token2))}
+        {times(amount2, findPrice(PriceKey.PAIR, token2))}
       </Formatted>
     ),
   }
@@ -532,7 +552,7 @@ const MintForm = ({ position, type }: Props) => {
     : undefined
 
   const closeMessages =
-    prevAsset && !gte(getBalance(token2), prevAsset.amount)
+    prevAsset && !gte(findBalance(token2), prevAsset.amount)
       ? [<>{linkToBuy} to close position</>]
       : undefined
 

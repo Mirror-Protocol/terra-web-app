@@ -11,7 +11,7 @@ import { validate as v, step, toBase64, placeholder } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import { BalanceKey } from "../hooks/contractKeys"
 import { useProtocol } from "../data/contract/protocol"
-import { multiplierQuery, useFind } from "../data/contract/normalize"
+import { multipliersQuery, useFind } from "../data/contract/normalize"
 import { useGovConfig } from "../data/gov/config"
 import { communityConfigQuery } from "../data/contract/info"
 import { mintAssetConfigQuery } from "../data/contract/contract"
@@ -80,7 +80,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
   const config = useGovConfig()
   const communityConfig = useRecoilValueLoadable(communityConfigQuery)
   const mintAssetConfig = useRecoilValueLoadable(mintAssetConfigQuery)
-  const multipliers = useRecoilValueLoadable(multiplierQuery)
+  const multipliers = useRecoilValueLoadable(multipliersQuery)
   const spend_limit =
     communityConfig.state === "hasValue"
       ? communityConfig.contents?.spend_limit

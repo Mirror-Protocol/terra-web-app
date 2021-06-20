@@ -9,7 +9,7 @@ import MintForm from "../../forms/MintForm"
 const Mint = () => {
   const { hash: type } = useHash<MintType>()
   const { search } = useLocation()
-  const idx = new URLSearchParams(search).get("idx") || undefined
+  const idx = new URLSearchParams(search).get("idx") || ""
 
   const parsed = useMintPosition(idx)
   const invalid = Boolean(idx && !parsed)

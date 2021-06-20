@@ -37,6 +37,8 @@ const Progress = ({ data, axis, className, onPosition, ...props }: Props) => {
     dragging && handlePosition(clientX)
   }
 
+  const [head] = data
+
   return (
     <div
       className={cx(styles.component, className, {
@@ -81,7 +83,7 @@ const Progress = ({ data, axis, className, onPosition, ...props }: Props) => {
         {onPosition && (
           <div
             className={styles.thumb}
-            style={{ left: percent(data[0].value) }}
+            style={head ? { left: percent(head.value) } : { display: "none" }}
             onMouseDown={() => setDragging(true)}
             onTouchStart={() => setDragging(true)}
             onClick={(e) => e.stopPropagation()}

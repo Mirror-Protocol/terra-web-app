@@ -1,7 +1,8 @@
-import { selectorFamily, useRecoilValue } from "recoil"
+import { atomFamily, selectorFamily } from "recoil"
 import { addressState } from "../wallet"
 import { protocolQuery } from "./protocol"
 import { getContractQueryQuery } from "../utils/query"
+import { useStoreLoadable } from "../utils/loadable"
 
 export const mintPositionQuery = selectorFamily({
   key: "mintPosition",
@@ -24,6 +25,11 @@ export const mintPositionQuery = selectorFamily({
     },
 })
 
-export const useMintPosition = (idx?: string) => {
-  return useRecoilValue(mintPositionQuery(idx ?? ""))
+const mintPositionState = atomFamily<MintPosition | undefined, string>({
+  key: "mintPositionState",
+  default: undefined,
+})
+
+export const useMintPosition = (idx: string) => {
+  return useStoreLoadable(mintPositionQuery(idx), mintPositionState(idx))
 }

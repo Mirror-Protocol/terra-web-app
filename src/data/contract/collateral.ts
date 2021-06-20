@@ -1,12 +1,11 @@
 import { selector } from "recoil"
-import { DEFAULT_MIN_RATIO, DEFAULT_MULTIPLIER } from "../../constants"
-import { times } from "../../libs/math"
+import { gt, times } from "../../libs/math"
 import { decimal } from "../../libs/parse"
-import { AssetInfoKey, PriceKey } from "../../hooks/contractKeys"
+import { PriceKey } from "../../hooks/contractKeys"
 import { whitelistExternal } from "../external/external"
 import { getTokensContractQueriesQuery } from "../utils/queries"
-import { findAssetInfoQuery } from "./normalize"
-import { protocolQuery } from "./protocol"
+import { useMinCollateralRatio, useMultipliers } from "./normalize"
+import { protocolQuery, useProtocol } from "./protocol"
 
 export const getMintPriceKeyQuery = selector({
   key: "getMintPriceKey",
@@ -24,28 +23,6 @@ export const getMintPriceKeyQuery = selector({
         : getIsDelisted(token)
         ? PriceKey.END
         : PriceKey.ORACLE
-  },
-})
-
-export const getMinRatioQuery = selector({
-  key: "getMinRatio",
-  get: ({ get }) => {
-    const { getIsDelisted } = get(protocolQuery)
-    const findAssetInfo = get(findAssetInfoQuery)
-
-    return (collateralToken: string, assetToken: string) => {
-      const minRatio =
-        findAssetInfo(AssetInfoKey.MINCOLLATERALRATIO, assetToken) ??
-        String(DEFAULT_MIN_RATIO)
-
-      const multiplier =
-        findAssetInfo(AssetInfoKey.MULTIPLIER, collateralToken) ??
-        String(DEFAULT_MULTIPLIER)
-
-      return getIsDelisted(assetToken)
-        ? minRatio
-        : decimal(times(minRatio, multiplier), 4)
-    }
   },
 })
 
@@ -71,3 +48,22 @@ export const collateralOracleAssetInfoQuery = selector({
     )
   },
 })
+
+/* find */
+export const useGetMinRatio = () => {
+  const { getIsDelisted } = useProtocol()
+  const minCollateralRatio = useMinCollateralRatio()
+  const multipliers = useMultipliers()
+
+  return (collateralToken: string, assetToken: string) => {
+    const minRatio = minCollateralRatio[assetToken]
+    const multiplier = multipliers[collateralToken]
+    const valid = gt(minRatio, 0) && gt(multiplier, 0)
+
+    return !valid
+      ? "0"
+      : getIsDelisted(assetToken)
+      ? minRatio
+      : decimal(times(minRatio, multiplier), 4)
+  }
+}

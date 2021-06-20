@@ -1,14 +1,14 @@
 import { atom, noWait, selector, useRecoilValue } from "recoil"
 import { div, gt, sum } from "../../libs/math"
-import { getIsTokenNative } from "../../libs/parse"
 import { PriceKey, BalanceKey, StakingKey } from "../../hooks/contractKeys"
-import { AssetInfoKey } from "../../hooks/contractKeys"
 import { getLoadableContents, useStoreLoadable } from "../utils/loadable"
 import { exchangeRatesQuery } from "../native/exchange"
 import { bankBalanceQuery } from "../native/balance"
-import { externalBalancesQuery } from "../external/external"
 import { externalPricesQuery } from "../external/external"
-import { protocolQuery } from "./protocol"
+import { externalBalancesQuery } from "../external/external"
+import { useExternalBalances } from "../external/external"
+import { useExternalPrices } from "../external/external"
+import { protocolQuery, useProtocol } from "./protocol"
 import { collateralOracleAssetInfoQuery } from "./collateral"
 import { pairPoolQuery, oraclePriceQuery } from "./contract"
 import { tokenBalanceQuery, lpTokenBalanceQuery } from "./contract"
@@ -22,14 +22,29 @@ export const nativePricesQuery = selector({
     reduceNativePrice(get(exchangeRatesQuery).OracleDenomsExchangeRates.Result),
 })
 
+const nativePricesState = atom<Dictionary>({
+  key: "nativePricesState",
+  default: {},
+})
+
 export const pairPricesQuery = selector({
   key: "pairPrices",
   get: ({ get }) => dict(get(pairPoolQuery), calcPairPrice),
 })
 
+const pairPricesState = atom<Dictionary>({
+  key: "pairPricesState",
+  default: {},
+})
+
 export const oraclePricesQuery = selector({
   key: "oraclePrices",
   get: ({ get }) => dict(get(oraclePriceQuery), ({ rate }) => rate),
+})
+
+const oraclePricesState = atom<Dictionary>({
+  key: "oraclePricesState",
+  default: {},
 })
 
 export const prePricesQuery = selector({
@@ -41,10 +56,20 @@ export const prePricesQuery = selector({
     ),
 })
 
+const prePricesState = atom<Dictionary>({
+  key: "prePricesState",
+  default: {},
+})
+
 export const endPricesQuery = selector({
   key: "endPrices",
   get: ({ get }) =>
     dict(get(mintAssetConfigQuery), ({ end_price }) => end_price),
+})
+
+const endPricesState = atom<Dictionary>({
+  key: "endPricesState",
+  default: {},
 })
 
 /* balance */
@@ -52,6 +77,11 @@ export const nativeBalancesQuery = selector({
   key: "nativeBalances",
   get: ({ get }) =>
     reduceByDenom(get(bankBalanceQuery)?.BankBalancesAddress?.Result ?? []),
+})
+
+const nativeBalancesState = atom<Dictionary>({
+  key: "nativeBalancesState",
+  default: {},
 })
 
 export const tokenBalancesQuery = selector({
@@ -156,7 +186,12 @@ export const minCollateralRatioQuery = selector({
     ),
 })
 
-export const multiplierQuery = selector<Dictionary>({
+export const minCollateralRatioState = atom<Dictionary>({
+  key: "minCollateralRatioState",
+  default: {},
+})
+
+export const multipliersQuery = selector<Dictionary>({
   key: "multiplierRatio",
   get: ({ get }) => ({
     uusd: "1",
@@ -167,11 +202,84 @@ export const multiplierQuery = selector<Dictionary>({
   }),
 })
 
-/* hooks */
+export const multipliersState = atom<Dictionary>({
+  key: "multiplierState",
+  default: {},
+})
+
+/* MIR Price */
+const MIRPriceQuery = selector({
+  key: "MIRPrice",
+  get: ({ get }) => {
+    const { getToken } = get(protocolQuery)
+    const pairPrices = get(pairPricesQuery)
+    return pairPrices[getToken("MIR")]
+  },
+})
+
+export const MIRPriceState = atom({
+  key: "MIRPriceState",
+  default: "0",
+})
+
+/* store: price */
+export const usePairPrices = () => {
+  return useStoreLoadable(pairPricesQuery, pairPricesState)
+}
+
+export const useOraclePrices = () => {
+  return useStoreLoadable(oraclePricesQuery, oraclePricesState)
+}
+
+export const useNativePrices = () => {
+  return useStoreLoadable(nativePricesQuery, nativePricesState)
+}
+
+export const usePrePrices = () => {
+  return useStoreLoadable(prePricesQuery, prePricesState)
+}
+
+export const useEndPrices = () => {
+  return useStoreLoadable(endPricesQuery, endPricesState)
+}
+
+/* store: balance */
+export const useNativeBalances = () => {
+  return useStoreLoadable(nativeBalancesQuery, nativeBalancesState)
+}
+
+export const useTokenBalances = () => {
+  return useStoreLoadable(tokenBalancesQuery, tokenBalancesState)
+}
+
+/* store: staking balance */
+export const useGovStaked = () => {
+  return useStoreLoadable(govStakedQuery, govStakedState)
+}
+
+export const useRewards = () => {
+  return useStoreLoadable(rewardsQuery, rewardsState)
+}
+
+/* store: asset info */
+export const useMinCollateralRatio = () => {
+  return useStoreLoadable(minCollateralRatioQuery, minCollateralRatioState)
+}
+
+export const useMultipliers = () => {
+  return useStoreLoadable(multipliersQuery, multipliersState)
+}
+
+/* store: MIR Price */
+export const useMIRPrice = () => {
+  return useStoreLoadable(MIRPriceQuery, MIRPriceState)
+}
+
+/* hooks:find */
 export const findPriceQuery = selector({
   key: "findPrice",
   get: ({ get }) => {
-    const { getIsDelisted, getIsPreIPO } = get(protocolQuery)
+    const { getPriceKey } = get(protocolQuery)
 
     const dictionary = {
       [PriceKey.PAIR]: getLoadableContents(get(noWait(pairPricesQuery))) ?? {},
@@ -185,50 +293,39 @@ export const findPriceQuery = selector({
         getLoadableContents(get(noWait(externalPricesQuery))) ?? {},
     }
 
-    return (key: PriceKey, token: string) => {
-      const $key = getIsTokenNative(token)
-        ? PriceKey.NATIVE
-        : getIsDelisted(token)
-        ? PriceKey.END
-        : key === PriceKey.ORACLE
-        ? getIsPreIPO(key)
-          ? PriceKey.PRE
-          : key
-        : key
-
-      return dictionary[$key][token]
-    }
+    return (key: PriceKey, token: string) =>
+      dictionary[getPriceKey(key, token)][token]
   },
 })
 
-export const findPairPriceQuery = selector({
-  key: "findPairPrice",
-  get: ({ get }) => {
-    const prices = get(pairPricesQuery)
-    return (token: string) => prices[token]
-  },
-})
+export const useFindPrice = () => {
+  const { getPriceKey } = useProtocol()
 
-const MIRPriceQuery = selector({
-  key: "MIRPrice",
-  get: ({ get }) => {
-    const { getToken } = get(protocolQuery)
-    const token = getToken("MIR")
+  const pairPrices = usePairPrices()
+  const oraclePrices = useOraclePrices()
+  const nativePrices = useNativePrices()
+  const prePrices = usePrePrices()
+  const endPrices = useEndPrices()
+  const externalPrices = useExternalPrices()
 
-    const findPrice = get(findPairPriceQuery)
-    return findPrice(token)
-  },
-})
+  const dictionary = {
+    [PriceKey.PAIR]: pairPrices,
+    [PriceKey.ORACLE]: oraclePrices,
+    [PriceKey.NATIVE]: nativePrices,
+    [PriceKey.PRE]: prePrices,
+    [PriceKey.END]: endPrices,
+    [PriceKey.EXTERNAL]: externalPrices,
+  }
 
-export const MIRPriceState = atom({
-  key: "MIRPriceState",
-  default: MIRPriceQuery,
-})
+  return (key: PriceKey, token: string) =>
+    dictionary[getPriceKey(key, token)][token]
+}
 
 export const findBalanceQuery = selector({
   key: "findBalance",
   get: ({ get }) => {
-    const { getIsExternal } = get(protocolQuery)
+    const { getBalanceKey } = get(protocolQuery)
+
     const dictionary = {
       [BalanceKey.NATIVE]:
         getLoadableContents(get(noWait(nativeBalancesQuery))) ?? {},
@@ -238,17 +335,25 @@ export const findBalanceQuery = selector({
         getLoadableContents(get(noWait(externalBalancesQuery))) ?? {},
     }
 
-    return (token: string) => {
-      const key = getIsExternal(token)
-        ? BalanceKey.EXTERNAL
-        : getIsTokenNative(token)
-        ? BalanceKey.NATIVE
-        : BalanceKey.TOKEN
-
-      return dictionary[key][token]
-    }
+    return (token: string) => dictionary[getBalanceKey(token)][token]
   },
 })
+
+export const useFindBalance = () => {
+  const { getBalanceKey } = useProtocol()
+
+  const nativeBalances = useNativeBalances()
+  const tokenBalances = useTokenBalances()
+  const externalBalances = useExternalBalances()
+
+  const dictionary = {
+    [BalanceKey.NATIVE]: nativeBalances,
+    [BalanceKey.TOKEN]: tokenBalances,
+    [BalanceKey.EXTERNAL]: externalBalances,
+  }
+
+  return (token: string) => dictionary[getBalanceKey(token)][token]
+}
 
 export const findQuery = selector({
   key: "find",
@@ -260,6 +365,10 @@ export const findQuery = selector({
       isPriceKey(key) ? findPrice(key, token) : findBalance(token)
   },
 })
+
+export const useFind = () => {
+  return useRecoilValue(findQuery)
+}
 
 export const findStakingQuery = selector({
   key: "findStaking",
@@ -281,61 +390,8 @@ export const findStakingQuery = selector({
   },
 })
 
-export const findAssetInfoQuery = selector({
-  key: "findAssetInfo",
-  get: ({ get }) => {
-    const dictionary = {
-      [AssetInfoKey.MINCOLLATERALRATIO]:
-        getLoadableContents(get(noWait(minCollateralRatioQuery))) ?? {},
-      [AssetInfoKey.MULTIPLIER]:
-        getLoadableContents(get(noWait(multiplierQuery))) ?? {},
-    }
-
-    return (key: AssetInfoKey, token: string) => dictionary[key][token]
-  },
-})
-
-/* hooks */
-export const useTokenBalances = () => {
-  return useStoreLoadable(tokenBalancesQuery, tokenBalancesState)
-}
-
-/* hooks:find */
-export const useFindPairPrice = () => {
-  return useRecoilValue(findPairPriceQuery)
-}
-
-export const useFindPrice = () => {
-  return useRecoilValue(findPriceQuery)
-}
-
-export const useFindBalance = () => {
-  return useRecoilValue(findBalanceQuery)
-}
-
-export const useFind = () => {
-  return useRecoilValue(findQuery)
-}
-
 export const useFindStaking = () => {
   return useRecoilValue(findStakingQuery)
-}
-
-export const useFindAssetInfo = () => {
-  return useRecoilValue(findAssetInfoQuery)
-}
-
-/* store */
-export const useGovStaked = () => {
-  return useStoreLoadable(govStakedQuery, govStakedState)
-}
-
-export const useRewards = () => {
-  return useStoreLoadable(rewardsQuery, rewardsState)
-}
-
-export const useMIRPrice = () => {
-  return useStoreLoadable(MIRPriceQuery, MIRPriceState)
 }
 
 /* utils */

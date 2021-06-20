@@ -52,8 +52,8 @@ const TradeForm = ({ type }: { type: TradeType }) => {
 
   /* context */
   const { state } = useLocation<{ token: string }>()
-  const { contracts, whitelist, delist, ...rest } = useProtocol()
-  const { getToken, getSymbol, toToken } = rest
+  const { contracts, whitelist, delist, ...helpers } = useProtocol()
+  const { getToken, getSymbol, toToken } = helpers
   const limitOrderContract = contracts["limitOrder"]
   const find = useFind()
   usePolling()

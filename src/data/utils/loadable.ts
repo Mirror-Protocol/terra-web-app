@@ -2,6 +2,21 @@ import { useEffect } from "react"
 import { Loadable, RecoilState, RecoilValue } from "recoil"
 import { useRecoilState, useRecoilValueLoadable } from "recoil"
 
+export const useStore = <T>(
+  recoilValue: RecoilValue<T>,
+  recoilState: RecoilState<T>
+) => {
+  const [state, setState] = useRecoilState(recoilState)
+  const query = useRecoilValueLoadable(recoilValue)
+
+  useEffect(() => {
+    const contents = getLoadableContents(query)
+    contents && setState(contents)
+  }, [query, setState])
+
+  return { state, loading: query.state === "loading" }
+}
+
 export const useStoreLoadable = <T>(
   recoilValue: RecoilValue<T>,
   recoilState: RecoilState<T>
@@ -10,7 +25,8 @@ export const useStoreLoadable = <T>(
   const query = useRecoilValueLoadable(recoilValue)
 
   useEffect(() => {
-    query.state === "hasValue" && setState(query.contents)
+    const contents = getLoadableContents(query)
+    contents && setState(contents)
   }, [query, setState])
 
   return state

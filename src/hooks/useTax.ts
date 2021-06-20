@@ -12,14 +12,14 @@ export default () => {
   const rate = data?.TreasuryTaxRate.Result
   const cap = data?.TreasuryTaxCapDenom.Result
 
-  const calcTax = (amount: string) =>
+  const calcTax = (amount = "0") =>
     rate && cap
       ? BigNumber.min(new BigNumber(amount).times(rate), cap)
           .integerValue(BigNumber.ROUND_CEIL)
           .toString()
       : "0"
 
-  const getMax = (balance: string) => {
+  const getMax = (balance = "0") => {
     if (rate && cap) {
       const balanceSafe = new BigNumber(balance).minus(1e6)
       const calculatedTax = new BigNumber(balanceSafe)

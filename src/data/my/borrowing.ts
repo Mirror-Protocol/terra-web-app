@@ -1,14 +1,11 @@
-import { atom, noWait, selector } from "recoil"
-import { gte, lt, lte, minus, sum, times } from "../../libs/math"
+import { atom, selector } from "recoil"
+import { gte, sum, times } from "../../libs/math"
 import calc from "../../libs/calc"
-import { getLoadableContents, useStoreLoadable } from "../utils/loadable"
+import { useStoreLoadable } from "../utils/loadable"
 import { protocolQuery } from "../contract/protocol"
 import { findQuery } from "../contract/normalize"
 import { mintPositionsQuery } from "../contract/positions"
-import { getMinRatioQuery, getMintPriceKeyQuery } from "../contract/collateral"
-
-const WARNING = 0.3
-const DANGER = 0
+import { getMintPriceKeyQuery } from "../contract/collateral"
 
 export const myBorrowingQuery = selector({
   key: "myBorrowing",
@@ -18,8 +15,6 @@ export const myBorrowingQuery = selector({
 
     const find = get(findQuery)
     const getPriceKey = get(getMintPriceKeyQuery)
-    const getMinRatioLoadable = get(noWait(getMinRatioQuery))
-    const getMinRatio = getLoadableContents(getMinRatioLoadable)
 
     const dataSource = positions
       .map((position) => {
@@ -38,15 +33,10 @@ export const myBorrowingQuery = selector({
         const assetValue = times(asset.amount, assetPrice)
 
         /* ratio */
-        const minRatio = getMinRatio?.(collateral.token, asset.token)
-
         const { ratio } = calc.mint({
           collateral: { ...collateral, price: collateralPrice },
           asset: { ...asset, price: assetPrice },
         })
-
-        const danger = lt(minus(ratio, minRatio), DANGER)
-        const warning = !danger && lte(minus(ratio, minRatio), WARNING)
 
         /* status */
         const status: ListedItemStatus =
@@ -68,9 +58,6 @@ export const myBorrowingQuery = selector({
             delisted: assetDelisted,
           },
           ratio,
-          minRatio,
-          danger,
-          warning,
         }
       })
       .filter(({ collateralAsset, mintedAsset }) => {

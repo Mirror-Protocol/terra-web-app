@@ -2,6 +2,7 @@ import { selector, useRecoilValue } from "recoil"
 import axios from "axios"
 import { ICON_URL } from "../../constants"
 import { getIsTokenNative, lookupSymbol } from "../../libs/parse"
+import { BalanceKey, PriceKey } from "../../hooks/contractKeys"
 import { whitelistExternal } from "../external/external"
 import { networkQuery } from "../network"
 
@@ -57,6 +58,24 @@ const protocolHelpersQuery = selector({
       return externalIconURL ?? icon
     }
 
+    const getPriceKey = (key: PriceKey, token: string) =>
+      getIsTokenNative(token)
+        ? PriceKey.NATIVE
+        : getIsDelisted(token)
+        ? PriceKey.END
+        : key === PriceKey.ORACLE
+        ? getIsPreIPO(key)
+          ? PriceKey.PRE
+          : key
+        : key
+
+    const getBalanceKey = (token: string) =>
+      getIsExternal(token)
+        ? BalanceKey.EXTERNAL
+        : getIsTokenNative(token)
+        ? BalanceKey.NATIVE
+        : BalanceKey.TOKEN
+
     const getIsDelisted = (token: string) =>
       whitelist[token]?.status === "DELISTED"
 
@@ -97,6 +116,9 @@ const protocolHelpersQuery = selector({
       getToken,
       getSymbol,
       getIcon,
+
+      getPriceKey,
+      getBalanceKey,
 
       getIsDelisted,
       getIsPreIPO,

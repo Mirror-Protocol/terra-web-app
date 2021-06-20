@@ -55,19 +55,17 @@ const CollateralRatio = ({ min, safe, ratio, compact, onRatio }: Props) => {
     <div className={cx(styles.component, { compact })}>
       {compact && (
         <span className={classNames(styles.percent, color)}>
-          <Formatted unit="%">{percentage(ratio)}</Formatted>
+          {gt(ratio, 0) && <Formatted unit="%">{percentage(ratio)}</Formatted>}
         </span>
       )}
 
       <Progress
-        data={[
-          {
-            value: gt(ratio, 0) ? getX(ratio, min) : "0",
-            label: gt(ratio, 0) ? percent(ratio) : "",
-            color,
-          },
-        ]}
-        axis={compact ? [minX] : [minX, safeX]}
+        data={
+          gt(ratio, 0) && gt(min, 0)
+            ? [{ value: getX(ratio, min), label: percent(ratio), color }]
+            : []
+        }
+        axis={!gt(min, 0) ? [] : compact ? [minX] : [minX, safeX]}
         onPosition={
           onRatio &&
           ((value) => onRatio(decimal(times(value, times(min, 2)), 4)))
