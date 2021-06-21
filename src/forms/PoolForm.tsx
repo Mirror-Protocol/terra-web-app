@@ -1,6 +1,5 @@
 import { useRef } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { useRecoilValue } from "recoil"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
 import Tooltips from "../lang/Tooltips"
@@ -13,9 +12,9 @@ import { renderBalance } from "../libs/formHelpers"
 import getLpName from "../libs/getLpName"
 import { usePolling } from "../hooks"
 import { PriceKey, BalanceKey, StakingKey } from "../hooks/contractKeys"
-import { tokenBalanceQuery } from "../data/contract/contract"
 import { useProtocol } from "../data/contract/protocol"
-import { useFind, useFindStaking } from "../data/contract/normalize"
+import { useFindBalanceStore, useFindPrice } from "../data/contract/normalize"
+import { useFindStaking } from "../data/contract/normalize"
 
 import { getPath, MenuKey } from "../routes"
 import FormGroup from "../components/FormGroup"
@@ -40,7 +39,6 @@ enum Key {
 }
 
 const PoolForm = ({ type }: Props) => {
-  useRecoilValue(tokenBalanceQuery) // To determine to show "Buy or Borrow"
   const priceKey = PriceKey.PAIR
 
   /* context */
@@ -48,13 +46,14 @@ const PoolForm = ({ type }: Props) => {
   const sp = new URLSearchParams(search)
   const autoStake = sp.get("pool") === null
   const { contracts, whitelist, getSymbol, toToken } = useProtocol()
-  const find = useFind()
+  const { contents: findBalance, ...findBalanceStore } = useFindBalanceStore()
+  const findPrice = useFindPrice()
   const findStaking = useFindStaking()
   usePolling()
 
   const getBalance = (token: string) =>
     ({
-      [PoolType.PROVIDE]: find(BalanceKey.TOKEN, token),
+      [PoolType.PROVIDE]: findBalance(token),
       [PoolType.WITHDRAW]: findStaking(StakingKey.LPSTAKABLE, token),
     }[type])
 
@@ -76,8 +75,8 @@ const PoolForm = ({ type }: Props) => {
   const { value, token } = values
   const amount = toAmount(value)
   const symbol = getSymbol(token)
-  const pairPrice = find(priceKey, token)
-  const oraclePrice = find(PriceKey.ORACLE, token)
+  const pairPrice = findPrice(priceKey, token)
+  const oraclePrice = findPrice(PriceKey.ORACLE, token)
   const price = gt(pairPrice, 0) ? pairPrice : oraclePrice
 
   /* form:focus input on select asset */
@@ -140,12 +139,13 @@ const PoolForm = ({ type }: Props) => {
     </Link>
   )
 
-  const info = gt(balance, 0) ? undefined : (
-    <p>
-      {linkToBuy}
-      {symbol !== "MIR" && <> or {linkToBorrow}</>} {symbol} to farm with
-    </p>
-  )
+  const info =
+    findBalanceStore.isLoading || gt(balance, 0) ? undefined : (
+      <p>
+        {linkToBuy}
+        {symbol !== "MIR" && <> or {linkToBorrow}</>} {symbol} to farm with
+      </p>
+    )
 
   const fields = {
     ...getFields({
@@ -180,7 +180,7 @@ const PoolForm = ({ type }: Props) => {
       [PoolType.PROVIDE]: {
         label: <TooltipIcon content={Tooltips.Farm.InputUST}>and</TooltipIcon>,
         value: toLP?.text,
-        help: renderBalance(find(BalanceKey.NATIVE, "uusd"), "uusd"),
+        help: renderBalance(findBalance("uusd"), "uusd"),
         unit: "UST",
         unitAfterValue: true,
       },
@@ -259,8 +259,7 @@ const PoolForm = ({ type }: Props) => {
     ],
   }[type]
 
-  const insufficient =
-    !!estimated && gt(estimated, find(BalanceKey.NATIVE, "uusd"))
+  const insufficient = !!estimated && gt(estimated, findBalance("uusd"))
   const disabled = invalid || (type === PoolType.PROVIDE && insufficient)
 
   /* result */
