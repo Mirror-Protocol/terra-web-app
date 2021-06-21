@@ -7,7 +7,7 @@ import { dashboardNetworkState } from "../../data/stats/statistic"
 import Table from "../../components/Table"
 import Formatted from "../../components/Formatted"
 import AssetItem from "../../components/AssetItem"
-import { MarketType } from "../../types/Types"
+import { TradeType } from "../../types/Types"
 import { getPath, MenuKey } from "../../routes"
 import styles from "./TopTradingTable.module.scss"
 
@@ -31,7 +31,7 @@ const TopTradingTable = () => {
       rows={({ token }) => ({
         to: {
           pathname: getPath(MenuKey.TRADE),
-          hash: MarketType.BUY,
+          hash: TradeType.BUY,
           state: { token },
         },
       })}

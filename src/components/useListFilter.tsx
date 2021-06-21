@@ -29,7 +29,7 @@ const useListFilter = (initial: string, sorters: Dictionary<Sorter>) => {
   )
 
   return {
-    compare: sorters[sorter].compare,
+    compare: sorters[sorter]?.compare,
     filter: (str: string) => str.toLowerCase().includes(input.toLowerCase()),
     renderSearch,
   }

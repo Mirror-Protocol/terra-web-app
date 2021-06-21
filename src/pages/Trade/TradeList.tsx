@@ -13,7 +13,7 @@ import { TooltipIcon } from "../../components/Tooltip"
 import useListFilter, { Sorter } from "../../components/useListFilter"
 import ChartContainer from "../../containers/ChartContainer"
 import AssetsIdleTable from "../../containers/AssetsIdleTable"
-import { MarketType } from "../../types/Types"
+import { TradeType } from "../../types/Types"
 
 const Sorters: Dictionary<Sorter> = {
   TOPTRADING: {
@@ -36,7 +36,7 @@ const Sorters: Dictionary<Sorter> = {
   },
 }
 
-const MarketList = () => {
+const TradeList = () => {
   const list = useTerraAssetList()
   const findChanges = useFindChanges()
   const history = useAssetsHistory()
@@ -55,7 +55,7 @@ const MarketList = () => {
       ) : (
         <Table
           rows={({ token }) => ({
-            to: { hash: MarketType.BUY, state: { token } },
+            to: { hash: TradeType.BUY, state: { token } },
           })}
           columns={[
             {
@@ -122,4 +122,4 @@ const MarketList = () => {
   )
 }
 
-export default MarketList
+export default TradeList

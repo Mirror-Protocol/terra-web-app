@@ -1,9 +1,3 @@
-export enum MarketType {
-  BUY = "buy",
-  SELL = "sell",
-  BORROW = "borrow",
-}
-
 export enum FarmType {
   LONG = "long",
   SHORT = "short",
