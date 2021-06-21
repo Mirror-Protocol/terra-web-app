@@ -1,7 +1,7 @@
-import AssetItem from "../components/AssetItem"
-import Icon from "../components/Icon"
-import { gt } from "../libs/math"
-import { format } from "../libs/parse"
+import AssetItem from "../../components/AssetItem"
+import Icon from "../../components/Icon"
+import { gt } from "../../libs/math"
+import { format } from "../../libs/parse"
 import styles from "./Asset.module.scss"
 
 export interface AssetItemProps extends DefaultListedItem {

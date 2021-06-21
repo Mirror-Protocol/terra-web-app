@@ -3,7 +3,7 @@ import { formatAsset } from "../libs/parse"
 import { useProtocol } from "../data/contract/protocol"
 import useAirdrops from "../data/stats/airdrop"
 import Container from "../components/Container"
-import FormContainer from "./FormContainer"
+import FormContainer from "./modules/FormContainer"
 
 const AirdropForm = () => {
   /* context */

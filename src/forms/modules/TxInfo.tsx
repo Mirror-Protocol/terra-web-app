@@ -1,5 +1,5 @@
-import { formatAsset } from "../libs/parse"
-import ResultFooter from "../components/ResultFooter"
+import { formatAsset } from "../../libs/parse"
+import ResultFooter from "../../components/ResultFooter"
 import TxHash from "./TxHash"
 import styles from "./TxInfo.module.scss"
 

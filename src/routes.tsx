@@ -25,7 +25,7 @@ import GraphQL from "./pages/Tools/GraphQL"
 import Data from "./pages/Tools/Data"
 import Auth from "./pages/Auth"
 import Receipt from "./pages/Tools/Receipt"
-import Caution from "./forms/Caution"
+import Caution from "./forms/modules/Caution"
 
 export enum MenuKey {
   DASHBOARD = "Dashboard",

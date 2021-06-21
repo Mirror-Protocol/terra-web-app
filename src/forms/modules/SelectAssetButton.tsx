@@ -1,8 +1,8 @@
 import { FC } from "react"
-import MESSAGE from "../lang/MESSAGE.json"
-import { lookupSymbol } from "../libs/parse"
-import Icon from "../components/Icon"
-import AssetIcon from "../components/AssetIcon"
+import MESSAGE from "../../lang/MESSAGE.json"
+import { lookupSymbol } from "../../libs/parse"
+import Icon from "../../components/Icon"
+import AssetIcon from "../../components/AssetIcon"
 import { Config } from "./useSelectAsset"
 import styles from "./SelectAssetButton.module.scss"
 

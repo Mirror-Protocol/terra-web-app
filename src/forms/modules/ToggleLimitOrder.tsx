@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 import classNames from "classnames/bind"
-import Toggle from "../components/Toggle"
+import Toggle from "../../components/Toggle"
 import styles from "./ToggleLimitOrder.module.scss"
 
 const cx = classNames.bind(styles)

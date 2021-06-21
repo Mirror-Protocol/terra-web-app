@@ -21,7 +21,7 @@ import useClaimRewardsReceipt from "../../forms/receipts/useClaimRewardsReceipt"
 import useClaimUSTReceipt from "../../forms/receipts/useClaimUSTReceipt"
 import useBurnReceipt from "../../forms/receipts/useBurnReceipt"
 import useSendReceipt from "../../forms/receipts/useSendReceipt"
-import TxInfo from "../../forms/TxInfo"
+import TxInfo from "../../forms/modules/TxInfo"
 
 const Receipt = () => {
   const parseTradeBUY = useTradeReceipt(TradeType.BUY)

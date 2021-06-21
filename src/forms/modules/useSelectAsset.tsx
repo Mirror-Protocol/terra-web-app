@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { useProtocol } from "../data/contract/protocol"
-import { PriceKey, BalanceKey } from "../hooks/contractKeys"
+import { useProtocol } from "../../data/contract/protocol"
+import { PriceKey, BalanceKey } from "../../hooks/contractKeys"
 import SelectAssetButton from "./SelectAssetButton"
 import Assets from "./Assets"
 

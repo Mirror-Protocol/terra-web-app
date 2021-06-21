@@ -1,5 +1,5 @@
-import { useNetwork } from "../hooks"
-import TxLink from "../components/TxLink"
+import { useNetwork } from "../../hooks"
+import TxLink from "../../components/TxLink"
 
 const TxHash = ({ children: hash }: { children: string }) => {
   const { finder } = useNetwork()

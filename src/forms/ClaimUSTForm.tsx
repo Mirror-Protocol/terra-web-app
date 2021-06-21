@@ -5,7 +5,7 @@ import { useMyLockedUST } from "../data/my/locked"
 import Formatted from "../components/Formatted"
 import Container from "../components/Container"
 import useClaimUSTReceipt from "./receipts/useClaimUSTReceipt"
-import FormContainer from "./FormContainer"
+import FormContainer from "./modules/FormContainer"
 
 const ClaimUSTForm = () => {
   /* context */

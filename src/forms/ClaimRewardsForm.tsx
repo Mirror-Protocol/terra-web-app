@@ -6,7 +6,7 @@ import { useFind, useRewards } from "../data/contract/normalize"
 import Formatted from "../components/Formatted"
 import Container from "../components/Container"
 import useClaimRewardsReceipt from "./receipts/useClaimRewardsReceipt"
-import FormContainer from "./FormContainer"
+import FormContainer from "./modules/FormContainer"
 
 const ClaimRewardsForm = () => {
   /* context */

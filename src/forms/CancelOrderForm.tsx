@@ -4,7 +4,7 @@ import { useProtocol } from "../data/contract/protocol"
 import Formatted from "../components/Formatted"
 import Container from "../components/Container"
 import { MenuKey } from "../pages/Txs/LimitOrder"
-import FormContainer from "./FormContainer"
+import FormContainer from "./modules/FormContainer"
 import useCancelOrderReceipt from "./receipts/useCancelOrderReceipt"
 
 interface Props {

@@ -21,9 +21,9 @@ import { TooltipIcon } from "../components/Tooltip"
 import WithPriceChart from "../containers/WithPriceChart"
 import { StakeType } from "../types/Types"
 import useStakeReceipt from "./receipts/useStakeReceipt"
-import usePool from "./usePool"
-import FormContainer from "./FormContainer"
-import FormIcon from "./FormIcon"
+import usePool from "./modules/usePool"
+import FormContainer from "./modules/FormContainer"
+import FormIcon from "./modules/FormIcon"
 
 enum Key {
   value = "value",

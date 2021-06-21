@@ -16,7 +16,7 @@ import { govStakedQuery } from "../data/contract/normalize"
 import FormGroup from "../components/FormGroup"
 import Container from "../components/Container"
 import useGovReceipt from "./receipts/useGovReceipt"
-import FormContainer from "./FormContainer"
+import FormContainer from "./modules/FormContainer"
 import styles from "./VoteForm.module.scss"
 
 const cx = classNames.bind(styles)

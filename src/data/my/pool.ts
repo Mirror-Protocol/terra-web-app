@@ -4,7 +4,7 @@ import { StakingKey } from "../../hooks/contractKeys"
 import { useStoreLoadable } from "../utils/loadable"
 import { protocolQuery } from "../contract/protocol"
 import { findStakingQuery } from "../contract/normalize"
-import { poolQuery } from "../../forms/usePool"
+import { poolQuery } from "../../forms/modules/usePool"
 
 export const myPoolQuery = selector({
   key: "myPool",

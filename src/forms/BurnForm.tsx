@@ -13,9 +13,9 @@ import { useProtocol } from "../data/contract/protocol"
 import { useFind } from "../data/contract/normalize"
 
 import Container from "../components/Container"
-import findPositions from "./findPositions"
+import findPositions from "./modules/findPositions"
 import useBurnReceipt from "./receipts/useBurnReceipt"
-import FormContainer from "./FormContainer"
+import FormContainer from "./modules/FormContainer"
 
 interface Props {
   token: string

@@ -1,5 +1,5 @@
 import { compose, descend, prop, sortWith } from "ramda"
-import { gte, lte, minus, number, sum } from "../libs/math"
+import { gte, lte, minus, number, sum } from "../../libs/math"
 
 const sortPositions = sortWith<CDP>([
   descend(compose((token) => token === "uusd", prop("collateralToken"))),

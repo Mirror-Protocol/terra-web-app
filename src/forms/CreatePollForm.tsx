@@ -22,8 +22,8 @@ import FormGroup from "../components/FormGroup"
 import Formatted from "../components/Formatted"
 import { PollType } from "../pages/Poll/CreatePoll"
 import useGovReceipt from "./receipts/useGovReceipt"
-import useSelectAsset, { Config } from "./useSelectAsset"
-import FormContainer from "./FormContainer"
+import useSelectAsset, { Config } from "./modules/useSelectAsset"
+import FormContainer from "./modules/FormContainer"
 import styles from "./CreatePollForm.module.scss"
 
 enum Key {

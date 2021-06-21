@@ -1,11 +1,11 @@
 import classNames from "classnames/bind"
-import Tooltips from "../lang/Tooltips"
-import { times, div, gt, gte, lt } from "../libs/math"
-import { decimal } from "../libs/parse"
-import { percent, percentage } from "../libs/num"
-import Progress from "../components/Progress"
-import { TooltipIcon } from "../components/Tooltip"
-import Formatted from "../components/Formatted"
+import Tooltips from "../../lang/Tooltips"
+import { times, div, gt, gte, lt } from "../../libs/math"
+import { decimal } from "../../libs/parse"
+import { percent, percentage } from "../../libs/num"
+import Progress from "../../components/Progress"
+import { TooltipIcon } from "../../components/Tooltip"
+import Formatted from "../../components/Formatted"
 import styles from "./CollateralRatio.module.scss"
 
 const cx = classNames.bind(styles)

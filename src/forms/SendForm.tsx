@@ -21,8 +21,8 @@ import FormGroup from "../components/FormGroup"
 import { TooltipIcon } from "../components/Tooltip"
 import Container from "../components/Container"
 import useSendReceipt from "./receipts/useSendReceipt"
-import FormContainer from "./FormContainer"
-import useSelectAsset, { Config } from "./useSelectAsset"
+import FormContainer from "./modules/FormContainer"
+import useSelectAsset, { Config } from "./modules/useSelectAsset"
 
 enum Key {
   to = "to",

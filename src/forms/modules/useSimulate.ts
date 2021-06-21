@@ -1,9 +1,9 @@
 import { useRecoilValue } from "recoil"
 import { useEffect, useState } from "react"
 import { equals } from "ramda"
-import { div, gt } from "../libs/math"
-import { TradeType } from "../types/Types"
-import { pairSimulateQuery } from "../data/contract/simulate"
+import { div, gt } from "../../libs/math"
+import { TradeType } from "../../types/Types"
+import { pairSimulateQuery } from "../../data/contract/simulate"
 
 interface Params {
   amount: string

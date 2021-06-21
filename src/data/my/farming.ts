@@ -7,7 +7,7 @@ import { StatsNetwork } from "../stats/statistic"
 import { protocolQuery } from "../contract/protocol"
 import { findQuery, findStakingQuery } from "../contract/normalize"
 import { rewardsQuery } from "../contract/normalize"
-import { poolQuery } from "../../forms/usePool"
+import { poolQuery } from "../../forms/modules/usePool"
 
 export const myFarmingQuery = selector({
   key: "myFarming",

@@ -1,4 +1,4 @@
-import Icon from "../components/Icon"
+import Icon from "../../components/Icon"
 import styles from "./FormIcon.module.scss"
 
 const FormIcon = ({ name }: { name: IconNames }) => (
