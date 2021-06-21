@@ -9,7 +9,7 @@ $active: $blue;
   }
 
   @include desktop {
-    margin-top: 60px;
+    margin-top: 40px;
   }
 }
 
@@ -65,7 +65,9 @@ $active: $blue;
 
 .icon {
   @include desktop {
-    margin-right: 8px;
+    margin-right: 12px;
+    width: 22px;
+    height: 22px;
   }
 
   @include mobile {

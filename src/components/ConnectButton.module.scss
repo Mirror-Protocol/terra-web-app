@@ -21,7 +21,8 @@
   @include desktop {
     @include transition(background-color);
 
-    background-color: $gray-22;
+    background-color: $gray-14;
+    border: solid 1px $blue;
     border-radius: 17px;
     height: 32px;
     padding: 0 14px;
