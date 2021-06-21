@@ -1,10 +1,7 @@
-import { atom, selector } from "recoil"
 import { PriceKey } from "../../hooks/contractKeys"
 import { div, gt, minus } from "../../libs/math"
-import { protocolQuery } from "../contract/protocol"
-import { useStoreLoadable } from "../utils/loadable"
-import { assetsByNetworkState, getAssetsHelpers } from "./assets"
-import { StatsNetwork } from "./statistic"
+import { useProtocol } from "../contract/protocol"
+import { useAssetsHelpersByNetwork } from "./assets"
 
 type FarmingType = "long" | "short"
 
@@ -24,15 +21,14 @@ export interface Item extends DefaultItem {
   change?: { [PriceKey.PAIR]?: number; [PriceKey.ORACLE]?: number }
 }
 
-export const getTerraAssetItemQuery = selector({
-  key: "getTerraAssetItem",
-  get: ({ get }) => {
-    const assets = get(assetsByNetworkState(StatsNetwork.TERRA))
-    const helpers = getAssetsHelpers(assets)
+export const useTerraAssetList = () => {
+  const { listed } = useProtocol()
+  const helpers = useAssetsHelpersByNetwork()
+  const { [PriceKey.PAIR]: getPair, [PriceKey.ORACLE]: getOracle } = helpers
+  const { volume, liquidity, longAPR, shortAPR } = helpers
 
-    return (item: ListedItem): DefaultItem => {
-      const { [PriceKey.PAIR]: getPair, [PriceKey.ORACLE]: getOracle } = helpers
-      const { volume, liquidity, longAPR, shortAPR } = helpers
+  return listed
+    .map((item): Item => {
       const { token } = item
       const pairPrice = getPair(token)
       const oraclePrice = getOracle(token)
@@ -51,28 +47,6 @@ export const getTerraAssetItemQuery = selector({
         apr: { long, short },
         recommended: long && short && gt(short, long) ? "short" : "long",
       }
-    }
-  },
-})
-
-export const TerraAssetListQuery = selector({
-  key: "TerraAssetList",
-  get: ({ get }) => {
-    const { listed } = get(protocolQuery)
-    const getAssetItem = get(getTerraAssetItemQuery)
-
-    return listed
-      .map(getAssetItem)
-      .filter(({ liquidity }) => !liquidity || gt(liquidity, 0))
-  },
-})
-
-/* state */
-export const TerraAssetListState = atom<DefaultItem[]>({
-  key: "TerraAssetListState",
-  default: [], // idle
-})
-
-export const useTerraAssetList = () => {
-  return useStoreLoadable(TerraAssetListQuery, TerraAssetListState)
+    })
+    .filter(({ liquidity }) => !liquidity || gt(liquidity, 0))
 }
