@@ -1,5 +1,6 @@
 import { div, minus } from "../../libs/math"
 import { format, formatAsset, lookupSymbol } from "../../libs/parse"
+import { insertIf } from "../../libs/utils"
 import { percent } from "../../libs/num"
 import { useProtocol } from "../../data/contract/protocol"
 import { TradeType } from "../../types/Types"
@@ -15,6 +16,7 @@ export default (type: TradeType, simulatedPrice?: string) => (logs: TxLog[]) => 
   const rtnAsset = val("ask_asset")
   const spread = val("spread_amount")
   const commission = val("commission_amount")
+  const tax = val("tax_amount")
 
   const rtnSymbol = getSymbol(rtnAsset)
   const offerSymbol = getSymbol(offerAsset)
@@ -46,6 +48,10 @@ export default (type: TradeType, simulatedPrice?: string) => (logs: TxLog[]) => 
     children: [
       { title: "Spread", content: formatAsset(spread, rtnSymbol) },
       { title: "Commission", content: formatAsset(commission, rtnSymbol) },
+      ...insertIf(rtnSymbol === "uusd", {
+        title: "Tax",
+        content: formatAsset(tax, rtnSymbol),
+      }),
     ],
   }
 
