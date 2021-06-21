@@ -23,7 +23,7 @@
 
   @include desktop {
     flex: none;
-    margin-left: 24px;
+    margin-left: $gutter-horizontal-desktop;
     width: 360px;
   }
 }
