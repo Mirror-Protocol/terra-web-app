@@ -65,7 +65,11 @@ const FormGroup = (props: FormGroupInterface) => {
   const renderUnit = () => (
     <section className={styles.unit}>
       {typeof unit === "string" && (
-        <AssetIcon symbol={unit} className={styles.icon} size={size} />
+        <AssetIcon
+          symbol={unit === "UST" ? "uusd" : unit}
+          className={styles.icon}
+          size={size}
+        />
       )}
 
       {typeof unit === "string" ? lookupSymbol(unit) : unit}
