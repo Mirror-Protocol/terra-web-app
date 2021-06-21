@@ -122,7 +122,16 @@ export const govStakerQuery = selector({
   },
 })
 
+const govStakerState = atom<GovStaker | undefined>({
+  key: "govStakerState",
+  default: undefined,
+})
+
 /* hooks */
 export const useStakingRewardInfo = () => {
   return useStoreLoadable(stakingRewardInfoQuery, stakingRewardInfoState)
+}
+
+export const useGovStaker = () => {
+  return useStoreLoadable(govStakerQuery, govStakerState)
 }

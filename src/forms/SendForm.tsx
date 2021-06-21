@@ -13,9 +13,10 @@ import { renderBalance } from "../libs/formHelpers"
 import { useNetwork } from "../hooks"
 import { useAddress } from "../hooks"
 import { useProtocol } from "../data/contract/protocol"
-import { PriceKey, BalanceKey } from "../hooks/contractKeys"
+import { PriceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
-import { useFind } from "../data/contract/normalize"
+import { useFindBalanceStore } from "../data/contract/normalize"
+import { useFindPriceStore } from "../data/contract/normalize"
 
 import FormGroup from "../components/FormGroup"
 import { TooltipIcon } from "../components/Tooltip"
@@ -48,21 +49,22 @@ interface Props {
 
 const SendForm = ({ tab, shuttleList }: Props) => {
   const priceKey = PriceKey.PAIR
-  const balanceKey = BalanceKey.TOKEN
 
   /* context */
   const { state } = useLocation<{ token: string }>()
   const { shuttle } = useNetwork()
   const address = useAddress()
   const { getSymbol } = useProtocol()
-  const find = useFind()
+
+  const { contents: findBalance } = useFindBalanceStore()
+  const findPrice = useFindPriceStore() // to calc shuttle fee
 
   /* form:validate */
   const getIsShuttleAvailable = (network: string, symbol: string) =>
     !network || !!shuttleList[network as ShuttleNetwork]?.[lookupSymbol(symbol)]
 
   const validate = ({ to, token, value, memo, network }: Values<Key>) => {
-    const max = find(balanceKey, token)
+    const max = findBalance(token)
     const symbol = getSymbol(token)
 
     return {
@@ -112,15 +114,9 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   }
 
   /* render:form */
-  const config: Config = {
-    balanceKey,
-    token,
-    onSelect,
-    native: ["uusd"],
-  }
-
+  const config: Config = { token, onSelect, native: ["uusd"] }
   const select = useSelectAsset(config)
-  const balance = find(balanceKey, token)
+  const balance = findBalance(token)
 
   const { getMax } = useTax()
   const maxAmount =
@@ -184,7 +180,7 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   }
 
   /* confirm */
-  const price = find(priceKey, token)
+  const price = findPrice(priceKey, token)
   const shuttleMinimum = div(1e6, price)
   const shuttleMinimumText = formatAsset(shuttleMinimum, symbol)
   const shuttleEnough = !network || gt(amount, shuttleMinimum)

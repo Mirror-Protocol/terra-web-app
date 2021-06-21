@@ -2,8 +2,9 @@ import { useState } from "react"
 import classNames from "classnames/bind"
 import { gt } from "../../libs/math"
 import { useProtocol } from "../../data/contract/protocol"
-import { BalanceKey, PriceKey } from "../../hooks/contractKeys"
-import { useFind } from "../../data/contract/normalize"
+import { PriceKey } from "../../hooks/contractKeys"
+import { useFindBalanceStore } from "../../data/contract/normalize"
+import { useFindPriceStore } from "../../data/contract/normalize"
 import Icon from "../../components/Icon"
 import { Config } from "./useSelectAsset"
 import Asset, { AssetItemProps } from "./Asset"
@@ -23,11 +24,12 @@ const getSymbolIndex = (symbol: string) => {
 
 const Assets = ({ selected, onSelect, ...props }: Props) => {
   const { native = [], showDelisted, showExternal } = props
-  const { getPriceKey, priceKey, balanceKey } = props
+  const { getPriceKey, priceKey } = props
   const { validate, dim, formatTokenName } = props
 
   const { listedAll, listedAllExternal, getIsDelisted } = useProtocol()
-  const find = useFind()
+  const { contents: findBalance } = useFindBalanceStore()
+  const findPrice = useFindPriceStore()
 
   /* search */
   const [value, setValue] = useState("")
@@ -38,16 +40,20 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
       symbol: "uusd",
       name: "UST",
       price:
-        priceKey || getPriceKey ? find(PriceKey.NATIVE, "uusd") : undefined,
-      balance: balanceKey ? find(BalanceKey.NATIVE, "uusd") : undefined,
+        priceKey || getPriceKey
+          ? findPrice(PriceKey.NATIVE, "uusd")
+          : undefined,
+      balance: findBalance("uusd"),
     },
     uluna: {
       token: "uluna",
       symbol: "uluna",
       name: "Luna",
       price:
-        priceKey || getPriceKey ? find(PriceKey.NATIVE, "uluna") : undefined,
-      balance: balanceKey ? find(BalanceKey.NATIVE, "uluna") : undefined,
+        priceKey || getPriceKey
+          ? findPrice(PriceKey.NATIVE, "uluna")
+          : undefined,
+      balance: findBalance("uluna"),
     },
   }
 
@@ -57,8 +63,8 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
     ...[
       ...listedAllExternal.filter(() => !!showExternal),
       ...listedAll.filter(({ token }) =>
-        showDelisted && balanceKey
-          ? !getIsDelisted(token) || gt(find(balanceKey, token), 0)
+        showDelisted
+          ? !getIsDelisted(token) || gt(findBalance(token), 0)
           : !getIsDelisted(token)
       ),
     ]
@@ -66,11 +72,11 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
       .map((item) => ({
         ...item,
         price: getPriceKey
-          ? find(getPriceKey(item.token), item.token)
+          ? findPrice(getPriceKey(item.token), item.token)
           : priceKey
-          ? find(priceKey, item.token)
+          ? findPrice(priceKey, item.token)
           : undefined,
-        balance: balanceKey && find(balanceKey, item.token),
+        balance: findBalance(item.token),
       })),
   ].sort(
     ({ symbol: a }, { symbol: b }) => getSymbolIndex(a) - getSymbolIndex(b)
@@ -101,8 +107,8 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
             )
           )
           .sort(({ token: a }, { token: b }) => {
-            const hasA = balanceKey && gt(find(balanceKey, a), 0) ? 1 : 0
-            const hasB = balanceKey && gt(find(balanceKey, b), 0) ? 1 : 0
+            const hasA = gt(findBalance(a), 0) ? 1 : 0
+            const hasB = gt(findBalance(b), 0) ? 1 : 0
             return hasB - hasA
           })
           .map((item) => {

@@ -20,9 +20,10 @@ import { renderBalance } from "../libs/formHelpers"
 import calc from "../libs/calc"
 import { useProtocol } from "../data/contract/protocol"
 import { slippageQuery } from "../data/tx/slippage"
-import { BalanceKey, PriceKey } from "../hooks/contractKeys"
+import { PriceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
-import { useFindBalanceStore, useFindPrice } from "../data/contract/normalize"
+import { useFindBalanceStore } from "../data/contract/normalize"
+import { useFindPriceStore } from "../data/contract/normalize"
 import { useGetMinRatio } from "../data/contract/collateral"
 import { getMintPriceKeyQuery } from "../data/contract/collateral"
 
@@ -62,13 +63,11 @@ interface Props {
 /*
 (required)
 minimum collateral ratio & multiplier: collateral ratio on form & component
-price: collateral ratio of the position
+price: get collateral ratio of the position
 token balance: validate balance on close
 */
 
 const MintForm = ({ position, type }: Props) => {
-  const balanceKey = BalanceKey.TOKEN
-
   /* context */
   const { state } = useLocation<{ token: string }>()
   const { contracts, listed, ...helpers } = useProtocol()
@@ -76,7 +75,7 @@ const MintForm = ({ position, type }: Props) => {
 
   const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
   const getMinRatio = useGetMinRatio()
-  const findPrice = useFindPrice()
+  const findPrice = useFindPriceStore()
   const { contents: findBalance, ...findBalanceStore } = useFindBalanceStore()
 
   const { getMax: getMaxAmount } = useTax()
@@ -226,7 +225,6 @@ const MintForm = ({ position, type }: Props) => {
   /* render:form */
   const select1 = useSelectAsset({
     getPriceKey,
-    balanceKey,
     token: token1,
     onSelect: onSelect(Key.token1),
     native: ["uusd", "uluna"],
@@ -237,7 +235,6 @@ const MintForm = ({ position, type }: Props) => {
 
   const select2 = useSelectAsset({
     priceKey: priceKey2,
-    balanceKey,
     token: token2,
     onSelect: onSelect(Key.token2),
     validate: ({ symbol }) => symbol !== "MIR",

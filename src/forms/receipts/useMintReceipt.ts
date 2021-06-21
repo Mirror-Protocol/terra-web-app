@@ -4,7 +4,7 @@ import { formatAsset, lookupSymbol } from "../../libs/parse"
 import { percent } from "../../libs/num"
 import { useProtocol } from "../../data/contract/protocol"
 import { MintType } from "../../types/Types"
-import { useFindPrice } from "../../data/contract/normalize"
+import { useFindPriceStore } from "../../data/contract/normalize"
 import { getMintPriceKeyQuery } from "../../data/contract/collateral"
 import { findValueFromLogs, splitTokenText } from "./receiptHelpers"
 
@@ -17,7 +17,7 @@ export default (type: MintType, prev?: MintPosition) => (logs: TxLog[]) => {
 
   /* context */
   const { getSymbol, parseToken } = useProtocol()
-  const find = useFindPrice()
+  const find = useFindPriceStore()
   const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
 
   const val = findValueFromLogs(logs)

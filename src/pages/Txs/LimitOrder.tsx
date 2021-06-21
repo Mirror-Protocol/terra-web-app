@@ -1,7 +1,6 @@
 import { RouteProps, useRouteMatch } from "react-router-dom"
 import Page from "../../components/Page"
 import CancelOrderForm from "../../forms/CancelOrderForm"
-import { useProtocol } from "../../data/contract/protocol"
 import { useLimitOrder } from "../../data/contract/order"
 import routes from "../../routes"
 
@@ -13,12 +12,11 @@ const CancelOrder = () => {
   const { params } = useRouteMatch<{ id: string }>()
   const { id } = params
 
-  const { contracts } = useProtocol()
   const parsed = useLimitOrder(Number(id))
 
   return !parsed ? null : (
     <Page>
-      <CancelOrderForm order={parsed} contract={contracts["limitOrder"]} />
+      <CancelOrderForm order={parsed} />
     </Page>
   )
 }

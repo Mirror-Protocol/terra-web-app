@@ -4,7 +4,7 @@ import { format } from "../libs/parse"
 import { useProtocol } from "../data/contract/protocol"
 import { PriceKey } from "../hooks/contractKeys"
 import { pairPoolQuery } from "../data/contract/contract"
-import { parsePairPool, useFindPrice } from "../data/contract/normalize"
+import { parsePairPool, useFindPriceStore } from "../data/contract/normalize"
 import Page from "../components/Page"
 import Table from "../components/Table"
 import Caption from "../components/Caption"
@@ -12,7 +12,7 @@ import Caption from "../components/Caption"
 const Info = () => {
   const priceKey = PriceKey.PAIR
   const { listed } = useProtocol()
-  const find = useFindPrice()
+  const find = useFindPriceStore()
   const pairPool = useRecoilValue(pairPoolQuery)
 
   const dataSource = !pairPool

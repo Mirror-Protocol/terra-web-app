@@ -1,5 +1,6 @@
-import { selector, useRecoilValue } from "recoil"
+import { atom, selector } from "recoil"
 import { protocolQuery } from "../contract/protocol"
+import { useStoreLoadable } from "../utils/loadable"
 import { getContractQueryQuery } from "../utils/query"
 
 export const govConfigQuery = selector({
@@ -14,6 +15,11 @@ export const govConfigQuery = selector({
   },
 })
 
-export const useGovConfig = (): GovConfig | undefined => {
-  return useRecoilValue(govConfigQuery)
+const govConfigState = atom<GovConfig | undefined>({
+  key: "govConfigState",
+  default: undefined,
+})
+
+export const useGovConfig = () => {
+  return useStoreLoadable(govConfigQuery, govConfigState)
 }

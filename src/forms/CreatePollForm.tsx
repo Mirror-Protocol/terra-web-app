@@ -1,4 +1,4 @@
-import { useRecoilValue, useRecoilValueLoadable } from "recoil"
+import { useRecoilValueLoadable } from "recoil"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
 import Tooltips from "../lang/Tooltips"
@@ -9,9 +9,9 @@ import { lookup, toAmount } from "../libs/parse"
 import useForm, { Values } from "../libs/useForm"
 import { validate as v, step, toBase64, placeholder } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
-import { BalanceKey } from "../hooks/contractKeys"
 import { useProtocol } from "../data/contract/protocol"
-import { multipliersQuery, useFind } from "../data/contract/normalize"
+import { multipliersQuery } from "../data/contract/normalize"
+import { useFindBalanceStore } from "../data/contract/normalize"
 import { useGovConfig } from "../data/gov/config"
 import { communityConfigQuery } from "../data/contract/info"
 import { mintAssetConfigQuery } from "../data/contract/contract"
@@ -76,11 +76,17 @@ interface Props {
 }
 
 const CreatePollForm = ({ type, headings }: Props) => {
-  const balanceKey = BalanceKey.TOKEN
+  /* context */
+  const { contracts, getToken, toAssetInfo } = useProtocol()
+  const { contents: findBalance } = useFindBalanceStore()
   const config = useGovConfig()
   const communityConfig = useRecoilValueLoadable(communityConfigQuery)
   const mintAssetConfig = useRecoilValueLoadable(mintAssetConfigQuery)
   const multipliers = useRecoilValueLoadable(multipliersQuery)
+  const factoryDistributionInfo = useRecoilValueLoadable(
+    factoryDistributionInfoQuery
+  )
+
   const spend_limit =
     communityConfig.state === "hasValue"
       ? communityConfig.contents?.spend_limit
@@ -93,6 +99,11 @@ const CreatePollForm = ({ type, headings }: Props) => {
 
   const getMultiplier = (token: string) =>
     multipliers.state === "hasValue" ? multipliers.contents?.[token] : undefined
+
+  const getWeight = (token: string) =>
+    factoryDistributionInfo.state === "hasValue"
+      ? factoryDistributionInfo.contents(token)
+      : undefined
 
   const getFieldKeys = () => {
     // Determine here which key to use for each type.
@@ -187,11 +198,6 @@ const CreatePollForm = ({ type, headings }: Props) => {
 
     return combined.filter(Boolean).join("\n")
   }
-
-  /* context */
-  const { contracts, getToken, toAssetInfo } = useProtocol()
-  const find = useFind()
-  const getWeight = useRecoilValue(factoryDistributionInfoQuery)
 
   /* form:validate */
   const validate = (values: Values<Key>) => {
@@ -389,7 +395,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
 
   const fields = {
     deposit: {
-      help: renderBalance(find(balanceKey, getToken("MIR")), "MIR"),
+      help: renderBalance(findBalance(getToken("MIR")), "MIR"),
       label: <TooltipIcon content={Tooltips.Gov.Deposit}>Deposit</TooltipIcon>,
       value: <Formatted symbol="MIR">{deposit}</Formatted>,
     },
@@ -784,7 +790,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
     }),
   ]
 
-  const messages = !gte(find(balanceKey, getToken("MIR")), deposit)
+  const messages = !gte(findBalance(getToken("MIR")), deposit)
     ? ["Insufficient balance"]
     : getLength(msg) > MAX_MSG_LENGTH
     ? ["Input is too long to be executed"]

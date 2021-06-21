@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useProtocol } from "../../data/contract/protocol"
-import { PriceKey, BalanceKey } from "../../hooks/contractKeys"
+import { PriceKey } from "../../hooks/contractKeys"
 import SelectAssetButton from "./SelectAssetButton"
 import Assets from "./Assets"
 
@@ -13,8 +13,6 @@ export interface Config {
   /** Key of price to show from data */
   priceKey?: PriceKey
   getPriceKey?: (token: string) => PriceKey
-  /** Key of balance to show from data */
-  balanceKey?: BalanceKey
 
   /** Include native denoms in the list */
   native?: string[]

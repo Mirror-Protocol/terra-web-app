@@ -19,7 +19,8 @@ import calc from "../libs/calc"
 import { useProtocol } from "../data/contract/protocol"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
-import { useFind } from "../data/contract/normalize"
+import { useFindBalanceStore } from "../data/contract/normalize"
+import { useFindPriceStore } from "../data/contract/normalize"
 import { slippageQuery } from "../data/tx/slippage"
 
 import FormGroup from "../components/FormGroup"
@@ -54,8 +55,8 @@ const TradeForm = ({ type }: { type: TradeType }) => {
   const { state } = useLocation<{ token: string }>()
   const { contracts, whitelist, delist, ...helpers } = useProtocol()
   const { getToken, getSymbol, toToken } = helpers
-  const limitOrderContract = contracts["limitOrder"]
-  const find = useFind()
+  const { contents: findBalance } = useFindBalanceStore()
+  const findPrice = useFindPriceStore() // to validate target price (limit order)
   usePolling()
 
   /* form:limit */
@@ -71,8 +72,8 @@ const TradeForm = ({ type }: { type: TradeType }) => {
     const token2 = { [TradeType.BUY]: token, [TradeType.SELL]: "uusd" }[type]
     const symbol1 = getSymbol(token1)
     const symbol2 = getSymbol(token2)
-    const max = find(balanceKey, token1)
-    const price = find(priceKey, token)
+    const max = findBalance(token1)
+    const price = findPrice(priceKey, token)
     const targetRangeKey = { [TradeType.BUY]: "max", [TradeType.SELL]: "min" }[
       type
     ]
@@ -176,7 +177,7 @@ const TradeForm = ({ type }: { type: TradeType }) => {
   ])
 
   /* render:form */
-  const balance = find(balanceKey, token1)
+  const balance = findBalance(token1)
   const config = { token, onSelect, priceKey, balanceKey }
   const select = useSelectAsset(config)
   const delisted = whitelist[token1]?.["status"] === "DELISTED"
@@ -200,7 +201,7 @@ const TradeForm = ({ type }: { type: TradeType }) => {
       unit: `UST per ${symbol}`,
       help: {
         title: "Terraswap Price",
-        content: format(find(priceKey, token)),
+        content: format(findPrice(priceKey, token)),
       },
     },
     [Key.value1]: {
@@ -230,7 +231,7 @@ const TradeForm = ({ type }: { type: TradeType }) => {
           ? undefined
           : () => setValue(Key.value1, max),
       assets: type === TradeType.SELL && select.assets,
-      help: renderBalance(find(balanceKey, token1), symbol1),
+      help: renderBalance(findBalance(token1), symbol1),
       focused: type === TradeType.SELL && select.isOpen,
     },
 
@@ -256,7 +257,7 @@ const TradeForm = ({ type }: { type: TradeType }) => {
         [TradeType.SELL]: lookupSymbol(symbol2),
       }[type],
       assets: type === TradeType.BUY && select.assets,
-      help: renderBalance(find(balanceKey, token2), symbol2),
+      help: renderBalance(findBalance(token2), symbol2),
       focused: type === TradeType.BUY && select.isOpen,
     },
   })
@@ -309,6 +310,7 @@ const TradeForm = ({ type }: { type: TradeType }) => {
   const asset2 = toToken({ token: token2, amount: amount2 })
   const swap = { belief_price: belief, max_spread: slippage }
 
+  const limitOrderContract = contracts["limitOrder"]
   const limitOrderData = limitOrderContract
     ? {
         [TradeType.BUY]: [

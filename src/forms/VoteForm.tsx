@@ -36,6 +36,7 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
   const symbol = "MIR"
 
   /* context */
+  const { contracts } = useProtocol()
   const govStaked = useRecoilValue(govStakedQuery)
   const { params } = useRouteMatch<{ id: string }>()
   const id = Number(params.id)
@@ -83,7 +84,6 @@ const VoteForm = ({ tab }: { tab: Tab }) => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const { contracts } = useProtocol()
   const data = [
     newContractMsg(contracts["gov"], {
       cast_vote: {

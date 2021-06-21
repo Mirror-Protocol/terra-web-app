@@ -9,14 +9,13 @@ import useCancelOrderReceipt from "./receipts/useCancelOrderReceipt"
 
 interface Props {
   order: Order
-  contract: string
 }
 
-const CancelOrderForm = ({ order, contract }: Props) => {
+const CancelOrderForm = ({ order }: Props) => {
   const { order_id, offer_asset, filled_offer_amount } = order
 
   /* context */
-  const { parseToken } = useProtocol()
+  const { contracts, parseToken } = useProtocol()
   const { amount, symbol } = parseToken(offer_asset)
 
   /* confirm */
@@ -38,7 +37,9 @@ const CancelOrderForm = ({ order, contract }: Props) => {
   /* submit */
   const newContractMsg = useNewContractMsg()
   const data = [
-    newContractMsg(contract, { cancel_order: { order_id: order_id } }),
+    newContractMsg(contracts["limitOrder"], {
+      cancel_order: { order_id: order_id },
+    }),
   ]
 
   const parseTx = useCancelOrderReceipt()

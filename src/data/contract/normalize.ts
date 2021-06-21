@@ -299,7 +299,7 @@ export const findPriceQuery = selector({
   },
 })
 
-export const useFindPrice = () => {
+export const useFindPriceStore = () => {
   const { getPriceKey } = useProtocol()
 
   const pairPrices = usePairPrices()

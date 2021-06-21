@@ -1,8 +1,7 @@
 import useNewContractMsg from "../libs/useNewContractMsg"
 import { gt, plus } from "../libs/math"
 import { useProtocol } from "../data/contract/protocol"
-import { BalanceKey } from "../hooks/contractKeys"
-import { useFind, useRewards } from "../data/contract/normalize"
+import { useFindBalanceStore, useRewards } from "../data/contract/normalize"
 import Formatted from "../components/Formatted"
 import Container from "../components/Container"
 import useClaimRewardsReceipt from "./receipts/useClaimRewardsReceipt"
@@ -11,10 +10,10 @@ import FormContainer from "./modules/FormContainer"
 const ClaimRewardsForm = () => {
   /* context */
   const { contracts, getToken } = useProtocol()
-  const find = useFind()
+  const { contents: findBalance } = useFindBalanceStore()
   const rewards = useRewards()
 
-  const balance = find(BalanceKey.TOKEN, getToken("MIR"))
+  const balance = findBalance(getToken("MIR"))
   const claiming = rewards.total
 
   /* confirm */

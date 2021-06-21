@@ -1,4 +1,3 @@
-import { useRecoilValue } from "recoil"
 import { useLocation } from "react-router-dom"
 import Tooltips from "../lang/Tooltips"
 import { toBase64 } from "../libs/formHelpers"
@@ -10,10 +9,10 @@ import { validate as v, placeholder, step } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import getLpName from "../libs/getLpName"
 import { useProtocol } from "../data/contract/protocol"
-import { BalanceKey, StakingKey } from "../hooks/contractKeys"
-import { govStakerQuery } from "../data/contract/contract"
-import { useFind, useFindStaking } from "../data/contract/normalize"
-import { govStakedQuery } from "../data/contract/normalize"
+import { StakingKey } from "../hooks/contractKeys"
+import { useGovStaker } from "../data/contract/contract"
+import { useFindBalanceStore, useFindStaking } from "../data/contract/normalize"
+import { useGovStaked } from "../data/contract/normalize"
 
 import FormGroup from "../components/FormGroup"
 import FormFeedback from "../components/FormFeedback"
@@ -42,10 +41,11 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
   const { state } = useLocation<{ token: string }>()
   const token = props.token ?? state?.token
   const { contracts, whitelist, getSymbol } = useProtocol()
-  const find = useFind()
+  const { contents: findBalance } = useFindBalanceStore()
   const findStaking = useFindStaking()
-  const govStaked = useRecoilValue(govStakedQuery)
-  const govStaker = useRecoilValue(govStakerQuery)
+  const govStaked = useGovStaked()
+  const govStaker = useGovStaker()
+  const getPool = usePool()
 
   const getBalance = (token: string) =>
     (!gov
@@ -54,7 +54,7 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
           [StakeType.UNSTAKE]: findStaking(StakingKey.LPSTAKED, token),
         }
       : {
-          [StakeType.STAKE]: find(BalanceKey.TOKEN, token),
+          [StakeType.STAKE]: findBalance(token),
           [StakeType.UNSTAKE]: govStaked,
         })[type as StakeType]
 
@@ -93,7 +93,6 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
   const symbol = getSymbol(token)
 
   /* estimate */
-  const getPool = usePool()
   const pool = token ? getPool({ amount, token }) : undefined
   const fromLP = pool?.fromLP
 

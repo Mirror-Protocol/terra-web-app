@@ -13,7 +13,10 @@ import getLpName from "../libs/getLpName"
 import { usePolling } from "../hooks"
 import { PriceKey, BalanceKey, StakingKey } from "../hooks/contractKeys"
 import { useProtocol } from "../data/contract/protocol"
-import { useFindBalanceStore, useFindPrice } from "../data/contract/normalize"
+import {
+  useFindBalanceStore,
+  useFindPriceStore,
+} from "../data/contract/normalize"
 import { useFindStaking } from "../data/contract/normalize"
 
 import { getPath, MenuKey } from "../routes"
@@ -47,8 +50,9 @@ const PoolForm = ({ type }: Props) => {
   const autoStake = sp.get("pool") === null
   const { contracts, whitelist, getSymbol, toToken } = useProtocol()
   const { contents: findBalance, ...findBalanceStore } = useFindBalanceStore()
-  const findPrice = useFindPrice()
+  const findPrice = useFindPriceStore()
   const findStaking = useFindStaking()
+  const getPool = usePool()
   usePolling()
 
   const getBalance = (token: string) =>
@@ -91,7 +95,6 @@ const PoolForm = ({ type }: Props) => {
   const { pair, lpToken } = whitelist[token] ?? {}
 
   /* estimate:result */
-  const getPool = usePool()
   const pool = token ? getPool({ amount, token }) : undefined
   const toLP = pool?.toLP
   const fromLP = pool?.fromLP
