@@ -1,5 +1,5 @@
 import { atom, selector } from "recoil"
-import { useStoreLoadable } from "../utils/loadable"
+import { useStore, useStoreLoadable } from "../utils/loadable"
 import * as anchor from "./anchor"
 
 export const whitelistExternal = {
@@ -31,6 +31,6 @@ export const useExternalPrices = () => {
   return useStoreLoadable(externalPricesQuery, externalPricesState)
 }
 
-export const useExternalBalances = () => {
-  return useStoreLoadable(externalBalancesQuery, externalBalancesState)
+export const useExternalBalancesStore = () => {
+  return useStore(externalBalancesQuery, externalBalancesState)
 }

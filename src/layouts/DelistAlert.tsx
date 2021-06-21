@@ -1,14 +1,14 @@
 import { uniq } from "ramda"
 import { gt } from "../libs/math"
 import { useProtocol } from "../data/contract/protocol"
-import { useTokenBalances } from "../data/contract/normalize"
+import { useTokenBalancesStore } from "../data/contract/normalize"
 import { useMintPositions } from "../data/contract/positions"
 import { useStakingRewardInfo } from "../data/contract/contract"
 import { useLimitOrders } from "../data/contract/orders"
 import DelistModal from "./DelistModal"
 
 const useHoldingTokens = () => {
-  const tokenBalances = useTokenBalances()
+  const { contents: tokenBalances } = useTokenBalancesStore()
   return Object.keys(tokenBalances).filter((token) =>
     gt(tokenBalances[token], 0)
   )

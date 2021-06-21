@@ -1,12 +1,13 @@
 import { atom, noWait, selector, useRecoilValue } from "recoil"
 import { div, gt, sum } from "../../libs/math"
 import { PriceKey, BalanceKey, StakingKey } from "../../hooks/contractKeys"
-import { getLoadableContents, useStoreLoadable } from "../utils/loadable"
+import { getLoadableContents } from "../utils/loadable"
+import { useStore, useStoreLoadable } from "../utils/loadable"
 import { exchangeRatesQuery } from "../native/exchange"
 import { bankBalanceQuery } from "../native/balance"
 import { externalPricesQuery } from "../external/external"
 import { externalBalancesQuery } from "../external/external"
-import { useExternalBalances } from "../external/external"
+import { useExternalBalancesStore } from "../external/external"
 import { useExternalPrices } from "../external/external"
 import { protocolQuery, useProtocol } from "./protocol"
 import { collateralOracleAssetInfoQuery } from "./collateral"
@@ -244,12 +245,12 @@ export const useEndPrices = () => {
 }
 
 /* store: balance */
-export const useNativeBalances = () => {
-  return useStoreLoadable(nativeBalancesQuery, nativeBalancesState)
+export const useNativeBalancesStore = () => {
+  return useStore(nativeBalancesQuery, nativeBalancesState)
 }
 
-export const useTokenBalances = () => {
-  return useStoreLoadable(tokenBalancesQuery, tokenBalancesState)
+export const useTokenBalancesStore = () => {
+  return useStore(tokenBalancesQuery, tokenBalancesState)
 }
 
 /* store: staking balance */
@@ -339,20 +340,25 @@ export const findBalanceQuery = selector({
   },
 })
 
-export const useFindBalance = () => {
+export const useFindBalanceStore = () => {
   const { getBalanceKey } = useProtocol()
 
-  const nativeBalances = useNativeBalances()
-  const tokenBalances = useTokenBalances()
-  const externalBalances = useExternalBalances()
+  const nativeBalances = useNativeBalancesStore()
+  const tokenBalances = useTokenBalancesStore()
+  const externalBalances = useExternalBalancesStore()
 
   const dictionary = {
-    [BalanceKey.NATIVE]: nativeBalances,
-    [BalanceKey.TOKEN]: tokenBalances,
-    [BalanceKey.EXTERNAL]: externalBalances,
+    [BalanceKey.NATIVE]: nativeBalances.contents,
+    [BalanceKey.TOKEN]: tokenBalances.contents,
+    [BalanceKey.EXTERNAL]: externalBalances.contents,
   }
 
-  return (token: string) => dictionary[getBalanceKey(token)][token]
+  return {
+    contents: (token: string) => dictionary[getBalanceKey(token)][token],
+    isLoading: [nativeBalances, tokenBalances, externalBalances].some(
+      ({ isLoading }) => isLoading
+    ),
+  }
 }
 
 export const findQuery = selector({

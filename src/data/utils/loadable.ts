@@ -14,7 +14,7 @@ export const useStore = <T>(
     contents && setState(contents)
   }, [query, setState])
 
-  return { state, loading: query.state === "loading" }
+  return { contents: state, isLoading: query.state === "loading" }
 }
 
 export const useStoreLoadable = <T>(

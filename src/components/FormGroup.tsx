@@ -1,6 +1,7 @@
-import { ReactNode, SelectHTMLAttributes, DetailedHTMLProps } from "react"
 import { useRef } from "react"
+import { ReactNode, SelectHTMLAttributes, DetailedHTMLProps } from "react"
 import { InputHTMLAttributes, TextareaHTMLAttributes } from "react"
+import { isNil } from "ramda"
 import classNames from "classnames/bind"
 import { lookupSymbol } from "../libs/parse"
 import { Content } from "./componentTypes"
@@ -79,7 +80,8 @@ const FormGroup = (props: FormGroupInterface) => {
 
       {(unit || help) && (
         <section className={styles.meta}>
-          {prev && renderUnit()}
+          {!isNil(prev) && renderUnit()}
+
           <section
             className={cx(styles.help, { clickable: max })}
             onClick={max}
@@ -96,7 +98,7 @@ const FormGroup = (props: FormGroupInterface) => {
   const renderInput = () => (
     <section className={cx((type === 2 || type === 3) && border)}>
       <section className={styles.wrapper}>
-        {!prev && !unitAfterValue && renderUnit()}
+        {isNil(prev) && !unitAfterValue && renderUnit()}
 
         <section className={styles.field}>
           {input ? (
@@ -110,7 +112,7 @@ const FormGroup = (props: FormGroupInterface) => {
           )}
         </section>
 
-        {!prev && unitAfterValue && renderUnit()}
+        {isNil(prev) && unitAfterValue && renderUnit()}
       </section>
 
       {assets && <section className={styles.assets}>{assets}</section>}
@@ -119,8 +121,10 @@ const FormGroup = (props: FormGroupInterface) => {
 
   const renderInputWithPrev = () => (
     <section className={styles.grid}>
-      <section className={classNames(styles.border, styles.readOnly)}>
-        {prev}
+      <section
+        className={cx(styles.border, styles.readOnly, { placeholder: !prev })}
+      >
+        {prev || "0"}
       </section>
       <Icon name="ArrowDown" className={styles.arrow} size={20} />
       {renderInput()}
@@ -133,7 +137,7 @@ const FormGroup = (props: FormGroupInterface) => {
     <div className={cx(styles.group, styles.component, `type-${type}`)}>
       <div className={cx(type === 1 && border)}>
         {(label || help) && renderLabel()}
-        {prev ? renderInputWithPrev() : renderInput()}
+        {isNil(prev) ? renderInput() : renderInputWithPrev()}
       </div>
 
       {!skipFeedback && (error || warn || info) && (

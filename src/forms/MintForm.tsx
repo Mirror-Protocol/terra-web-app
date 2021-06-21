@@ -22,7 +22,7 @@ import { useProtocol } from "../data/contract/protocol"
 import { slippageQuery } from "../data/tx/slippage"
 import { BalanceKey, PriceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
-import { useFindBalance, useFindPrice } from "../data/contract/normalize"
+import { useFindBalanceStore, useFindPrice } from "../data/contract/normalize"
 import { useGetMinRatio } from "../data/contract/collateral"
 import { getMintPriceKeyQuery } from "../data/contract/collateral"
 
@@ -77,7 +77,7 @@ const MintForm = ({ position, type }: Props) => {
   const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
   const getMinRatio = useGetMinRatio()
   const findPrice = useFindPrice()
-  const findBalance = useFindBalance()
+  const { contents: findBalance, ...findBalanceStore } = useFindBalanceStore()
 
   const { getMax: getMaxAmount } = useTax()
   const { isClosed } = useLatest()
@@ -348,7 +348,7 @@ const MintForm = ({ position, type }: Props) => {
       ) : (
         "Collateral Ratio (%)"
       ),
-      prev: edit ? (prevRatio ? percentage(prevRatio) : "0") : undefined,
+      prev: edit ? (prevRatio ? percentage(prevRatio) : "") : undefined,
       input: { type: "number", step: step(), placeholder: "" },
       unit: open ? "%" : "",
     },
@@ -552,7 +552,9 @@ const MintForm = ({ position, type }: Props) => {
     : undefined
 
   const closeMessages =
-    prevAsset && !gte(findBalance(token2), prevAsset.amount)
+    !findBalanceStore.isLoading &&
+    prevAsset &&
+    !gte(findBalance(token2), prevAsset.amount)
       ? [<>{linkToBuy} to close position</>]
       : undefined
 
@@ -563,7 +565,10 @@ const MintForm = ({ position, type }: Props) => {
     : undefined
 
   const disabled =
-    isMarketClosed || invalidRepay || (!close ? invalid : !!closeMessages)
+    findBalanceStore.isLoading ||
+    isMarketClosed ||
+    invalidRepay ||
+    (!close ? invalid : !!closeMessages)
 
   const label = type
 
