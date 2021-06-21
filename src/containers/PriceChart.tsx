@@ -23,6 +23,7 @@ const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
   const findChange = useFindChange()
   const helpers = useAssetsHelpersByNetwork()
 
+  /* request */
   const ranges = [
     {
       label: "Day",
@@ -50,7 +51,6 @@ const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
     },
   ]
 
-  /* request */
   const [range, setRange] = useState(ranges[2])
   const { interval, from } = range
   const to = now.getTime()

@@ -39,7 +39,7 @@ const Assets = () => {
       <h1 className={styles.title}>mAsset</h1>
       <ul>
         {list.map((item, index) => (
-          <li className={styles.item}>
+          <li className={styles.item} key={index}>
             <Summary {...item} key={index} />
           </li>
         ))}

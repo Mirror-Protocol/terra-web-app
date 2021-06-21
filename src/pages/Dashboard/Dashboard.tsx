@@ -43,23 +43,27 @@ const Dashboard = () => {
       select={selectAttrs}
       doc={"/user-guide/getting-started"}
     >
-      <section className={styles.mobile}>{bound(<TVLTotal />)}</section>
+      <section className={styles.mobile}>
+        <TVLTotal />
+      </section>
 
       <Masonry>
         {[
           [
-            { component: bound(<TVL />), flex: "none" },
-            { component: bound(<MIRPrice />), flex: "none" },
-            { component: bound(<MIRSupply />), flex: 1 },
+            { component: <TVL />, flex: "none" },
+            { component: <MIRPrice />, flex: "none" },
+            { component: <MIRSupply />, flex: 1 },
           ],
           [
-            { component: bound(<LiquidityHistoryChart />), flex: "none" },
-            { component: bound(<VolumeHistoryChart />), flex: 1 },
+            { component: <LiquidityHistoryChart />, flex: "none" },
+            { component: <VolumeHistoryChart />, flex: 1 },
           ],
         ]}
       </Masonry>
 
-      <section className={styles.mobile}>{bound(<MIRPrice />)}</section>
+      <section className={styles.mobile}>
+        <MIRPrice />
+      </section>
       <footer className={styles.footer}>{bound(<DashboardFooter />)}</footer>
     </Page>
   )
