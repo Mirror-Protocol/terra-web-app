@@ -1,10 +1,9 @@
 import classNames from "classnames"
 import Tooltips from "../../lang/Tooltips"
-import { lt, lte, minus, plus } from "../../libs/math"
+import { plus } from "../../libs/math"
 import { decimal, formatAsset, lookupSymbol } from "../../libs/parse"
 import { getPath, MenuKey } from "../../routes"
 import { useMyBorrowing } from "../../data/my/borrowing"
-import { useGetMinRatio } from "../../data/contract/collateral"
 import Table from "../../components/Table"
 import Caption from "../../components/Caption"
 import Icon from "../../components/Icon"
@@ -18,29 +17,13 @@ import ShortBadge from "./ShortBadge"
 import CaptionData from "./CaptionData"
 import styles from "./Borrowing.module.scss"
 
-const WARNING = 0.3
-const DANGER = 0
-
 const Borrowing = () => {
-  const { totalMintedValue, totalCollateralValue, ...borrowing } =
+  const { dataSource, totalMintedValue, totalCollateralValue } =
     useMyBorrowing()
-  const getMinRatio = useGetMinRatio()
 
   const renderTooltip = (value: string, tooltip: string) => (
     <TooltipIcon content={tooltip}>≈ {formatAsset(value, "uusd")}</TooltipIcon>
   )
-
-  const dataSource = borrowing.dataSource.map((row) => {
-    const { ratio, collateralAsset, mintedAsset } = row
-    const minRatio = getMinRatio(collateralAsset.token, mintedAsset.token)
-    const state = lt(minus(ratio, minRatio), DANGER)
-      ? "danger"
-      : lte(minus(ratio, minRatio), WARNING)
-      ? "warning"
-      : ""
-
-    return { ...row, minRatio, state }
-  })
 
   const dataExists = !!dataSource.length
   const description = dataExists && (
@@ -84,7 +67,7 @@ const Borrowing = () => {
           {
             key: "mintedAsset",
             title: ["Ticker", "ID"],
-            render: ({ symbol, status }, { idx, state, is_short }) => {
+            render: ({ symbol, delisted }, { idx, state, is_short }) => {
               const className = classNames(styles.idx, { red: state })
               const tooltip =
                 state === "warning"
@@ -93,7 +76,7 @@ const Borrowing = () => {
 
               return [
                 <>
-                  {status === "DELISTED" && <Delisted />}
+                  {delisted && <Delisted />}
                   <span className={className}>
                     {state && (
                       <Tooltip content={tooltip}>
@@ -120,14 +103,13 @@ const Borrowing = () => {
           },
           {
             key: "borrowed",
+            dataIndex: "mintedAsset",
             title: (
               <TooltipIcon content={Tooltips.My.Borrowed}>Borrowed</TooltipIcon>
             ),
-            render: (_, { mintedAsset }) => [
-              <Formatted symbol={mintedAsset.symbol}>
-                {mintedAsset.amount}
-              </Formatted>,
-              <Formatted symbol="uusd">{mintedAsset.value}</Formatted>,
+            render: ({ amount, symbol, value }) => [
+              <Formatted symbol={symbol}>{amount}</Formatted>,
+              <Formatted symbol="uusd">{value}</Formatted>,
             ],
             align: "right",
           },
@@ -138,21 +120,19 @@ const Borrowing = () => {
                 Collateral
               </TooltipIcon>
             ),
-            render: (_, { collateralAsset }) => {
-              const amount = (
+            render: ({ delisted, token, amount, symbol, value }) => {
+              const amountContent = (
                 <>
-                  {collateralAsset.delisted && <Delisted />}
-                  <Formatted symbol={collateralAsset.symbol}>
-                    {collateralAsset.amount}
-                  </Formatted>
+                  {delisted && <Delisted />}
+                  <Formatted symbol={symbol}>{amount}</Formatted>
                 </>
               )
 
-              const value = (
-                <Formatted symbol="uusd">{collateralAsset.value}</Formatted>
-              )
+              const valueContent = <Formatted symbol="uusd">{value}</Formatted>
 
-              return collateralAsset.token === "uusd" ? amount : [amount, value]
+              return token === "uusd"
+                ? amountContent
+                : [amountContent, valueContent]
             },
             align: "right",
           },

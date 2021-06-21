@@ -71,9 +71,9 @@ const ShortFarming = () => {
             "Ticker",
             <TooltipIcon content={Tooltips.My.APR}>APR</TooltipIcon>,
           ],
-          render: (symbol, { status, apr }) => [
+          render: (symbol, { delisted, apr }) => [
             <>
-              {status === "DELISTED" && <Delisted />}
+              {delisted && <Delisted />}
               {symbol}
             </>,
             apr && <Percent>{apr}</Percent>,

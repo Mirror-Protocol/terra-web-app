@@ -32,9 +32,9 @@ const Pool = () => {
         {
           key: "symbol",
           title: "Pool Name",
-          render: (symbol, { status }) => (
+          render: (symbol, { delisted }) => (
             <>
-              {status === "DELISTED" && <Delisted />}
+              {delisted && <Delisted />}
               {getLpName(symbol)}
             </>
           ),

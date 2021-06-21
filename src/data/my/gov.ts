@@ -1,53 +1,53 @@
-import { atom, noWait, selector } from "recoil"
+import { atom, selector } from "recoil"
 import { gt, times } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
-import { getLoadableContents, useStoreLoadable } from "../utils/loadable"
-import { protocolQuery } from "../contract/protocol"
-import { govStakerQuery } from "../contract/contract"
-import { findQuery, govStakedQuery } from "../contract/normalize"
-import { pollsByIdsQuery } from "../gov/polls"
-import { statsAccountQuery } from "../stats/account"
+import { useStoreLoadable } from "../utils/loadable"
+import { useProtocol } from "../contract/protocol"
+import { useGovStaker } from "../contract/contract"
+import { useFindPrice, useGovStaked } from "../contract/normalize"
+import { usePollsByIds } from "../gov/polls"
+import { statsAccountQuery, useStatsAccount } from "../stats/account"
 
-const voteHistoryQuery = selector({
-  key: "voteHistory",
-  get: ({ get }) => {
-    const account = get(statsAccountQuery)
-    const voteHistory = account?.voteHistory
-    const govStaker = get(govStakerQuery)
+const useVoteHistory = () => {
+  const account = useStatsAccount()
+  const voteHistory = account?.voteHistory
+  const govStaker = useGovStaker()
 
-    if (!govStaker) return []
+  const ids = !govStaker
+    ? []
+    : [
+        ...govStaker.locked_balance.map(([id]) => id),
+        ...govStaker.withdrawable_polls.map(([id]) => id),
+      ]
 
-    const ids = [
-      ...govStaker.locked_balance.map(([id]) => id),
-      ...govStaker.withdrawable_polls.map(([id]) => id),
-    ]
+  const pollsByIds = usePollsByIds(ids)
+  const pollsByIdsValues = Object.values(pollsByIds)
 
-    const pollsByIds = Object.values(get(pollsByIdsQuery(ids)))
+  if (!voteHistory || !pollsByIdsValues) return []
 
-    if (!voteHistory || !pollsByIds) return []
-
-    return [
-      ...govStaker.locked_balance.map(([id, { balance, vote }]) => {
-        return {
-          id,
-          title: pollsByIds.find((poll) => poll.id === id)?.title,
-          vote,
-          amount: balance,
-        }
-      }),
-      ...govStaker.withdrawable_polls.map(([id, reward]) => {
-        const item = voteHistory.find(({ pollId }) => Number(pollId) === id)
-        return {
-          id,
-          title: pollsByIds.find((poll) => poll.id === id)?.title,
-          vote: item?.voteOption,
-          amount: item?.amount,
-          reward,
-        }
-      }),
-    ].sort(({ id: a }, { id: b }) => b - a)
-  },
-})
+  return !govStaker
+    ? []
+    : [
+        ...govStaker.locked_balance.map(([id, { balance, vote }]) => {
+          return {
+            id,
+            title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
+            vote,
+            amount: balance,
+          }
+        }),
+        ...govStaker.withdrawable_polls.map(([id, reward]) => {
+          const item = voteHistory.find(({ pollId }) => Number(pollId) === id)
+          return {
+            id,
+            title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
+            vote: item?.voteOption,
+            amount: item?.amount,
+            reward,
+          }
+        }),
+      ].sort(({ id: a }, { id: b }) => b - a)
+}
 
 const accGovRewardQuery = selector({
   key: "accGovReward",
@@ -58,45 +58,42 @@ const accGovRewardQuery = selector({
   },
 })
 
-export const myGovQuery = selector({
-  key: "myGov",
-  get: ({ get }) => {
-    const priceKey = PriceKey.PAIR
-
-    const { getToken } = get(protocolQuery)
-    const mir = getToken("MIR")
-
-    const find = get(findQuery)
-    const govStaked = get(govStakedQuery)
-    const govStaker = getLoadableContents(get(noWait(govStakerQuery)))
-    const accReward = getLoadableContents(get(noWait(accGovRewardQuery)))
-    const dataSource = getLoadableContents(get(noWait(voteHistoryQuery))) ?? []
-
-    const price = find(priceKey, mir)
-    const valid = gt(govStaked, 1)
-
-    const staked = valid ? govStaked : "0"
-    const stakedValue = valid ? times(staked, price) : "0"
-
-    const votingRewards = govStaker?.pending_voting_rewards ?? "0"
-    const votingRewardsValue = times(votingRewards, price)
-
-    return {
-      dataSource,
-      staked,
-      stakedValue,
-      votingRewards,
-      votingRewardsValue,
-      accReward,
-    }
-  },
+const accGovRewardState = atom({
+  key: "accGovRewardState",
+  default: "0",
 })
 
-const myGovState = atom({
-  key: "myGovState",
-  default: myGovQuery,
-})
+const useAccGovReward = () => {
+  return useStoreLoadable(accGovRewardQuery, accGovRewardState)
+}
 
 export const useMyGov = () => {
-  return useStoreLoadable(myGovQuery, myGovState)
+  const priceKey = PriceKey.PAIR
+
+  const { getToken } = useProtocol()
+  const mir = getToken("MIR")
+
+  const findPrice = useFindPrice()
+  const govStaked = useGovStaked()
+  const govStaker = useGovStaker()
+  const accReward = useAccGovReward()
+  const dataSource = useVoteHistory()
+
+  const price = findPrice(priceKey, mir)
+  const valid = gt(govStaked, 1)
+
+  const staked = valid ? govStaked : "0"
+  const stakedValue = valid ? times(staked, price) : "0"
+
+  const votingRewards = govStaker?.pending_voting_rewards ?? "0"
+  const votingRewardsValue = times(votingRewards, price)
+
+  return {
+    dataSource,
+    staked,
+    stakedValue,
+    votingRewards,
+    votingRewardsValue,
+    accReward,
+  }
 }

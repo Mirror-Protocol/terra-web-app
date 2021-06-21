@@ -11,7 +11,7 @@ import { validate as v, step, toBase64, placeholder } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import { useProtocol } from "../data/contract/protocol"
 import { multipliersQuery } from "../data/contract/normalize"
-import { useFindBalanceStore } from "../data/contract/normalize"
+import { useFindBalance } from "../data/contract/normalize"
 import { useGovConfig } from "../data/gov/config"
 import { communityConfigQuery } from "../data/contract/info"
 import { mintAssetConfigQuery } from "../data/contract/contract"
@@ -78,7 +78,7 @@ interface Props {
 const CreatePollForm = ({ type, headings }: Props) => {
   /* context */
   const { contracts, getToken, toAssetInfo } = useProtocol()
-  const { contents: findBalance } = useFindBalanceStore()
+  const { contents: findBalance } = useFindBalance()
   const config = useGovConfig()
   const communityConfig = useRecoilValueLoadable(communityConfigQuery)
   const mintAssetConfig = useRecoilValueLoadable(mintAssetConfigQuery)

@@ -1,7 +1,6 @@
 import Tooltips from "../../lang/Tooltips"
 import { formatAsset } from "../../libs/parse"
 import { useMyHolding } from "../../data/my/holding"
-import { useProtocol } from "../../data/contract/protocol"
 import { getPath, MenuKey } from "../../routes"
 
 import { TradeType } from "../../types/Types"
@@ -16,7 +15,6 @@ import CaptionData from "./CaptionData"
 
 const Holding = () => {
   const { totalValue, dataSource } = useMyHolding()
-  const { getIsDelisted } = useProtocol()
 
   const dataExists = !!dataSource.length
 
@@ -48,9 +46,9 @@ const Holding = () => {
         {
           key: "symbol",
           title: "Ticker",
-          render: (symbol, { status, name }) => [
+          render: (symbol, { delisted, name }) => [
             <>
-              {status === "DELISTED" && <Delisted />}
+              {delisted && <Delisted />}
               <h1>{symbol}</h1>
             </>,
             name,
@@ -87,8 +85,8 @@ const Holding = () => {
         {
           key: "actions",
           dataIndex: "token",
-          render: (token) => {
-            const link = getIsDelisted(token)
+          render: (token, { delisted }) => {
+            const link = delisted
               ? {
                   to: `/burn/${token}`,
                   children: MenuKey.BURN,

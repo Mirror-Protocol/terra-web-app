@@ -16,6 +16,11 @@ export const pairPoolQuery = selector({
   },
 })
 
+const pairPoolState = atom<Dictionary<PairPool> | undefined>({
+  key: "pairPoolState",
+  default: undefined,
+})
+
 export const oraclePriceQuery = selector({
   key: "oraclePrice",
   get: async ({ get }) => {
@@ -128,6 +133,10 @@ const govStakerState = atom<GovStaker | undefined>({
 })
 
 /* hooks */
+export const usePairPool = () => {
+  return useStoreLoadable(pairPoolQuery, pairPoolState)
+}
+
 export const useStakingRewardInfo = () => {
   return useStoreLoadable(stakingRewardInfoQuery, stakingRewardInfoState)
 }

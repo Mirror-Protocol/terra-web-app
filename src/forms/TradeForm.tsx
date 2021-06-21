@@ -19,8 +19,8 @@ import calc from "../libs/calc"
 import { useProtocol } from "../data/contract/protocol"
 import { PriceKey, BalanceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
-import { useFindBalanceStore } from "../data/contract/normalize"
-import { useFindPriceStore } from "../data/contract/normalize"
+import { useFindBalance } from "../data/contract/normalize"
+import { useFindPrice } from "../data/contract/normalize"
 import { slippageQuery } from "../data/tx/slippage"
 
 import FormGroup from "../components/FormGroup"
@@ -55,8 +55,8 @@ const TradeForm = ({ type }: { type: TradeType }) => {
   const { state } = useLocation<{ token: string }>()
   const { contracts, whitelist, delist, ...helpers } = useProtocol()
   const { getToken, getSymbol, toToken } = helpers
-  const { contents: findBalance } = useFindBalanceStore()
-  const findPrice = useFindPriceStore() // to validate target price (limit order)
+  const { contents: findBalance } = useFindBalance()
+  const findPrice = useFindPrice() // to validate target price (limit order)
   usePolling()
 
   /* form:limit */

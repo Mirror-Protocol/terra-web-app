@@ -1,7 +1,8 @@
 import { last } from "ramda"
-import { selectorFamily } from "recoil"
+import { atomFamily, selectorFamily } from "recoil"
 import { getContractQueriesQuery } from "../utils/queries"
 import { getContractQueryQuery } from "../utils/query"
+import { useStoreLoadable } from "../utils/loadable"
 import { usePagination } from "../utils/pagination"
 import alias from "../contract/alias"
 import { protocolQuery } from "../contract/protocol"
@@ -37,19 +38,33 @@ export const pollsByIdsQuery = selectorFamily({
       const getContractQueries = get(getContractQueriesQuery)
       const { contracts } = get(protocolQuery)
 
-      const document = alias(
-        ids.map((id) => ({
-          name: "poll" + id,
-          contract: contracts["gov"],
-          msg: { poll: { poll_id: id } },
-        })),
-        "pollsByIds"
-      )
+      if (ids.length) {
+        const document = alias(
+          ids.map((id) => ({
+            name: "poll" + id,
+            contract: contracts["gov"],
+            msg: { poll: { poll_id: id } },
+          })),
+          "pollsByIds"
+        )
 
-      return (await getContractQueries<Poll>(document, "pollsByIds")) ?? {}
+        return (await getContractQueries<Poll>(document, "pollsByIds")) ?? {}
+      }
+
+      return {}
     },
 })
 
+const pollsByIdsState = atomFamily<Dictionary<Poll>, PollID[]>({
+  key: "pollsByIdsState",
+  default: {},
+})
+
+/* hooks */
 export const usePolls = () => {
   return usePagination(govPollsQuery, ({ data }) => last(data)?.id, LIMIT, "id")
+}
+
+export const usePollsByIds = (ids: PollID[]) => {
+  return useStoreLoadable(pollsByIdsQuery(ids), pollsByIdsState(ids))
 }

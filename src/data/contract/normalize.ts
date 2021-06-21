@@ -7,7 +7,7 @@ import { exchangeRatesQuery } from "../native/exchange"
 import { bankBalanceQuery } from "../native/balance"
 import { externalPricesQuery } from "../external/external"
 import { externalBalancesQuery } from "../external/external"
-import { useExternalBalancesStore } from "../external/external"
+import { useExternalBalances } from "../external/external"
 import { useExternalPrices } from "../external/external"
 import { protocolQuery, useProtocol } from "./protocol"
 import { collateralOracleAssetInfoQuery } from "./collateral"
@@ -106,12 +106,22 @@ export const lpStakableBalancesQuery = selector({
   },
 })
 
+const lpStakableBalancesState = atom<Dictionary>({
+  key: "lpStakableBalancesState",
+  default: {},
+})
+
 export const lpStakedBalancesQuery = selector({
   key: "lpStakedBalances",
   get: ({ get }) => {
     const result = get(stakingRewardInfoQuery)
     return result ? reduceStakingReward(result, "bond_amount") : {}
   },
+})
+
+const lpStakedBalancesState = atom<Dictionary>({
+  key: "lpStakedBalancesState",
+  default: {},
 })
 
 export const slpStakedBalancesQuery = selector({
@@ -122,6 +132,11 @@ export const slpStakedBalancesQuery = selector({
   },
 })
 
+const slpStakedBalancesState = atom<Dictionary>({
+  key: "slpStakedBalancesState",
+  default: {},
+})
+
 export const lpRewardBalancesQuery = selector({
   key: "lpRewardBalances",
   get: ({ get }) => {
@@ -130,12 +145,22 @@ export const lpRewardBalancesQuery = selector({
   },
 })
 
+const lpRewardBalancesState = atom<Dictionary>({
+  key: "lpRewardBalancesState",
+  default: {},
+})
+
 export const slpRewardBalancesQuery = selector({
   key: "slpRewardBalances",
   get: ({ get }) => {
     const result = get(stakingRewardInfoQuery)
     return result ? reduceStakingReward(result, "pending_reward", true) : {}
   },
+})
+
+const slpRewardBalancesState = atom<Dictionary>({
+  key: "slpRewardBalancesState",
+  default: {},
 })
 
 export const govStakedQuery = selector({
@@ -245,15 +270,35 @@ export const useEndPrices = () => {
 }
 
 /* store: balance */
-export const useNativeBalancesStore = () => {
+export const useNativeBalances = () => {
   return useStore(nativeBalancesQuery, nativeBalancesState)
 }
 
-export const useTokenBalancesStore = () => {
+export const useTokenBalances = () => {
   return useStore(tokenBalancesQuery, tokenBalancesState)
 }
 
 /* store: staking balance */
+export const useLpStakableBalances = () => {
+  return useStore(lpStakableBalancesQuery, lpStakableBalancesState)
+}
+
+export const useLpStakedBalances = () => {
+  return useStore(lpStakedBalancesQuery, lpStakedBalancesState)
+}
+
+export const useSlpStakedBalances = () => {
+  return useStore(slpStakedBalancesQuery, slpStakedBalancesState)
+}
+
+export const useLpRewardBalances = () => {
+  return useStore(lpRewardBalancesQuery, lpRewardBalancesState)
+}
+
+export const useSlpRewardBalances = () => {
+  return useStore(slpRewardBalancesQuery, slpRewardBalancesState)
+}
+
 export const useGovStaked = () => {
   return useStoreLoadable(govStakedQuery, govStakedState)
 }
@@ -299,7 +344,7 @@ export const findPriceQuery = selector({
   },
 })
 
-export const useFindPriceStore = () => {
+export const useFindPrice = () => {
   const { getPriceKey } = useProtocol()
 
   const pairPrices = usePairPrices()
@@ -340,12 +385,12 @@ export const findBalanceQuery = selector({
   },
 })
 
-export const useFindBalanceStore = () => {
+export const useFindBalance = () => {
   const { getBalanceKey } = useProtocol()
 
-  const nativeBalances = useNativeBalancesStore()
-  const tokenBalances = useTokenBalancesStore()
-  const externalBalances = useExternalBalancesStore()
+  const nativeBalances = useNativeBalances()
+  const tokenBalances = useTokenBalances()
+  const externalBalances = useExternalBalances()
 
   const dictionary = {
     [BalanceKey.NATIVE]: nativeBalances.contents,
@@ -397,7 +442,30 @@ export const findStakingQuery = selector({
 })
 
 export const useFindStaking = () => {
-  return useRecoilValue(findStakingQuery)
+  const lpStakableBalances = useLpStakableBalances()
+  const lpStakedBalances = useLpStakedBalances()
+  const slpStakedBalances = useSlpStakedBalances()
+  const lpRewardBalances = useLpRewardBalances()
+  const slpRewardBalances = useSlpRewardBalances()
+
+  const dictionary = {
+    [StakingKey.LPSTAKABLE]: lpStakableBalances.contents,
+    [StakingKey.LPSTAKED]: lpStakedBalances.contents,
+    [StakingKey.SLPSTAKED]: slpStakedBalances.contents,
+    [StakingKey.LPREWARD]: lpRewardBalances.contents,
+    [StakingKey.SLPREWARD]: slpRewardBalances.contents,
+  }
+
+  return {
+    contents: (key: StakingKey, token: string) => dictionary[key][token],
+    isLoading: [
+      lpStakableBalances,
+      lpStakedBalances,
+      slpStakedBalances,
+      lpRewardBalances,
+      slpRewardBalances,
+    ].some(({ isLoading }) => isLoading),
+  }
 }
 
 /* utils */

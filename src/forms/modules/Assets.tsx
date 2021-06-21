@@ -3,8 +3,8 @@ import classNames from "classnames/bind"
 import { gt } from "../../libs/math"
 import { useProtocol } from "../../data/contract/protocol"
 import { PriceKey } from "../../hooks/contractKeys"
-import { useFindBalanceStore } from "../../data/contract/normalize"
-import { useFindPriceStore } from "../../data/contract/normalize"
+import { useFindBalance } from "../../data/contract/normalize"
+import { useFindPrice } from "../../data/contract/normalize"
 import Icon from "../../components/Icon"
 import { Config } from "./useSelectAsset"
 import Asset, { AssetItemProps } from "./Asset"
@@ -28,8 +28,8 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
   const { validate, dim, formatTokenName } = props
 
   const { listedAll, listedAllExternal, getIsDelisted } = useProtocol()
-  const { contents: findBalance } = useFindBalanceStore()
-  const findPrice = useFindPriceStore()
+  const { contents: findBalance } = useFindBalance()
+  const findPrice = useFindPrice()
 
   /* search */
   const [value, setValue] = useState("")

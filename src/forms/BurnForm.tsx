@@ -10,8 +10,8 @@ import useNewContractMsg from "../libs/useNewContractMsg"
 import { PriceKey } from "../hooks/contractKeys"
 import { cdpsQuery } from "../data/stats/cdps"
 import { useProtocol } from "../data/contract/protocol"
-import { useFindBalanceStore } from "../data/contract/normalize"
-import { useFindPriceStore } from "../data/contract/normalize"
+import { useFindBalance } from "../data/contract/normalize"
+import { useFindPrice } from "../data/contract/normalize"
 
 import Container from "../components/Container"
 import findPositions from "./modules/findPositions"
@@ -28,8 +28,8 @@ const BurnForm = () => {
   /* context */
   const { contracts, getSymbol, getIsDelisted } = useProtocol()
   const cdps = useRecoilValue(cdpsQuery(token))
-  const { contents: findBalance } = useFindBalanceStore()
-  const findPrice = useFindPriceStore()
+  const { contents: findBalance } = useFindBalance()
+  const findPrice = useFindPrice()
 
   const balance = findBalance(token)
   const positions = gt(balance, 0) && cdps ? findPositions(balance, cdps) : []

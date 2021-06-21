@@ -4,9 +4,9 @@ import classNames from "classnames"
 import Tooltips from "../../lang/Tooltips"
 import { gt, times } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
-import { BalanceKey } from "../../hooks/contractKeys"
 import { useMyTotal } from "../../data/my/total"
-import { useFind, useMIRPrice, useRewards } from "../../data/contract/normalize"
+import { useUusdBalance } from "../../data/native/balance"
+import { useMIRPrice, useRewards } from "../../data/contract/normalize"
 
 import { getPath, MenuKey } from "../../routes"
 import Card, { CardMain } from "../../components/Card"
@@ -143,7 +143,6 @@ export default TotalValue
 
 /* hooks */
 const useShouldBuyUST = () => {
-  const find = useFind()
-  const uusd = find(BalanceKey.NATIVE, "uusd")
+  const uusd = useUusdBalance()
   return !gt(uusd, 0)
 }

@@ -1,62 +1,21 @@
 import { uniq } from "ramda"
-import { gt } from "../libs/math"
 import { useProtocol } from "../data/contract/protocol"
-import { useTokenBalancesStore } from "../data/contract/normalize"
-import { useMintPositions } from "../data/contract/positions"
-import { useStakingRewardInfo } from "../data/contract/contract"
-import { useLimitOrders } from "../data/contract/orders"
+import { useMyTotal } from "../data/my/total"
 import DelistModal from "./DelistModal"
-
-const useHoldingTokens = () => {
-  const { contents: tokenBalances } = useTokenBalancesStore()
-  return Object.keys(tokenBalances).filter((token) =>
-    gt(tokenBalances[token], 0)
-  )
-}
-
-const useMintTokens = () => {
-  const { parseAssetInfo } = useProtocol()
-  const mintPositions = useMintPositions()
-  const collateral = mintPositions.map(
-    (position) => parseAssetInfo(position.collateral.info).token
-  )
-
-  const asset = mintPositions.map(
-    (position) => parseAssetInfo(position.asset.info).token
-  )
-
-  return uniq([...collateral, ...asset])
-}
-
-const useStakingTokens = () => {
-  const stakingRewardInfo = useStakingRewardInfo()
-  return (
-    stakingRewardInfo?.reward_infos.map(({ asset_token }) => asset_token) ?? []
-  )
-}
-
-const useLimitOrder = () => {
-  const { parseAssetInfo } = useProtocol()
-  const limitOrders = useLimitOrders()
-  return limitOrders.map(
-    ({ ask_asset }) => parseAssetInfo(ask_asset.info).token
-  )
-}
 
 const DelistAlert = () => {
   const { delist } = useProtocol()
   const filter = (token: string) => !!delist[token]
 
-  const delistedHolding = useHoldingTokens()
-  const delistedMint = useMintTokens()
-  const delistedStaking = useStakingTokens()
-  const delistedLimitOrder = useLimitOrder()
+  const { holding, borrowing, farming, short, limitOrder } = useMyTotal()
 
   const delistedTokens = uniq([
-    ...delistedHolding,
-    ...delistedMint,
-    ...delistedStaking,
-    ...delistedLimitOrder,
+    ...holding.dataSource.map(({ token }) => token),
+    ...borrowing.dataSource.map(({ collateralAsset }) => collateralAsset.token),
+    ...borrowing.dataSource.map(({ mintedAsset }) => mintedAsset.token),
+    ...farming.dataSource.map(({ token }) => token),
+    ...short.dataSource.map(({ token }) => token),
+    ...limitOrder.dataSource.map(({ token }) => token),
   ]).filter(filter)
 
   return delistedTokens.length ? <DelistModal tokens={delistedTokens} /> : null

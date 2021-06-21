@@ -37,5 +37,18 @@ export const useMyTotal = () => {
     gov: plus(gov.stakedValue, gov.votingRewardsValue),
   }
 
-  return { list, total: sum(Object.values(list)) }
+  const total = sum(Object.values(list))
+
+  return {
+    list,
+    total,
+    uusd,
+    holding,
+    limitOrder,
+    borrowing,
+    pool,
+    farming,
+    short,
+    gov,
+  }
 }

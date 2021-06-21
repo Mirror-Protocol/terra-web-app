@@ -54,7 +54,7 @@ const Gov = () => {
           key: "title",
           dataIndex: "title",
           title: ["Title", "Poll ID"],
-          render: (title, { id }) => ["", id],
+          render: (title, { id }) => [title, id],
           bold: true,
         },
         {

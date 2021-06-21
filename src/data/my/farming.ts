@@ -1,71 +1,52 @@
-import { atom, noWait, selector } from "recoil"
 import { gt, sum, times } from "../../libs/math"
 import { PriceKey, StakingKey } from "../../hooks/contractKeys"
-import { getLoadableContents, useStoreLoadable } from "../utils/loadable"
-import { assetsByNetworkState, getAssetsHelpers } from "../stats/assets"
-import { StatsNetwork } from "../stats/statistic"
-import { protocolQuery } from "../contract/protocol"
-import { findQuery, findStakingQuery } from "../contract/normalize"
-import { rewardsQuery } from "../contract/normalize"
-import { poolQuery } from "../../forms/modules/usePool"
-
-export const myFarmingQuery = selector({
-  key: "myFarming",
-  get: ({ get }) => {
-    const priceKey = PriceKey.PAIR
-    const { listedAll, getToken } = get(protocolQuery)
-    const mir = getToken("MIR")
-
-    const findStaking = get(findStakingQuery)
-    const find = get(findQuery)
-    const rewards = get(rewardsQuery)
-
-    const getPool = get(poolQuery)
-    const assets = getLoadableContents(
-      get(noWait(assetsByNetworkState(StatsNetwork.TERRA)))
-    )
-
-    const longAPR = assets ? getAssetsHelpers(assets).longAPR : undefined
-
-    const dataSource = listedAll
-      .map((item: ListedItem) => {
-        const { token } = item
-        const balance = findStaking(StakingKey.LPSTAKED, token)
-        const { fromLP } = getPool({ amount: balance, token })
-
-        return {
-          ...item,
-          apr: longAPR?.(token),
-          staked: findStaking(StakingKey.LPSTAKED, token),
-          reward: findStaking(StakingKey.LPREWARD, token),
-          withdrawable: fromLP,
-        }
-      })
-      .filter(({ staked, reward }) =>
-        [staked, reward].some((balance) => balance && gt(balance, 0))
-      )
-
-    const price = find(priceKey, mir)
-    const totalRewards = rewards.long
-    const totalRewardsValue = times(rewards.long, price)
-    const totalWithdrawableValue = sum(
-      dataSource.map(({ withdrawable }) => withdrawable?.value ?? 0)
-    )
-
-    return {
-      dataSource,
-      totalRewards,
-      totalRewardsValue,
-      totalWithdrawableValue,
-    }
-  },
-})
-
-const myFarmingState = atom({
-  key: "myFarmingState",
-  default: myFarmingQuery,
-})
+import { getAssetsHelpers, useAssetsByNetwork } from "../stats/assets"
+import { useProtocol } from "../contract/protocol"
+import { useFindPrice, useFindStaking, useRewards } from "../contract/normalize"
+import usePool from "../../forms/modules/usePool"
 
 export const useMyFarming = () => {
-  return useStoreLoadable(myFarmingQuery, myFarmingState)
+  const priceKey = PriceKey.PAIR
+  const { listedAll, getToken, getIsDelisted } = useProtocol()
+  const { contents: findStaking } = useFindStaking()
+  const findPrice = useFindPrice()
+  const rewards = useRewards()
+  const getPool = usePool()
+  const assets = useAssetsByNetwork()
+
+  const longAPR = assets ? getAssetsHelpers(assets).longAPR : undefined
+  const mir = getToken("MIR")
+
+  const dataSource = listedAll
+    .map((item: ListedItem) => {
+      const { token } = item
+      const balance = findStaking(StakingKey.LPSTAKED, token)
+      const { fromLP } = getPool({ amount: balance, token })
+
+      return {
+        ...item,
+        delisted: getIsDelisted(token),
+        apr: longAPR?.(token),
+        staked: findStaking(StakingKey.LPSTAKED, token),
+        reward: findStaking(StakingKey.LPREWARD, token),
+        withdrawable: fromLP,
+      }
+    })
+    .filter(({ staked, reward }) =>
+      [staked, reward].some((balance) => balance && gt(balance, 0))
+    )
+
+  const price = findPrice(priceKey, mir)
+  const totalRewards = rewards.long
+  const totalRewardsValue = times(rewards.long, price)
+  const totalWithdrawableValue = sum(
+    dataSource.map(({ withdrawable }) => withdrawable?.value ?? 0)
+  )
+
+  return {
+    dataSource,
+    totalRewards,
+    totalRewardsValue,
+    totalWithdrawableValue,
+  }
 }

@@ -22,8 +22,8 @@ import { useProtocol } from "../data/contract/protocol"
 import { slippageQuery } from "../data/tx/slippage"
 import { PriceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
-import { useFindBalanceStore } from "../data/contract/normalize"
-import { useFindPriceStore } from "../data/contract/normalize"
+import { useFindBalance } from "../data/contract/normalize"
+import { useFindPrice } from "../data/contract/normalize"
 import { useGetMinRatio } from "../data/contract/collateral"
 import { getMintPriceKeyQuery } from "../data/contract/collateral"
 
@@ -75,8 +75,8 @@ const MintForm = ({ position, type }: Props) => {
 
   const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
   const getMinRatio = useGetMinRatio()
-  const findPrice = useFindPriceStore()
-  const { contents: findBalance, ...findBalanceStore } = useFindBalanceStore()
+  const findPrice = useFindPrice()
+  const { contents: findBalance, ...findBalanceStore } = useFindBalance()
 
   const { getMax: getMaxAmount } = useTax()
   const { isClosed } = useLatest()

@@ -37,7 +37,7 @@ export const uusdBalanceQuery = selector({
 
 export const uusdBalanceState = atom({
   key: "uusdBalanceState",
-  default: uusdBalanceQuery,
+  default: "0",
 })
 
 export const useUusdBalance = () => {

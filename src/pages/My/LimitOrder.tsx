@@ -46,9 +46,9 @@ const LimitOrder = () => {
           {
             key: "type",
             title: ["Order Type", "ID"],
-            render: (value, { status, order_id }) => [
+            render: (value, { delisted, order_id }) => [
               <>
-                {status === "DELISTED" && <Delisted />}
+                {delisted && <Delisted />}
                 <h1>{capitalize(value)}</h1>
               </>,
               order_id,

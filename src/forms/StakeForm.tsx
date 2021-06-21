@@ -11,7 +11,7 @@ import getLpName from "../libs/getLpName"
 import { useProtocol } from "../data/contract/protocol"
 import { StakingKey } from "../hooks/contractKeys"
 import { useGovStaker } from "../data/contract/contract"
-import { useFindBalanceStore, useFindStaking } from "../data/contract/normalize"
+import { useFindBalance, useFindStaking } from "../data/contract/normalize"
 import { useGovStaked } from "../data/contract/normalize"
 
 import FormGroup from "../components/FormGroup"
@@ -41,8 +41,8 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
   const { state } = useLocation<{ token: string }>()
   const token = props.token ?? state?.token
   const { contracts, whitelist, getSymbol } = useProtocol()
-  const { contents: findBalance } = useFindBalanceStore()
-  const findStaking = useFindStaking()
+  const { contents: findBalance } = useFindBalance()
+  const { contents: findStaking } = useFindStaking()
   const govStaked = useGovStaked()
   const govStaker = useGovStaker()
   const getPool = usePool()

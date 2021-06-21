@@ -1,4 +1,5 @@
-import { selector } from "recoil"
+import { atom, selector } from "recoil"
+import { useStoreLoadable } from "../utils/loadable"
 import { getContractQueriesQuery } from "../utils/queries"
 import alias from "./alias"
 import { shortPositionsQuery } from "./positions"
@@ -28,3 +29,12 @@ export const lockPositionInfoQuery = selector({
     )
   },
 })
+
+const lockPositionInfoState = atom<Dictionary<LockPositionInfo>>({
+  key: "lockPositionInfoState",
+  default: {},
+})
+
+export const useLockPositionInfo = () => {
+  return useStoreLoadable(lockPositionInfoQuery, lockPositionInfoState)
+}

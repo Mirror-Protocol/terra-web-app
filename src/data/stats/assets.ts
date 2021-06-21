@@ -31,9 +31,12 @@ export const assetsByNetworkQuery = selectorFamily({
     },
 })
 
-export const assetsByNetworkState = atomFamily({
+export const assetsByNetworkState = atomFamily<
+  Dictionary<AssetDataItem>,
+  StatsNetwork
+>({
   key: "assetsByNetworkState",
-  default: assetsByNetworkQuery,
+  default: {},
 })
 
 export const assetsHistoryQuery = selector({

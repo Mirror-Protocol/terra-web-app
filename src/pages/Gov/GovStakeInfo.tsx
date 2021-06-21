@@ -2,7 +2,7 @@ import { useRouteMatch } from "react-router-dom"
 import { useAddress } from "../../hooks"
 import { useProtocol } from "../../data/contract/protocol"
 import { useGovStaked } from "../../data/contract/normalize"
-import { useTokenBalancesStore } from "../../data/contract/normalize"
+import { useTokenBalances } from "../../data/contract/normalize"
 import Card from "../../components/Card"
 import Summary from "../../components/Summary"
 import LinkButton from "../../components/LinkButton"
@@ -14,7 +14,7 @@ const GovStakeInfo = () => {
   const { getToken } = useProtocol()
   const address = useAddress()
   const govStaked = useGovStaked()
-  const { contents: tokenBalances } = useTokenBalancesStore()
+  const { contents: tokenBalances } = useTokenBalances()
   const { [getToken("MIR")]: govStakable } = tokenBalances
 
   const contents = [

@@ -31,6 +31,6 @@ export const useExternalPrices = () => {
   return useStoreLoadable(externalPricesQuery, externalPricesState)
 }
 
-export const useExternalBalancesStore = () => {
+export const useExternalBalances = () => {
   return useStore(externalBalancesQuery, externalBalancesState)
 }

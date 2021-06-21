@@ -17,8 +17,8 @@ import { StakeType } from "../../types/Types"
 import CaptionData from "./CaptionData"
 
 const Farming = () => {
-  const { dataSource, totalRewards, totalRewardsValue } = useMyFarming()
   const { getSymbol } = useProtocol()
+  const { dataSource, totalRewards, totalRewardsValue } = useMyFarming()
 
   const dataExists = !!dataSource.length
   const description = dataExists && (
@@ -56,9 +56,9 @@ const Farming = () => {
             "Pool Name",
             <TooltipIcon content={Tooltips.My.APR}>APR</TooltipIcon>,
           ],
-          render: (symbol, { status, apr }) => [
+          render: (symbol, { delisted, apr }) => [
             <>
-              {status === "DELISTED" && <Delisted />}
+              {delisted && <Delisted />}
               {getLpName(symbol)}
             </>,
             apr && <Percent>{apr}</Percent>,

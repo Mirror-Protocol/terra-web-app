@@ -15,8 +15,8 @@ import { useAddress } from "../hooks"
 import { useProtocol } from "../data/contract/protocol"
 import { PriceKey } from "../hooks/contractKeys"
 import useTax from "../hooks/useTax"
-import { useFindBalanceStore } from "../data/contract/normalize"
-import { useFindPriceStore } from "../data/contract/normalize"
+import { useFindBalance } from "../data/contract/normalize"
+import { useFindPrice } from "../data/contract/normalize"
 
 import FormGroup from "../components/FormGroup"
 import { TooltipIcon } from "../components/Tooltip"
@@ -56,8 +56,8 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   const address = useAddress()
   const { getSymbol } = useProtocol()
 
-  const { contents: findBalance } = useFindBalanceStore()
-  const findPrice = useFindPriceStore() // to calc shuttle fee
+  const { contents: findBalance } = useFindBalance()
+  const findPrice = useFindPrice() // to calc shuttle fee
 
   /* form:validate */
   const getIsShuttleAvailable = (network: string, symbol: string) =>
