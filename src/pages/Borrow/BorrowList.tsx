@@ -16,6 +16,7 @@ const BorrowList = () => {
   const { filter, compare, renderSearch } = useListFilter("", Sorters)
 
   const dataSource = list
+    .filter(({ symbol }) => symbol !== "MIR")
     .filter(({ name, symbol }) => [name, symbol].some(filter))
     .sort(compare)
 
