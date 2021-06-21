@@ -11,7 +11,7 @@
     "@sentry/react": "^6.3.6",
     "@sentry/tracing": "^6.3.6",
     "@terra-money/terra.js": "^1.7.0",
-    "@terra-money/wallet-provider": "^0.14.0",
+    "@terra-money/wallet-provider": "^1.0.0",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^13.1.8",
