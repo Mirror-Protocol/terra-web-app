@@ -23,7 +23,7 @@ const useLatest = () => {
 
   const isClosed = (symbol: string) => {
     const ticker = symbol.slice(1)
-    return false && symbol !== "uusd" && closed[ticker] === "CLOSED"
+    return symbol !== "uusd" && closed[ticker] === "CLOSED"
   }
 
   return { isClosed, error }
