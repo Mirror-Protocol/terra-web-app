@@ -53,10 +53,9 @@ $container-gutter-horizontal-mobile: 16px;
 $container-gutter-horizontal-desktop: 32px;
 
 $gutter-horizontal-mobile: 28px;
-$gutter-horizontal-desktop: 32px;
-$gutter: $gutter-horizontal-desktop;
+$gutter-horizontal-desktop: 20px;
 $gutter-vertical-mobile: 12px;
-$gutter-vertical-desktop: 12px;
+$gutter-vertical-desktop: 20px;
 
 $header-height-mobile: 54px;
 $header-height-desktop: 54px;
@@ -69,7 +68,7 @@ $card-padding-header-mobile: $card-padding-vertical-mobile
 $card-padding-main-mobile: 8px $gutter-horizontal-mobile
   $card-padding-vertical-mobile;
 
-$card-padding-horizontal-desktop: $gutter-horizontal-desktop;
+$card-padding-horizontal-desktop: 32px;
 $card-padding-vertical-desktop: 40px;
 $card-padding-header-desktop: $card-padding-vertical-desktop
   $card-padding-horizontal-desktop 0px;

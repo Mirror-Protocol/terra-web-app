@@ -2,14 +2,14 @@
 
 .toast {
   position: fixed;
-  top: $gutter;
-  right: $gutter;
+  top: $gutter-horizontal-desktop;
+  right: $gutter-horizontal-desktop;
   z-index: 9999;
 
   background: $gray-22;
   border-radius: $border-radius;
   box-shadow: 0 10px 40px 0 fade-out(black, 0.7);
-  padding: $gutter;
+  padding: $gutter-horizontal-desktop;
   text-align: center;
   width: 260px;
 }
@@ -59,5 +59,5 @@
 .content {
   color: $white-92;
   font-size: 12px;
-  margin-bottom: $gutter;
+  margin-bottom: $gutter-horizontal-desktop;
 }

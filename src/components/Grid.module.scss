@@ -1,11 +1,6 @@
 @use "sass:math";
 @import "mixins";
 
-$gutter-horizontal-mobile: 16px;
-$gutter-vertical-mobile: 12px;
-$gutter-horizontal-desktop: 32px;
-$gutter-vertical-desktop: 28px;
-
 $margin-horizontal-mobile: math.div($gutter-horizontal-mobile, 2);
 $margin-vertical-mobile: math.div($gutter-vertical-mobile, 2);
 $margin-horizontal-desktop: math.div($gutter-horizontal-desktop, 2);
