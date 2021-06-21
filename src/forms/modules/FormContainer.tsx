@@ -159,7 +159,7 @@ export const Component = ({ data: msgs, memo, ...props }: Props) => {
 
     const txFee = (
       <Formatted symbol="uusd" dp={6}>
-        {plus(tax, fee.amount)}
+        {plus(!deduct ? tax : 0, fee.amount)}
       </Formatted>
     )
 
