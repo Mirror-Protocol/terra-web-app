@@ -1,12 +1,9 @@
-import { atom, noWait, selector, useRecoilValue } from "recoil"
+import { atom, selector } from "recoil"
 import { div, gt, sum } from "../../libs/math"
 import { PriceKey, BalanceKey, StakingKey } from "../../hooks/contractKeys"
-import { getLoadableContents } from "../utils/loadable"
 import { useStore, useStoreLoadable } from "../utils/loadable"
 import { exchangeRatesQuery } from "../native/exchange"
 import { bankBalanceQuery } from "../native/balance"
-import { externalPricesQuery } from "../external/external"
-import { externalBalancesQuery } from "../external/external"
 import { useExternalBalances } from "../external/external"
 import { useExternalPrices } from "../external/external"
 import { protocolQuery, useProtocol } from "./protocol"
@@ -322,28 +319,6 @@ export const useMIRPrice = () => {
 }
 
 /* hooks:find */
-export const findPriceQuery = selector({
-  key: "findPrice",
-  get: ({ get }) => {
-    const { getPriceKey } = get(protocolQuery)
-
-    const dictionary = {
-      [PriceKey.PAIR]: getLoadableContents(get(noWait(pairPricesQuery))) ?? {},
-      [PriceKey.ORACLE]:
-        getLoadableContents(get(noWait(oraclePricesQuery))) ?? {},
-      [PriceKey.NATIVE]:
-        getLoadableContents(get(noWait(nativePricesQuery))) ?? {},
-      [PriceKey.PRE]: getLoadableContents(get(noWait(prePricesQuery))) ?? {},
-      [PriceKey.END]: getLoadableContents(get(noWait(endPricesQuery))) ?? {},
-      [PriceKey.EXTERNAL]:
-        getLoadableContents(get(noWait(externalPricesQuery))) ?? {},
-    }
-
-    return (key: PriceKey, token: string) =>
-      dictionary[getPriceKey(key, token)][token]
-  },
-})
-
 export const useFindPrice = () => {
   const { getPriceKey } = useProtocol()
 
@@ -367,24 +342,6 @@ export const useFindPrice = () => {
     dictionary[getPriceKey(key, token)][token]
 }
 
-export const findBalanceQuery = selector({
-  key: "findBalance",
-  get: ({ get }) => {
-    const { getBalanceKey } = get(protocolQuery)
-
-    const dictionary = {
-      [BalanceKey.NATIVE]:
-        getLoadableContents(get(noWait(nativeBalancesQuery))) ?? {},
-      [BalanceKey.TOKEN]:
-        getLoadableContents(get(noWait(tokenBalancesQuery))) ?? {},
-      [BalanceKey.EXTERNAL]:
-        getLoadableContents(get(noWait(externalBalancesQuery))) ?? {},
-    }
-
-    return (token: string) => dictionary[getBalanceKey(token)][token]
-  },
-})
-
 export const useFindBalance = () => {
   const { getBalanceKey } = useProtocol()
 
@@ -405,41 +362,6 @@ export const useFindBalance = () => {
     ),
   }
 }
-
-export const findQuery = selector({
-  key: "find",
-  get: ({ get }) => {
-    const findPrice = get(findPriceQuery)
-    const findBalance = get(findBalanceQuery)
-
-    return (key: PriceKey | BalanceKey, token: string) =>
-      isPriceKey(key) ? findPrice(key, token) : findBalance(token)
-  },
-})
-
-export const useFind = () => {
-  return useRecoilValue(findQuery)
-}
-
-export const findStakingQuery = selector({
-  key: "findStaking",
-  get: ({ get }) => {
-    const dictionary = {
-      [StakingKey.LPSTAKABLE]:
-        getLoadableContents(get(noWait(lpStakableBalancesQuery))) ?? {},
-      [StakingKey.LPSTAKED]:
-        getLoadableContents(get(noWait(lpStakedBalancesQuery))) ?? {},
-      [StakingKey.SLPSTAKED]:
-        getLoadableContents(get(noWait(slpStakedBalancesQuery))) ?? {},
-      [StakingKey.LPREWARD]:
-        getLoadableContents(get(noWait(lpRewardBalancesQuery))) ?? {},
-      [StakingKey.SLPREWARD]:
-        getLoadableContents(get(noWait(slpRewardBalancesQuery))) ?? {},
-    }
-
-    return (key: StakingKey, token: string) => dictionary[key][token]
-  },
-})
 
 export const useFindStaking = () => {
   const lpStakableBalances = useLpStakableBalances()
@@ -480,9 +402,6 @@ export const dict = <Data, Item = string>(
   )
 
 /* helpers */
-const isPriceKey = (key: string): key is PriceKey =>
-  Object.values(PriceKey).some((k) => k === key)
-
 export const parsePairPool = ({ assets, total_share }: PairPool) => ({
   uusd: assets.find(({ info }) => "native_token" in info)?.amount ?? "0",
   asset: assets.find(({ info }) => "token" in info)?.amount ?? "0",
