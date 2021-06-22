@@ -1,15 +1,14 @@
-import { selector, useRecoilValue } from "recoil"
+import { atom, selector } from "recoil"
 import { request } from "graphql-request"
 import { gt } from "../../libs/math"
+import { useStoreLoadable } from "../utils/loadable"
 import { addressState } from "../wallet"
 import { statsURLQuery } from "../network"
-import { locationKeyState } from "../app"
 import { AIRDROP } from "./gqldocs"
 
 const airdropQuery = selector({
   key: "airdrop",
   get: async ({ get }) => {
-    get(locationKeyState)
     const address = get(addressState)
 
     if (address) {
@@ -25,8 +24,13 @@ const airdropQuery = selector({
   },
 })
 
+const airdropState = atom<Airdrop | undefined>({
+  key: "airdropState",
+  default: undefined,
+})
+
 const useAirdrop = () => {
-  return useRecoilValue(airdropQuery)
+  return useStoreLoadable(airdropQuery, airdropState)
 }
 
 export default useAirdrop

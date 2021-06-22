@@ -1,14 +1,14 @@
 import useNewContractMsg from "../libs/useNewContractMsg"
 import { formatAsset } from "../libs/parse"
 import { useProtocol } from "../data/contract/protocol"
-import useAirdrops from "../data/stats/airdrop"
+import useAirdrop from "../data/stats/airdrop"
 import Container from "../components/Container"
 import FormContainer from "./modules/FormContainer"
 
 const AirdropForm = () => {
   /* context */
   const { contracts } = useProtocol()
-  const airdrop = useAirdrops()
+  const airdrop = useAirdrop()
 
   /* confirm */
   const contents = !airdrop
