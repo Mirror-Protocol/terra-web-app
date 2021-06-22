@@ -15,12 +15,15 @@ const AirdropToast = () => {
       </button>
 
       <Image height={80} className={styles.image} />
-      <header className={styles.header}>MIR Airdrop</header>
-      <p className={styles.content}>Claim your MIR tokens</p>
 
-      <LinkButton to="/airdrop" onClick={close} color="blue" size="sm" block>
-        Claim
-      </LinkButton>
+      <section>
+        <header className={styles.header}>MIR Airdrop</header>
+        <p className={styles.content}>Claim your MIR tokens</p>
+
+        <LinkButton to="/airdrop" onClick={close} color="blue" size="sm" block>
+          Claim
+        </LinkButton>
+      </section>
     </div>
   )
 }

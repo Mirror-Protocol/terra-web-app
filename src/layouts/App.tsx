@@ -1,11 +1,12 @@
+import { useAddress } from "../hooks"
 import routes from "../routes"
 import { MenuKey, getPath } from "../routes"
-
 import Menu from "../components/Menu"
-import Boundary from "../components/Boundary"
+import Boundary, { bound } from "../components/Boundary"
 import { useAlertByNetwork } from "./init"
 import { useInitAddress, useInitNetwork, useLocationKey } from "./init"
 import AlertNetwork from "./AlertNetwork"
+import Airdrop from "./Airdrop"
 import Layout from "./Layout"
 import Nav from "./Nav"
 import Header from "./Header"
@@ -25,6 +26,7 @@ const App = () => {
   useInitAddress()
   useInitNetwork()
   const alert = useAlertByNetwork()
+  const address = useAddress()
 
   const menu = Object.entries(icons).map(([key, icon]) => ({
     icon,
@@ -39,6 +41,7 @@ const App = () => {
       nav={<Nav />}
       menu={<Menu list={menu} />}
       header={<Header />}
+      banner={address && bound(<Airdrop />)}
       footer={<Footer />}
     >
       <Boundary>{routes()}</Boundary>

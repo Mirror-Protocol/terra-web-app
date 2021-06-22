@@ -6,10 +6,11 @@ interface Props {
   nav: ReactNode
   menu: ReactNode
   header: ReactNode
+  banner: ReactNode
   footer: ReactNode
 }
 
-const Layout: FC<Props> = ({ nav, menu, header, footer, children }) => {
+const Layout: FC<Props> = ({ nav, menu, header, banner, footer, children }) => {
   return (
     <div className={styles.layout}>
       <div className={styles.aside}>
@@ -22,6 +23,7 @@ const Layout: FC<Props> = ({ nav, menu, header, footer, children }) => {
       </div>
 
       <div className={styles.header}>{header}</div>
+      <div className={styles.banner}>{banner}</div>
       <Container>{children}</Container>
 
       <div className={styles.navigate}>{menu}</div>
