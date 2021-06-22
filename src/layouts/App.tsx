@@ -1,5 +1,5 @@
 import routes from "../routes"
-import { MenuKey, getPath, gnb } from "../routes"
+import { MenuKey, getPath } from "../routes"
 
 import Menu from "../components/Menu"
 import Boundary from "../components/Boundary"
@@ -13,6 +13,7 @@ import Footer from "./Footer"
 import "./App.scss"
 
 const icons: Dictionary<IconNames> = {
+  [MenuKey.MY]: "MyPage",
   [MenuKey.TRADE]: "Trade",
   [MenuKey.BORROW]: "Borrow",
   [MenuKey.FARM]: "Farm",
@@ -25,9 +26,9 @@ const App = () => {
   useInitNetwork()
   const alert = useAlertByNetwork()
 
-  const menu = Object.values(gnb).map((key: MenuKey) => ({
-    icon: icons[key],
-    attrs: { to: getPath(key), children: key },
+  const menu = Object.entries(icons).map(([key, icon]) => ({
+    icon,
+    attrs: { to: getPath(key as MenuKey), children: key },
   }))
 
   return alert ? (

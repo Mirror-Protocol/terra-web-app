@@ -45,8 +45,6 @@ export enum MenuKey {
   LIMIT = "Limit order",
 }
 
-export const gnb = [MenuKey.TRADE, MenuKey.BORROW, MenuKey.FARM, MenuKey.GOV]
-
 export const menu: Dictionary<RouteProps> = {
   [MenuKey.DASHBOARD]: { path: "/", exact: true, component: Dashboard },
   [MenuKey.MY]: { path: "/my", component: My },

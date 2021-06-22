@@ -73,6 +73,7 @@ type IconNames =
   | "Mobile"
   | "Mode"
   | "MoreCircle"
+  | "MyPage"
   | "Plus"
   | "Poll"
   | "PollSolid"

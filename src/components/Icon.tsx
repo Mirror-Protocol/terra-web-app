@@ -36,6 +36,7 @@ import { ReactComponent as Mirror } from "../styles/icons/Mirror.svg"
 import { ReactComponent as Mobile } from "../styles/icons/Mobile.svg"
 import { ReactComponent as Mode } from "../styles/icons/Mode.svg"
 import { ReactComponent as MoreCircle } from "../styles/icons/MoreCircle.svg"
+import { ReactComponent as MyPage } from "../styles/icons/MyPage.svg"
 import { ReactComponent as Plus } from "../styles/icons/Plus.svg"
 import { ReactComponent as Poll } from "../styles/icons/Poll.svg"
 import { ReactComponent as PollSolid } from "../styles/icons/PollSolid.svg"
@@ -97,6 +98,7 @@ const Icon = ({ name, size = 16, className }: Props) => {
     Mobile: <Mobile {...props} />,
     Mode: <Mode {...props} />,
     MoreCircle: <MoreCircle {...props} />,
+    MyPage: <MyPage {...props} />,
     Plus: <Plus {...props} />,
     Poll: <Poll {...props} />,
     PollSolid: <PollSolid {...props} />,
