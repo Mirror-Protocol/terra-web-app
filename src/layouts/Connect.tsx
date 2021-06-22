@@ -9,16 +9,20 @@ const Connect = ({ className }: { className?: string }) => {
   const address = useAddress()
   const modal = useModal()
 
-  return !address ? (
-    <>
-      <ConnectButton className={className} onClick={() => modal.open()}>
-        {MESSAGE.Wallet.Connect}
-      </ConnectButton>
+  return (
+    <div className={className}>
+      {!address ? (
+        <>
+          <ConnectButton onClick={() => modal.open()}>
+            {MESSAGE.Wallet.Connect}
+          </ConnectButton>
 
-      <ConnectListModal {...modal} />
-    </>
-  ) : (
-    <Connected className={className} />
+          <ConnectListModal {...modal} />
+        </>
+      ) : (
+        <Connected />
+      )}
+    </div>
   )
 }
 
