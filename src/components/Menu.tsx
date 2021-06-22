@@ -1,23 +1,20 @@
+import { CSSProperties } from "react"
 import { NavLink } from "react-router-dom"
-import classNames from "classnames"
-import styles from "./Menu.module.scss"
 import Icon from "./Icon"
+import styles from "./Menu.module.scss"
 
 interface MenuItem {
   icon: IconNames
   attrs: { to: string; children: string }
-  desktopOnly?: boolean
+  style: CSSProperties
 }
 
 const Menu = ({ list }: { list: MenuItem[] }) => {
   return (
     <ul className={styles.menu}>
-      {list.map(({ icon, attrs, desktopOnly }) => {
+      {list.map(({ icon, attrs, style }) => {
         return (
-          <li
-            className={classNames(styles.item, { desktop: desktopOnly })}
-            key={attrs.children}
-          >
+          <li className={styles.item} style={style} key={attrs.children}>
             <NavLink
               {...attrs}
               exact={attrs.to === "/"}

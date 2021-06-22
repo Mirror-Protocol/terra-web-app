@@ -29,6 +29,7 @@ const App = () => {
   const menu = Object.entries(icons).map(([key, icon]) => ({
     icon,
     attrs: { to: getPath(key as MenuKey), children: key },
+    style: { order: Number(key === MenuKey.MY) },
   }))
 
   return alert ? (
