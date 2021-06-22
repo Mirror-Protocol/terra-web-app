@@ -24,9 +24,9 @@ const networks: Record<string, MirrorNetworkInfo> = {
   },
   testnet: {
     name: "testnet",
-    chainId: "tequila-0004",
-    lcd: "https://tequila-lcd.terra.dev/",
-    fcd: "https://tequila-fcd.terra.dev/",
+    chainID: "tequila-0004",
+    lcd: "https://tequila-lcd.terra.dev",
+    fcd: "https://tequila-fcd.terra.dev",
     id: "tequila-0004",
     contract: "/tequila.json",
     swap: "/swap.json",

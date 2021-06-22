@@ -2,7 +2,8 @@
 @import "variables";
 
 .modal {
-  width: 460px;
+  width: 100%;
+  max-width: $modal-width;
   outline: 0;
   position: relative;
 }
@@ -20,9 +21,9 @@
 
 .close {
   position: absolute;
-  width: calc(100% - 50px);
+  right: 25px;
+  top: 25px;
   text-align: right;
-  margin-top: 25px;
   z-index: 1;
 
   span {

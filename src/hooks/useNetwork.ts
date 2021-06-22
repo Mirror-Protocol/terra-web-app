@@ -7,11 +7,6 @@ const useNetwork = () => {
 
   const network = networks[extNetwork.name]
 
-  console.log("extNetwork")
-  console.log(extNetwork)
-  console.log("network")
-  console.log(network)
-
   const finder = (address: string, path: string = "account") =>
     `${FINDER}/${extNetwork.chainID}/${path}/${address}`
 

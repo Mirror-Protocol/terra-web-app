@@ -8,8 +8,13 @@ import { useLocation } from "react-router-dom"
 import { isNil } from "ramda"
 import useNewContractMsg from "terra/useNewContractMsg"
 import { LP, LUNA, MAX_SPREAD, ULUNA } from "constants/constants"
-import { useNetwork, useContractsAddress, useContract, useAddress } from "hooks"
-import { ConnectType, useWallet } from "@terra-money/wallet-provider"
+import {
+  useNetwork,
+  useContractsAddress,
+  useContract,
+  useAddress,
+  useConnectModal,
+} from "hooks"
 import { format, lookup } from "libs/parse"
 import { decimal } from "libs/parse"
 import { toAmount } from "libs/parse"
@@ -43,8 +48,6 @@ import SvgArrow from "images/arrow.svg"
 import SvgPlus from "images/plus.svg"
 import Button from "components/Button"
 import MESSAGE from "lang/MESSAGE.json"
-import { useModal } from "components/Modal"
-import SupportModal from "layouts/SupportModal"
 import SwapConfirm from "./SwapConfirm"
 import useAPI from "rest/useAPI"
 import terraExtension, { PostResponse } from "terra/extension"
@@ -103,17 +106,13 @@ const postTerraExtension = (
 }
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
+  const connectModal = useConnectModal()
   const { toToken, isNativeToken, getSymbol } = useContractsAddress()
   const { loadTaxInfo, loadTaxRate } = useAPI()
   const { state } = useLocation<{ symbol: string }>()
   const { fee } = useNetwork()
   const { find } = useContract()
   const walletAddress = useAddress()
-  const { connect, availableConnectTypes } = useWallet()
-  const isWalletInstalled = useMemo(() => {
-    return availableConnectTypes.includes(ConnectType.CHROME_EXTENSION)
-  }, [availableConnectTypes])
-  const modal = useModal()
 
   const { pairs } = usePairs()
   const balanceKey = {
@@ -708,7 +707,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
 
   return (
     <Wrapper>
-      {availableConnectTypes.join()}
       <Container sm>
         {formState.isSubmitted && result && (
           <Result
@@ -717,7 +715,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
             onFailure={handleFailure}
           />
         )}
-        <SupportModal {...modal} />
         <form
           onSubmit={form.handleSubmit(handleSubmit, handleFailure)}
           style={{ display: formState.isSubmitted ? "none" : "block" }}
@@ -888,7 +885,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
                 </p>
               </div>
               <Button
-                {...(isWalletInstalled && walletAddress
+                {...(walletAddress
                   ? {
                       children: type || "Submit",
                       loading: formState.isSubmitting,
@@ -903,10 +900,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
                       type: "submit",
                     }
                   : {
-                      onClick: () =>
-                        isWalletInstalled
-                          ? connect(ConnectType.CHROME_EXTENSION)
-                          : modal.open(),
+                      onClick: () => connectModal.open(),
                       type: "button",
                       children: MESSAGE.Form.Button.ConnectWallet,
                     })}
