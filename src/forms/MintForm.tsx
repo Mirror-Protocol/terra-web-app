@@ -548,12 +548,13 @@ const MintForm = ({ position, type }: Props) => {
     ? [MESSAGE.Form.Validate.CollateralRatio.Safe]
     : undefined
 
-  const closeMessages =
-    !findBalanceStore.isLoading &&
-    prevAsset &&
-    !gte(findBalance(token2), prevAsset.amount)
-      ? [<>{linkToBuy} to close position</>]
-      : undefined
+  const closeMessages = isMarketClosed
+    ? [marketClosedMessage]
+    : !findBalanceStore.isLoading &&
+      prevAsset &&
+      !gte(findBalance(token2), prevAsset.amount)
+    ? [<>{linkToBuy} to close position</>]
+    : undefined
 
   const messages = touched[Key.ratio]
     ? ratioMessages
