@@ -22,14 +22,16 @@ const ClaimUSTForm = () => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const data = gt(totalUnlockedUST, 0)
-    ? dataSource
-        .filter(({ unlocked }) => gt(unlocked, 0))
-        .map(({ idx }) =>
-          newContractMsg(contracts["lock"], {
-            unlock_position_funds: { position_idx: idx },
-          })
-        )
+  const ids = dataSource
+    .filter(({ unlocked }) => gt(unlocked, 0))
+    .map(({ idx }) => idx)
+
+  const data = ids.length
+    ? [
+        newContractMsg(contracts["lock"], {
+          unlock_position_funds: { position_idx: ids },
+        }),
+      ]
     : []
 
   const disabled = !gt(totalUnlockedUST, 0)
