@@ -62,6 +62,9 @@ interface AssetDataItem {
   statistic: {
     liquidity: string
     volume: string
+    marketCap: string
+    collateralValue: string
+    minCollateralRatio: string
     apr: APR
   }
 }

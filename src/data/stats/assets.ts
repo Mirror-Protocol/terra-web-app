@@ -137,6 +137,9 @@ export const getAssetsHelpers = (assets: Dictionary<AssetDataItem>) => {
     description: getValueFromAsset("description"),
     liquidity: getValueFromAsset("statistic.liquidity"),
     volume: getValueFromAsset("statistic.volume"),
+    marketCap: getValueFromAsset("statistic.marketCap"),
+    collateralValue: getValueFromAsset("statistic.collateralValue"),
+    minCollateralRatio: getValueFromAsset("statistic.minCollateralRatio"),
     longAPR: getValueFromAsset("statistic.apr.long"),
     shortAPR: getValueFromAsset("statistic.apr.short"),
   }

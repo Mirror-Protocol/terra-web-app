@@ -1,5 +1,5 @@
 import Tooltips from "../../lang/Tooltips"
-import { lt, gt, number } from "../../libs/math"
+import { gt, number, minus } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useTerraAssetList } from "../../data/stats/list"
 import { useAssetsHistory, useFindChanges } from "../../data/stats/assets"
@@ -18,21 +18,17 @@ import { TradeType } from "../../types/Types"
 const Sorters: Dictionary<Sorter> = {
   TOPTRADING: {
     label: "Top Trading",
-    compare: (a, b) => (lt(a.volume ?? 0, b.volume ?? 0) ? 1 : -1),
+    compare: (a, b) => number(minus(b.volume, a.volume)),
   },
   TOPGAINER: {
     label: "Top Gainer",
     compare: (a, b) =>
-      lt(a.change?.[PriceKey.PAIR] ?? 0, b.change?.[PriceKey.PAIR] ?? 0)
-        ? 1
-        : -1,
+      number(minus(b.change?.[PriceKey.PAIR], a.change?.[PriceKey.PAIR])),
   },
   TOPLOSER: {
     label: "Top Loser",
     compare: (a, b) =>
-      lt(a.change?.[PriceKey.PAIR] ?? 0, b.change?.[PriceKey.PAIR] ?? 0)
-        ? -1
-        : 1,
+      number(minus(a.change?.[PriceKey.PAIR], b.change?.[PriceKey.PAIR])),
   },
 }
 

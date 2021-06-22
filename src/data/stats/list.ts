@@ -12,6 +12,9 @@ export interface DefaultItem extends ListedItem {
 
   liquidity: string
   volume: string
+  marketCap: string
+  collateralValue: string
+  minCollateralRatio: string
   apr: { long: string; short?: string }
 
   recommended: FarmingType
@@ -25,7 +28,8 @@ export const useTerraAssetList = () => {
   const { listed } = useProtocol()
   const helpers = useAssetsHelpersByNetwork()
   const { [PriceKey.PAIR]: getPair, [PriceKey.ORACLE]: getOracle } = helpers
-  const { volume, liquidity, longAPR, shortAPR } = helpers
+  const { volume, liquidity, marketCap, collateralValue } = helpers
+  const { minCollateralRatio, longAPR, shortAPR } = helpers
 
   return listed
     .map((item): Item => {
@@ -46,6 +50,9 @@ export const useTerraAssetList = () => {
         liquidity: liquidity(token),
         apr: { long, short },
         recommended: long && short && gt(short, long) ? "short" : "long",
+        marketCap: marketCap(token),
+        collateralValue: collateralValue(token),
+        minCollateralRatio: minCollateralRatio(token),
       }
     })
     .filter(({ liquidity }) => !liquidity || gt(liquidity, 0))
