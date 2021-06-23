@@ -1,5 +1,6 @@
 import { PriceKey } from "../../hooks/contractKeys"
 import { div, gt, minus } from "../../libs/math"
+import { useFindPrice } from "../contract/normalize"
 import { useProtocol } from "../contract/protocol"
 import { useAssetsHelpersByNetwork, useFindChange } from "./assets"
 
@@ -26,17 +27,17 @@ export interface Item extends DefaultItem {
 
 export const useTerraAssetList = () => {
   const { listed } = useProtocol()
+  const findPrice = useFindPrice()
   const findChange = useFindChange()
   const helpers = useAssetsHelpersByNetwork()
-  const { [PriceKey.PAIR]: getPair, [PriceKey.ORACLE]: getOracle } = helpers
   const { volume, liquidity, marketCap, collateralValue } = helpers
   const { minCollateralRatio, longAPR, shortAPR } = helpers
 
   return listed
     .map((item): Item => {
       const { token } = item
-      const pairPrice = getPair(token)
-      const oraclePrice = getOracle(token)
+      const pairPrice = findPrice(PriceKey.PAIR, token)
+      const oraclePrice = findPrice(PriceKey.ORACLE, token)
       const long = longAPR(token)
       const short = shortAPR(token)
 

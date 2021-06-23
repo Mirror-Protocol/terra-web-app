@@ -57,11 +57,6 @@ export const ASSETS = {
         token
         description
 
-        prices {
-          price
-          oraclePrice
-        }
-
         statistic {
           liquidity(network: $network)
           volume(network: $network)
@@ -77,7 +72,7 @@ export const ASSETS = {
     }
   `,
 
-  PRICES: gql`
+  CHANGE: gql`
     query assets($timestamp: Float!) {
       assets {
         token

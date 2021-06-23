@@ -64,13 +64,12 @@ const assetsHistoryState = atom<Dictionary<PriceHistoryItem[]>>({
   default: {},
 })
 
-interface AssetPrices {
-  [PriceKey.PAIR]: { price: string; change?: number }
-  [PriceKey.ORACLE]: { price: string; change?: number }
-}
+type Changes =
+  | { [PriceKey.PAIR]?: number; [PriceKey.ORACLE]?: number }
+  | undefined
 
-export const pricesQuery = selector({
-  key: "prices",
+export const changesQuery = selector({
+  key: "changes",
   get: async ({ get }) => {
     interface Asset {
       token: string
@@ -87,36 +86,30 @@ export const pricesQuery = selector({
     const yesterday = getTime(subDays(startOfMinute(new Date()), 1))
     const { assets } = await request<{ assets: Asset[] }>(
       url + "?assetsChanges",
-      ASSETS.PRICES,
+      ASSETS.CHANGE,
       { timestamp: yesterday }
     )
 
-    return assets.reduce<Dictionary<AssetPrices>>((acc, { token, prices }) => {
+    return assets.reduce<Dictionary<Changes>>((acc, { token, prices }) => {
       const { price, priceAt, oraclePrice, oraclePriceAt } = prices
       return {
         ...acc,
         [token]: {
-          [PriceKey.PAIR]: {
-            price: price,
-            change: calcChange({
-              today: price,
-              yesterday: priceAt ?? undefined,
-            }),
-          },
-          [PriceKey.ORACLE]: {
-            price: oraclePrice,
-            change: calcChange({
-              today: oraclePrice,
-              yesterday: oraclePriceAt ?? undefined,
-            }),
-          },
+          [PriceKey.PAIR]: calcChange({
+            today: price,
+            yesterday: priceAt ?? undefined,
+          }),
+          [PriceKey.ORACLE]: calcChange({
+            today: oraclePrice,
+            yesterday: oraclePriceAt ?? undefined,
+          }),
         },
       }
     }, {})
   },
 })
 
-const changesState = atom<Dictionary<AssetPrices>>({
+const changesState = atom<Dictionary<Changes>>({
   key: "changesState",
   default: {},
 })
@@ -139,8 +132,6 @@ export const getAssetsHelpers = (assets: Dictionary<AssetDataItem>) => {
     path(key.split("."), assets[token]) as string
 
   return {
-    [PriceKey.PAIR]: getValueFromAsset("prices.price"),
-    [PriceKey.ORACLE]: getValueFromAsset("prices.oraclePrice"),
     description: getValueFromAsset("description"),
     liquidity: getValueFromAsset("statistic.liquidity"),
     volume: getValueFromAsset("statistic.volume"),
@@ -153,7 +144,7 @@ export const getAssetsHelpers = (assets: Dictionary<AssetDataItem>) => {
 }
 
 export const useChanges = () => {
-  return useStoreLoadable(pricesQuery, changesState)
+  return useStoreLoadable(changesQuery, changesState)
 }
 
 export const useFindChanges = () => {
@@ -166,7 +157,7 @@ export const useFindChange = () => {
   return (key: PriceKey, token: string) => {
     if (!hasChanges(key)) return
     const changes = findChanges(token)
-    return changes[key]?.change
+    return changes[key]
   }
 }
 

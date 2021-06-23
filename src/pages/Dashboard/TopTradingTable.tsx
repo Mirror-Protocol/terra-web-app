@@ -2,6 +2,7 @@ import { useRecoilValue } from "recoil"
 import { minus, number } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useProtocol } from "../../data/contract/protocol"
+import { useFindPrice } from "../../data/contract/normalize"
 import { useAssetsHelpersByNetwork } from "../../data/stats/assets"
 import { dashboardNetworkState } from "../../data/stats/statistic"
 import Table from "../../components/Table"
@@ -13,14 +14,14 @@ import styles from "./TopTradingTable.module.scss"
 
 const TopTradingTable = () => {
   const { listed } = useProtocol()
+  const findPrice = useFindPrice()
   const network = useRecoilValue(dashboardNetworkState)
-  const { [PriceKey.PAIR]: findPrice, volume } =
-    useAssetsHelpersByNetwork(network)
+  const { volume } = useAssetsHelpersByNetwork(network)
 
   const dataSource = listed
     .map((item) => ({
       ...item,
-      price: findPrice(item.token),
+      price: findPrice(PriceKey.PAIR, item.token),
       volume: volume(item.token),
     }))
     .sort(({ volume: a }, { volume: b }) => number(minus(b, a)))

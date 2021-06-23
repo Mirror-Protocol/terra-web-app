@@ -6,6 +6,7 @@ import { format, formatAsset } from "../libs/parse"
 import { div, minus } from "../libs/math"
 import { percent } from "../libs/num"
 import { PriceKey } from "../hooks/contractKeys"
+import { useFindPrice } from "../data/contract/normalize"
 import { useAssetHistory } from "../data/stats/asset"
 import { useAssetsHelpersByNetwork, useFindChange } from "../data/stats/assets"
 import Change from "../components/Change"
@@ -20,6 +21,7 @@ const cx = classNames.bind(styles)
 
 const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
   const now = startOfMinute(new Date())
+  const findPrice = useFindPrice()
   const findChange = useFindChange()
   const helpers = useAssetsHelpersByNetwork()
 
@@ -62,8 +64,8 @@ const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
   const history = useAssetHistory(params)
 
   /* render */
-  const price = helpers.pair(token)
-  const oraclePrice = helpers.oracle(token)
+  const price = findPrice(PriceKey.PAIR, token)
+  const oraclePrice = findPrice(PriceKey.ORACLE, token)
   const volume = helpers.volume(token)
   const liquidity = helpers.liquidity(token)
   const description = helpers.description(token)

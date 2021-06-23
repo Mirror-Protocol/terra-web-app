@@ -53,12 +53,6 @@ interface AssetDataItem {
   token: string
   description?: string
 
-  prices: {
-    price: string
-    priceAt: string
-    oraclePrice: string
-  }
-
   statistic: {
     liquidity: string
     volume: string
