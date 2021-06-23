@@ -15,6 +15,9 @@
 
   svg {
     fill: $blue;
+    @include mobile {
+      margin-left: 4px;
+    }
   }
 }
 
