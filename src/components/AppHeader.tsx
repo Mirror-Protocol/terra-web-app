@@ -4,17 +4,14 @@ import styles from "./AppHeader.module.scss"
 
 interface Props {
   logo: ReactNode
-  connect: ReactNode
 }
 
-const AppHeader = ({ logo, connect }: Props) => {
+const AppHeader = ({ logo }: Props) => {
   return (
     <header className={styles.header}>
       <Link to="/" className={styles.logo}>
         {logo}
       </Link>
-
-      <section className={styles.connect}>{connect}</section>
     </header>
   )
 }

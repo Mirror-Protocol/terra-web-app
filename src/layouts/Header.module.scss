@@ -1,7 +1,10 @@
 @import "mixins";
 
+$item-gutter: 20px;
+
 .header {
   @include flex;
+  margin: 0 (-$item-gutter / 2);
 
   @include mobile {
     justify-content: space-between;
@@ -12,23 +15,23 @@
   }
 }
 
-.network {
-  flex: 1;
-  text-align: right;
-}
-
 .item {
   @include flex;
 
   @include mobile {
     height: $header-height-mobile;
-    padding: 0 $container-gutter-horizontal-mobile;
+    padding: 0 ($item-gutter / 2);
   }
 
   @include desktop {
     height: $header-height-desktop;
-    padding: 0 $container-gutter-horizontal-desktop;
+    padding: 0 ($item-gutter / 2);
   }
+}
+
+.network {
+  flex: 1;
+  justify-content: flex-end;
 }
 
 .docs svg {
