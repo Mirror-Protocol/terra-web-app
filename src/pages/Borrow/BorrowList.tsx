@@ -68,16 +68,16 @@ const BorrowList = () => {
               desktop: true,
             },
             {
-              key: "marketCap",
-              title: "Market Cap",
+              key: "collateralValue",
+              title: "Collateral Value",
               render: (value) =>
                 gt(value, 0) && <Formatted symbol="uusd">{value}</Formatted>,
               align: "right",
               desktop: true,
             },
             {
-              key: "collateralValue",
-              title: "Collateral Value",
+              key: "marketCap",
+              title: "Market Cap",
               render: (value) =>
                 gt(value, 0) && <Formatted symbol="uusd">{value}</Formatted>,
               align: "right",
