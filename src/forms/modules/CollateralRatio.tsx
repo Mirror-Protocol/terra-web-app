@@ -1,9 +1,10 @@
 import classNames from "classnames/bind"
+import { COLLATERAL_RATIO } from "../../constants"
 import Tooltips from "../../lang/Tooltips"
-import { times, div, gt, gte, lt } from "../../libs/math"
+import { times, div, gt, lt, minus } from "../../libs/math"
 import { decimal } from "../../libs/parse"
 import { percent, percentage } from "../../libs/num"
-import Progress from "../../components/Progress"
+import Progress, { ProgressBarColor } from "../../components/Progress"
 import { TooltipIcon } from "../../components/Tooltip"
 import Formatted from "../../components/Formatted"
 import styles from "./CollateralRatio.module.scss"
@@ -22,6 +23,13 @@ const getX = (ratio: string, min: string) => {
   const x = div(ratio, times(min, 2))
   return lt(x, 0) ? "0" : gt(x, 1) ? "1" : x
 }
+
+export const getState = (diff: string): "danger" | "warning" | "none" =>
+  lt(diff, COLLATERAL_RATIO.DANGER)
+    ? "danger"
+    : lt(diff, COLLATERAL_RATIO.WARNING)
+    ? "warning"
+    : "none"
 
 const CollateralRatio = ({ min, safe, ratio, compact, onRatio }: Props) => {
   const minText = `Min: ${percent(min)}`
@@ -49,7 +57,10 @@ const CollateralRatio = ({ min, safe, ratio, compact, onRatio }: Props) => {
     ),
   }
 
-  const color = gte(ratio, safe) ? "blue" : "red"
+  const state = getState(minus(ratio, min))
+  const color = { none: "blue", warning: "orange", danger: "red" }[
+    state
+  ] as ProgressBarColor
 
   return (
     <div className={cx(styles.component, { compact })}>

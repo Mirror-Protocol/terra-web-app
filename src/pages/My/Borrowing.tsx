@@ -1,4 +1,4 @@
-import classNames from "classnames"
+import classNames from "classnames/bind"
 import Tooltips from "../../lang/Tooltips"
 import { plus } from "../../libs/math"
 import { decimal, formatAsset, lookupSymbol } from "../../libs/parse"
@@ -16,6 +16,8 @@ import CollateralRatio from "../../forms/modules/CollateralRatio"
 import ShortBadge from "./ShortBadge"
 import CaptionData from "./CaptionData"
 import styles from "./Borrowing.module.scss"
+
+const cx = classNames.bind(styles)
 
 const Borrowing = () => {
   const { dataSource, totalMintedValue, totalCollateralValue } =
@@ -67,18 +69,23 @@ const Borrowing = () => {
           {
             key: "mintedAsset",
             title: ["Ticker", "ID"],
-            render: ({ symbol, delisted }, { idx, state, is_short }) => {
-              const className = classNames(styles.idx, { red: state })
-              const tooltip =
-                state === "warning"
-                  ? Tooltips.My.PositionWarning
-                  : Tooltips.My.PositionDanger
+            render: (
+              { symbol, delisted },
+              { idx, state, is_short, willBeLiquidated }
+            ) => {
+              const tooltip = willBeLiquidated
+                ? Tooltips.My.PositionDanger
+                : state === "danger"
+                ? Tooltips.My.PositionWarning
+                : undefined
+
+              const className = cx(styles.ticker, { red: tooltip })
 
               return [
                 <>
                   {delisted && <Delisted />}
                   <span className={className}>
-                    {state && (
+                    {tooltip && (
                       <Tooltip content={tooltip}>
                         <Icon name="ExclamationCircleSolid" size={16} />
                       </Tooltip>

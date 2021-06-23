@@ -1,14 +1,12 @@
 import { useRecoilValue } from "recoil"
-import { gte, lt, lte, minus, sum, times } from "../../libs/math"
+import { gte, lte, minus, sum, times } from "../../libs/math"
 import calc from "../../libs/calc"
 import { useProtocol } from "../contract/protocol"
 import { useFindPrice } from "../contract/normalize"
 import { useMintPositions } from "../contract/positions"
 import { getMintPriceKeyQuery } from "../contract/collateral"
 import { useGetMinRatio } from "../contract/collateral"
-
-const WARNING = 0.3
-const DANGER = 0
+import { getState } from "../../forms/modules/CollateralRatio"
 
 export const useMyBorrowing = () => {
   const { getIsDelisted, parseToken } = useProtocol()
@@ -40,11 +38,8 @@ export const useMyBorrowing = () => {
       })
 
       const minRatio = getMinRatio(collateral.token, asset.token)
-      const state = lt(minus(ratio, minRatio), DANGER)
-        ? "danger"
-        : lte(minus(ratio, minRatio), WARNING)
-        ? "warning"
-        : ""
+      const diffRatio = minus(ratio, minRatio)
+      const state = getState(diffRatio)
 
       /* status */
       const status: ListedItemStatus =
@@ -68,6 +63,7 @@ export const useMyBorrowing = () => {
         ratio,
         minRatio,
         state,
+        willBeLiquidated: lte(diffRatio, 0),
       }
     })
     .filter(({ collateralAsset, mintedAsset }) => {

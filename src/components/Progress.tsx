@@ -6,10 +6,11 @@ import styles from "./Progress.module.scss"
 
 const cx = classNames.bind(styles)
 
+export type ProgressBarColor = "blue" | "orange" | "red" | "gray"
 interface Item {
   value: string
   label?: string
-  color?: "blue" | "red" | "gray"
+  color?: ProgressBarColor
 }
 
 interface Props {
