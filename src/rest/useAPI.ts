@@ -95,6 +95,7 @@ interface TokenResult {
   symbol: string
   decimals: number
   total_supply: string
+  contract_addr: string
 }
 
 interface PoolResponse {
@@ -153,7 +154,7 @@ export function isNativeInfo(object: any): object is NativeInfo {
 }
 
 export default () => {
-  const { fcd, factory } = useNetwork()
+  const { fcd, factory, service } = useNetwork()
   const { address } = useWallet()
   const { getSymbol } = useContractsAddress()
   const getURL = useURL()
@@ -217,6 +218,25 @@ export default () => {
       pairs: [],
     }
     let lastPair: (NativeInfo | AssetInfo)[] | null = null
+
+    try {
+      const url = `${service}/pairs`
+      const res: PairsResult = (await axios.get(url)).data
+
+      if (res.pairs.length !== 0) {
+        res.pairs.filter((pair) => 
+          !isBlacklisted(pair?.asset_infos?.[0]) &&
+          !isBlacklisted(pair?.asset_infos?.[1])
+        ).forEach((pair) => {
+          result.pairs.push(pair)
+        })
+
+        return result
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
     while (true) {
       const url = getURL(factory, {
         pairs: { limit: 30, start_after: lastPair },
@@ -244,7 +264,13 @@ export default () => {
       lastPair = pairs.result.pairs.slice(-1)[0]?.asset_infos
     }
     return result
-  }, [factory, getURL])
+  }, [service, factory, getURL])
+
+  const loadTokensInfo = useCallback(async (): Promise<TokenResult[]> => {
+    const url = `${service}/tokens`
+    const res: TokenResult[] = (await axios.get(url)).data
+    return res
+  }, [service])
 
   const loadTokenInfo = useCallback(
     async (contract: string): Promise<TokenResult> => {
@@ -301,6 +327,7 @@ export default () => {
     loadContractBalance,
     loadGasPrice,
     loadPairs,
+    loadTokensInfo,
     loadTokenInfo,
     loadPool,
     querySimulate,

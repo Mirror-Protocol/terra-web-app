@@ -23,6 +23,7 @@ interface NetworkConfig {
   /** Fixed fee */
   fee: { gasPrice: string; amount: string; gas: string }
   factory: string
+  service: string
 }
 
 interface ExtNetworkConfig {
