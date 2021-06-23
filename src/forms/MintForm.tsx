@@ -460,7 +460,12 @@ const MintForm = ({ position, type }: Props) => {
 
   const isCollateralNative = getIsTokenNative(token1)
   const slippage = useRecoilValue(slippageQuery)
-  const belief = decimal(div(1, price), 18)
+  const pairPrice = div(
+    findPrice(PriceKey.PAIR, token2),
+    findPrice(PriceKey.PAIR, token1)
+  )
+
+  const belief = decimal(div(1, pairPrice), 18)
 
   const createSend = (msg: object, amount?: string) => ({
     send: { amount, contract: contracts["mint"], msg: toBase64(msg) },
