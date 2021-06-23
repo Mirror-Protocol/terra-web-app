@@ -2,12 +2,14 @@ import { atom, selector } from "recoil"
 import { useStoreLoadable } from "../utils/loadable"
 import { getListedContractQueriesQuery } from "../utils/queries"
 import { getContractQueryQuery } from "../utils/query"
+import { pairPriceKeyState } from "../app"
 import { addressState } from "../wallet"
 import { protocolQuery } from "./protocol"
 
 export const pairPoolQuery = selector({
   key: "pairPool",
   get: async ({ get }) => {
+    get(pairPriceKeyState)
     const getListedContractQueries = get(getListedContractQueriesQuery)
     return await getListedContractQueries<PairPool>(
       ({ token, pair }) => ({ token, contract: pair, msg: { pool: {} } }),

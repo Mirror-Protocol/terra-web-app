@@ -10,7 +10,6 @@ import useForm, { Values } from "../libs/useForm"
 import { validate as v, placeholder, step, toBase64 } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
 import getLpName from "../libs/getLpName"
-import { usePolling } from "../hooks"
 import { PriceKey, BalanceKey, StakingKey } from "../hooks/contractKeys"
 import { useProtocol } from "../data/contract/protocol"
 import { useFindBalance, useFindPrice } from "../data/contract/normalize"
@@ -50,7 +49,6 @@ const PoolForm = ({ type }: Props) => {
   const findPrice = useFindPrice()
   const { contents: findStaking } = useFindStaking()
   const getPool = usePool()
-  usePolling()
 
   const getBalance = (token: string) =>
     ({

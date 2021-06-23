@@ -1,4 +1,5 @@
 import { useAddress } from "../hooks"
+import { usePolling } from "../data/app"
 import routes from "../routes"
 import { MenuKey, getPath } from "../routes"
 import Menu from "../components/Menu"
@@ -22,6 +23,7 @@ const icons: Dictionary<IconNames> = {
 }
 
 const App = () => {
+  usePolling()
   useLocationKey()
   useInitAddress()
   useInitNetwork()

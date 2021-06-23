@@ -7,7 +7,6 @@ import useNewContractMsg from "../libs/useNewContractMsg"
 import { COMMISSION } from "../constants"
 import Tooltips from "../lang/Tooltips"
 import { div, gt, times } from "../libs/math"
-import { usePolling } from "../hooks"
 import { dp, format, lookup, lookupSymbol } from "../libs/parse"
 import { decimal } from "../libs/parse"
 import { toAmount } from "../libs/parse"
@@ -57,7 +56,6 @@ const TradeForm = ({ type }: { type: TradeType }) => {
   const { getToken, getSymbol, toToken } = helpers
   const { contents: findBalance } = useFindBalance()
   const findPrice = useFindPrice() // to validate target price (limit order)
-  usePolling()
 
   /* form:limit */
   const limitOrderState = useState(false)
