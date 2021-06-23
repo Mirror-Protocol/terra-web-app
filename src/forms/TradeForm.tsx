@@ -123,7 +123,7 @@ const TradeForm = ({ type }: { type: TradeType }) => {
   const { pair } = whitelist[token] ?? {}
   const buying = type === TradeType.BUY
   const selling = type === TradeType.SELL
-  const reverse = form.changed === Key.value2 || (isLimitOrder && buying)
+  const reverse = form.changed === Key.value2
 
   const simulationParams = Object.assign(
     { pair, type, reverse },
@@ -137,23 +137,21 @@ const TradeForm = ({ type }: { type: TradeType }) => {
 
   /* change another amount on simulate */
   useEffect(() => {
-    const key = reverse ? Key.value1 : Key.value2
+    const key = isLimitOrder
+      ? type === TradeType.BUY
+        ? Key.value1
+        : Key.value2
+      : reverse
+      ? Key.value1
+      : Key.value2
     const symbol = reverse ? symbol1 : symbol2
     const targetAmount = {
-      [TradeType.BUY]: target
-        ? reverse
-          ? times(value2, target)
-          : div(value1, target)
-        : "",
-      [TradeType.SELL]: target
-        ? reverse
-          ? div(value2, target)
-          : times(value1, target)
-        : "",
+      [TradeType.BUY]: times(value2, target),
+      [TradeType.SELL]: times(value1, target),
     }[type]
 
     const next = isLimitOrder
-      ? decimal(targetAmount || "0", dp(symbol))
+      ? decimal(targetAmount || "0", dp())
       : simulated
       ? lookup(simulated.amount, symbol)
       : error && ""
@@ -169,6 +167,8 @@ const TradeForm = ({ type }: { type: TradeType }) => {
     setValues,
     type,
     target,
+    value1,
+    value2,
     symbol1,
     symbol2,
     error,
@@ -194,7 +194,6 @@ const TradeForm = ({ type }: { type: TradeType }) => {
         type: "number",
         step: step("uusd"),
         placeholder: placeholder("uusd"),
-        autoFocus: true,
       },
       unit: `UST per ${symbol}`,
       help: {
