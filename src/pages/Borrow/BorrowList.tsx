@@ -61,6 +61,13 @@ const BorrowList = () => {
               align: "right",
             },
             {
+              key: "minCollateralRatio",
+              title: "Min Collateral Ratio",
+              render: (value) => <Percent>{value}</Percent>,
+              align: "right",
+              desktop: true,
+            },
+            {
               key: "marketCap",
               title: "Market Cap",
               render: (value) =>
@@ -73,13 +80,6 @@ const BorrowList = () => {
               title: "Collateral Value",
               render: (value) =>
                 gt(value, 0) && <Formatted symbol="uusd">{value}</Formatted>,
-              align: "right",
-              desktop: true,
-            },
-            {
-              key: "minCollateralRatio",
-              title: "Min Collateral Ratio",
-              render: (value) => <Percent>{value}</Percent>,
               align: "right",
               desktop: true,
             },
