@@ -10,7 +10,7 @@ import styles from "./ChartContainer.module.scss"
 const cx = classNames.bind(styles)
 
 /* styles */
-const $font = "'Gotham A', 'Gotham B'"
+const $font = '"Gotham SSm A", "Gotham SSm B"'
 const $blue = "#66adff"
 const $red = "#f15e7e"
 const $gray34 = "#555557"
