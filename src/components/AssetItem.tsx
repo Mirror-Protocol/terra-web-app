@@ -33,7 +33,9 @@ const AssetItem: FC<Props> = ({ token, size, idle, children, ...props }) => {
         {children ? (
           <section className={styles.content}>{children}</section>
         ) : name ? (
-          <section className={classNames(styles.content, styles.name)}>
+          <section
+            className={classNames(styles.content, styles.name, "desktop")}
+          >
             {name}
           </section>
         ) : null}

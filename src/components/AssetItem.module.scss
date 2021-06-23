@@ -2,6 +2,7 @@
 
 .asset {
   @include flex(flex-start);
+  min-height: 36px;
 }
 
 .header {
