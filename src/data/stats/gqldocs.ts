@@ -65,6 +65,9 @@ export const ASSETS = {
         statistic {
           liquidity(network: $network)
           volume(network: $network)
+          marketCap
+          collateralValue
+          minCollateralRatio
           apr {
             long
             short
