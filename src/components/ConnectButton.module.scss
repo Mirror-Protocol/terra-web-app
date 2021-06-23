@@ -17,8 +17,10 @@
     fill: $blue;
     margin-left: 4px;
   }
+}
 
-  @include desktop {
+@include desktop {
+  .component {
     @include transition(background-color);
 
     background-color: $gray-14;
@@ -31,6 +33,10 @@
     &:hover {
       background-color: fade-out($blue, 0.9);
     }
+  }
+
+  .connected {
+    border: solid 1px $gray-24;
   }
 }
 

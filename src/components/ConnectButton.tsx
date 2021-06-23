@@ -1,17 +1,20 @@
 import { FC, forwardRef } from "react"
-import classNames from "classnames"
+import classNames from "classnames/bind"
 import Icon from "./Icon"
 import styles from "./ConnectButton.module.scss"
 
+const cx = classNames.bind(styles)
+
 interface Props {
+  connected?: boolean
   className?: string
   onClick?: () => void
 }
 
 const ConnectButton: FC<Props> = forwardRef(
-  ({ className, onClick, children }, ref: any) => {
+  ({ connected, className, onClick, children }, ref: any) => {
     const attrs = {
-      className: classNames(styles.component, className),
+      className: cx(styles.component, className, { connected }),
       children: (
         <>
           <section className={styles.wrapper}>

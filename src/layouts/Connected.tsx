@@ -13,7 +13,7 @@ const Connected = () => {
 
   return (
     <Tippy {...DropdownTippyProps} render={() => <ConnectedInfo />} key={key}>
-      <ConnectButton>
+      <ConnectButton connected>
         <div className={styles.button}>{bound(<Balance />)}</div>
       </ConnectButton>
     </Tippy>
