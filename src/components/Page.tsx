@@ -26,17 +26,18 @@ const Page: FC<Props> = ({ title, description, children, ...props }) => {
       {title && (
         <header className={styles.header}>
           <section className={styles.heading}>
-            <h1 className={styles.title}>{title}</h1>
+            <h1 className={styles.title}>
+              {title}
+              {description && (
+                <span className={styles.description}>{description}</span>
+              )}
+            </h1>
 
             {select && <Select {...getSelectAttrs(select)} />}
           </section>
 
           {action && <section className={styles.action}>{action}</section>}
         </header>
-      )}
-
-      {description && (
-        <section className={styles.description}>{description}</section>
       )}
 
       <Boundary>
