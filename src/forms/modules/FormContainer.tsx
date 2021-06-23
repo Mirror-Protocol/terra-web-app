@@ -58,6 +58,7 @@ interface Props {
   gov?: boolean
 
   children?: ReactNode
+  full?: boolean
 }
 
 export type PostError =
@@ -67,7 +68,7 @@ export type PostError =
   | TxUnspecifiedError
 
 export const Component = ({ data: msgs, memo, ...props }: Props) => {
-  const { contents, messages, label, children } = props
+  const { contents, messages, label, children, full } = props
   const { attrs, pretax, deduct, parseTx = () => [], gov } = props
 
   /* context */
@@ -169,7 +170,7 @@ export const Component = ({ data: msgs, memo, ...props }: Props) => {
 
     return (
       <>
-        <Card confirm={contents && renderConfirm(contents)} lg>
+        <Card confirm={contents && renderConfirm(contents)} lg full={full}>
           {children}
         </Card>
 

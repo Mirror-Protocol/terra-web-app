@@ -817,11 +817,11 @@ const CreatePollForm = ({ type, headings }: Props) => {
       {fieldKeys.map(
         (key) =>
           !fields[key].input?.disabled && (
-            <FormGroup {...fields[key]} type={2} key={key} />
+            <FormGroup {...fields[key]} type={2} textAlign="left" key={key} />
           )
       )}
 
-      <FormGroup {...fields["deposit"]} type={2} />
+      <FormGroup {...fields["deposit"]} type={2} textAlign="left" />
     </FormContainer>
   )
 }

@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 import { reverse } from "ramda"
-import classNames from "classnames/bind"
 import { MsgExecuteContract } from "@terra-money/terra.js"
 
 import useNewContractMsg from "../libs/useNewContractMsg"
@@ -40,12 +39,10 @@ import useMintReceipt from "./receipts/useMintReceipt"
 import FormContainer from "./modules/FormContainer"
 import useSelectAsset from "./modules/useSelectAsset"
 import useLatest from "./modules/useLatest"
-import FormIcon from "./modules/FormIcon"
 import CollateralRatio from "./modules/CollateralRatio"
 import SetSlippageTolerance from "./modules/SetSlippageTolerance"
+import MintStep from "./MintStep"
 import styles from "./MintForm.module.scss"
-
-const cx = classNames.bind(styles)
 
 enum Key {
   value1 = "value1",
@@ -287,7 +284,7 @@ const MintForm = ({ position, type }: Props) => {
   const fields = getFields({
     [Key.value1]: {
       label: open ? (
-        "Collateralize"
+        ""
       ) : (
         <TooltipIcon content={Tooltips.Mint.Collateral}>Collateral</TooltipIcon>
       ),
@@ -307,18 +304,12 @@ const MintForm = ({ position, type }: Props) => {
     },
 
     [Key.value2]: {
-      label: edit ? (
-        short ? (
-          "Shorted"
-        ) : (
-          <TooltipIcon content={Tooltips.Mint.Asset}>Borrowed</TooltipIcon>
-        )
+      label: open ? (
+        ""
       ) : short ? (
-        <TooltipIcon content={Tooltips.Farm.Shorted}>to short</TooltipIcon>
+        "Shorted"
       ) : (
-        <TooltipIcon content={Tooltips.Mint.ExpectedMintedAsset}>
-          to borrow
-        </TooltipIcon>
+        <TooltipIcon content={Tooltips.Mint.Asset}>Borrowed</TooltipIcon>
       ),
       prev: edit ? format(prevAsset?.amount, symbol2) : undefined,
       input: {
@@ -328,7 +319,7 @@ const MintForm = ({ position, type }: Props) => {
       },
       unit: open ? select2.button : symbol2,
       assets: select2.assets,
-      help: renderBalance(findBalance(token2), symbol2),
+      help: open ? undefined : renderBalance(findBalance(token2), symbol2),
       focused: select2.isOpen,
       warn: invalidRepay ? (
         <>{linkToBuy} to repay</>
@@ -338,13 +329,7 @@ const MintForm = ({ position, type }: Props) => {
     },
 
     [Key.ratio]: {
-      label: open ? (
-        <TooltipIcon content={Tooltips.Mint.CollateralRatio}>
-          at collateral ratio
-        </TooltipIcon>
-      ) : (
-        "Collateral Ratio (%)"
-      ),
+      label: open ? "" : "Collateral Ratio (%)",
       prev: edit ? (prevRatio ? percentage(prevRatio) : "") : undefined,
       input: { type: "number", step: step(), placeholder: "" },
       unit: open ? "%" : "",
@@ -585,6 +570,43 @@ const MintForm = ({ position, type }: Props) => {
     deduct,
   }
 
+  const steps = [
+    {
+      index: 1,
+      title: `Choose a Collateral Asset`,
+      content: `Choose a collateral asset for the ${
+        short ? "short" : "borrowing"
+      } position. The type of collateral asset may affect the minimum collateral ratio.`,
+      render: <FormGroup {...fields[Key.value1]} type={2} />,
+    },
+    {
+      index: 2,
+      title: `Set a Collateral Ratio`,
+      content: `Set a collateral ratio for the position. When the ratio drops below the minimum collateral ratio, the position will be liquidated.`,
+      render: (
+        <section className={styles.group}>
+          <CollateralRatio {...ratioProps} />
+          <FormGroup {...fields[Key.ratio]} type={2} skipFeedback />
+        </section>
+      ),
+    },
+    {
+      index: 3,
+      title: `${short ? "Short" : "Borrow"} an mAsset`,
+      content: `Choose an mAsset to ${short ? "short" : "borrow"} below. ${
+        short ? "Short" : "Borrowing"
+      } positions may be closed in My Page to receive back the underlying collateral.`,
+      render: <FormGroup {...fields[Key.value2]} type={2} />,
+      action: short && <SetSlippageTolerance />,
+      info: short && (
+        <FormFeedback type="help">
+          The short amount will be immediately sold after the position is
+          opened.
+        </FormFeedback>
+      ),
+    },
+  ]
+
   return (
     <WithPriceChart token={token2}>
       {type === MintType.CLOSE ? (
@@ -600,23 +622,10 @@ const MintForm = ({ position, type }: Props) => {
           <FormFeedback type="warn">{Tooltips.Mint.Caution}</FormFeedback>
         </FormContainer>
       ) : (
-        <FormContainer {...container} {...tax} parseTx={parseTx}>
-          {short && (
-            <section className={cx(styles.header, { right: short })}>
-              <SetSlippageTolerance />
-            </section>
-          )}
-
-          <FormGroup {...fields[Key.value1]} />
-          <FormGroup {...fields[Key.ratio]} skipFeedback />
-          <FormIcon name="ArrowDown" />
-          <FormGroup {...fields[Key.value2]} />
-
-          <section className={styles.ratio}>
-            <CollateralRatio {...ratioProps} />
-          </section>
-
-          <FormFeedback type="warn">{Tooltips.Mint.Caution}</FormFeedback>
+        <FormContainer {...container} {...tax} parseTx={parseTx} full>
+          {steps.map((step) => (
+            <MintStep {...step} key={step.index} />
+          ))}
         </FormContainer>
       )}
     </WithPriceChart>

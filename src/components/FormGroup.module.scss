@@ -182,9 +182,14 @@ $padding: 18px 24px;
   margin-right: 12px;
 }
 
-.type-1 .field,
-.type-1 .field input {
+.field,
+.field input {
   text-align: right;
+}
+
+.left,
+.left input {
+  text-align: left;
 }
 
 .unit:last-child {

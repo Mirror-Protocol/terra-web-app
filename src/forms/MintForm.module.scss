@@ -1,14 +1,5 @@
 @import "mixins";
 
-.header {
-  @include flex;
-  margin-bottom: 24px;
-
-  &.right {
-    justify-content: flex-end;
-  }
-}
-
 .message {
   @include flex(flex-start);
   display: inline-flex;
@@ -29,4 +20,26 @@
 
 .ratio {
   margin-top: 32px;
+}
+
+.group {
+  @include mobile {
+    > :last-child {
+      margin-top: $card-padding-vertical-mobile;
+    }
+  }
+
+  @include desktop {
+    @include flex;
+
+    > :first-child {
+      flex: 1;
+    }
+
+    > :last-child {
+      flex: none;
+      width: 100px;
+      margin-left: 20px;
+    }
+  }
 }

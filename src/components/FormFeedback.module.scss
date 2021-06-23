@@ -12,7 +12,7 @@
 
   svg {
     flex: none;
-    margin-right: 12px;
+    margin-right: 8px;
     margin-top: 2px;
   }
 }
@@ -22,6 +22,9 @@
 }
 
 .help {
+  padding: 0;
+  color: $white-64;
+
   svg {
     fill: $white-44;
   }

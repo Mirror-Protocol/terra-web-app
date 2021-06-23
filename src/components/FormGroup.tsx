@@ -42,6 +42,7 @@ export interface FormGroupInterface {
   warn?: ReactNode
   info?: ReactNode
   type?: 1 | 2 | 3
+  textAlign?: "left"
   size?: AssetSize
   skipFeedback?: boolean
   unitAfterValue?: boolean
@@ -50,7 +51,7 @@ export interface FormGroupInterface {
 const FormGroup = (props: FormGroupInterface) => {
   const { prev, input, textarea, select, value } = props
   const { label, help, unit, max, assets, focused, error, warn, info } = props
-  const { type = 1, size = "sm", skipFeedback } = props
+  const { type = 1, textAlign, size = "sm", skipFeedback } = props
 
   const inputRef = useRef<HTMLInputElement>(null)
   const inputAttrs: Input = {
@@ -104,7 +105,7 @@ const FormGroup = (props: FormGroupInterface) => {
       <section className={styles.wrapper}>
         {isNil(prev) && !unitAfterValue && renderUnit()}
 
-        <section className={styles.field}>
+        <section className={cx(styles.field, textAlign)}>
           {input ? (
             <input {...inputAttrs} ref={inputRef} />
           ) : textarea ? (
