@@ -2,7 +2,6 @@ import Tooltips from "../../lang/Tooltips"
 import { minus, max, number } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useProtocol } from "../../data/contract/protocol"
-import { useFindChanges } from "../../data/stats/assets"
 import { useTerraAssetList } from "../../data/stats/list"
 import Table from "../../components/Table"
 import Percent from "../../components/Percent"
@@ -39,12 +38,10 @@ const Sorters: Dictionary<Sorter> = {
 const FarmList = () => {
   const { getSymbol } = useProtocol()
   const list = useTerraAssetList()
-  const findChanges = useFindChanges()
   const { filter, compare, renderSearch } = useListFilter("APR", Sorters)
 
   const dataSource = list
     .filter(({ symbol, name }) => [symbol, name].some(filter))
-    .map((item) => ({ ...item, change: findChanges(item.token) }))
     .sort(compare)
     .sort((a, b) => Number(b.symbol === "MIR") - Number(a.symbol === "MIR"))
 

@@ -1,7 +1,7 @@
 import { PriceKey } from "../../hooks/contractKeys"
 import { div, gt, minus } from "../../libs/math"
 import { useProtocol } from "../contract/protocol"
-import { useAssetsHelpersByNetwork } from "./assets"
+import { useAssetsHelpersByNetwork, useFindChange } from "./assets"
 
 type FarmingType = "long" | "short"
 
@@ -21,11 +21,12 @@ export interface DefaultItem extends ListedItem {
 }
 
 export interface Item extends DefaultItem {
-  change?: { [PriceKey.PAIR]?: number; [PriceKey.ORACLE]?: number }
+  change?: number
 }
 
 export const useTerraAssetList = () => {
   const { listed } = useProtocol()
+  const findChange = useFindChange()
   const helpers = useAssetsHelpersByNetwork()
   const { [PriceKey.PAIR]: getPair, [PriceKey.ORACLE]: getOracle } = helpers
   const { volume, liquidity, marketCap, collateralValue } = helpers
@@ -43,6 +44,7 @@ export const useTerraAssetList = () => {
         ...item,
         [PriceKey.PAIR]: pairPrice,
         [PriceKey.ORACLE]: oraclePrice,
+        change: findChange(PriceKey.PAIR, token),
         premium: oraclePrice
           ? minus(div(pairPrice, oraclePrice), 1)
           : undefined,

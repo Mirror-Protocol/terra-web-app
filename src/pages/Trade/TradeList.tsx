@@ -2,7 +2,7 @@ import Tooltips from "../../lang/Tooltips"
 import { gt, number, minus } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useTerraAssetList } from "../../data/stats/list"
-import { useAssetsHistory, useFindChanges } from "../../data/stats/assets"
+import { useAssetsHistory } from "../../data/stats/assets"
 
 import Table from "../../components/Table"
 import Change from "../../components/Change"
@@ -22,25 +22,21 @@ const Sorters: Dictionary<Sorter> = {
   },
   TOPGAINER: {
     label: "Top Gainer",
-    compare: (a, b) =>
-      number(minus(b.change?.[PriceKey.PAIR], a.change?.[PriceKey.PAIR])),
+    compare: (a, b) => number(minus(b.change, a.change)),
   },
   TOPLOSER: {
     label: "Top Loser",
-    compare: (a, b) =>
-      number(minus(a.change?.[PriceKey.PAIR], b.change?.[PriceKey.PAIR])),
+    compare: (a, b) => number(minus(a.change, b.change)),
   },
 }
 
 const TradeList = () => {
   const list = useTerraAssetList()
-  const findChanges = useFindChanges()
   const history = useAssetsHistory()
   const { filter, compare, renderSearch } = useListFilter("TOPTRADING", Sorters)
 
   const dataSource = list
     .filter(({ name, symbol }) => [name, symbol].some(filter))
-    .map((item) => ({ ...item, change: findChanges(item.token) }))
     .sort(compare)
 
   return (
@@ -67,7 +63,7 @@ const TradeList = () => {
               render: (price, { change }) =>
                 gt(price, 0) && [
                   <Formatted unit="UST">{price}</Formatted>,
-                  <Change align="right">{change?.[PriceKey.PAIR]}</Change>,
+                  <Change align="right">{change}</Change>,
                 ],
               align: "right",
             },

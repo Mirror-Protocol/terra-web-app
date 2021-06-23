@@ -77,7 +77,7 @@ export const ASSETS = {
     }
   `,
 
-  CHANGE: gql`
+  PRICES: gql`
     query assets($timestamp: Float!) {
       assets {
         token
