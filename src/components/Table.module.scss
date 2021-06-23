@@ -1,10 +1,10 @@
 @import "mixins";
 
-$padding-caption-mobile: 16px $gutter-horizontal-mobile;
+$padding-caption-mobile: 16px $card-padding-horizontal-mobile;
 $padding-th-mobile: 16px 16px;
 $padding-td-mobile: 16px 16px;
 
-$padding-caption-desktop: 20px $gutter-horizontal-desktop;
+$padding-caption-desktop: 20px $card-padding-horizontal-desktop;
 $padding-th-desktop: 20px 16px;
 $padding-td-desktop: 24px 16px;
 
@@ -31,21 +31,21 @@ $padding-td-desktop: 24px 16px;
 .caption {
   @include mobile {
     &:first-child {
-      padding-left: $gutter-horizontal-mobile;
+      padding-left: $card-padding-horizontal-mobile;
     }
 
     &:last-child {
-      padding-right: $gutter-horizontal-mobile;
+      padding-right: $card-padding-horizontal-mobile;
     }
   }
 
   @include desktop {
     &:first-child {
-      padding-left: $gutter-horizontal-desktop;
+      padding-left: $card-padding-horizontal-desktop;
     }
 
     &:last-child {
-      padding-right: $gutter-horizontal-desktop;
+      padding-right: $card-padding-horizontal-desktop;
     }
   }
 }

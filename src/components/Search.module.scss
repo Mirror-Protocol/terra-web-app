@@ -17,12 +17,12 @@
 
   @include mobile {
     padding: 16px 12px;
-    padding-left: $gutter-horizontal-mobile;
+    padding-left: $card-padding-horizontal-mobile;
   }
 
   @include desktop {
     padding: 20px 12px;
-    padding-left: $gutter-horizontal-desktop;
+    padding-left: $card-padding-horizontal-desktop;
   }
 
   padding-right: 8px;
@@ -44,10 +44,10 @@
   font-weight: 500;
 
   @include mobile {
-    padding-right: $gutter-horizontal-mobile;
+    padding-right: $card-padding-horizontal-mobile;
   }
 
   @include desktop {
-    padding-right: $gutter-horizontal-desktop;
+    padding-right: $card-padding-horizontal-desktop;
   }
 }
