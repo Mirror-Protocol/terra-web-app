@@ -87,6 +87,7 @@
   "Send": {
     "ShuttleFee": "A fee of 1 UST or 0.1% of the transfer amount (whichever is greater) will be charged for transferring assets from Terra to Ethereum/BSC through Shuttle"
   },
+
   "Trade": {
     "Chart": "Chart displaying 24 hours price movement",
     "Premium": "Percentage difference between Terraswap and Oracle price",
@@ -94,7 +95,12 @@
     "MinimumReceived": "Expected minimum quantity to be received based on the current price, maximum spread, and commission",
     "SlippageTolerance": "Your transaction will revert if the price changes by more than this percentage."
   },
+
   "Mint": {
+    "MinimumCollateralRatio": "Lowest collateral ratio to borrow this asset",
+    "CollateralValue": "Total value of locked collateral",
+    "MarketCap": "Total value of borrowed asset",
+
     "Open": "New assets will be borrowed when collateral is deposited. Any price change of either the collateral or the borrowed assets may lead to liquidation.",
     "Caution": "Your position can be liquidated when it falls below the minimum collateral ratio",
 
@@ -110,6 +116,7 @@
     "ExpectedUST": "UST from shorting mAsset will be locked for 15 days",
     "ProtocolFee": "Paid from withdrawn collateral"
   },
+
   "Farm": {
     "LongAPR": "Annualized MIR reward return from providing the asset's liquidity.\nThe APR based on premium is updated once every hour.",
     "ShortAPR": "Annualized MIR reward return from depositing collateral to create short position.\nThe APR based on premium is updated once every hour.",

@@ -1,12 +1,13 @@
+import Tooltips from "../../lang/Tooltips"
 import { gt, minus, number } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useTerraAssetList } from "../../data/stats/list"
-
 import Table from "../../components/Table"
 import Formatted from "../../components/Formatted"
 import Percent from "../../components/Percent"
 import AssetItem from "../../components/AssetItem"
 import useListFilter, { Sorter } from "../../components/useListFilter"
+import { TooltipIcon } from "../../components/Tooltip"
 import AssetsIdleTable from "../../containers/AssetsIdleTable"
 import { MintType } from "../../types/Types"
 
@@ -62,14 +63,22 @@ const BorrowList = () => {
             },
             {
               key: "minCollateralRatio",
-              title: "Min Collateral Ratio",
+              title: (
+                <TooltipIcon content={Tooltips.Mint.MinimumCollateralRatio}>
+                  Min Collateral Ratio
+                </TooltipIcon>
+              ),
               render: (value) => <Percent>{value}</Percent>,
               align: "right",
               desktop: true,
             },
             {
               key: "collateralValue",
-              title: "Collateral Value",
+              title: (
+                <TooltipIcon content={Tooltips.Mint.CollateralValue}>
+                  Collateral Value
+                </TooltipIcon>
+              ),
               render: (value) =>
                 gt(value, 0) && <Formatted symbol="uusd">{value}</Formatted>,
               align: "right",
@@ -77,7 +86,11 @@ const BorrowList = () => {
             },
             {
               key: "marketCap",
-              title: "Market Cap",
+              title: (
+                <TooltipIcon content={Tooltips.Mint.MarketCap}>
+                  Market Cap
+                </TooltipIcon>
+              ),
               render: (value) =>
                 gt(value, 0) && <Formatted symbol="uusd">{value}</Formatted>,
               align: "right",
