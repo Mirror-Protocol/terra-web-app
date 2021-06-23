@@ -41,7 +41,7 @@ $active: $blue;
 
   @include mobile {
     @include flex;
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 500;
     height: $navigate-height-mobile;
     text-transform: uppercase;

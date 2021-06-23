@@ -15,7 +15,6 @@
 
   svg {
     fill: $blue;
-    margin-left: 4px;
   }
 }
 
@@ -28,7 +27,7 @@
     border-radius: 17px;
     height: 32px;
     padding: 0 14px;
-    width: 160px;
+    width: 170px;
 
     &:hover {
       background-color: fade-out($blue, 0.9);

@@ -6,14 +6,15 @@
   select {
     appearance: none;
     font-size: 12px;
-    padding-right: 30px;
+    padding-right: 12px;
+    direction: rtl;
   }
 
   svg {
     fill: $blue;
     position: absolute;
     top: 50%;
-    right: 12px;
+    right: 0;
     transform: translate(0, -50%);
     pointer-events: none;
   }
