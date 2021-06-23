@@ -361,7 +361,9 @@ const MintForm = ({ position, type }: Props) => {
   const price = div(findPrice(priceKey2, token2), findPrice(priceKey1, token1))
 
   const priceContents = {
-    title: <TooltipIcon content={Tooltips.Mint.Price}>Price</TooltipIcon>,
+    title: (
+      <TooltipIcon content={Tooltips.Mint.Price}>Oracle Price</TooltipIcon>
+    ),
     content: (
       <Formatted
         format={(value) => `1 ${lookupSymbol(symbol2)} ≈ ${format(value)}`}
