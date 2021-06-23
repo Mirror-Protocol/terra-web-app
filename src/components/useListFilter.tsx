@@ -24,6 +24,7 @@ const useListFilter = (initial: string, sorters: Dictionary<Sorter>) => {
           value: key,
           children: label,
         }))}
+        right
       />
     </Search>
   )

@@ -6,16 +6,26 @@
   select {
     appearance: none;
     font-size: 12px;
-    padding-right: 12px;
-    direction: rtl;
+    padding-right: 30px;
   }
 
   svg {
     fill: $blue;
     position: absolute;
     top: 50%;
-    right: 0;
+    right: 12px;
     transform: translate(0, -50%);
     pointer-events: none;
+  }
+}
+
+.right {
+  select {
+    padding-right: 12px;
+    direction: rtl;
+  }
+
+  svg {
+    right: 0;
   }
 }
