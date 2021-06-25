@@ -1,0 +1,69 @@
+@import "mixins";
+@import "variables";
+
+.component {
+  @include flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 300px;
+}
+
+/* search */
+$gutter-horizontal: 24px;
+$gutter-vertical: 16px;
+$gutter: $gutter-vertical $gutter-horizontal;
+
+.search {
+  @include flex(flex-start, stretch);
+  flex: none;
+  margin: 20px (-$gutter-horizontal) 0;
+  padding: 0 $gutter-horizontal;
+
+  background: fade-out($bg, 0.5);
+  height: 56px;
+
+  label {
+    @include flex;
+  }
+
+  svg {
+    fill: $blue;
+    margin-right: 12px;
+  }
+
+  input {
+    flex: 1;
+    font-size: 14px;
+  }
+}
+
+/* feedback */
+.feedback {
+  text-align: center;
+}
+
+/* assets */
+.list {
+  flex: 1;
+  margin: 0 -24px;
+  overflow-y: scroll;
+}
+
+.button {
+  @include transition(background-color);
+
+  width: 100%;
+
+  &.selected,
+  &:not(.disabled):hover {
+    background-color: fade-out(white, 0.95);
+  }
+
+  &.disabled {
+    opacity: 0.3;
+  }
+}
+
+.dim {
+  opacity: 0.3;
+}

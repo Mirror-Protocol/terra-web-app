@@ -1,0 +1,53 @@
+@import "mixins";
+
+.component {
+  @include flex(space-between, stretch);
+  background: $gray-14;
+  border-radius: 8px;
+  margin-bottom: $gutter-vertical-desktop;
+}
+
+.wrapper {
+  @include flex(flex-start, stretch);
+  flex: 1;
+}
+
+.icon {
+  @include flex;
+
+  @include mobile {
+    padding: 16px 12px;
+    padding-left: $card-padding-horizontal-mobile;
+  }
+
+  @include desktop {
+    padding: 20px 12px;
+    padding-left: $card-padding-horizontal-desktop;
+  }
+
+  padding-right: 8px;
+
+  svg {
+    fill: $blue;
+  }
+}
+
+.input {
+  flex: 1;
+  width: 100%;
+}
+
+.payload {
+  @include flex;
+  color: $blue;
+  font-size: 12px;
+  font-weight: 500;
+
+  @include mobile {
+    padding-right: $card-padding-horizontal-mobile;
+  }
+
+  @include desktop {
+    padding-right: $card-padding-horizontal-desktop;
+  }
+}

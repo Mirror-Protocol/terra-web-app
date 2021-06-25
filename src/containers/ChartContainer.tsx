@@ -1,134 +1,134 @@
-import { ReactNode } from "react"
-import { helpers, ChartData, ChartPoint, ChartOptions } from "chart.js"
-import { Line, defaults, Bar } from "react-chartjs-2"
+import { ChartData, ChartOptions, ScatterDataPoint } from "chart.js"
+import { Line, Bar } from "react-chartjs-2"
+import "chartjs-adapter-date-fns"
 import { format as formatDate } from "date-fns"
-import { gt, lt } from "../libs/math"
+import classNames from "classnames/bind"
+import { FMT } from "../constants"
 import { format } from "../libs/parse"
-import Change from "../components/Change"
 import styles from "./ChartContainer.module.scss"
 
-/* styles */
-const $font = "Poppins"
-const $darkblue = "#172240"
-const $aqua = "#47d7e2"
-const $red = "#e64c57"
-const $slate = "#505466"
-const $text = "#cccccc"
-const $line = helpers.color($slate).alpha(0.2).rgbString()
+const cx = classNames.bind(styles)
 
-defaults.global.defaultFontColor = $slate
-defaults.global.defaultFontFamily = $font
+/* styles */
+const $font = '"Gotham SSm A", "Gotham SSm B"'
+const $blue = "#66adff"
+const $red = "#f15e7e"
+const $gray34 = "#555557"
+const $gray22 = "#373738"
 
 interface Props {
-  value?: ReactNode
-  change?: string
-  datasets: ChartPoint[]
+  change?: number
+  datasets: ScatterDataPoint[]
   fmt?: { t: string }
   compact?: boolean
   bar?: boolean
 }
 
-const ChartContainer = ({ value, change, datasets, ...props }: Props) => {
+const ChartContainer = ({ change, datasets = [], ...props }: Props) => {
   const { fmt, compact, bar } = props
 
-  const borderColor =
-    (change && (gt(change, 0) ? $aqua : lt(change, 0) && $red)) || $text
-
-  const height = compact ? 120 : 240
+  const last = datasets[datasets.length - 1]?.y
+  const head = datasets[0]?.y
+  const borderColor = last > head ? $blue : last < head ? $red : $gray34
 
   const data: ChartData = {
     datasets: [
-      {
-        fill: false,
-        borderColor,
-        borderCapStyle: "round",
-        borderWidth: compact ? 2 : 6,
-        lineTension: compact ? 0.2 : 0.05,
-        pointRadius: 0,
-        pointHoverRadius: 0,
-        data: datasets,
-      },
+      Object.assign(
+        {
+          fill: !compact,
+          backgroundColor: $gray22,
+          borderColor: compact ? borderColor : $gray34,
+          borderWidth: 2,
+          tension: compact ? 0.2 : 0.05,
+          pointRadius: 0,
+          data: datasets,
+        },
+        compact
+          ? { pointHoverRadius: 0 }
+          : {
+              pointHoverRadius: 3,
+              pointHoverBorderWidth: 3,
+              pointHoverBackgroundColor: $blue,
+              pointHoverBorderColor: $blue,
+              hoverBackgroundColor: $blue,
+              hoverBorderColor: $blue,
+            }
+      ),
     ],
   }
 
-  const options: ChartOptions = {
+  const options: ChartOptions<"bar" | "line"> = {
+    interaction: { mode: "index", intersect: false },
     responsive: true,
     maintainAspectRatio: false,
     animation: { duration: 0 },
-    legend: { display: false },
-    layout: compact ? { padding: 20 } : undefined,
-    scales: {
-      xAxes: [
-        {
-          offset: true,
-          type: "time",
-          display: !compact,
-          ticks: {
-            source: "data",
-            autoSkip: true,
-            autoSkipPadding: 15,
-            maxRotation: 0,
-          },
-          gridLines: { display: false },
+    layout: compact ? undefined : { padding: { top: 40 } },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        enabled: !compact,
+        mode: "index",
+        intersect: false,
+        displayColors: false,
+        backgroundColor: "transparent",
+        cornerRadius: 5,
+        titleColor: $blue,
+        titleFont: { size: 16, weight: "500", family: $font },
+        titleAlign: "center",
+        bodyColor: $blue,
+        bodyFont: { size: 12, family: $font },
+        bodyAlign: "center",
+        xAlign: "center",
+        yAlign: "bottom",
+        callbacks: {
+          title: ([{ parsed }]) => format(String(parsed.y)),
+          label: ({ parsed }) =>
+            fmt
+              ? formatDate(new Date(parsed.x), fmt.t)
+              : formatDate(new Date(parsed.x), FMT.MMdd).toUpperCase(),
         },
-      ],
-      yAxes: [
-        {
-          display: !compact,
-          position: "right",
-          gridLines: {
-            drawBorder: false,
-            color: $line,
-            zeroLineColor: $line,
-          },
-          ticks: {
-            callback: (value) => format(value as string),
-            padding: 20,
-          },
-        },
-      ],
+      },
     },
-    tooltips: {
-      mode: "index",
-      intersect: false,
-      displayColors: false,
-      backgroundColor: "white",
-      cornerRadius: 5,
-      titleFontColor: $darkblue,
-      titleFontSize: 16,
-      titleFontStyle: "600",
-      bodyFontColor: $darkblue,
-      bodyFontSize: 12,
-      xPadding: 10,
-      yPadding: 8,
-      callbacks: {
-        title: ([{ value }]) => (value ? format(value) : ""),
-        label: ({ label }) =>
-          label
-            ? fmt
-              ? formatDate(new Date(label), fmt.t)
-              : new Date(label).toDateString()
-            : "",
+    scales: {
+      xAxes: {
+        type: "time",
+        display: false,
+        ticks: {
+          source: "auto",
+          autoSkip: true,
+          autoSkipPadding: 15,
+          maxRotation: 0,
+        },
+        grid: { display: false },
+      },
+
+      yAxes: {
+        display: false,
+        position: "right",
+        grid: {
+          drawBorder: false,
+        },
+        ticks: {
+          callback: (value) => format(value as string),
+          padding: 20,
+        },
       },
     },
   }
 
-  const chartProps = { height, data, options }
+  const chartProps = { data, options, height: compact ? 24 : undefined }
+  const render = () =>
+    bar ? (
+      <Bar type="bar" {...chartProps} />
+    ) : (
+      <Line type="line" {...chartProps} />
+    )
 
   return (
-    <article>
-      {value && (
-        <header className={styles.header}>
-          <strong className={styles.value}>{value}</strong>
-          <Change className={styles.change}>{change}</Change>
-        </header>
-      )}
-
-      {datasets.length > 1 && (
-        <section className={styles.chart}>
-          {bar ? <Bar {...chartProps} /> : <Line {...chartProps} />}
-        </section>
-      )}
+    <article className={cx({ compact })}>
+      <section className={styles.chart}>
+        {datasets.length > 1 && render()}
+      </section>
     </article>
   )
 }

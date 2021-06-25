@@ -1,20 +1,34 @@
 interface Dashboard {
   assetMarketCap: string
-  totalValueLocked: string
-  collateralRatio: string
-  mirCirculatingSupply: string
   govAPR: string
-  govAPY: string
+  mirPrice: string
+  mirSupply: MIRSupply
+  totalValueLocked: TVL
+  latest24h: Latest24h
+}
 
-  latest24h: {
-    transactions: string
-    volume: string
-    feeVolume: string
-    mirVolume: string
-  }
-
+interface DashboardHistory {
   liquidityHistory: ChartItem[]
   tradingVolumeHistory: ChartItem[]
+}
+
+interface MIRSupply {
+  circulating: string
+  liquidity: string
+  staked: string
+}
+
+interface TVL {
+  total: string
+  liquidity: string
+  collateral: string
+  stakedMir: string
+}
+
+interface Lastest24h {
+  transactions: string
+  volume: string
+  feeVolume: string
 }
 
 interface ChartItem {
@@ -22,39 +36,55 @@ interface ChartItem {
   value: string
 }
 
+/* account */
+interface StatsAccount {
+  accumulatedGovReward: string
+  voteHistory: VoteItem[]
+}
+
+interface VoteItem {
+  pollId: string
+  amount: string
+  voteOption: VoteAnswer
+}
+
 /* asset */
-interface AssetStatsData {
+interface AssetDataItem {
   token: string
   description?: string
+
   statistic: {
     liquidity: string
     volume: string
-    apr: string
-    apy: string
+    marketCap: string
+    collateralValue: string
+    minCollateralRatio: string
+    apr: APR
   }
 }
 
-interface AssetStats {
-  description: Dict<string | undefined>
-  liquidity: Dict<string | undefined>
-  volume: Dict<string | undefined>
-  apr: Dict<string | undefined>
-  apy: Dict<string | undefined>
-}
+interface AssetHistoryItem {
+  token: string
 
-/* price */
-interface YesterdayData {
-  [token: string]: {
-    prices: {
-      priceAt: string | null
-      oraclePriceAt: string | null
-    }
+  prices: {
+    history: PriceHistoryItem[]
   }
 }
 
-interface Yesterday {
-  pair: Dict<string | undefined>
-  oracle: Dict<string | undefined>
+interface AssetHistoryData {
+  prices: {
+    history: PriceHistoryItem[]
+  }
+}
+
+interface PriceHistoryItem {
+  timestamp: number
+  price: string
+}
+
+interface APR {
+  long: string
+  short: string
 }
 
 /* cdp */

@@ -1,27 +1,22 @@
-import { gt } from "../libs/math"
-import { truncate } from "../libs/text"
-import { useContract, useRefetch, useAddress } from "../hooks"
-import { AccountInfoKey } from "../hooks/contractKeys"
-import ConnectedButton from "../components/ConnectedButton"
+import { useRecoilValue } from "recoil"
+import Tippy from "@tippyjs/react"
+import { locationKeyState } from "../data/app"
+import { bound } from "../components/Boundary"
+import { DropdownTippyProps } from "../components/Tooltip"
+import ConnectButton from "../components/ConnectButton"
+import ConnectedInfo from "./ConnectedInfo"
 import Balance from "./Balance"
-import Wallet from "./Wallet"
-import WhereToBuy from "./WhereToBuy"
+import styles from "./Connected.module.scss"
 
 const Connected = () => {
-  const address = useAddress()
-  const { uusd } = useContract()
-  const { data } = useRefetch([AccountInfoKey.UUSD])
-  const shouldBuyUST = !!data && !gt(uusd, 0)
+  const key = useRecoilValue(locationKeyState)
 
   return (
-    <>
-      <ConnectedButton
-        address={truncate(address)}
-        balance={<Balance />}
-        info={(close) => <Wallet close={close} />}
-      />
-      {shouldBuyUST && <WhereToBuy />}
-    </>
+    <Tippy {...DropdownTippyProps} render={() => <ConnectedInfo />} key={key}>
+      <ConnectButton connected>
+        <div className={styles.button}>{bound(<Balance />)}</div>
+      </ConnectButton>
+    </Tippy>
   )
 }
 

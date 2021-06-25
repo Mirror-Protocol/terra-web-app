@@ -1,0 +1,27 @@
+@import "mixins";
+
+.component {
+  @include desktop {
+    @include flex(space-between);
+  }
+
+  white-space: nowrap;
+}
+
+.desc {
+  flex: 1;
+  font-size: 12px;
+}
+
+.button {
+  font-size: 12px;
+  font-weight: 500;
+  color: $blue;
+  cursor: pointer;
+  letter-spacing: -0.2px;
+
+  svg {
+    fill: $blue;
+    margin-left: 4px;
+  }
+}

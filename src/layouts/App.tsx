@@ -1,42 +1,53 @@
+import { useAddress } from "../hooks"
+import { usePolling } from "../data/app"
 import routes from "../routes"
-import Container from "../components/Container"
-import { SettingsProvider, useSettingsState } from "../hooks/useSettings"
-import { ContractProvider, useContractState } from "../hooks/useContract"
-import useConnectGraph from "../hooks/useConnectGraph"
-import useAddress from "../hooks/useAddress"
-import { StatsProvider, useStatsState } from "../statistics/useStats"
+import { MenuKey, getPath } from "../routes"
+import Menu from "../components/Menu"
+import Boundary, { bound } from "../components/Boundary"
 import { useAlertByNetwork } from "./init"
-import DelistAlert from "./DelistAlert"
+import { useInitAddress, useInitNetwork, useLocationKey } from "./init"
 import AlertNetwork from "./AlertNetwork"
 import Airdrop from "./Airdrop"
+import Layout from "./Layout"
+import Nav from "./Nav"
 import Header from "./Header"
 import Footer from "./Footer"
 import "./App.scss"
 
+const icons: Dictionary<IconNames> = {
+  [MenuKey.MY]: "MyPage",
+  [MenuKey.TRADE]: "Trade",
+  [MenuKey.BORROW]: "Borrow",
+  [MenuKey.FARM]: "Farm",
+  [MenuKey.GOV]: "Governance",
+}
+
 const App = () => {
+  usePolling()
+  useLocationKey()
+  useInitAddress()
+  useInitNetwork()
   const alert = useAlertByNetwork()
   const address = useAddress()
-  const settings = useSettingsState()
-  const contract = useContractState(address)
-  const stats = useStatsState()
-  useConnectGraph(address)
+
+  const menu = Object.entries(icons).map(([key, icon]) => ({
+    icon,
+    attrs: { to: getPath(key as MenuKey), children: key },
+    style: { order: Number(key === MenuKey.MY) },
+  }))
 
   return alert ? (
     <AlertNetwork />
   ) : (
-    <SettingsProvider value={settings}>
-      <ContractProvider value={contract}>
-        <StatsProvider value={stats}>
-          <Header />
-          <Container>
-            {address && <DelistAlert />}
-            {routes()}
-          </Container>
-          <Footer />
-          {address && <Airdrop />}
-        </StatsProvider>
-      </ContractProvider>
-    </SettingsProvider>
+    <Layout
+      nav={<Nav />}
+      menu={<Menu list={menu} />}
+      header={<Header />}
+      banner={address && bound(<Airdrop />)}
+      footer={<Footer />}
+    >
+      <Boundary>{routes()}</Boundary>
+    </Layout>
   )
 }
 

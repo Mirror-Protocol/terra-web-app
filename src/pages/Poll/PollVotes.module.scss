@@ -1,10 +1,5 @@
 @import "mixins";
 
-.sm {
-  @include flex(space-between);
-  margin-top: 5px;
-}
-
 .votes {
   @include flex(flex-end);
 }
@@ -13,20 +8,10 @@
   text-transform: uppercase;
 }
 
-.sm .label {
-  font-size: 12px;
-  margin-left: 20px;
-
-  strong {
-    margin-right: 3px;
-  }
-}
-
-.lg .label {
+.label {
   @include flex;
   flex-direction: column;
   flex: 1;
-  font-size: 18px;
   margin-top: 30px;
   margin-bottom: 30px;
 
@@ -40,14 +25,14 @@
   }
 }
 
-.help {
-  @include flex;
-  font-size: 12px;
-  > * {
-    margin-right: 5px;
-  }
+.answer {
+  margin-bottom: 2px;
 }
 
 .danger {
   color: $red;
+
+  svg {
+    fill: $red;
+  }
 }

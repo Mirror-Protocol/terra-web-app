@@ -23,4 +23,4 @@ interface LocalNetworkConfig {
 }
 
 type ShuttleNetwork = "ethereum" | "bsc"
-type ShuttleList = Record<ShuttleNetwork, Dictionary<string>>
+type ShuttleList = Record<ShuttleNetwork, Dictionary>

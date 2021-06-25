@@ -9,7 +9,7 @@
       "CollateralRatio": {
         "Current": "Collateral ratio must be higher than current collateral ratio",
         "Minimum": "Collateral ratio must be higher than minimum collateral ratio",
-        "Safe": "Collateral ratio is lower than safe ratio"
+        "Safe": "Collateral ratio is lower than the suggested safe ratio"
       },
       "LastestPrice": {
         "FailedToFetch": "Failed to fetch latest price"
@@ -48,11 +48,10 @@
 
   "MyPage": {
     "Empty": {
-      "Holdings": "No current asset balances",
-      "Minted": "No current asset mint positions",
-      "Pool": "No current liquidity positions",
-      "Staked": "No current staking positions",
-      "Orders": "No current limit orders"
+      "Holding": "No current asset balances",
+      "Borrowing": "No current asset borrow or short positions",
+      "Farming": "No current farming positions",
+      "LimitOrder": "No current limit order"
     }
   }
 }

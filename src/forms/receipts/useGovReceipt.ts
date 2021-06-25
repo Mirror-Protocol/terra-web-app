@@ -1,11 +1,11 @@
 import { capitalize } from "../../libs/utils"
 import { formatAsset } from "../../libs/parse"
-import { useContractsAddress } from "../../hooks"
-import { findValue } from "./receiptHelpers"
+import { useProtocol } from "../../data/contract/protocol"
+import { findValueFromLogs } from "./receiptHelpers"
 
 export default () => (logs: TxLog[]) => {
-  const { getSymbol } = useContractsAddress()
-  const val = findValue(logs)
+  const { getSymbol } = useProtocol()
+  const val = findValueFromLogs(logs)
 
   const id = val("poll_id")
   const amount = val("amount")

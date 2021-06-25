@@ -1,0 +1,29 @@
+@import "mixins";
+
+.flex {
+  @include desktop {
+    @include flex(space-between, flex-start);
+  }
+}
+
+.content {
+  @include desktop {
+    flex: 1;
+  }
+}
+
+.chart {
+  background: $gray-14;
+  border-radius: $border-radius;
+  overflow: hidden;
+
+  @include mobile {
+    margin-top: 40px;
+  }
+
+  @include desktop {
+    flex: none;
+    margin-left: $gutter-horizontal-desktop;
+    width: 360px;
+  }
+}

@@ -16,7 +16,7 @@ const AlertNetwork = () => {
       <p>
         Change Terra Station network setting to
         <br />
-        "Mainnet"
+        "Testnet"
       </p>
     </article>
   )

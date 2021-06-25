@@ -1,0 +1,42 @@
+@import "mixins";
+
+.header {
+  @include flex(space-between);
+
+  color: $white-92;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  padding: $gutter-horizontal-mobile $card-padding-vertical-mobile;
+
+  &:not(:first-child) {
+    border-top: 1px solid $bg;
+  }
+
+  svg {
+    fill: $blue;
+  }
+}
+
+.collapsed {
+  color: $white-44;
+}
+
+.link {
+  color: $white-44;
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  padding: 16px 32px;
+
+  &:hover {
+    color: $blue;
+  }
+}
+
+.active {
+  background: $gray-18;
+  color: $blue;
+}

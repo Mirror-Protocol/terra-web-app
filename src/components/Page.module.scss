@@ -1,11 +1,17 @@
 @import "mixins";
 
 .article {
-  padding: 30px 0;
+  @include mobile {
+    padding: 25px 0;
+  }
+
+  @include desktop {
+    padding: 64px 0;
+  }
 }
 
 .header {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 
   @include desktop {
     @include flex(space-between);
@@ -16,53 +22,44 @@
   @include flex(flex-start);
 }
 
+.action {
+  @include mobile {
+    margin-top: 12px;
+  }
+}
+
 .title {
-  color: white;
-  font-size: 24px;
+  color: $white-92;
   font-weight: 500;
+  letter-spacing: -0.3px;
+
+  @include mobile {
+    font-size: 24px;
+  }
+
+  @include desktop {
+    font-size: 40px;
+  }
+}
+
+.description {
+  border-left: 1px solid $gray-18;
+  color: $white-44;
+  font-size: 60%;
+  font-weight: normal;
+  margin-left: 16px;
+  padding-left: 16px;
 }
 
 .select {
-  position: relative;
-
-  select {
-    appearance: none;
-    border: solid 1px fade-out($slate, 0.5);
-    border-radius: 3px;
-    font-size: 12px;
-    margin-left: 10px;
-    padding: 5px 10px;
-    padding-right: 30px;
-  }
-
-  i {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translate(0, -50%);
-    pointer-events: none;
-  }
-}
-
-.doc {
-  @include flex(flex-start);
-  @include link($slate, white);
-  border-left: $border;
-  font-size: 12px;
-  font-weight: 500;
-  margin-left: 20px;
-  padding-left: 15px;
-  text-transform: uppercase;
-
-  &:hover {
-    text-decoration: none;
-  }
+  border: solid 1px fade-out($gray-34, 0.5);
+  border-radius: 6px;
+  color: $white-64;
+  margin-left: 12px;
+  letter-spacing: -0.3px;
+  padding: 10px 12px;
 }
 
 .icon {
   margin-right: 4px;
-}
-
-.description {
-  margin-bottom: 30px;
 }

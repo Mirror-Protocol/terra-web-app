@@ -1,0 +1,23 @@
+@import "mixins";
+
+.card {
+  @include desktop {
+    @include flex;
+    align-items: flex-start;
+
+    > * {
+      flex: none;
+      width: 50%;
+    }
+  }
+}
+
+.table {
+  @include mobile {
+    border-top: 1px solid $bg;
+  }
+
+  @include desktop {
+    border-left: 2px solid $bg;
+  }
+}

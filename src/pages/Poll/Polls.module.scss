@@ -1,26 +1,30 @@
 @import "mixins";
 
-.component {
-  margin-top: 30px;
-}
-
 .header {
   @include flex(space-between);
-  margin-bottom: 20px;
+
+  @include mobile {
+    margin-top: 40px;
+    margin-bottom: 12px;
+  }
+
+  @include desktop {
+    margin-top: 60px;
+    margin-bottom: 20px;
+  }
 }
 
 .title {
   color: white;
-  font-size: 16px;
 }
 
 .wrapper {
   position: relative;
 
-  i {
+  svg {
     position: absolute;
     top: 50%;
-    right: 6px;
+    right: 12px;
     transform: translate(0, -50%);
     pointer-events: none;
   }
@@ -28,7 +32,7 @@
 
 .select {
   appearance: none;
-  border: 1px solid $slate;
+  border: 1px solid $gray-34;
   border-radius: 3px;
   font-size: 12px;
   padding: 6px 10px;

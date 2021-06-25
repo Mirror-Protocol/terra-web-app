@@ -1,13 +1,13 @@
-import { MIR } from "../../constants"
+import { useRecoilValue } from "recoil"
 import { formatAsset } from "../../libs/parse"
-import { useVoters } from "../../graphql/useGov"
 import { useNetwork } from "../../hooks"
+import { govVotersQuery } from "../../data/gov/vote"
 import Table from "../../components/Table"
 import ExtLink from "../../components/ExtLink"
 
 const PollVoters = ({ id }: { id: number }) => {
   const { finder } = useNetwork()
-  const { voters } = useVoters(id)
+  const voters = useRecoilValue(govVotersQuery(id))
 
   return !voters?.length ? null : (
     <Table
@@ -21,7 +21,7 @@ const PollVoters = ({ id }: { id: number }) => {
         { key: "vote", render: (answer) => answer.toUpperCase() },
         {
           key: "balance",
-          render: (amount) => formatAsset(amount, MIR),
+          render: (amount) => formatAsset(amount, "MIR"),
           align: "right",
         },
       ]}

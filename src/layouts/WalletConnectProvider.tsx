@@ -1,28 +1,47 @@
-import { NetworkInfo } from "@terra-money/wallet-provider"
-import { useWallet, WalletProvider } from "@terra-money/wallet-provider"
 import { FC } from "react"
-import networks from "../networks"
+import { NetworkInfo, WalletStatus } from "@terra-money/wallet-provider"
+import { useWallet } from "@terra-money/wallet-provider"
+import { WalletProvider } from "@terra-money/wallet-provider"
+import networks, { defaultNetwork } from "../networks"
+import { useProtocol } from "../data/contract/protocol"
+import Reconnect from "./Reconnect"
+import MobileSplash from "./MobileSplash"
 
 const walletConnectChainIds: Record<number, NetworkInfo> = {
   0: networks.testnet,
   1: networks.mainnet,
+  2: networks.moonshine,
+}
+
+const WithInitialized: FC = ({ children }) => {
+  useProtocol()
+  const { status, network } = useWallet()
+  const initialized = status !== WalletStatus.INITIALIZING
+  const invalidNetwork = !networks[network.name]
+
+  return !initialized ? (
+    <MobileSplash />
+  ) : invalidNetwork ? (
+    <Reconnect {...network} />
+  ) : (
+    <>{children}</>
+  )
+}
+
+const createReadonlyWalletSession = async () => {
+  const terraAddress = prompt()
+  return terraAddress ? { network: defaultNetwork, terraAddress } : null
 }
 
 const WalletConnectProvider: FC = ({ children }) => (
   <WalletProvider
-    defaultNetwork={networks.mainnet}
+    defaultNetwork={defaultNetwork}
     walletConnectChainIds={walletConnectChainIds}
+    createReadonlyWalletSession={createReadonlyWalletSession}
     connectorOpts={{ bridge: "https://walletconnect.terra.dev/" }}
   >
-    {children}
+    <WithInitialized>{children}</WithInitialized>
   </WalletProvider>
 )
 
 export default WalletConnectProvider
-
-/* hooks */
-export const useLCD = () => {
-  const { network } = useWallet()
-  const networkInfo = networks[network.name]
-  return networkInfo?.lcd
-}

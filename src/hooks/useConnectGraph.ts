@@ -1,18 +1,28 @@
 import { useEffect } from "react"
-import { useMutation } from "@apollo/client"
-import { CONNECT } from "../statistics/gqldocs"
-import useStatsClient from "../statistics/useStatsClient"
-import useNetwork from "./useNetwork"
+import { useRecoilValue } from "recoil"
+import { gql, request } from "graphql-request"
+import { statsURLQuery } from "../data/network"
+import useAddress from "./useAddress"
 
-/* graph */
-const useConnectGraph = (address: string) => {
-  const { stats } = useNetwork()
-  const client = useStatsClient()
-  const [connectToGraph] = useMutation(CONNECT, { client })
+export const CONNECT = gql`
+  mutation connect($address: String!) {
+    connect(address: $address) {
+      address
+    }
+  }
+`
+
+const useConnectGraph = () => {
+  const url = useRecoilValue(statsURLQuery)
+  const address = useAddress()
 
   useEffect(() => {
-    address && stats && connectToGraph({ variables: { address } })
-  }, [address, stats, connectToGraph])
+    const mutate = async () => {
+      await request(url + "?connect", CONNECT, { address })
+    }
+
+    address && mutate()
+  }, [address, url])
 }
 
 export default useConnectGraph

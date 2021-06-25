@@ -1,19 +1,24 @@
 @import "mixins";
 
-.header {
-  @include flex(flex-start);
-}
-
-.value {
-  color: white;
-  font-size: 20px;
-}
-
-.change {
-  font-size: 12px;
-  margin-left: 10px;
-}
-
 .chart {
-  margin-top: 20px;
+  @include mobile {
+    width: 100%;
+    height: 180px;
+    margin-top: -12px;
+  }
+
+  @include desktop {
+    width: 100%;
+    height: 300px;
+    margin-top: -16px;
+  }
+}
+
+.compact {
+  display: inline-block;
+
+  .chart {
+    width: 60px;
+    height: 24px;
+  }
 }

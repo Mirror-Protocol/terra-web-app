@@ -1,0 +1,47 @@
+@import "mixins";
+
+.default {
+  @include mobile {
+    width: 24px;
+    height: 24px;
+  }
+
+  @include desktop {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.sm {
+  @include mobile {
+    width: 18px;
+    height: 18px;
+  }
+
+  @include desktop {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.xs {
+  width: 16px;
+  height: 16px;
+}
+
+.lg {
+  @include mobile {
+    width: 40px;
+    height: 40px;
+  }
+
+  @include desktop {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.idle {
+  @include idle;
+  border-radius: 50%;
+}

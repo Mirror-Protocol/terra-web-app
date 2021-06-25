@@ -1,9 +1,16 @@
 import { FC } from "react"
-import classNames from "classnames"
+import classNames from "classnames/bind"
 import styles from "./Badge.module.scss"
 
-const Badge: FC<{ className?: string }> = ({ className, children }) => (
-  <span className={classNames(styles.badge, className)}>{children}</span>
+const cx = classNames.bind(styles)
+
+interface Props {
+  className?: string
+  bg?: string
+}
+
+const Badge: FC<Props> = ({ className, children, bg }) => (
+  <span className={cx(styles.badge, className, `bg-${bg}`)}>{children}</span>
 )
 
 export default Badge

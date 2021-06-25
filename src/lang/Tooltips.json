@@ -1,0 +1,174 @@
+{
+  "Dashboard": {
+    "MIRPrice": "Terraswap price of MIR",
+
+    "TVL": "Total value of collateral, liquidity and staked MIR",
+    "Liquidity": "Total value of all mAssets and UST in liquidity pools",
+    "Staked": "Total value of staked MIR",
+    "Collateral": "Value of all collateral locked",
+    "TVLETH": "Total value of liquidity",
+
+    "MIRCirculatingSupply": {
+      "Liquidity": "Number of MIR in liquidity pool",
+      "Staked": "Number of MIR staked in governance",
+      "Others": "Number of MIR in community pool or held by users"
+    },
+
+    "mAsset": {
+      "MarketCap": "Total value of all minted assets",
+      "Transactions": "Number of transactions occurred in the last 24 hours",
+      "Fee": "Value of trading fee paid in the last 24 hours"
+    },
+
+    "Chart": {
+      "Liquidity": "Total value of all mAssets and UST in liquidity pools",
+      "Volume": "Total value of all assets traded in the last 24 hours. The chart data is accumulated on daily basis."
+    },
+    "TopTrading": "Sorted by trading volume"
+  },
+
+  "My": {
+    "TotalValue": "Total value of all holdings, collateral, withdrawable liquidity, rewards, staked MIR and UST.",
+
+    "Total": {
+      "UST": "Total amount of UST held",
+      "Holding": "Total value of all assets held",
+      "LimitOrder": "Total value of assets locked in unfilled limit orders",
+      "Borrowing": "Total collateral value minus total borrowed value",
+      "Pool": "Total value of all mAssets and UST withdrawable from liquidity pools",
+      "Farming": "Total value of all mAssets and UST withdrawable from farming pools",
+      "Gov": "Total value of staked MIR and unclaimed voting rewards"
+    },
+
+    "TotalRewards": "Total number of claimable MIR from Farming positions and governance",
+
+    "Holding": "List of mAssets held",
+    "Borrowing": "List of borrowing and short positions",
+    "Pool": "List of liquidity provider positions",
+    "Farming": "List of long and short farming positions",
+    "Govern": "List of voted polls",
+    "History": "List of transaction history",
+
+    "TotalHoldingValue": "Total value of all assets held",
+    "Balance": "Quantity of the corresponding asset held",
+    "Value": "Value of the corresponding asset held",
+
+    "TotalBorrowedValue": "Total value of all assets borrowed or shorted",
+    "TotalCollateralValue": "Total value of all collateral locked",
+    "Borrowed": "Quantity of the corresponding asset borrowed",
+    "Collateral": "Quantity of collateral locked for the corresponding borrow position",
+    "CollateralRatio": "Ratio of the Collateral Value to the Borrowed Value",
+    "PositionWarning": "Position is close to liquidation. Close the position or deposit more collateral. When collateral ratio drops below the minimum value, any user may immediately liquidate the position.",
+    "PositionDanger": "Position can be liquidated anytime upon request. Close the position or deposit more collateral.",
+
+    "TotalLockedUST": "Total quantity of UST locked shorting",
+    "TotalUnlockedUST": "Total quantity of claimable UST",
+    "LockedUST": "Quantity of UST locked from shorting",
+    "UnlockedUST": "Quantity of claimable UST from this short position",
+    "Withdrawable": "Quantity of withdrawable assets from the corresponding asset liquidity pool",
+    "FarmReward": "Quantity of claimable rewards for the corresponding staking position",
+    "APR": "Annualized staking return",
+
+    "Staked": "Quantity of MIR staked",
+    "VotingRewards": "Total quantity of claimable rewards from all voted polls",
+    "GovReward": "Protocol fee paid from withdrawing collateral is distributed to MIR stakers and increases staked MIR",
+    "AccRewards": "Total quantity of rewards accumulated from staking MIR",
+
+    "LimitOrder": "List of trade orders to be executed at the limit price",
+    "LimitPrice": "Price at which the order will be executed",
+    "OrderValue": "Value of the limit order",
+    "TotalLockedValue": "Total value of assets locked in unfilled limit orders"
+  },
+
+  "Forms": {
+    "TxFee": "Fee paid to execute this transaction"
+  },
+
+  "Send": {
+    "ShuttleFee": "A fee of 1 UST or 0.1% of the transfer amount (whichever is greater) will be charged for transferring assets from Terra to Ethereum/BSC through Shuttle"
+  },
+
+  "Trade": {
+    "Chart": "Chart displaying 24 hours price movement",
+    "Premium": "Percentage difference between Terraswap and Oracle price",
+    "Price": "Price is based on the pool ratio. The effective price changes dynamically depending on the trade size.\n\n• Spread: Fee paid due to the difference between market price and estimated price.\n• Commission: Fee charged by the protocol that is automatically deducted from the assets that user receives.",
+    "MinimumReceived": "Expected minimum quantity to be received based on the current price, maximum spread, and commission",
+    "SlippageTolerance": "Your transaction will revert if the price changes by more than this percentage."
+  },
+
+  "Mint": {
+    "MinimumCollateralRatio": "Lowest collateral ratio to borrow this asset",
+    "CollateralValue": "Total value of locked collateral",
+    "MarketCap": "Total value of borrowed asset",
+
+    "Open": "New assets will be borrowed when collateral is deposited. Any price change of either the collateral or the borrowed assets may lead to liquidation.",
+    "Caution": "Your position can be liquidated when it falls below the minimum collateral ratio",
+
+    "Collateral": "Current amount of collateral",
+    "Asset": "Current amount of borrowed asset",
+
+    "ExpectedMintedAsset": "Expected quantity of assets received with above collateral",
+    "CollateralRatio": "Ratio of the collateral value to the borrowed value",
+    "MinCollateralRatio": "Minimum collateral ratio. When the position drops below this value, any user may immediately liquidate the position.",
+    "SafeCollateralRatio": "(Minimum collateral ratio) + 50%",
+
+    "Price": "Price of the corresponding asset that is determined by the oracle feeder",
+    "ExpectedUST": "UST from shorting mAsset will be locked for 15 days",
+    "ProtocolFee": "Paid from withdrawn collateral"
+  },
+
+  "Farm": {
+    "LongAPR": "Annualized MIR reward return from providing the asset's liquidity.\nThe APR based on premium is updated once every hour.",
+    "ShortAPR": "Annualized MIR reward return from depositing collateral to create short position.\nThe APR based on premium is updated once every hour.",
+    "Premium": "Percentage difference between Terraswap and Oracle price",
+
+    "Long": "Provide liquidity to receive LP tokens which are staked to earn MIR token rewards",
+    "InputAsset": "Quantity of assets to be added to the corresponding asset liquidity pool",
+    "InputUST": "Corresponding required amount of UST added to the liquidity pool",
+
+    "Short": "Provide collateral to create short positions and earn MIR token rewards.",
+    "Shorted": "Expected quantity of assets shorted with above collateral",
+
+    "UnstakeAmount": "Quantity of LP tokens to be burned",
+    "Output": "Estimated quantity of mAsset and UST to be received",
+
+    "PoolPrice": "Price of the corresponding asset that is determined by the current pool ratio",
+    "PoolShare": "Ratio of the liquidity provided to the total liquidity provided post-transaction",
+    "LPfromTx": "Quantity of LP tokens to be received"
+  },
+
+  "Gov": {
+    "TotalStaked": "Total quantity of MIR tokens staked",
+    "StakingRatio": "Ratio of the quantity of staked MIR tokens to the total quantity of MIR",
+    "APR": "Annualized MIR staking return based on 15 days average of MIR distribution and staking ratio. \n\nReward is generated from protocol fee which occurs when collateral is withdrawn from borrow or short position.",
+    "CommunityPoolBalance": "Total number of MIR tokens currently in the community pool",
+
+    "Polls": "Staked MIR can be used as voting power in polls that are currently in progress",
+
+    "Ticker": "Ticker of asset to be whitelisted",
+    "ListedExchange": "Exchange that the underlying asset trades on",
+    "SuggestedOracle": "Oracle provider or address",
+
+    "Weight": "Weight which MIR is distributed",
+    "AuctionDiscount": "Discount rate applied to collateral sold in liquidation auction",
+    "MinimumCollateralRatio": "Lowest collateral ratio which users can set to mint new assets. Position will be liquidated below this ratio",
+    "Deposit": "Passing the quorum will return the deposit to the creator. Failure to pass quorum will distribute the deposit to all MIR stakers.",
+
+    "MintPeriod": "Number of seconds which minting of Pre-IPO assets will be allowed for",
+    "MinimumCollateralRatioAfterIPO": "Lowest collateral ratio which users can set to borrow new assets after IPO event.",
+    "PreIpoPrice": "Fixed price to be used for borrowing of Pre-IPO asset",
+
+    "Quorum": "Minimum quorum required for accepting a poll (in percentage)",
+    "Threshold": "Minimum percentage of YES votes to pass a poll (in percentage)",
+    "VotingPeriod": "Length of poll (in units of seconds)",
+    "EffectiveDelay": "Length of delay before protocol integration for a passed poll (in units of seconds)",
+    "ExpirationPeriod": "Length of expiration period when for a failed poll (in units of seconds)",
+    "ProposalDeposit": "Minimum deposit to start a poll (in units of MIR)",
+
+    "VoterWeight": "Ratio of protocol fee reward to be distributed to voters",
+    "Multiplier": "Multiplied to minimum collateral ratio of the borrowed asset",
+
+    "Recipient": "Grant recipient address",
+    "Amount": "Grant amount (in units of MIR)"
+  }
+}

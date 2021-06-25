@@ -1,0 +1,15 @@
+@import "mixins";
+
+.button {
+  @include flex;
+  @include transition(color);
+  font-size: 12px;
+}
+
+.on {
+  color: $blue;
+}
+
+.toggle {
+  margin-right: 8px;
+}

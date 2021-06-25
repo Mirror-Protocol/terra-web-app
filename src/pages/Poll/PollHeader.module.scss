@@ -15,8 +15,18 @@
 
 .meta {
   @include flex(space-between);
-  color: $slate;
+  color: $gray-34;
   font-weight: 500;
+}
+
+.id,
+.type {
+  @include desktop {
+    font-size: 14px;
+  }
+  @include mobile {
+    font-size: 12px;
+  }
 }
 
 .type {
@@ -40,14 +50,39 @@
   @include flex(flex-start);
 
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1;
-  margin-bottom: 5px;
+  margin-top: 20px;
+  margin-bottom: 8px;
   text-transform: uppercase;
 
-  i {
+  @include mobile {
+    font-size: 12px;
+  }
+
+  svg {
     margin-right: 5px;
   }
+}
+
+.blue {
+  color: $blue;
+
+  svg {
+    fill: $blue;
+  }
+}
+
+.red {
+  color: $red;
+
+  svg {
+    fill: $red;
+  }
+}
+
+.strike {
+  text-decoration: line-through;
 }
 
 .title {

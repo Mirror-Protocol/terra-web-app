@@ -1,0 +1,36 @@
+@import "mixins";
+@import "variables";
+
+.article {
+  color: $white-92;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.title {
+  color: $white-92;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+.conclusion {
+  color: $blue;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 40px;
+}
+
+.footer {
+  margin-top: 42px;
+  text-align: center;
+}
+
+.label {
+  @include flex(flex-start);
+  display: inline-block;
+  color: $white-92;
+  font-size: 14px;
+  font-weight: 500;
+}

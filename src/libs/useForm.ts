@@ -1,5 +1,9 @@
 import { useState, ChangeEvent, FocusEvent } from "react"
+import { FormGroupInterface } from "../components/FormGroup"
 import { record } from "./utils"
+
+export type Values<T extends string> = Record<T, string>
+export type Touched<T extends string> = Record<T, boolean>
 
 const useForm = <Key extends string>(
   initial: Values<Key>,
@@ -39,39 +43,39 @@ const useForm = <Key extends string>(
   const errors = validate(values)
   const invalid = Object.values(errors).some((v) => v)
 
-  const getFields = (fields: Partial<Record<Key, FormGroup>>) =>
-    Object.entries<FormGroup>({ ...record(initial, {}), ...fields }).reduce(
-      (acc, [key, field]) => {
-        const defaultAttributes = {
-          id: key,
-          name: key,
-          value: values[key as Key],
-          onChange: handleChange,
-          autoComplete: "off",
-        }
+  const getFields = (fields: Partial<Record<Key, FormGroupInterface>>) =>
+    Object.entries<FormGroupInterface>({
+      ...record(initial, {}),
+      ...fields,
+    }).reduce((acc, [key, field]) => {
+      const defaultAttributes = {
+        id: key,
+        name: key,
+        value: values[key as Key],
+        onChange: handleChange,
+        autoComplete: "off",
+      }
 
-        return {
-          ...acc,
-          [key]: Object.assign(
-            {
-              ...field,
-              focused: focused === key || field.focused,
-              error: touched[key as Key] ? errors[key as Key] : "",
-            },
-            field.input && {
-              input: { ...defaultAttributes, ...field.input },
-            },
-            field.textarea && {
-              textarea: { ...defaultAttributes, rows: 3, ...field.textarea },
-            },
-            field.select && {
-              select: { ...defaultAttributes, ...field.select },
-            }
-          ),
-        }
-      },
-      {} as Record<Key, FormGroup>
-    )
+      return {
+        ...acc,
+        [key]: Object.assign(
+          {
+            ...field,
+            focused: focused === key || field.focused,
+            error: touched[key as Key] ? errors[key as Key] : "",
+          },
+          field.input && {
+            input: { ...defaultAttributes, ...field.input },
+          },
+          field.textarea && {
+            textarea: { ...defaultAttributes, rows: 3, ...field.textarea },
+          },
+          field.select && {
+            select: { ...defaultAttributes, ...field.select },
+          }
+        ),
+      }
+    }, {} as Record<Key, FormGroupInterface>)
 
   return {
     values,

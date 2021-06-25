@@ -1,24 +1,60 @@
+@use "sass:math";
 @import "mixins";
 
-$gutter: 30px;
-$margin: ($gutter / 2);
+$margin-horizontal-mobile: math.div($gutter-horizontal-mobile, 2);
+$margin-vertical-mobile: math.div($gutter-vertical-mobile, 2);
+$margin-horizontal-desktop: math.div($gutter-horizontal-desktop, 2);
+$margin-vertical-desktop: math.div($gutter-vertical-desktop, 2);
+
+$margin-mobile: $margin-vertical-mobile $margin-horizontal-mobile;
+$margin-desktop: $margin-vertical-desktop $margin-horizontal-desktop;
+$negative-margin-mobile: (-$margin-vertical-mobile) (-$margin-horizontal-mobile);
+$negative-margin-desktop: (-$margin-vertical-desktop)
+  (-$margin-horizontal-desktop);
 
 .row {
   @include flex(flex-start);
   align-items: stretch;
-  margin: -$margin;
 
   > * {
     flex: 1;
-    margin: $margin;
+
+    @include mobile {
+      margin: $margin-mobile;
+    }
+
+    @include desktop {
+      margin: $margin-desktop;
+    }
   }
 
   @include mobile {
+    margin: $negative-margin-mobile;
     flex-direction: column;
   }
 
+  @include desktop {
+    margin: $negative-margin-desktop;
+  }
+
   & + & {
-    margin-top: $margin;
+    @include mobile {
+      margin-top: $margin-vertical-mobile;
+    }
+
+    @include desktop {
+      margin-top: $margin-vertical-desktop;
+    }
+  }
+}
+
+.gutter {
+  @include mobile {
+    margin-top: $gutter-vertical-mobile;
+  }
+
+  @include desktop {
+    margin-top: $gutter-vertical-desktop;
   }
 }
 
@@ -32,14 +68,12 @@ $margin: ($gutter / 2);
   }
 
   .wrap-2 > * {
-    width: calc((100% / 2) - #{$gutter});
-  }
+    @include mobile {
+      width: calc((100% / 2) - #{$gutter-horizontal-mobile});
+    }
 
-  .wrap-3 > * {
-    width: calc((100% / 3) - #{$gutter});
-  }
-
-  .wrap-4 > * {
-    width: calc((100% / 4) - #{$gutter});
+    @include desktop {
+      width: calc((100% / 2) - #{$gutter-horizontal-desktop});
+    }
   }
 }

@@ -9,6 +9,5 @@ interface Tx {
   token: string
   datetime: string
   fee: string
-  tags: string[]
   memo: string
 }

@@ -1,25 +1,40 @@
 import { ReactNode } from "react"
+import { useHistory } from "react-router-dom"
 import classNames from "classnames/bind"
-import { path } from "ramda"
+import { isNil, path } from "ramda"
+import { LocationDescriptor } from "history"
 import styles from "./Table.module.scss"
 
 const cx = classNames.bind(styles)
 
 interface Props<T> {
+  caption?: ReactNode
   rows?: (record: T) => Row
   columns: Column<T>[]
   dataSource: T[]
+  config?: {
+    hideHeader?: boolean
+    noRadius?: boolean
+    darker?: boolean
+  }
 }
 
 interface Row {
   background?: string
+  to?: LocationDescriptor
+}
+
+interface Cell {
+  background?: string
+  to?: LocationDescriptor
 }
 
 interface Column<T> {
   key: string
-  title?: ReactNode
+  title?: ReactNode | ReactNode[]
   dataIndex?: string
-  render?: (value: any, record: T, index: number) => ReactNode
+  render?: (value: any, record: T, index: number) => ReactNode | ReactNode[]
+  cell?: (value: any, record: T, index: number) => Cell
   children?: Column<T>[]
 
   colSpan?: number
@@ -30,6 +45,7 @@ interface Column<T> {
   border?: BorderPosition[]
   bold?: boolean
   width?: string | number
+  desktop?: boolean
 }
 
 enum BorderPosition {
@@ -41,7 +57,8 @@ const SEP = "."
 
 type DefaultRecordType = Record<string, any>
 function Table<T extends DefaultRecordType>(props: Props<T>) {
-  const { rows, columns, dataSource } = props
+  const { caption, rows, columns, dataSource, config } = props
+  const { push } = useHistory()
 
   const normalized = columns.reduce<Column<T>[]>(
     (acc, { children, ...column }) => {
@@ -96,57 +113,118 @@ function Table<T extends DefaultRecordType>(props: Props<T>) {
   }
 
   const renderTh = (column: Column<T>): ReactNode => {
-    const { key, title, colSpan, width } = column
+    const { key, title, colSpan, width, desktop } = column
     return (
       <th
-        className={classNames(getClassName(column), styles.th)}
+        className={cx(getClassName(column), styles.th, { desktop })}
         colSpan={colSpan}
         style={{ width }}
         key={key}
       >
-        {title ?? key}
+        {!isNil(title) ? (
+          Array.isArray(title) ? (
+            <ul>
+              {title.map((title, index) => (
+                <li key={index}>{title}</li>
+              ))}
+            </ul>
+          ) : (
+            title
+          )
+        ) : (
+          key
+        )}
       </th>
     )
   }
 
   const colspan = columns.some(({ children }) => children)
-  return !dataSource.length ? null : (
-    <div className={styles.wrapper}>
-      <table className={cx({ margin: colspan })}>
-        <thead>
-          {colspan && (
-            <tr className={cx({ colspan })}>{columns.map(renderColSpan)}</tr>
-          )}
+  return (
+    <div className={cx(styles.wrapper, { radius: !config?.noRadius })}>
+      <table className={cx({ margin: colspan, darker: config?.darker })}>
+        {caption && (
+          <caption
+            className={cx(styles.caption, { border: !config?.hideHeader })}
+          >
+            {caption}
+          </caption>
+        )}
 
-          <tr>{normalized.map(renderTh)}</tr>
-        </thead>
+        {!!dataSource.length && (
+          <>
+            {!config?.hideHeader && (
+              <thead>
+                {colspan && (
+                  <tr className={cx({ colspan })}>
+                    {columns.map(renderColSpan)}
+                  </tr>
+                )}
 
-        <tbody>
-          {dataSource.map((record, index) => {
-            const renderTd = (column: Column<T>): ReactNode => {
-              const { key, dataIndex, render } = column
-              const { className, bold, width } = column
-              const value = path<any>((dataIndex ?? key).split(SEP), record)
-              const tdClassName = cx({ bold }, styles.td, className)
+                <tr>{normalized.map(renderTh)}</tr>
+              </thead>
+            )}
 
-              return (
-                <td
-                  className={classNames(getClassName(column), tdClassName)}
-                  style={{ width }}
-                  key={key}
-                >
-                  {render?.(value, record, index) ?? value}
-                </td>
-              )
-            }
+            <tbody>
+              {dataSource.map((record, index) => {
+                const renderTd = (column: Column<T>): ReactNode => {
+                  const { key, dataIndex, render, cell: getCell } = column
+                  const { className, bold, width, desktop } = column
+                  const value = path<any>((dataIndex ?? key).split(SEP), record)
+                  const tdClassName = cx(
+                    { bold, desktop },
+                    styles.td,
+                    className
+                  )
 
-            return (
-              <tr className={cx(rows?.(record).background)} key={index}>
-                {normalized.map(renderTd)}
-              </tr>
-            )
-          })}
-        </tbody>
+                  const content = render?.(value, record, index)
+                  const cell = getCell?.(value, record, index)
+
+                  return (
+                    <td
+                      className={cx(
+                        getClassName(column),
+                        cell?.background,
+                        { clickable: cell?.to },
+                        tdClassName
+                      )}
+                      onClick={() => cell?.to && push(cell.to)}
+                      style={{ width }}
+                      key={key}
+                    >
+                      {render ? (
+                        Array.isArray(content) ? (
+                          <ul>
+                            {content.map((content, index) => (
+                              <li className={cx({ sub: index })} key={index}>
+                                {content}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          content
+                        )
+                      ) : (
+                        value
+                      )}
+                    </td>
+                  )
+                }
+
+                const row = rows?.(record)
+
+                return (
+                  <tr
+                    className={cx(row?.background, { clickable: row?.to })}
+                    onClick={() => row?.to && push(row.to)}
+                    key={index}
+                  >
+                    {normalized.map(renderTd)}
+                  </tr>
+                )
+              })}
+            </tbody>
+          </>
+        )}
       </table>
     </div>
   )

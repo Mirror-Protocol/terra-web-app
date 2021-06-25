@@ -1,12 +1,13 @@
 import { useRouteMatch } from "react-router-dom"
-import { gt, plus } from "../../libs/math"
+import { gt, sum } from "../../libs/math"
 import Card from "../../components/Card"
-import Grid from "../../components/Grid"
+import { Gutter } from "../../components/Grid"
 import PollHeader from "./PollHeader"
 import PollMeta from "./PollMeta"
 import PollSummary from "./PollSummary"
 import PollVotes from "./PollVotes"
 import PollVoters from "./PollVoters"
+import VoteLink from "./VoteLink"
 import styles from "./PollDetails.module.scss"
 
 const PollDetails = ({ poll }: { poll: Poll }) => {
@@ -15,32 +16,39 @@ const PollDetails = ({ poll }: { poll: Poll }) => {
 
   return !poll ? null : (
     <>
-      <Grid>
+      <Gutter>
         <Card>
           <PollHeader {...poll} titleClassName={styles.title} />
           <PollMeta {...poll} />
+          <VoteLink {...poll} />
         </Card>
-      </Grid>
+      </Gutter>
 
-      <Grid>
+      <Gutter>
         <Card>
           <PollSummary {...poll} />
         </Card>
-      </Grid>
+      </Gutter>
 
-      <Grid>
+      <Gutter>
         <Card title="Vote Details">
-          {!gt(plus(poll.yes_votes, poll.no_votes), 0) ? (
+          {!gt(getTotal(poll), 0) ? (
             <p className="empty">No votes found</p>
           ) : (
             <PollVotes {...poll} lg />
           )}
-
-          <PollVoters id={id} />
         </Card>
-      </Grid>
+      </Gutter>
+
+      <Gutter>
+        <PollVoters id={id} />
+      </Gutter>
     </>
   )
 }
 
 export default PollDetails
+
+/* helpers */
+const getTotal = (poll: Poll) =>
+  sum([poll.yes_votes ?? 0, poll.no_votes ?? 0, poll.abstain_votes ?? 0])

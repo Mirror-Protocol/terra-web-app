@@ -26,6 +26,5 @@ export const insertIf = <T>(condition?: any, ...elements: T[]) =>
   condition ? elements : []
 
 /* string */
-export const getLength = (text: string) => new Blob([text]).size
-export const capitalize = (text: string) =>
-  text[0].toUpperCase() + text.slice(1)
+export const getLength = (text = "") => new Blob([text]).size
+export const capitalize = (text = "") => text[0]?.toUpperCase() + text.slice(1)

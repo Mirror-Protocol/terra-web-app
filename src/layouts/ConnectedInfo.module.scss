@@ -1,0 +1,60 @@
+@import "mixins";
+@import "variables";
+
+.wallet {
+  // padding: 28px;
+  background-color: $gray-22;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px 0 rgba(black, 0.15);
+  overflow: hidden;
+  width: 240px;
+}
+
+.main {
+  padding: 32px;
+}
+
+.address {
+  @include flex;
+
+  color: $white-92;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px;
+
+  svg {
+    @include transition;
+    fill: $white-92;
+    margin-left: 4px;
+  }
+
+  &:hover {
+    color: $blue;
+    text-decoration: none;
+
+    svg {
+      fill: $blue;
+    }
+  }
+}
+
+.copy {
+  @include link($white-64, $white-92);
+
+  background-color: $gray-34;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  margin-bottom: 40px;
+  padding: 4px 12px;
+  text-transform: uppercase;
+}
+
+.disconnect {
+  @include link($white-64, $white-92);
+  background: $gray-18;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 12px;
+  width: 100%;
+}

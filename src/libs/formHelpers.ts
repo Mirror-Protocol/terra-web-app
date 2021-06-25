@@ -1,11 +1,11 @@
 import { AccAddress } from "@terra-money/terra.js"
 import { div, gt, gte, isInteger, pow } from "./math"
 import { getLength, omitEmpty } from "./utils"
-import { dp, validateDp, lookup, format, toAmount } from "./parse"
+import { dp as getDp, validateDp, lookup, format, toAmount } from "./parse"
 
 /* forms */
 export const placeholder = (symbol?: string) => step(symbol).replace("1", "0")
-export const step = (symbol?: string) => div(1, pow(10, dp(symbol)))
+export const step = (symbol?: string) => div(1, pow(10, getDp(symbol)))
 
 export const renderBalance = (
   balance?: string,
@@ -30,6 +30,7 @@ interface AmountRange {
   symbol?: string
   min?: string
   max?: string
+  dp?: number
 }
 
 export const validate = {
@@ -65,7 +66,7 @@ export const validate = {
     !isInteger(value) ? `${label} must be an integer` : "",
 
   amount: (value: string, range: AmountRange = {}, label = "Amount") => {
-    const { optional, symbol, min, max } = range
+    const { optional, symbol, min, max, dp } = range
     const amount = symbol ? toAmount(value) : value
 
     return optional && !value
@@ -76,8 +77,8 @@ export const validate = {
       ? `${label} must be greater than 0`
       : min && !gte(amount, min)
       ? `${label} must be greater than ${lookup(min, symbol)}`
-      : !validateDp(value, symbol)
-      ? `${label} must be within ${dp(symbol)} decimal points`
+      : !validateDp(value, symbol, dp)
+      ? `${label} must be within ${dp ?? getDp(symbol)} decimal points`
       : max && gt(max, 0) && gt(amount, max)
       ? `${label} must be between 0 and ${lookup(max, symbol)}`
       : symbol && max && !gt(max, 0)
@@ -90,9 +91,6 @@ export const validate = {
     return Array.from(symbol).some((char) => !regex.test(char)) ? "Invalid" : ""
   },
 }
-
-export const validateSlippage = (value: string) =>
-  !validateDp(value) ? `Slippage must be within ${dp()} decimal points` : ""
 
 /* data (utf-8) */
 export const toBase64 = (object: object) => {

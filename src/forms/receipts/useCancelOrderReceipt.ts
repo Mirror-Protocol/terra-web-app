@@ -1,10 +1,10 @@
 import { formatAsset } from "../../libs/parse"
-import { useContractsAddress } from "../../hooks"
-import { findValue, splitTokenText } from "./receiptHelpers"
+import { useProtocol } from "../../data/contract/protocol"
+import { findValueFromLogs, splitTokenText } from "./receiptHelpers"
 
 export default () => (logs: TxLog[]) => {
-  const { getSymbol } = useContractsAddress()
-  const val = findValue(logs)
+  const { getSymbol } = useProtocol()
+  const val = findValueFromLogs(logs)
 
   const order_id = val("order_id")
   const refund = splitTokenText(val("bidder_refund"))

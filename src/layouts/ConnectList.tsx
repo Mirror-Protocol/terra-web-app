@@ -1,7 +1,7 @@
 import { ConnectType, useWallet } from "@terra-money/wallet-provider"
 import { ReactNode } from "react"
-import { ReactComponent as Terra } from "../images/Terra.svg"
-import WalletConnect from "../images/WalletConnect.png"
+import { ReactComponent as Terra } from "../styles/images/Terra.svg"
+import WalletConnect from "../styles/images/WalletConnect.png"
 import styles from "./ConnectList.module.scss"
 
 const size = { width: 24, height: 24 }
@@ -15,7 +15,7 @@ const ConnectList = () => {
     .concat(
       availableInstallTypes.includes(ConnectType.CHROME_EXTENSION)
         ? {
-            label: "Terra Station (extension)",
+            label: "Terra Station Extension",
             image: <Terra {...size} />,
             onClick: () => install(ConnectType.CHROME_EXTENSION),
           }
@@ -24,13 +24,13 @@ const ConnectList = () => {
     .concat(
       availableConnectTypes.includes(ConnectType.WEBEXTENSION)
         ? {
-            label: "Terra Station (extension)",
+            label: "Terra Station Extension",
             image: <Terra {...size} />,
             onClick: () => connect(ConnectType.WEBEXTENSION),
           }
         : availableConnectTypes.includes(ConnectType.CHROME_EXTENSION)
         ? {
-            label: "Terra Station (extension)",
+            label: "Terra Station Extension",
             image: <Terra {...size} />,
             onClick: () => connect(ConnectType.CHROME_EXTENSION),
           }
@@ -39,7 +39,7 @@ const ConnectList = () => {
     .concat(
       availableConnectTypes.includes(ConnectType.WALLETCONNECT)
         ? {
-            label: "Terra Station (mobile)",
+            label: "Terra Station Mobile",
             image: <img src={WalletConnect} {...size} alt="WalletConnect" />,
             onClick: () => connect(ConnectType.WALLETCONNECT),
           }

@@ -5,20 +5,24 @@ import ConnectButton from "../components/ConnectButton"
 import Connected from "./Connected"
 import ConnectListModal from "./ConnectListModal"
 
-const Connect = () => {
+const Connect = ({ className }: { className?: string }) => {
   const address = useAddress()
   const modal = useModal()
 
-  return !address ? (
-    <>
-      <ConnectButton onClick={() => modal.open()}>
-        {MESSAGE.Wallet.Connect}
-      </ConnectButton>
+  return (
+    <div className={className}>
+      {!address ? (
+        <>
+          <ConnectButton onClick={() => modal.open()}>
+            {MESSAGE.Wallet.Connect}
+          </ConnectButton>
 
-      <ConnectListModal {...modal} />
-    </>
-  ) : (
-    <Connected />
+          <ConnectListModal {...modal} />
+        </>
+      ) : (
+        <Connected />
+      )}
+    </div>
   )
 }
 

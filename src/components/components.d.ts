@@ -1,74 +1,9 @@
-interface Content {
-  title?: ReactNode
-  content?: ReactNode
-}
-
-/* Header */
-interface MenuItem {
-  attrs: { to: string; children: string }
-  desktopOnly?: boolean
-}
-
-/* Forms */
-type Values<T> = Record<T, string>
-type Touched<T> = Record<T, boolean>
-
-type Input = DetailedHTMLProps<
-  InputHTMLAttributes<HTMLInputElement>,
-  HTMLInputElement
->
-
-type TextArea = DetailedHTMLProps<
-  TextareaHTMLAttributes<HTMLTextAreaElement>,
-  HTMLTextAreaElement
->
-
-type Select = DetailedHTMLProps<
-  SelectHTMLAttributes<HTMLSelectElement>,
-  HTMLSelectElement
->
-
-interface FormGroup {
-  input?: Input
-  textarea?: TextArea
-  select?: Select
-  value?: ReactNode
-  label?: ReactNode
-  help?: Content
-  unit?: ReactNode
-  max?: () => void
-  assets?: ReactNode
-  focused?: boolean
-  error?: string
-  type?: 1 | 2
-  skipFeedback?: boolean
-}
-
-/* Buttons */
-interface ButtonProps {
-  /** xs: 22px; sm: 26px; md: 36px; lg: 50px */
-  size?: "xs" | "sm" | "md" | "lg"
-  color?: string
-  outline?: boolean
-  block?: boolean
-
-  loading?: boolean
-  submit?: boolean
-
-  disabled?: boolean
-  className?: string
-  children?: ReactNode
-}
-
-type ButtonAttrs = ButtonHTMLAttributes<HTMLButtonElement>
-type Button = ButtonProps & ButtonAttrs
-
 /* Tab */
 interface Tab {
   tabs: string[]
   tooltips?: string[]
   current?: string
-  shadow?: boolean
+  onClick?: (tab: string) => void
 }
 
 /* Modal */
@@ -84,27 +19,74 @@ interface FormatConfig {
   dp?: number
 }
 
-interface CountOptions extends FormatConfig {
-  /** 0 if undefined */
-  children?: string
-  /** As a unit. */
+interface FormattedOptions extends FormatConfig {
+  children?: string // 0 if undefined
+
   symbol?: string
-  /** Plus on positive */
-  plus?: boolean
-  /** Custom formatter */
+  unit?: string
+
   format?: (current: string) => string
+  plus?: boolean // display plus sign if positive
+  approx?: boolean // ≈
+  noUnit?: boolean
+  noCount?: boolean
+
+  big?: boolean
+  className?: string
 }
 
-interface Confirm {
-  contents?: Content[]
-  warning?: string
-}
+type AssetSize = "default" | "sm" | "xs" | "lg"
 
-interface AssetItem {
-  symbol: string
-  token: string
-  name: string
-  status?: ListedItemStatus
-  price?: string
-  balance?: string
-}
+/* icons */
+type IconNames =
+  | "ArrowDown"
+  | "ArrowRightCircleSolid"
+  | "Borrow"
+  | "Chart"
+  | "Chat"
+  | "Check"
+  | "CheckDouble"
+  | "ChevronDown"
+  | "ChevronDownThin"
+  | "ChevronRight"
+  | "ChevronUp"
+  | "ChevronUpThin"
+  | "Claim"
+  | "Clock"
+  | "Close"
+  | "CloseCircleSolid"
+  | "CloseCircleSolidBlue"
+  | "Completed"
+  | "Desktop"
+  | "Discord"
+  | "Docs"
+  | "DownSolid"
+  | "Download"
+  | "ExclamationCircle"
+  | "ExclamationCircleSolid"
+  | "ExclamationTriangleSolid"
+  | "External"
+  | "Farm"
+  | "Github"
+  | "Governance"
+  | "GridViewSolid"
+  | "InfoCircle"
+  | "ListView"
+  | "Medium"
+  | "Mirror"
+  | "Mobile"
+  | "Mode"
+  | "MoreCircle"
+  | "MyPage"
+  | "Plus"
+  | "Poll"
+  | "PollSolid"
+  | "Search"
+  | "Send"
+  | "Settings"
+  | "Telegram"
+  | "Trade"
+  | "Twitter"
+  | "UpSolid"
+  | "VerifiedSolid"
+  | "Wallet"

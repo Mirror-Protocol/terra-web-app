@@ -2,10 +2,15 @@
 @import "variables";
 
 .list {
-  background: $saturated-blue;
   border-radius: $border-radius;
-  font-size: 12px;
-  padding: 20px;
+
+  @include mobile {
+    font-size: 12px;
+  }
+
+  @include desktop {
+    font-size: 14px;
+  }
 
   &:not(:first-child) {
     margin-top: 30px;
@@ -13,7 +18,7 @@
 }
 
 .item:not(:first-child) {
-  margin-top: 10px;
+  margin-top: 16px;
 }
 
 .article {
@@ -21,9 +26,10 @@
 }
 
 .title {
-  color: $battleship;
+  color: $white-44;
+  font-weight: normal;
 }
 
 .content {
-  color: $light;
+  color: $white-80;
 }

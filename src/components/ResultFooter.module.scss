@@ -1,0 +1,23 @@
+@import "mixins";
+
+.row {
+  @include flex(space-between);
+  color: $white-44;
+
+  @include mobile {
+    font-size: 12px;
+  }
+
+  @include desktop {
+    font-size: 14px;
+  }
+
+  .title {
+    font-weight: normal;
+    color: $white-44;
+  }
+
+  & + & {
+    margin-top: 16px;
+  }
+}

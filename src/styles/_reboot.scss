@@ -5,8 +5,8 @@
 }
 
 html {
-  line-height: $line-height;
   font-family: $font-family, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
@@ -14,6 +14,7 @@ body {
   color: $text;
   margin: 0;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 hr {
@@ -36,7 +37,7 @@ h4,
 h5,
 h6 {
   font-size: inherit;
-  font-weight: 600;
+  font-weight: 500;
   margin: 0;
 }
 
@@ -54,8 +55,14 @@ ol {
   list-style: none;
 }
 
-strong {
-  font-weight: 600;
+strong,
+.strong {
+  font-weight: 500;
+}
+
+small,
+.small {
+  font-size: 75%;
 }
 
 a {
@@ -75,6 +82,7 @@ table {
   width: 100%;
 }
 
+caption,
 th {
   text-align: left;
 }

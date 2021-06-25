@@ -1,22 +1,52 @@
 @import "mixins";
-@import "variables";
 
-.article {
-  font-weight: 600;
+.article:not(.lg) .title {
+  font-size: 12px;
 }
 
 .title {
-  color: $battleship;
-  margin-bottom: 5px;
+  color: $white-44;
+  font-weight: 500;
+
+  @include mobile {
+    margin-bottom: 4px;
+  }
+
+  @include desktop {
+    margin-bottom: 8px;
+  }
+
+  text-transform: uppercase;
 }
 
 .content {
-  color: white;
-  font-size: 20px;
+  font-weight: 500;
+
+  @include mobile {
+    font-size: 18px;
+  }
+
+  @include desktop {
+    font-size: 28px;
+  }
 }
 
-.footer {
-  color: $battleship;
-  font-size: 12px;
-  font-weight: 500;
+.lg .content {
+  @include mobile {
+    font-size: 32px;
+  }
+
+  @include desktop {
+    font-size: 40px;
+  }
+}
+
+.sm .content {
+  @include mobile {
+    font-size: 18px;
+  }
+
+  @include desktop {
+    font-size: 20px;
+  }
 }
