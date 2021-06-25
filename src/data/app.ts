@@ -1,5 +1,6 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { atom, useSetRecoilState } from "recoil"
+import { isNil } from "ramda"
 
 export const locationKeyState = atom({
   key: "locationKey",
@@ -12,9 +13,17 @@ export const pairPriceKeyState = atom({
 })
 
 export const usePolling = () => {
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout>()
   const setPairPriceKey = useSetRecoilState(pairPriceKeyState)
 
   useEffect(() => {
-    setInterval(() => setPairPriceKey((n) => n + 1), 3000)
+    const id = setInterval(() => setPairPriceKey((n) => n + 1), 5000)
+    setIntervalId(id)
   }, [setPairPriceKey])
+
+  useEffect(() => {
+    return () => {
+      !isNil(intervalId) && clearInterval(intervalId)
+    }
+  }, [intervalId])
 }
