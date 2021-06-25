@@ -12,7 +12,7 @@ import Formatted from "../../components/Formatted"
 import CaptionData from "./CaptionData"
 
 const Gov = () => {
-  const { dataSource, accReward, staked, votingRewards } = useMyGov()
+  const { dataSource, staked, votingRewards } = useMyGov()
   const dataExists = !!dataSource.length || gt(staked, 0)
   const description = dataExists && (
     <CaptionData
@@ -20,14 +20,6 @@ const Gov = () => {
         {
           title: <TooltipIcon content={Tooltips.My.Staked}>Staked</TooltipIcon>,
           content: formatAsset(staked, "MIR"),
-        },
-        {
-          title: (
-            <TooltipIcon content={Tooltips.My.AccRewards}>
-              Accumulated Rewards
-            </TooltipIcon>
-          ),
-          content: formatAsset(accReward, "MIR"),
         },
         {
           title: (

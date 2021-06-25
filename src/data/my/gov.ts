@@ -63,7 +63,7 @@ const accGovRewardState = atom({
   default: "0",
 })
 
-const useAccGovReward = () => {
+export const useAccGovReward = () => {
   return useStoreLoadable(accGovRewardQuery, accGovRewardState)
 }
 
@@ -76,7 +76,6 @@ export const useMyGov = () => {
   const findPrice = useFindPrice()
   const govStaked = useGovStaked()
   const govStaker = useGovStaker()
-  const accReward = useAccGovReward()
   const dataSource = useVoteHistory()
 
   const price = findPrice(priceKey, mir)
@@ -94,6 +93,5 @@ export const useMyGov = () => {
     stakedValue,
     votingRewards,
     votingRewardsValue,
-    accReward,
   }
 }
