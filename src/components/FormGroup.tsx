@@ -107,7 +107,7 @@ const FormGroup = (props: FormGroupInterface) => {
 
         <section className={cx(styles.field, textAlign)}>
           {input ? (
-            <input {...inputAttrs} ref={inputRef} />
+            <input {...inputAttrs} autoFocus={false} ref={inputRef} />
           ) : textarea ? (
             <textarea {...textarea} />
           ) : select ? (

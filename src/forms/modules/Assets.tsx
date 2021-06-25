@@ -94,7 +94,6 @@ const Assets = ({ selected, onSelect, ...props }: Props) => {
           name="search"
           onChange={(e) => setValue(e.target.value)}
           autoComplete="off"
-          autoFocus
         />
       </section>
 
