@@ -49,7 +49,7 @@ export const assetsHistoryQuery = selector({
     const { assets } = await request<{ assets: AssetHistoryItem[] }>(
       url + "?assetsHistory",
       ASSETS.HISTORY,
-      { interval: 30, from: subDays(now, 1).getTime(), to: now.getTime() }
+      { interval: 60, from: subDays(now, 1).getTime(), to: now.getTime() }
     )
 
     return assets.reduce<Dictionary<PriceHistoryItem[]>>(
