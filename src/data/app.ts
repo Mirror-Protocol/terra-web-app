@@ -17,7 +17,7 @@ export const usePolling = () => {
   const setPairPriceKey = useSetRecoilState(pairPriceKeyState)
 
   useEffect(() => {
-    const id = setInterval(() => setPairPriceKey((n) => n + 1), 5000)
+    const id = setInterval(() => setPairPriceKey((n) => n + 1), 30000)
     setIntervalId(id)
   }, [setPairPriceKey])
 
