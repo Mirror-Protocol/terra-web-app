@@ -23,6 +23,9 @@ export const validateDp = (value: string, symbol?: string, decimal?: number) =>
 export const decimal = (value = "0", dp = 6) =>
   new BigNumber(value).decimalPlaces(dp, rm).toString()
 
+export const toFixed = (value = "0", dp = 6) =>
+  new BigNumber(value).toFixed(dp, rm).toString()
+
 export const lookup: Formatter = (amount = "0", symbol, config) => {
   const value = symbol
     ? new BigNumber(amount).div(SMALLEST).dp(6, rm)

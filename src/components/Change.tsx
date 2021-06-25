@@ -1,3 +1,4 @@
+import { isNil } from "ramda"
 import classNames from "classnames/bind"
 import { abs, gt, gte, lt } from "../libs/math"
 import { percent } from "../libs/num"
@@ -25,14 +26,14 @@ const Change = ({ children, align = "left", inline, idle }: Props) => {
     return (
       <span className={cx(className, { up, down })}>
         {icon && <Icon name={icon} size={10} />}
-        {percent(abs(change))}
+        {percent(abs(change), 2, 2)}
       </span>
     )
   }
 
   return idle ? (
     <span className={classNames(className, styles.idle)}>0</span>
-  ) : change ? (
+  ) : !isNil(change) ? (
     render(change)
   ) : null
 }
