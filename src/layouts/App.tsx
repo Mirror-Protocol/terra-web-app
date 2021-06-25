@@ -14,10 +14,6 @@ import Header from "./Header"
 import Footer from "./Footer"
 import "./App.scss"
 
-/* under maintenance */
-import { useState } from "react"
-import UnderMaintenance from "./UnderMaintenance"
-
 const icons: Dictionary<IconNames> = {
   [MenuKey.MY]: "MyPage",
   [MenuKey.TRADE]: "Trade",
@@ -40,12 +36,7 @@ const App = () => {
     style: { order: Number(key === MenuKey.MY) },
   }))
 
-  /* under maintenance */
-  const [hideMaintenance, setHideMaintenance] = useState(false)
-
-  return !hideMaintenance ? (
-    <UnderMaintenance onHide={() => setHideMaintenance(true)} />
-  ) : alert ? (
+  return alert ? (
     <AlertNetwork />
   ) : (
     <Layout
