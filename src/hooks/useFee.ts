@@ -5,9 +5,7 @@ const useFee = (length = 1) => {
   const { fee } = useNetwork()
   const { gasPrice } = fee
 
-  const amount = new BigNumber(fee.amount)
-    .times(Math.ceil(length / 3))
-    .toNumber()
+  const amount = new BigNumber(fee.amount).times(length).toNumber()
 
   const gas = new BigNumber(amount)
     .div(gasPrice)
