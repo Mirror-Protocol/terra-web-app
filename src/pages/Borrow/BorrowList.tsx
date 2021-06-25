@@ -21,7 +21,7 @@ const Sorters: Dictionary<Sorter> = {
     compare: (a, b) => number(minus(b.collateralValue, a.collateralValue)),
   },
   MINCOLLATERALRATIO: {
-    label: "Min Collateral Ratio",
+    label: "Minimum Collateral Ratio",
     compare: (a, b) =>
       number(minus(b.minCollateralRatio, a.minCollateralRatio)),
   },
@@ -66,7 +66,7 @@ const BorrowList = () => {
               key: "minCollateralRatio",
               title: (
                 <TooltipIcon content={Tooltips.Mint.MinimumCollateralRatio}>
-                  Min Collateral Ratio
+                  Min. Col. Ratio
                 </TooltipIcon>
               ),
               render: (value) => <Percent>{value}</Percent>,
