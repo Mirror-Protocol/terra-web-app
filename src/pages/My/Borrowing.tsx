@@ -62,6 +62,7 @@ const Borrowing = () => {
             description={description}
           />
         }
+        rowKey="idx"
         rows={({ state }) => ({
           background: state ? "red" : undefined,
         })}

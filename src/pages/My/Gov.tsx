@@ -41,6 +41,7 @@ const Gov = () => {
           description={description}
         />
       }
+      rowKey="id"
       columns={[
         {
           key: "title",

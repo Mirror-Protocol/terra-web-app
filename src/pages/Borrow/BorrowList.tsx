@@ -43,6 +43,7 @@ const BorrowList = () => {
         <AssetsIdleTable />
       ) : (
         <Table
+          rowKey="token"
           rows={({ token }) => ({
             to: { hash: MintType.BORROW, state: { token } },
           })}

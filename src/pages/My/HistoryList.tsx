@@ -21,6 +21,7 @@ const HistoryList = ({ data, loading, more }: Props) => {
             loading={loading}
           />
         }
+        rowKey="id"
         columns={[
           { key: "id", render: (id, item) => <HistoryItem {...item} /> },
         ]}

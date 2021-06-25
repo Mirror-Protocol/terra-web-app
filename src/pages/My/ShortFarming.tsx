@@ -64,6 +64,7 @@ const ShortFarming = () => {
   return !dataExists ? null : (
     <Table
       caption={<Caption title="Short Farming" description={description} />}
+      rowKey="token"
       columns={[
         {
           key: "symbol",

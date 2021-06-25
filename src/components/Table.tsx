@@ -9,6 +9,7 @@ const cx = classNames.bind(styles)
 
 interface Props<T> {
   caption?: ReactNode
+  rowKey: keyof T
   rows?: (record: T) => Row
   columns: Column<T>[]
   dataSource: T[]
@@ -57,7 +58,7 @@ const SEP = "."
 
 type DefaultRecordType = Record<string, any>
 function Table<T extends DefaultRecordType>(props: Props<T>) {
-  const { caption, rows, columns, dataSource, config } = props
+  const { caption, rowKey, rows, columns, dataSource, config } = props
   const { push } = useHistory()
 
   const normalized = columns.reduce<Column<T>[]>(
@@ -216,7 +217,7 @@ function Table<T extends DefaultRecordType>(props: Props<T>) {
                   <tr
                     className={cx(row?.background, { clickable: row?.to })}
                     onClick={() => row?.to && push(row.to)}
-                    key={index}
+                    key={record[rowKey]}
                   >
                     {normalized.map(renderTd)}
                   </tr>

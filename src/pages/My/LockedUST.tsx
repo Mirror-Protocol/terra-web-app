@@ -44,6 +44,7 @@ const LockedUST = () => {
   return !dataExists ? null : (
     <Table
       caption={<Caption title="Locked UST" description={description} />}
+      rowKey="idx"
       columns={[
         {
           key: "symbol",

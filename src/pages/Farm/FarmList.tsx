@@ -52,6 +52,7 @@ const FarmList = () => {
         <AssetsIdleTable />
       ) : (
         <Table
+          rowKey="token"
           rows={({ token }) =>
             getSymbol(token) === "MIR" ? { background: "darker" } : {}
           }

@@ -49,6 +49,7 @@ const TradeList = () => {
         <AssetsIdleTable />
       ) : (
         <Table
+          rowKey="token"
           rows={({ token }) =>
             Object.assign(
               { to: { hash: TradeType.BUY, state: { token } } },

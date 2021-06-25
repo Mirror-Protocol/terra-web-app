@@ -114,6 +114,7 @@ const Tool = () => {
 
       <Gutter>
         <Table
+          rowKey="token"
           columns={[
             { key: "symbol" },
             { key: "token" },

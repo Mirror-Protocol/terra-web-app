@@ -28,6 +28,7 @@ const Pool = () => {
           description={description}
         />
       }
+      rowKey="token"
       columns={[
         {
           key: "symbol",

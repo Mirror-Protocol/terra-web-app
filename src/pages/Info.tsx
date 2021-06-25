@@ -29,6 +29,7 @@ const Info = () => {
   return (
     <Page title="Info">
       <Table
+        rowKey="token"
         caption={<Caption title="Pair Pool" />}
         columns={[
           { key: "symbol", title: "Ticker", bold: true },

@@ -7,6 +7,7 @@ const AssetsIdleTable = () => {
 
   return (
     <Table
+      rowKey="token"
       columns={[
         {
           key: "token",

@@ -29,6 +29,7 @@ const TopTradingTable = () => {
 
   return (
     <Table
+      rowKey="token"
       rows={({ token }) => ({
         to: {
           pathname: getPath(MenuKey.TRADE),

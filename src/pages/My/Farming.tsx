@@ -49,6 +49,7 @@ const Farming = () => {
           description={description}
         />
       }
+      rowKey="token"
       columns={[
         {
           key: "symbol",

@@ -42,6 +42,7 @@ const LimitOrder = () => {
             description={description}
           />
         }
+        rowKey="order_id"
         columns={[
           {
             key: "type",

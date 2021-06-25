@@ -11,6 +11,7 @@ const PollVoters = ({ id }: { id: number }) => {
 
   return !voters?.length ? null : (
     <Table
+      rowKey="voter"
       columns={[
         {
           key: "voter",

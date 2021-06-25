@@ -42,6 +42,7 @@ const Holding = () => {
           description={description}
         />
       }
+      rowKey="token"
       columns={[
         {
           key: "symbol",
