@@ -34,6 +34,7 @@ import Result from "./Result"
 interface Props {
   data: Msg[]
   memo?: string
+  gasAdjust?: number
 
   /** Form information */
   contents?: Content[]
@@ -67,7 +68,7 @@ export type PostError =
   | TxFailed
   | TxUnspecifiedError
 
-export const Component = ({ data: msgs, memo, ...props }: Props) => {
+export const Component = ({ data: msgs, memo, gasAdjust, ...props }: Props) => {
   const { contents, messages, label, children, full } = props
   const { attrs, pretax, deduct, parseTx = () => [], gov } = props
 
@@ -85,7 +86,7 @@ export const Component = ({ data: msgs, memo, ...props }: Props) => {
   const address = useAddress()
 
   /* tax */
-  const fee = useFee(msgs?.length)
+  const fee = useFee(msgs?.length, gasAdjust)
   const { calcTax } = useTax()
   const tax = pretax ? calcTax(pretax) : "0"
   const uusdAmount = !deduct

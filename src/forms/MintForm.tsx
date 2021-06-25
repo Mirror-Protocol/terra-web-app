@@ -565,6 +565,7 @@ const MintForm = ({ position, type }: Props) => {
   const tax = {
     pretax: token1 === "uusd" ? (edit ? diffCollateral : amount1) : "0",
     deduct,
+    gasAdjust: 1.5,
   }
 
   const steps = [
