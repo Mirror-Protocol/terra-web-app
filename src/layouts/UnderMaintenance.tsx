@@ -10,7 +10,7 @@ enum Status {
   AVAILABLE,
 }
 
-const current: Status = Status.UNAVAILABLE
+const current: Status = Status.AVAILABLE
 
 const UnderMaintenance = ({ onHide }: { onHide: () => void }) => {
   const content = {
