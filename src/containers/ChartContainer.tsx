@@ -12,6 +12,7 @@ const cx = classNames.bind(styles)
 /* styles */
 const $font = '"Gotham SSm A", "Gotham SSm B"'
 const $blue = "#66adff"
+const $blue62 = "#55779D"
 const $red = "#f15e7e"
 const $gray34 = "#555557"
 const $gray22 = "#373738"
@@ -48,10 +49,10 @@ const ChartContainer = ({ change, datasets = [], ...props }: Props) => {
           : {
               pointHoverRadius: 3,
               pointHoverBorderWidth: 3,
-              pointHoverBackgroundColor: $blue,
-              pointHoverBorderColor: $blue,
-              hoverBackgroundColor: $blue,
-              hoverBorderColor: $blue,
+              pointHoverBackgroundColor: $blue62,
+              pointHoverBorderColor: $blue62,
+              hoverBackgroundColor: $blue62,
+              hoverBorderColor: $blue62,
             }
       ),
     ],
@@ -62,7 +63,7 @@ const ChartContainer = ({ change, datasets = [], ...props }: Props) => {
     responsive: true,
     maintainAspectRatio: false,
     animation: { duration: 0 },
-    layout: compact ? undefined : { padding: { top: 40 } },
+    layout: compact ? undefined : { padding: { top: 12 } },
     plugins: {
       legend: { display: false },
       tooltip: {
