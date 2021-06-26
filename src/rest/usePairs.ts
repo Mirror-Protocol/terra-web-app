@@ -227,6 +227,14 @@ export default () => {
                 }
               }
 
+              if (name === "mainnet" && tokenInfo1?.symbol === "MINE" && !(tokenInfo1?.contract_addr === "terra1kcthelkax4j9x8d3ny6sdag0qmxxynl3qtcrpy")) {
+                return
+              }
+
+              if (name === "mainnet" && tokenInfo2?.symbol === "MINE" && !(tokenInfo2?.contract_addr === "terra1kcthelkax4j9x8d3ny6sdag0qmxxynl3qtcrpy")) {
+                return
+              }
+
               const lpTokenInfo = await getTokenInfo({
                 token: { contract_addr: pairResult.liquidity_token },
               })
