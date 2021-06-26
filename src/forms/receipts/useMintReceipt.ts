@@ -48,14 +48,14 @@ export default (type: MintType, prev?: MintPosition) => (logs: TxLog[]) => {
       token: prevCollateral?.token,
     },
     [MintType.EDIT]: {
-      amount: deposit.amount
-        ? plus(prevCollateral?.amount, deposit.amount)
-        : withdraw.amount
-        ? minus(
-            minus(prevCollateral?.amount, withdraw.amount),
-            protocolFee.amount
-          )
-        : prevCollateral?.amount,
+      amount: minus(
+        deposit.amount
+          ? plus(prevCollateral?.amount, deposit.amount)
+          : withdraw.amount
+          ? minus(prevCollateral?.amount, withdraw.amount)
+          : prevCollateral?.amount,
+        protocolFee.amount
+      ),
       token: prevCollateral?.token,
     },
   }[type]

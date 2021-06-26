@@ -381,7 +381,11 @@ const MintForm = ({ position, type }: Props) => {
   }
 
   const PROTOCOL_FEE = 0.015
-  const protocolFee = times(times(price, amount2), PROTOCOL_FEE)
+  const protocolFee = times(
+    times(price, edit ? abs(diffAsset) : amount2),
+    PROTOCOL_FEE
+  )
+
   const protocolFeeContents = {
     title: "Protocol Fee",
     content: <Formatted symbol={symbol1}>{protocolFee}</Formatted>,
@@ -413,7 +417,12 @@ const MintForm = ({ position, type }: Props) => {
       ? [burnContents]
       : [burnContents, withdrawContents, protocolFeeContents],
 
-    [MintType.EDIT]: [priceContents, collateralContents, mintedContents],
+    [MintType.EDIT]: [
+      priceContents,
+      collateralContents,
+      mintedContents,
+      protocolFeeContents,
+    ],
   }[type]
 
   /* submit */
