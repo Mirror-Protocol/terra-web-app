@@ -1,5 +1,7 @@
+import { gql, request } from "graphql-request"
 import { selector } from "recoil"
 import { getContractQueryQuery } from "../utils/query"
+import { mantleURLQuery } from "../network"
 import { getPairPricesQuery, getTokenBalancesQuery } from "./terraswap"
 
 const contracts: Dictionary<string> = {
@@ -28,12 +30,36 @@ interface EpochState {
 const getToken = (symbol: string) =>
   Object.values(assets).find((item) => item.symbol === symbol)?.token ?? ""
 
+const LAST_SYNCED_HEIGHT = gql`
+  query {
+    LastSyncedHeight
+  }
+`
+
+const lastSyncedHeightQuery = selector({
+  key: "lastSyncedHeight",
+  get: async ({ get }) => {
+    const url = get(mantleURLQuery)
+    const { LastSyncedHeight } = await request<{ LastSyncedHeight: number }>(
+      url + "?height",
+      LAST_SYNCED_HEIGHT
+    )
+
+    return LastSyncedHeight
+  },
+})
+
 export const anchorMarketEpochStateQuery = selector({
   key: "anchorMarketEpochState",
   get: async ({ get }) => {
     const getContractQuery = get(getContractQueryQuery)
+    const height = get(lastSyncedHeightQuery)
+
     return await getContractQuery<EpochState>(
-      { contract: contracts["anchorMarket"], msg: { epoch_state: {} } },
+      {
+        contract: contracts["anchorMarket"],
+        msg: { epoch_state: { block_height: height + 1 } },
+      },
       "anchorMarketEpochState"
     )
   },
