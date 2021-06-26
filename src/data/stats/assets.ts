@@ -79,7 +79,6 @@ interface Prices {
 export const pricesQuery = selector({
   key: "prices",
   get: async ({ get }) => {
-    get(priceKeyIndexState)
     get(locationKeyState)
     const url = get(statsURLQuery)
     const yesterday = getTime(subDays(startOfMinute(new Date()), 1))

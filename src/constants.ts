@@ -23,7 +23,7 @@ export const COMMISSION = 0.003
 export const COLLATERAL_RATIO = { DANGER: 0.15, WARNING: 0.3 }
 
 /* network:settings */
-export const PRICES_POLLING_INTERVAL = 3000
+export const PRICES_POLLING_INTERVAL = 30000
 export const TX_POLLING_INTERVAL = 1000
 
 /* outbound */
