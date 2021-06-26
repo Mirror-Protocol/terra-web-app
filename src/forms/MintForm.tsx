@@ -370,17 +370,6 @@ const MintForm = ({ position, type }: Props) => {
     ),
   }
 
-  const uusdContents = {
-    title: (
-      <TooltipIcon content={Tooltips.Mint.ExpectedUST}>Locked UST</TooltipIcon>
-    ),
-    content: (
-      <Formatted symbol="uusd" approx>
-        {times(amount2, findPrice(PriceKey.PAIR, token2))}
-      </Formatted>
-    ),
-  }
-
   const burnContents = {
     title: "Burn Amount",
     content: <Formatted symbol={symbol2}>{prevAsset?.amount}</Formatted>,
@@ -418,7 +407,7 @@ const MintForm = ({ position, type }: Props) => {
 
   const contents = {
     [MintType.BORROW]: !gt(price, 0) ? undefined : [priceContents],
-    [MintType.SHORT]: !gt(price, 0) ? undefined : [priceContents, uusdContents],
+    [MintType.SHORT]: !gt(price, 0) ? undefined : [priceContents],
 
     [MintType.CLOSE]: closeDelistedAsset
       ? [burnContents]
@@ -568,7 +557,7 @@ const MintForm = ({ position, type }: Props) => {
     gasAdjust: 1.5,
   }
 
-  const steps = [
+  const defaultSteps = [
     {
       index: 1,
       title: `Choose a Collateral Asset`,
@@ -596,6 +585,26 @@ const MintForm = ({ position, type }: Props) => {
       action: short && <SetSlippageTolerance />,
     },
   ]
+
+  const shortSteps = [
+    {
+      index: 4,
+      title: `Confirm Returned UST`,
+      content: `UST returned from shorting will be locked for 2 weeks.`,
+      render: (
+        <FormGroup
+          value={format(
+            times(amount2, findPrice(PriceKey.PAIR, token2)),
+            "uusd"
+          )}
+          unit="UST"
+          type={2}
+        />
+      ),
+    },
+  ]
+
+  const steps = short ? [...defaultSteps, ...shortSteps] : defaultSteps
 
   return (
     <WithPriceChart token={token2}>
