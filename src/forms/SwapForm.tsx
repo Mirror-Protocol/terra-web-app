@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "styled-components"
 import Container from "components/Container"
 import { useForm } from "react-hook-form"
-import Result, { ResultProps } from "./Result"
+import Result from "./Result"
 import Tab from "components/Tab"
 import { useLocation } from "react-router-dom"
 import { isNil } from "ramda"
@@ -39,7 +39,7 @@ import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import { Coin, CreateTxOptions } from "@terra-money/terra.js"
+import { Coin, Coins, StdFee } from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import { insertIf } from "libs/utils"
@@ -50,7 +50,7 @@ import Button from "components/Button"
 import MESSAGE from "lang/MESSAGE.json"
 import SwapConfirm from "./SwapConfirm"
 import useAPI from "rest/useAPI"
-import terraExtension, { PostResponse } from "terra/extension"
+import { TxResult, useWallet } from "@terra-money/wallet-provider"
 
 enum Key {
   token1 = "token1",
@@ -80,31 +80,6 @@ const Wrapper = styled.div`
   position: relative;
 `
 
-const postTerraExtension = (
-  options: CreateTxOptions,
-  txFee: {
-    gasPrice: string
-    amount: string
-    tax: string
-    symbol: string
-    gas: string
-  }
-): Promise<PostResponse> => {
-  return new Promise((resolve, reject) => {
-    try {
-      const requestId = terraExtension.post(options, txFee, (res) => {
-        if (res?.id === requestId) {
-          resolve(res)
-          return
-        }
-        reject(res)
-      })
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
-
 const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
   const connectModal = useConnectModal()
   const { toToken, isNativeToken, getSymbol } = useContractsAddress()
@@ -113,6 +88,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
   const { fee } = useNetwork()
   const { find } = useContract()
   const walletAddress = useAddress()
+  const { post: terraExtensionPost } = useWallet()
 
   const { pairs } = usePairs()
   const balanceKey = {
@@ -596,91 +572,110 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
       const amount1 = toAmount(value1)
       const amount2 = toAmount(value2)
       const asset = toToken({ symbol: token1, amount: amount1 })
-      const data = {
-        [Type.SWAP]: isNativeToken(token1)
-          ? [
-              ...insertIf(
-                !isNativeToken(token2),
-                newContractMsg(token2, {
-                  increase_allowance: { amount: amount2, spender: pair },
-                })
-              ),
-              newContractMsg(pair, { swap: { offer_asset: asset } }, [
-                { amount: amount1, denom: getSymbol(symbol1) },
-              ]),
-            ]
-          : [
-              ...insertIf(
-                !isNativeToken(token2),
-                newContractMsg(token2, {
-                  increase_allowance: { amount: amount2, spender: pair },
-                })
-              ),
-              newContractMsg(token1, {
-                send: {
-                  amount: amount1,
-                  contract: pair,
-                  msg: toBase64({ swap: {} }),
-                },
-              }),
-            ],
-        [Type.PROVIDE]: [
-          ...insertIf(
-            !isNativeToken(token1),
-            newContractMsg(token1, {
-              increase_allowance: { amount: amount1, spender: pair },
-            })
-          ),
-          ...insertIf(
-            !isNativeToken(token2),
-            newContractMsg(token2, {
-              increase_allowance: { amount: amount2, spender: pair },
-            })
-          ),
-          newContractMsg(
-            pair,
-            {
-              provide_liquidity: {
-                assets: [
-                  toToken({ amount: amount1, symbol: token1 }),
-                  toToken({ amount: amount2, symbol: token2 }),
-                ],
-                slippage_tolerance: "0.1",
-              },
-            },
-            [
-              ...insertIf(isNativeToken(token1), {
-                amount: amount1,
-                denom: getSymbol(symbol1),
-              }),
-              ...insertIf(isNativeToken(token2), {
-                amount: amount2,
-                denom: getSymbol(symbol2),
-              }),
-            ]
-          ),
-        ],
-        [Type.WITHDRAW]: [
-          newContractMsg(lpContract, {
-            send: {
-              amount: amount1,
-              contract: pair,
-              msg: toBase64({ withdraw_liquidity: {} }),
-            },
-          }),
-        ],
-      }[type]
       try {
-        const extensionResult = await postTerraExtension(
-          { msgs: data, memo: undefined },
-          {
-            gasPrice,
-            amount: feeValue,
-            tax,
-            symbol: getSymbol(feeSymbol),
-            gas: fee.gas,
+        const msgs = {
+          [Type.SWAP]: isNativeToken(token1)
+            ? [
+                ...insertIf(
+                  !isNativeToken(token2),
+                  newContractMsg(token2, {
+                    increase_allowance: { amount: amount2, spender: pair },
+                  })
+                ),
+                newContractMsg(pair, { swap: { offer_asset: asset } }, [
+                  { amount: amount1, denom: getSymbol(symbol1) },
+                ]),
+              ]
+            : [
+                ...insertIf(
+                  !isNativeToken(token2),
+                  newContractMsg(token2, {
+                    increase_allowance: { amount: amount2, spender: pair },
+                  })
+                ),
+                newContractMsg(token1, {
+                  send: {
+                    amount: amount1,
+                    contract: pair,
+                    msg: toBase64({ swap: {} }),
+                  },
+                }),
+              ],
+          [Type.PROVIDE]: [
+            ...insertIf(
+              !isNativeToken(token1),
+              newContractMsg(token1, {
+                increase_allowance: { amount: amount1, spender: pair },
+              })
+            ),
+            ...insertIf(
+              !isNativeToken(token2),
+              newContractMsg(token2, {
+                increase_allowance: { amount: amount2, spender: pair },
+              })
+            ),
+            newContractMsg(
+              pair,
+              {
+                provide_liquidity: {
+                  assets: [
+                    toToken({ amount: amount1, symbol: token1 }),
+                    toToken({ amount: amount2, symbol: token2 }),
+                  ],
+                  slippage_tolerance: "0.1",
+                },
+              },
+              [
+                ...insertIf(isNativeToken(token1), {
+                  amount: amount1,
+                  denom: getSymbol(symbol1),
+                }),
+                ...insertIf(isNativeToken(token2), {
+                  amount: amount2,
+                  denom: getSymbol(symbol2),
+                }),
+              ]
+            ),
+          ],
+          [Type.WITHDRAW]: [
+            newContractMsg(lpContract, {
+              send: {
+                amount: amount1,
+                contract: pair,
+                msg: toBase64({ withdraw_liquidity: {} }),
+              },
+            }),
+          ],
+        }[type]
+        const symbol = getSymbol(feeSymbol)
+        const gas = fee.gas
+        const amount = feeValue
+        const feeCoins = new Coins({})
+        feeCoins.set(symbol, ceil(amount))
+        tax.split(",").every((item) => {
+          if (item === "0") {
+            return false
           }
-        )
+          const taxCoin = Coin.fromString(item)
+          const feeCoin = feeCoins.get(taxCoin.denom)
+          if (feeCoin === undefined) {
+            feeCoins.set(taxCoin.denom, taxCoin.amount)
+          } else {
+            feeCoins.set(taxCoin.denom, feeCoin.amount.add(taxCoin.amount))
+          }
+          return true
+        })
+
+        const txOptions = {
+          msgs,
+          memo: undefined,
+          purgeQueue: true,
+          gasPrices: `${gasPrice}${getSymbol(feeSymbol)}`,
+          fee: new StdFee(parseInt(gas), feeCoins),
+        }
+        const extensionResult = await terraExtensionPost(txOptions)
+
+        // const extensionResult = await postTerraExtension(options, txFee);
         if (extensionResult) {
           setResult(extensionResult)
           return
@@ -690,27 +685,28 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
       }
     },
     [
-      fee,
-      getSymbol,
+      toToken,
       isNativeToken,
-      lpContract,
       newContractMsg,
       pair,
-      tax,
-      toToken,
+      getSymbol,
+      lpContract,
       type,
+      tax,
+      fee,
+      terraExtensionPost,
       handleFailure,
     ]
   )
 
-  const [result, setResult] = useState<PostResponse | undefined>()
+  const [result, setResult] = useState<TxResult | undefined>()
 
   return (
     <Wrapper>
       <Container sm>
         {formState.isSubmitted && result && (
           <Result
-            {...(result as ResultProps)}
+            response={result}
             parserKey={type || "default"}
             onFailure={handleFailure}
           />
