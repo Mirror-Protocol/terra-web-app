@@ -2,7 +2,7 @@ import { selector } from "recoil"
 import { gt, times } from "../../libs/math"
 import { decimal } from "../../libs/parse"
 import { PriceKey } from "../../hooks/contractKeys"
-import { whitelistExternal } from "../external/external"
+import { whitelistExternalQuery } from "../external/external"
 import { getTokensContractQueriesQuery } from "../utils/queries"
 import { useMinCollateralRatio, useMultipliers } from "./normalize"
 import { protocolQuery, useProtocol } from "./protocol"
@@ -30,6 +30,8 @@ export const collateralOracleAssetInfoQuery = selector({
   key: "collateralOracleAssetInfo",
   get: async ({ get }) => {
     const { contracts, listed } = get(protocolQuery)
+    const whitelistExternal = get(whitelistExternalQuery)
+
     const tokens = [
       "uluna",
       ...listed

@@ -3,7 +3,7 @@ import axios from "axios"
 import { ICON_URL } from "../../constants"
 import { getIsTokenNative, lookupSymbol } from "../../libs/parse"
 import { BalanceKey, PriceKey } from "../../hooks/contractKeys"
-import { whitelistExternal } from "../external/external"
+import { whitelistExternalQuery } from "../external/external"
 import { networkQuery } from "../network"
 
 const protocolAddressQuery = selector({
@@ -24,6 +24,7 @@ const protocolHelpersQuery = selector({
   key: "protocolHelpers",
   get: ({ get }) => {
     const { whitelist } = get(protocolAddressQuery)
+    const whitelistExternal = get(whitelistExternalQuery)
 
     const listedAll = Object.values(whitelist)
     const listedAllExternal = Object.values(whitelistExternal)

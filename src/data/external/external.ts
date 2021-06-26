@@ -2,9 +2,13 @@ import { atom, selector } from "recoil"
 import { useStore, useStoreLoadable } from "../utils/loadable"
 import * as anchor from "./anchor"
 
-export const whitelistExternal = {
-  ...anchor.assets,
-}
+export const whitelistExternalQuery = selector({
+  key: "whitelistExternal",
+  get: ({ get }) => {
+    const anchorProtocol = get(anchor.anchorProtocolQuery)
+    return { ...anchorProtocol.assets }
+  },
+})
 
 export const externalPricesQuery = selector({
   key: "externalPrices",
