@@ -555,7 +555,7 @@ const MintForm = ({ position, type }: Props) => {
     invalidRepay ||
     (!close ? invalid : !!closeMessages)
 
-  const label = short ? "Farm" : type
+  const label = open && short ? "Farm" : type
 
   /* result */
   const parseTx = useMintReceipt(type, position)
