@@ -56,7 +56,7 @@ const FormGroup = (props: FormGroupInterface) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const inputAttrs: Input = {
     ...input,
-    inputMode: "numeric",
+    inputMode: "decimal",
     onWheel: () => inputRef.current?.blur(),
   }
 
