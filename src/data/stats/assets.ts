@@ -5,7 +5,7 @@ import { getTime, startOfMinute, subDays } from "date-fns"
 import { minus, div, gt, isFinite, number } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useStoreLoadable } from "../utils/loadable"
-import { locationKeyState } from "../app"
+import { locationKeyState, priceKeyIndexState } from "../app"
 import { statsURLQuery } from "../network"
 import { StatsNetwork } from "./statistic"
 import { ASSETS } from "./gqldocs"
@@ -64,6 +64,38 @@ const assetsHistoryState = atom<Dictionary<PriceHistoryItem[]>>({
   default: {},
 })
 
+interface Asset {
+  token: string
+  prices: Prices
+}
+
+interface Prices {
+  price: string
+  priceAt: string | null
+  oraclePrice: string
+  oraclePriceAt: string | null
+}
+
+export const pricesQuery = selector({
+  key: "prices",
+  get: async ({ get }) => {
+    get(priceKeyIndexState)
+    get(locationKeyState)
+    const url = get(statsURLQuery)
+    const yesterday = getTime(subDays(startOfMinute(new Date()), 1))
+    const { assets } = await request<{ assets: Asset[] }>(
+      url + "?assetsPrices",
+      ASSETS.CHANGE,
+      { timestamp: yesterday }
+    )
+
+    return assets.reduce<Dictionary<Prices>>(
+      (acc, cur) => ({ ...acc, [cur.token]: cur.prices }),
+      {}
+    )
+  },
+})
+
 type Changes =
   | { [PriceKey.PAIR]?: number; [PriceKey.ORACLE]?: number }
   | undefined
@@ -71,41 +103,26 @@ type Changes =
 export const changesQuery = selector({
   key: "changes",
   get: async ({ get }) => {
-    interface Asset {
-      token: string
-      prices: {
-        price: string
-        priceAt: string | null
-        oraclePrice: string
-        oraclePriceAt: string | null
-      }
-    }
-
-    get(locationKeyState)
-    const url = get(statsURLQuery)
-    const yesterday = getTime(subDays(startOfMinute(new Date()), 1))
-    const { assets } = await request<{ assets: Asset[] }>(
-      url + "?assetsChanges",
-      ASSETS.CHANGE,
-      { timestamp: yesterday }
+    const assets = get(pricesQuery)
+    return Object.entries(assets).reduce<Dictionary<Changes>>(
+      (acc, [token, prices]) => {
+        const { price, priceAt, oraclePrice, oraclePriceAt } = prices
+        return {
+          ...acc,
+          [token]: {
+            [PriceKey.PAIR]: calcChange({
+              today: price,
+              yesterday: priceAt ?? undefined,
+            }),
+            [PriceKey.ORACLE]: calcChange({
+              today: oraclePrice,
+              yesterday: oraclePriceAt ?? undefined,
+            }),
+          },
+        }
+      },
+      {}
     )
-
-    return assets.reduce<Dictionary<Changes>>((acc, { token, prices }) => {
-      const { price, priceAt, oraclePrice, oraclePriceAt } = prices
-      return {
-        ...acc,
-        [token]: {
-          [PriceKey.PAIR]: calcChange({
-            today: price,
-            yesterday: priceAt ?? undefined,
-          }),
-          [PriceKey.ORACLE]: calcChange({
-            today: oraclePrice,
-            yesterday: oraclePriceAt ?? undefined,
-          }),
-        },
-      }
-    }, {})
   },
 })
 

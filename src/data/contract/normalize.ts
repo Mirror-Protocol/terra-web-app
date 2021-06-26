@@ -2,13 +2,13 @@ import { atom, selector } from "recoil"
 import { div, gt, sum } from "../../libs/math"
 import { PriceKey, BalanceKey, StakingKey } from "../../hooks/contractKeys"
 import { useStore, useStoreLoadable } from "../utils/loadable"
+import { pricesQuery } from "../stats/assets"
 import { exchangeRatesQuery } from "../native/exchange"
 import { bankBalanceQuery } from "../native/balance"
 import { useExternalBalances } from "../external/external"
 import { useExternalPrices } from "../external/external"
 import { protocolQuery, useProtocol } from "./protocol"
 import { collateralOracleAssetInfoQuery } from "./collateral"
-import { pairPoolQuery, oraclePriceQuery } from "./contract"
 import { tokenBalanceQuery, lpTokenBalanceQuery } from "./contract"
 import { mintAssetConfigQuery, stakingRewardInfoQuery } from "./contract"
 import { govStakerQuery } from "./contract"
@@ -27,7 +27,7 @@ const nativePricesState = atom<Dictionary>({
 
 export const pairPricesQuery = selector({
   key: "pairPrices",
-  get: ({ get }) => dict(get(pairPoolQuery), calcPairPrice),
+  get: ({ get }) => dict(get(pricesQuery), ({ price }) => price),
 })
 
 const pairPricesState = atom<Dictionary>({
@@ -37,7 +37,7 @@ const pairPricesState = atom<Dictionary>({
 
 export const oraclePricesQuery = selector({
   key: "oraclePrices",
-  get: ({ get }) => dict(get(oraclePriceQuery), ({ rate }) => rate),
+  get: ({ get }) => dict(get(pricesQuery), ({ oraclePrice }) => oraclePrice),
 })
 
 const oraclePricesState = atom<Dictionary>({

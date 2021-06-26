@@ -1,25 +1,30 @@
 import { useEffect, useState } from "react"
 import { atom, useSetRecoilState } from "recoil"
 import { isNil } from "ramda"
+import { PRICES_POLLING_INTERVAL } from "../constants"
 
 export const locationKeyState = atom({
   key: "locationKey",
   default: "",
 })
 
-export const pairPriceKeyState = atom({
-  key: "pairPriceKey",
+export const priceKeyIndexState = atom({
+  key: "priceKeyIndex",
   default: 0,
 })
 
-export const usePolling = () => {
+export const usePollingPrices = () => {
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout>()
-  const setPairPriceKey = useSetRecoilState(pairPriceKeyState)
+  const setPriceKeyIndex = useSetRecoilState(priceKeyIndexState)
 
   useEffect(() => {
-    const id = setInterval(() => setPairPriceKey((n) => n + 1), 30000)
+    const id = setInterval(
+      () => setPriceKeyIndex((n) => n + 1),
+      PRICES_POLLING_INTERVAL
+    )
+
     setIntervalId(id)
-  }, [setPairPriceKey])
+  }, [setPriceKeyIndex])
 
   useEffect(() => {
     return () => {
