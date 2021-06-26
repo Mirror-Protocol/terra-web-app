@@ -44,6 +44,7 @@ interface Props {
   deduct?: boolean
   /** Form feedback */
   messages?: ReactNode[]
+  warnings?: ReactNode[]
 
   /** Submit disabled */
   disabled?: boolean
@@ -69,7 +70,7 @@ export type PostError =
   | TxUnspecifiedError
 
 export const Component = ({ data: msgs, memo, gasAdjust, ...props }: Props) => {
-  const { contents, messages, label, children, full } = props
+  const { contents, messages, warnings, label, children, full } = props
   const { attrs, pretax, deduct, parseTx = () => [], gov } = props
 
   /* context */
@@ -177,6 +178,12 @@ export const Component = ({ data: msgs, memo, gasAdjust, ...props }: Props) => {
 
         {(invalidMessages ?? messages)?.map((message, index) => (
           <FormFeedback type="error" key={index}>
+            {message}
+          </FormFeedback>
+        ))}
+
+        {warnings?.map((message, index) => (
+          <FormFeedback type="warn" key={index}>
             {message}
           </FormFeedback>
         ))}

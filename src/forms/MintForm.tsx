@@ -538,6 +538,10 @@ const MintForm = ({ position, type }: Props) => {
     ? closeMessages
     : undefined
 
+  const warnings = [
+    `A 1.5% fee of the minted value will be levied when the position is closed`,
+  ]
+
   const disabled =
     findBalanceStore.isLoading ||
     isMarketClosed ||
@@ -548,13 +552,17 @@ const MintForm = ({ position, type }: Props) => {
 
   /* result */
   const parseTx = useMintReceipt(type, position)
-
-  const container = { attrs, contents, messages, label, disabled, data }
-  const deduct = close || (edit && lt(diffCollateral, 0))
-  const tax = {
+  const container = {
+    attrs,
+    contents,
+    messages,
+    label,
+    disabled,
+    data,
     pretax: token1 === "uusd" ? (edit ? diffCollateral : amount1) : "0",
-    deduct,
+    deduct: close || (edit && lt(diffCollateral, 0)),
     gasAdjust: 1.5,
+    parseTx,
   }
 
   const defaultSteps = [
@@ -609,9 +617,9 @@ const MintForm = ({ position, type }: Props) => {
   return (
     <WithPriceChart token={token2}>
       {type === MintType.CLOSE ? (
-        <FormContainer {...container} {...tax} parseTx={parseTx} />
+        <FormContainer {...container} />
       ) : type === MintType.EDIT ? (
-        <FormContainer {...container} {...tax} parseTx={parseTx}>
+        <FormContainer {...container}>
           <FormGroup {...fields[Key.value1]} type={3} size="xs" />
           <FormGroup {...fields[Key.ratio]} type={3} size="xs" skipFeedback />
           <FormGroup {...fields[Key.value2]} type={3} size="xs" />
@@ -621,7 +629,7 @@ const MintForm = ({ position, type }: Props) => {
           <FormFeedback type="warn">{Tooltips.Mint.Caution}</FormFeedback>
         </FormContainer>
       ) : (
-        <FormContainer {...container} {...tax} parseTx={parseTx} full>
+        <FormContainer {...container} warnings={warnings} full>
           {steps.map((step) => (
             <Step {...step} key={step.index} />
           ))}
