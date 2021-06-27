@@ -31,7 +31,7 @@
 
 /* footer */
 .footer {
-  @include flex(flex-start);
+  @include flex(space-between);
   color: $gray-34;
   font-size: 12px;
   margin-top: 30px;

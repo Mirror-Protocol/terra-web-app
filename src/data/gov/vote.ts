@@ -1,4 +1,5 @@
 import { selectorFamily } from "recoil"
+import { useGovStaker } from "../contract/contract"
 import { protocolQuery } from "../contract/protocol"
 import { getContractQueryQuery } from "../utils/query"
 
@@ -20,3 +21,11 @@ export const govVotersQuery = selectorFamily({
       return response?.voters
     },
 })
+
+export const useGetVoted = (id: number) => {
+  const govStaker = useGovStaker()
+
+  return govStaker?.locked_balance.some(
+    ([lockedId]: LockedBalance) => id === lockedId
+  )
+}

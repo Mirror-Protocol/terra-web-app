@@ -1,3 +1,4 @@
+import { useGetVoted } from "../../data/gov/vote"
 import { isEmphasizedPoll } from "./pollHelpers"
 import usePollTimeText from "./usePollTimeText"
 import PollHeader from "./PollHeader"
@@ -6,6 +7,7 @@ import styles from "./PollItem.module.scss"
 
 const PollItem = (poll: Poll) => {
   const pollTimeText = usePollTimeText(poll)
+  const voted = useGetVoted(poll.id)
 
   return !poll ? null : (
     <article className={styles.component}>
@@ -15,9 +17,13 @@ const PollItem = (poll: Poll) => {
       </section>
 
       <footer className={styles.footer}>
-        <strong>{pollTimeText.label}: </strong>
-        {pollTimeText.text}
-        {isEmphasizedPoll(poll) && ` (${pollTimeText.toNow})`}
+        <p>
+          <strong>{pollTimeText.label}: </strong>
+          {pollTimeText.text}
+          {isEmphasizedPoll(poll) && ` (${pollTimeText.toNow})`}
+        </p>
+
+        {voted && "Voted"}
       </footer>
     </article>
   )
