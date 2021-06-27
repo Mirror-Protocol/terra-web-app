@@ -1,5 +1,5 @@
 import { useGovConfig } from "../../data/gov/config"
-import { PollStatus } from "./Poll"
+import { Poll, PollStatus } from "../../data/gov/poll"
 import { toText } from "./pollHelpers"
 
 const usePollTimeText = (poll?: Poll) => {

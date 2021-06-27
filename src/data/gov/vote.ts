@@ -22,10 +22,11 @@ export const govVotersQuery = selectorFamily({
     },
 })
 
-export const useGetVoted = (id: number) => {
+export const useGetVoted = () => {
   const govStaker = useGovStaker()
 
-  return govStaker?.locked_balance.some(
-    ([lockedId]: LockedBalance) => id === lockedId
-  )
+  return (id: number) =>
+    govStaker?.locked_balance.some(
+      ([lockedId]: LockedBalance) => id === lockedId
+    )
 }

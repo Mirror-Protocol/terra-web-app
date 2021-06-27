@@ -1,5 +1,6 @@
 import { truncate } from "../../libs/text"
 import { useNetwork } from "../../hooks"
+import { Poll } from "../../data/gov/poll"
 import Dl from "../../components/Dl"
 import ExtLink from "../../components/ExtLink"
 import usePollTimeText from "./usePollTimeText"

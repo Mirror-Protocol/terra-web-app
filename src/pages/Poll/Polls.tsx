@@ -4,16 +4,19 @@ import classNames from "classnames/bind"
 
 import Tooltips from "../../lang/Tooltips"
 import { usePolls } from "../../data/gov/polls"
+import { PollStatus } from "../../data/gov/poll"
 import { useParsePoll } from "../../data/gov/parse"
+import { useGetVoted } from "../../data/gov/vote"
+
 import Card from "../../components/Card"
 import Grid from "../../components/Grid"
 import LoadingTitle from "../../components/LoadingTitle"
 import Button, { Submit } from "../../components/Button"
 import { TooltipIcon } from "../../components/Tooltip"
 import Icon from "../../components/Icon"
+import Checkbox from "../../components/Checkbox"
 
 import { isEmphasizedPoll } from "./pollHelpers"
-import { PollStatus } from "./Poll"
 import PollItem from "./PollItem"
 import styles from "./Polls.module.scss"
 
@@ -23,7 +26,9 @@ const Polls = ({ title }: { title: string }) => {
   const { url } = useRouteMatch()
   const { idle, data, more } = usePolls()
   const parsePoll = useParsePoll()
+  const getVoted = useGetVoted()
 
+  const [showUnvotedOnly, setShowUnvotedOnly] = useState(false)
   const [filter, setFilter] = useState<PollStatus | "">("")
 
   return idle ? null : (
@@ -36,6 +41,13 @@ const Polls = ({ title }: { title: string }) => {
         </LoadingTitle>
 
         <div className={styles.wrapper}>
+          <button
+            type="button"
+            className={styles.checkbox}
+            onClick={() => setShowUnvotedOnly(!showUnvotedOnly)}
+          >
+            <Checkbox checked={showUnvotedOnly}>Hide voted polls</Checkbox>
+          </button>
           <select
             className={styles.select}
             value={filter}
@@ -55,6 +67,11 @@ const Polls = ({ title }: { title: string }) => {
 
       <Grid wrap={2}>
         {data
+          .filter(
+            ({ id, status }) =>
+              !showUnvotedOnly ||
+              (!getVoted(id) && status === PollStatus.InProgress)
+          )
           .filter(({ status }) => !filter || status === filter)
           .map(parsePoll)
           .map((poll) => {

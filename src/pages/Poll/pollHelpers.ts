@@ -1,7 +1,7 @@
 import { format, formatDistanceToNow } from "date-fns"
 import { FMT } from "../../constants"
 import { capitalize } from "../../libs/utils"
-import { PollStatus } from "./Poll"
+import { Poll, PollStatus } from "../../data/gov/poll"
 
 /* end */
 export const toText = (next: number) => {

@@ -7,8 +7,13 @@ import { usePagination } from "../utils/pagination"
 import alias from "../contract/alias"
 import { protocolQuery } from "../contract/protocol"
 import { locationKeyState } from "../app"
+import { Poll, PollData } from "./poll"
 
 export const LIMIT = 30
+
+export interface PollsData {
+  polls: PollData[]
+}
 
 const govPollsQuery = selectorFamily({
   key: "govPolls",

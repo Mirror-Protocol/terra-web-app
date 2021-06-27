@@ -1,5 +1,6 @@
 import { useRouteMatch } from "react-router-dom"
 import { gt, sum } from "../../libs/math"
+import { Poll } from "../../data/gov/poll"
 import Card from "../../components/Card"
 import { Gutter } from "../../components/Grid"
 import PollHeader from "./PollHeader"

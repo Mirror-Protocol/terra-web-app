@@ -1,4 +1,5 @@
 import { insertIf } from "../../libs/utils"
+import { Poll } from "../../data/gov/poll"
 import Dl from "../../components/Dl"
 import PreLine from "../../components/PreLine"
 import ExtLink from "../../components/ExtLink"

@@ -6,6 +6,7 @@ import { fromBase64 } from "../../libs/formHelpers"
 import { protocolQuery } from "../contract/protocol"
 import { Content } from "../../components/componentTypes"
 import { PollType } from "../../pages/Poll/CreatePoll"
+import { Poll, PollData } from "./poll"
 
 const parsePollQuery = selector({
   key: "parsePoll",

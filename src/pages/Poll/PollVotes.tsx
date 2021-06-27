@@ -4,6 +4,7 @@ import { formatAsset } from "../../libs/parse"
 import { percent } from "../../libs/num"
 import { useGovConfig } from "../../data/gov/config"
 import { useGovState } from "../../data/gov/state"
+import { Poll } from "../../data/gov/poll"
 import Progress from "../../components/Progress"
 import styles from "./PollVotes.module.scss"
 

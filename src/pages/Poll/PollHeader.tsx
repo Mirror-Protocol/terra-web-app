@@ -1,6 +1,6 @@
 import classNames from "classnames/bind"
+import { Poll, PollStatus } from "../../data/gov/poll"
 import Icon from "../../components/Icon"
-import { PollStatus } from "./Poll"
 import styles from "./PollHeader.module.scss"
 
 const cx = classNames.bind(styles)

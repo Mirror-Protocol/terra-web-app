@@ -9,13 +9,6 @@ export enum Type {
   EXECUTE = "execute",
 }
 
-export enum PollStatus {
-  InProgress = "in_progress",
-  Passed = "passed",
-  Rejected = "rejected",
-  Executed = "executed",
-}
-
 const Poll = () => {
   const { params } = useRouteMatch<{ id: string }>()
   const id = Number(params.id)

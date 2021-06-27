@@ -1,39 +1,5 @@
-interface PollsData {
-  polls: PollData[]
-}
-
-interface PollData {
-  id: number
-  end_time: number
-  status: PollStatus
-  creator: string
-
-  deposit_amount: string
-
-  yes_votes?: string
-  no_votes?: string
-  abstain_votes?: string
-  total_balance_at_end_poll?: string
-
-  title: string
-  description: string
-  link?: string
-
-  execute_data: {
-    contract: string
-    msg: EncodedExecuteMsg
-  }
-}
-
 type EncodedExecuteMsg = string
 type EncodedPassCommandMsg = string
-
-interface Poll extends PollData {
-  type?: string
-  msg?: object
-  params?: object
-  contents?: Content[]
-}
 
 type DecodedExecuteMsg =
   | { whitelist: Whitelist }
