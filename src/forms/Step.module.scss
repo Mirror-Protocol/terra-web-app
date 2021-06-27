@@ -3,17 +3,14 @@
 .article {
   &:not(:first-child) {
     border-top: 1px solid $bg;
-    margin-top: $card-padding-vertical-mobile;
   }
 
   @include mobile {
     padding: $card-padding-vertical-mobile $card-padding-horizontal-mobile;
-    padding-bottom: 0;
   }
 
   @include desktop {
     padding: $card-padding-vertical-desktop $card-padding-horizontal-desktop;
-    padding-bottom: 0;
   }
 }
 

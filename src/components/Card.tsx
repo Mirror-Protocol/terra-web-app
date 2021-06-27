@@ -63,7 +63,6 @@ const Card: FC<Props> = (props) => {
     <>
       <CardHeader {...props} />
       {full ? children : children && <CardMain>{children}</CardMain>}
-      {confirm && <CardConfirm>{confirm}</CardConfirm>}
     </>
   )
 
@@ -74,7 +73,12 @@ const Card: FC<Props> = (props) => {
       className
     ),
 
-    children: footer ? (
+    children: confirm ? (
+      <>
+        <div>{content}</div>
+        {confirm && <CardConfirm>{confirm}</CardConfirm>}
+      </>
+    ) : footer ? (
       <>
         <div>{content}</div>
         {footer}
