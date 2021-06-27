@@ -5,14 +5,14 @@ import twitter from "./Community/twitter.png"
 import github from "./Community/github.png"
 
 import ExtLink from "./ExtLink"
-import styles from "./AppFooter.module.scss"
+import styles from "./Community.module.scss"
 
 interface Props {
   network?: string
   project: string
 }
 
-const AppFooter = ({ network, project }: Props) => {
+const Community = ({ network, project }: Props) => {
   const community = [
     {
       href: `https://github.com/Mirror-Protocol/${project}`,
@@ -57,4 +57,4 @@ const AppFooter = ({ network, project }: Props) => {
   )
 }
 
-export default AppFooter
+export default Community

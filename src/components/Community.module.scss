@@ -4,7 +4,7 @@
 $padding: 8px;
 
 .community {
-  @include flex;
+  @include flex(flex-start);
   margin: -$padding;
 }
 
