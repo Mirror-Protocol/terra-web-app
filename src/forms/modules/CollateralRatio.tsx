@@ -32,8 +32,8 @@ export const getState = (diff: string): "danger" | "warning" | "none" =>
     : "none"
 
 const CollateralRatio = ({ min, safe, ratio, compact, onRatio }: Props) => {
-  const minText = `Min: ${percent(min)}`
-  const safeText = `Safe: ${percent(safe)}`
+  const minText = `Min: ${percent(min, -1)}`
+  const safeText = `Safe: ${percent(safe, -1)}`
 
   const minX = {
     x: getX(min, min),

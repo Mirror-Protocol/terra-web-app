@@ -81,7 +81,7 @@ export const parseVotes = (
     voted,
     quorum,
     axis: !gt(voted, quorum)
-      ? [{ x: quorum, label: `Quorum ${percent(quorum)}` }]
+      ? [{ x: quorum, label: `Quorum ${percent(quorum, -1)}` }]
       : [{ x: threshold, label: "Threshold" }],
     data: [
       {
