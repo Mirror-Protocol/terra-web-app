@@ -18,9 +18,15 @@
 
   @include mobile {
     font-size: 12px;
+    margin-bottom: 40px;
   }
 
   @include desktop {
     font-size: 14px;
+    margin-bottom: 36px;
   }
+}
+
+.footer {
+  text-align: center;
 }

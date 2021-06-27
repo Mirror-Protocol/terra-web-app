@@ -16,8 +16,8 @@ import LinkButton from "../../components/LinkButton"
 import DoughnutChart from "../../containers/DoughnutChart"
 import BuyLinks from "../../components/BuyLinks"
 import Icon from "../../components/Icon"
-import { Submit } from "../../components/Button"
 import { TooltipIcon } from "../../components/Tooltip"
+import Summary from "../../components/Summary"
 import styles from "./TotalValue.module.scss"
 
 const TotalValue = () => {
@@ -32,18 +32,16 @@ const TotalValue = () => {
   const rewards = useRewards()
 
   const claimAll = (
-    <CardMain>
-      <Submit>
-        <LinkButton
-          to={getPath(MenuKey.CLAIMREWARDS)}
-          disabled={!gt(rewards.total, 0)}
-          size="md"
-          block
-        >
-          <Icon name="Claim" />
-          Claim All Rewards
-        </LinkButton>
-      </Submit>
+    <CardMain className={styles.footer}>
+      <LinkButton
+        to={getPath(MenuKey.CLAIMREWARDS)}
+        disabled={!gt(rewards.total, 0)}
+        size="md"
+        block
+      >
+        <Icon name="Claim" />
+        Claim All Rewards
+      </LinkButton>
     </CardMain>
   )
 
@@ -134,6 +132,10 @@ const TotalValue = () => {
         <p className={classNames(styles.muted, "muted")}>
           <Formatted symbol="uusd">{times(rewards.total, MIRPrice)}</Formatted>
         </p>
+
+        <Summary title="MIR Price" size="xs">
+          <Formatted unit="UST">{MIRPrice}</Formatted>
+        </Summary>
       </Card>
     </Grid>
   )

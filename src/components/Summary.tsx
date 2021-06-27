@@ -8,7 +8,7 @@ const cx = classNames.bind(styles)
 interface Props {
   title: ReactNode
   tooltip?: string
-  size?: "lg" | "sm"
+  size?: "lg" | "sm" | "xs"
 }
 
 const Summary: FC<Props> = ({ title, children, tooltip, size }) => (
