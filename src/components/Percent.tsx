@@ -5,12 +5,13 @@ import { percentage } from "../libs/num"
 interface Props {
   color?: "blue" | "red"
   children: string
+  dp?: number
 }
 
-const Percent = ({ color, children }: Props) => {
+const Percent = ({ color, children, dp }: Props) => {
   return !isFinite(children) ? null : (
     <span className={classNames(color)}>
-      {percentage(children)}
+      {percentage(children, dp)}
       <small>%</small>
     </span>
   )

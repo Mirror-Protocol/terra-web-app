@@ -69,7 +69,7 @@ const BorrowList = () => {
                   Min. Col. Ratio
                 </TooltipIcon>
               ),
-              render: (value) => <Percent>{value}</Percent>,
+              render: (value) => <Percent dp={0}>{value}</Percent>,
               align: "right",
               desktop: true,
             },

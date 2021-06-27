@@ -52,9 +52,10 @@ export const getIsBig: Formatter<boolean> = (amount, symbol) =>
 
 export const format: Formatter = (amount, symbol, config) => {
   const value = new BigNumber(lookup(amount, symbol, config))
+  const decimals = Array.from({ length: dp(symbol) }, () => "0").join("")
   const formatted = getIsBig(amount, symbol)
-    ? numeral(value.div(1e4).integerValue(rm).times(1e4)).format("0,0.[00]a")
-    : numeral(value).format(config?.integer ? "0,0" : "0,0.[000000]")
+    ? numeral(value.div(1e4).integerValue(rm).times(1e4)).format("0,0.00a")
+    : numeral(value).format(config?.integer ? "0,0" : "0,0." + decimals)
 
   return formatted.toUpperCase()
 }

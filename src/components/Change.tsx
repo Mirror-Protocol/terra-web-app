@@ -26,7 +26,7 @@ const Change = ({ children, align = "left", inline, idle }: Props) => {
     return (
       <span className={cx(className, { up, down })}>
         {icon && <Icon name={icon} size={10} />}
-        {percent(abs(change), 2, 2)}
+        {percent(abs(change), 2)}
       </span>
     )
   }

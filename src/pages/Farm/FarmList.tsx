@@ -71,7 +71,10 @@ const FarmList = () => {
               ),
               render: (value, { recommended }) => (
                 <>
-                  <Percent color={recommended === "long" ? "blue" : undefined}>
+                  <Percent
+                    color={recommended === "long" ? "blue" : undefined}
+                    dp={1}
+                  >
                     {value}
                   </Percent>
                   <p className={styles.link}>
@@ -102,6 +105,7 @@ const FarmList = () => {
                   <>
                     <Percent
                       color={recommended === "short" ? "red" : undefined}
+                      dp={1}
                     >
                       {value}
                     </Percent>
