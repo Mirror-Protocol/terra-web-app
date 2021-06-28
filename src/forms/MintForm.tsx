@@ -548,7 +548,9 @@ const MintForm = ({ position, type }: Props) => {
     : undefined
 
   const warnings = [
-    `A 1.5% fee of the minted value will be levied when the position is closed`,
+    `A 1.5% fee of the minted value will be levied when the ${
+      short ? "short" : "borrow"
+    } position is closed`,
   ]
 
   const disabled =
