@@ -551,7 +551,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
   }, [fee, gasPrice, setValue])
 
   const handleFailure = useCallback(() => {
-    form.reset(form.getValues())
+    setTimeout(() => {
+      form.reset(form.getValues(), {
+        keepIsSubmitted: false,
+        keepSubmitCount: false,
+      })
+    }, 125)
     setResult(undefined)
   }, [form])
   const newContractMsg = useNewContractMsg()
@@ -681,7 +686,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
           return
         }
       } catch (error) {
-        handleFailure()
+        setResult(error)
       }
     },
     [
@@ -695,7 +700,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
       tax,
       fee,
       terraExtensionPost,
-      handleFailure,
     ]
   )
 
@@ -707,6 +711,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
         {formState.isSubmitted && result && (
           <Result
             response={result}
+            error={result instanceof Error ? result : undefined}
             parserKey={type || "default"}
             onFailure={handleFailure}
           />

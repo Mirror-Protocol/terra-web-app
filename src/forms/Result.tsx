@@ -23,7 +23,7 @@ import axios from "rest/request"
 
 export interface ResultProps {
   response?: TxResult
-  error?: UserDenied | CreateTxFailed | TxFailed | TxUnspecifiedError
+  error?: UserDenied | CreateTxFailed | TxFailed | TxUnspecifiedError | Error
   onFailure: () => void
   parserKey: string
 }
@@ -37,8 +37,8 @@ enum STATUS {
 }
 
 const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
-  const txHash = response?.result.txhash ?? ""
-  const raw_log = response?.result.raw_log ?? ""
+  const txHash = response?.result?.txhash ?? ""
+  const raw_log = response?.result?.raw_log ?? ""
   /* polling */
   const [txInfo, setTxInfo] = useState<SwapTxInfo>()
 
