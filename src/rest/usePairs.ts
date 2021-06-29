@@ -123,7 +123,8 @@ export default () => {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<Pairs>({ pairs: [] })
   const { loadPairs, loadTokenInfo, loadTokensInfo } = useAPI()
-  const { name } = useNetwork()
+  const { name: networkName } = useNetwork()
+  const [currentNetworkName, setCurrentNetworkName] = useState("")
 
   const getTokenInfo = useCallback(
     async (info: NativeInfo | AssetInfo) => {
@@ -159,10 +160,14 @@ export default () => {
 
   useEffect(() => {
     try {
-      if (isLoading || result?.pairs.length > 0) {
+      if (
+        isLoading ||
+        (result?.pairs.length > 0 && currentNetworkName === networkName)
+      ) {
         return
       }
       setIsLoading(true)
+      setCurrentNetworkName(networkName)
 
       const fetchTokensInfo = async () => {
         try {
@@ -174,7 +179,7 @@ export default () => {
           console.log(error)
         }
 
-        (name === "testnet" ? testnetTokens : mainnetTokens).forEach(
+        ;(networkName === "testnet" ? testnetTokens : mainnetTokens).forEach(
           (token) => {
             if (
               token !== undefined &&
@@ -227,11 +232,25 @@ export default () => {
                 }
               }
 
-              if (name === "mainnet" && tokenInfo1?.symbol === "MINE" && !(tokenInfo1?.contract_addr === "terra1kcthelkax4j9x8d3ny6sdag0qmxxynl3qtcrpy")) {
+              if (
+                networkName === "mainnet" &&
+                tokenInfo1?.symbol === "MINE" &&
+                !(
+                  tokenInfo1?.contract_addr ===
+                  "terra1kcthelkax4j9x8d3ny6sdag0qmxxynl3qtcrpy"
+                )
+              ) {
                 return
               }
 
-              if (name === "mainnet" && tokenInfo2?.symbol === "MINE" && !(tokenInfo2?.contract_addr === "terra1kcthelkax4j9x8d3ny6sdag0qmxxynl3qtcrpy")) {
+              if (
+                networkName === "mainnet" &&
+                tokenInfo2?.symbol === "MINE" &&
+                !(
+                  tokenInfo2?.contract_addr ===
+                  "terra1kcthelkax4j9x8d3ny6sdag0qmxxynl3qtcrpy"
+                )
+              ) {
                 return
               }
 
@@ -284,7 +303,15 @@ export default () => {
       console.log(error)
       setIsLoading(false)
     }
-  }, [getTokenInfo, isLoading, loadPairs, loadTokensInfo, name, result])
+  }, [
+    currentNetworkName,
+    getTokenInfo,
+    isLoading,
+    loadPairs,
+    loadTokensInfo,
+    networkName,
+    result,
+  ])
 
   return { ...result, isLoading }
 }
