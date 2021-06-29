@@ -165,12 +165,7 @@ const MintForm = ({ position, type }: Props) => {
   /* form:focus input on select asset */
   const valueRef = useRef<HTMLInputElement>(null)
   const onSelect = (name: Key) => (token: string) => {
-    const next: Partial<Record<Key, Partial<Values<Key>>>> = {
-      [Key.token1]: { token2: token === token2 ? "" : token2 },
-      [Key.token2]: { token1: token === token1 ? "" : token1 },
-    }
-
-    setValues({ ...values, ...next[name], [name]: token })
+    setValue(name, token)
     !value1 && valueRef.current?.focus()
   }
 
