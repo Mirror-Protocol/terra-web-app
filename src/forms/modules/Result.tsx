@@ -10,6 +10,7 @@ import { getPath, MenuKey } from "../../routes"
 import Wait, { STATUS } from "../../components/Wait"
 import { getTxInfosQuery } from "../../data/native/tx"
 import { bankBalanceIndexState } from "../../data/native/balance"
+import { concatFromContract } from "../receipts/receiptHelpers"
 import TxHash from "./TxHash"
 import TxInfo from "./TxInfo"
 import { PostError } from "./FormContainer"
@@ -57,12 +58,13 @@ const Result = ({ response, error, parseTx, onFailure, gov }: Props) => {
   }, [status, setBankBalanceIndexState])
 
   /* verbose */
-  const verbose = txInfo ? JSON.stringify(txInfo, null, 2) : undefined
+  const verbose = txInfo
+    ? JSON.stringify(concatFromContract(txInfo.Logs), null, 2)
+    : undefined
+
   useEffect(() => {
     const log = () => {
-      console.groupCollapsed("Logs")
       console.info(verbose)
-      console.groupEnd()
     }
 
     verbose && log()

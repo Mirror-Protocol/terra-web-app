@@ -66,4 +66,4 @@ export const formatAsset: Formatter = (amount, symbol, config) =>
 export const toAmount = (value: string) =>
   value ? new BigNumber(value).times(SMALLEST).integerValue().toString() : "0"
 
-export const getIsTokenNative = (token: string) => token.startsWith("u")
+export const getIsTokenNative = (token = "") => token.startsWith("u")

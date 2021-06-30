@@ -9,7 +9,7 @@ import Checkbox from "../../components/Checkbox"
 import Boundary from "../../components/Boundary"
 
 import { MintType, PoolType, StakeType, TradeType } from "../../types/Types"
-import { fromContract } from "../../forms/receipts/receiptHelpers"
+import { concatFromContract } from "../../forms/receipts/receiptHelpers"
 import useTradeReceipt from "../../forms/receipts/useTradeReceipt"
 import useLimitOrderReceipt from "../../forms/receipts/useLimitOrderReceipt"
 import useCancelOrderReceipt from "../../forms/receipts/useCancelOrderReceipt"
@@ -114,7 +114,9 @@ const Receipt = () => {
 
           <Gutter>
             <Card title="From Contract">
-              <pre>{JSON.stringify(fromContract(txInfo.Logs), null, 2)}</pre>
+              <pre>
+                {JSON.stringify(concatFromContract(txInfo.Logs), null, 2)}
+              </pre>
             </Card>
           </Gutter>
         </>

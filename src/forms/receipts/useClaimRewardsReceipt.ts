@@ -1,12 +1,12 @@
 import { formatAsset } from "../../libs/parse"
 import { plus } from "../../libs/math"
-import { fromContract } from "./receiptHelpers"
+import { findPathFromContract } from "./receiptHelpers"
 
 export default () => (logs: TxLog[]) => {
-  const [staking, voting] = fromContract(logs)
+  const fc = findPathFromContract(logs)
 
-  const stakingRewardsAmount = staking?.withdraw?.amount
-  const votingRewardsAmount = voting?.withdraw_voting_rewards?.amount
+  const stakingRewardsAmount = fc("withdraw")("amount")
+  const votingRewardsAmount = fc("withdraw_voting_rewards")("amount")
   const amount = plus(stakingRewardsAmount, votingRewardsAmount)
 
   return [{ title: "Claimed", content: formatAsset(amount, "MIR") }]

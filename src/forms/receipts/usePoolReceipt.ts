@@ -2,16 +2,13 @@ import { formatAsset } from "../../libs/parse"
 import getLpName from "../../libs/getLpName"
 import { useProtocol } from "../../data/contract/protocol"
 import { PoolType } from "../../types/Types"
-import {
-  findValueFromLogs,
-  fromContract,
-  parseTokenText,
-} from "./receiptHelpers"
+import { findValueFromLogs, findPathFromContract } from "./receiptHelpers"
+import { parseTokenText } from "./receiptHelpers"
 
 export default (type: PoolType) => (logs: TxLog[]) => {
   const { getSymbol } = useProtocol()
   const val = findValueFromLogs(logs)
-  const fc = fromContract(logs)
+  const fc = findPathFromContract(logs)
 
   const join = (array: { amount: string; token: string }[]) =>
     array
@@ -24,7 +21,7 @@ export default (type: PoolType) => (logs: TxLog[]) => {
   const received = val("share", 1)
   const refund = parseTokenText(val("refund_assets"))
   const withdrawn = val("withdrawn_share")
-  const withdrawnToken = fc[0]?.["transfer"]?.["contract_address"]
+  const withdrawnToken = fc("transfer")("contract_address")
   const withdrawnSymbol = getSymbol(withdrawnToken)
 
   /* contents */

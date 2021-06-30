@@ -557,7 +557,7 @@ const MintForm = ({ position, type }: Props) => {
   const label = open && short ? "Farm" : type
 
   /* result */
-  const parseTx = useMintReceipt(type, position)
+  const parseTx = useMintReceipt(type)
   const container = {
     attrs,
     contents,
