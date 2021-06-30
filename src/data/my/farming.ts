@@ -1,8 +1,9 @@
-import { gt, sum, times } from "../../libs/math"
+import { div, gt, sum, times } from "../../libs/math"
 import { PriceKey, StakingKey } from "../../hooks/contractKeys"
 import { getAssetsHelpers, useAssetsByNetwork } from "../stats/assets"
 import { useProtocol } from "../contract/protocol"
 import { useFindPrice, useFindStaking, useRewards } from "../contract/normalize"
+import { useLpTokensTotalSupplyQuery } from "../contract/info"
 import usePool from "../../forms/modules/usePool"
 
 export const useMyFarming = () => {
@@ -13,6 +14,7 @@ export const useMyFarming = () => {
   const rewards = useRewards()
   const getPool = usePool()
   const assets = useAssetsByNetwork()
+  const lpTokensTotalSupply = useLpTokensTotalSupplyQuery()
 
   const longAPR = assets ? getAssetsHelpers(assets).longAPR : undefined
   const mir = getToken("MIR")
@@ -30,6 +32,9 @@ export const useMyFarming = () => {
         staked: findStaking(StakingKey.LPSTAKED, token),
         reward: findStaking(StakingKey.LPREWARD, token),
         withdrawable: fromLP,
+        share: lpTokensTotalSupply[token]
+          ? div(balance, lpTokensTotalSupply[token])
+          : undefined,
       }
     })
     .filter(({ staked, reward }) =>

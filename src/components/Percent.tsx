@@ -1,5 +1,5 @@
 import classNames from "classnames"
-import { isFinite } from "../libs/math"
+import { div, gt, isFinite, lt } from "../libs/math"
 import { percentage } from "../libs/num"
 
 interface Props {
@@ -8,10 +8,14 @@ interface Props {
   dp?: number
 }
 
-const Percent = ({ color, children, dp }: Props) => {
-  return !isFinite(children) ? null : (
+const MIN = div(0.01, 100) // 0.01%
+const Percent = ({ color, children: value, dp }: Props) => {
+  const lessThanMinimum = lt(value, MIN) && gt(value, 0)
+  const prefix = lessThanMinimum ? "<" : ""
+
+  return !isFinite(value) ? null : (
     <span className={classNames(color)}>
-      {percentage(children, dp)}
+      {prefix + percentage(value, dp)}
       <small>%</small>
     </span>
   )

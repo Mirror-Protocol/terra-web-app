@@ -87,6 +87,12 @@ const Farming = () => {
           align: "right",
         },
         {
+          key: "share",
+          title: "Share",
+          render: (value) => <Percent>{value}</Percent>,
+          align: "right",
+        },
+        {
           key: "reward",
           title: (
             <TooltipIcon content={Tooltips.My.FarmReward}>Reward</TooltipIcon>

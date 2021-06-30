@@ -1,7 +1,33 @@
 import { atom, selector } from "recoil"
 import { useStoreLoadable } from "../utils/loadable"
+import { getListedContractQueriesQuery } from "../utils/queries"
 import { getContractQueryQuery } from "../utils/query"
+import { dict } from "./normalize"
 import { protocolQuery } from "./protocol"
+
+export const lpTokensInfoQuery = selector({
+  key: "lpTokensInfo",
+  get: async ({ get }) => {
+    const getListedContractQueries = get(getListedContractQueriesQuery)
+    return await getListedContractQueries<{ total_supply: string }>(
+      ({ token, lpToken }) => {
+        return { token, contract: lpToken, msg: { token_info: {} } }
+      },
+      "lpTokensInfo"
+    )
+  },
+})
+
+export const lpTokensTotalSupplyQuery = selector({
+  key: "lpTokensTotalSupply",
+  get: ({ get }) =>
+    dict(get(lpTokensInfoQuery), ({ total_supply }) => total_supply),
+})
+
+const lpTokensTotalSupplyState = atom<Dictionary>({
+  key: "lpTokensTotalSupplyState",
+  default: {},
+})
 
 export const mirrorTokenInfoQuery = selector({
   key: "mirrorTokenInfo",
@@ -97,6 +123,10 @@ export const factoryDistributionInfoQuery = selector({
 })
 
 /* store */
+export const useLpTokensTotalSupplyQuery = () => {
+  return useStoreLoadable(lpTokensTotalSupplyQuery, lpTokensTotalSupplyState)
+}
+
 export const useMirrorTokenGovBalance = () => {
   return useStoreLoadable(
     mirrorTokenGovBalanceQuery,
