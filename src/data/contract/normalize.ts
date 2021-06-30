@@ -297,11 +297,11 @@ export const useSlpRewardBalances = () => {
 }
 
 export const useGovStaked = () => {
-  return useStoreLoadable(govStakedQuery, govStakedState)
+  return useStore(govStakedQuery, govStakedState)
 }
 
 export const useRewards = () => {
-  return useStoreLoadable(rewardsQuery, rewardsState)
+  return useStore(rewardsQuery, rewardsState)
 }
 
 /* store: asset info */

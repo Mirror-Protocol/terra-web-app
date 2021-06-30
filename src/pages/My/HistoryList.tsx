@@ -6,11 +6,11 @@ import HistoryItem from "./HistoryItem"
 
 interface Props {
   data: Tx[]
-  loading: boolean
+  isLoading: boolean
   more?: () => void
 }
 
-const HistoryList = ({ data, loading, more }: Props) => {
+const HistoryList = ({ data, isLoading, more }: Props) => {
   return !data.length ? null : (
     <>
       <Table
@@ -18,7 +18,7 @@ const HistoryList = ({ data, loading, more }: Props) => {
           <Caption
             title="Transaction History"
             action={<DownloadCSV txs={data} />}
-            loading={loading}
+            loading={isLoading}
           />
         }
         rowKey="id"
@@ -31,7 +31,7 @@ const HistoryList = ({ data, loading, more }: Props) => {
 
       {more && (
         <Submit>
-          <Button color="secondary" onClick={more} block loading={loading}>
+          <Button color="secondary" onClick={more} block loading={isLoading}>
             More
           </Button>
         </Submit>

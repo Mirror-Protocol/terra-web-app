@@ -29,7 +29,7 @@ const TotalValue = () => {
 
   /* Claim */
   const MIRPrice = useMIRPrice()
-  const rewards = useRewards()
+  const { contents: rewards } = useRewards()
 
   const claimAll = (
     <CardMain className={styles.footer}>

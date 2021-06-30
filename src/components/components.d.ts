@@ -1,9 +1,9 @@
 /* Tab */
-interface Tab {
-  tabs: string[]
+interface Tab<T = string> {
+  tabs: T[]
   tooltips?: string[]
-  current?: string
-  onClick?: (tab: string) => void
+  current?: T
+  onClick?: (tab: T) => void
 }
 
 /* Modal */

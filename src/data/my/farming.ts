@@ -8,9 +8,9 @@ import usePool from "../../forms/modules/usePool"
 export const useMyFarming = () => {
   const priceKey = PriceKey.PAIR
   const { listedAll, getToken, getIsDelisted } = useProtocol()
-  const { contents: findStaking } = useFindStaking()
+  const { contents: findStaking, isLoading } = useFindStaking()
   const findPrice = useFindPrice()
-  const rewards = useRewards()
+  const { contents: rewards, isLoading: isLoadingRewards } = useRewards()
   const getPool = usePool()
   const assets = useAssetsByNetwork()
 
@@ -48,5 +48,6 @@ export const useMyFarming = () => {
     totalRewards,
     totalRewardsValue,
     totalWithdrawableValue,
+    isLoading: isLoading || isLoadingRewards,
   }
 }

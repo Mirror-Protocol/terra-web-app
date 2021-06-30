@@ -8,10 +8,21 @@ import { useFindPrice, useGovStaked } from "../contract/normalize"
 import { usePollsByIds } from "../gov/polls"
 import { statsAccountQuery, useStatsAccount } from "../stats/account"
 
-const useVoteHistory = () => {
+interface VoteHistoryItem {
+  id: number
+  title?: string
+  vote?: string
+  amount?: string
+  reward?: string
+}
+
+const useVoteHistory = (): {
+  contents: VoteHistoryItem[]
+  isLoading: boolean
+} => {
   const account = useStatsAccount()
   const voteHistory = account?.voteHistory
-  const govStaker = useGovStaker()
+  const { contents: govStaker, isLoading: isLoadingStaker } = useGovStaker()
 
   const ids = !govStaker
     ? []
@@ -20,33 +31,37 @@ const useVoteHistory = () => {
         ...govStaker.withdrawable_polls.map(([id]) => id),
       ]
 
-  const pollsByIds = usePollsByIds(ids)
+  const { contents: pollsByIds, isLoading: isLoadingPolls } = usePollsByIds(ids)
   const pollsByIdsValues = Object.values(pollsByIds)
 
-  if (!voteHistory || !pollsByIdsValues) return []
+  if (!voteHistory || !pollsByIdsValues)
+    return { contents: [], isLoading: false }
 
-  return !govStaker
-    ? []
-    : [
-        ...govStaker.locked_balance.map(([id, { balance, vote }]) => {
-          return {
-            id,
-            title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
-            vote,
-            amount: balance,
-          }
-        }),
-        ...govStaker.withdrawable_polls.map(([id, reward]) => {
-          const item = voteHistory.find(({ pollId }) => Number(pollId) === id)
-          return {
-            id,
-            title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
-            vote: item?.voteOption,
-            amount: item?.amount,
-            reward,
-          }
-        }),
-      ].sort(({ id: a }, { id: b }) => b - a)
+  return {
+    contents: !govStaker
+      ? []
+      : [
+          ...govStaker.locked_balance.map(([id, { balance, vote }]) => {
+            return {
+              id,
+              title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
+              vote,
+              amount: balance,
+            }
+          }),
+          ...govStaker.withdrawable_polls.map(([id, reward]) => {
+            const item = voteHistory.find(({ pollId }) => Number(pollId) === id)
+            return {
+              id,
+              title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
+              vote: item?.voteOption,
+              amount: item?.amount,
+              reward,
+            }
+          }),
+        ].sort(({ id: a }, { id: b }) => b - a),
+    isLoading: isLoadingStaker || isLoadingPolls,
+  }
 }
 
 const accGovRewardQuery = selector({
@@ -74,9 +89,9 @@ export const useMyGov = () => {
   const mir = getToken("MIR")
 
   const findPrice = useFindPrice()
-  const govStaked = useGovStaked()
-  const govStaker = useGovStaker()
-  const dataSource = useVoteHistory()
+  const { contents: govStaked, isLoading: isLoadingStaked } = useGovStaked()
+  const { contents: govStaker, isLoading: isLoadingStaker } = useGovStaker()
+  const { contents: dataSource, isLoading: isLoadingHistory } = useVoteHistory()
 
   const price = findPrice(priceKey, mir)
   const valid = gt(govStaked, 1)
@@ -93,5 +108,6 @@ export const useMyGov = () => {
     stakedValue,
     votingRewards,
     votingRewardsValue,
+    isLoading: isLoadingStaked || isLoadingStaker || isLoadingHistory,
   }
 }

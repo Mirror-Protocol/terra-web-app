@@ -11,7 +11,7 @@ const ClaimRewardsForm = () => {
   /* context */
   const { contracts, getToken } = useProtocol()
   const { contents: findBalance } = useFindBalance()
-  const rewards = useRewards()
+  const { contents: rewards } = useRewards()
 
   const balance = findBalance(getToken("MIR"))
   const claiming = rewards.total

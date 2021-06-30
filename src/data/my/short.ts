@@ -8,9 +8,9 @@ import { useMyLockedUST } from "./locked"
 export const useMyShortFarming = () => {
   const priceKey = PriceKey.PAIR
   const { listedAll, getToken, getIsDelisted } = useProtocol()
-  const { contents: findStaking } = useFindStaking()
+  const { contents: findStaking, isLoading } = useFindStaking()
   const findPrice = useFindPrice()
-  const rewards = useRewards()
+  const { contents: rewards, isLoading: isLoadingRewards } = useRewards()
   const myLockedUST = useMyLockedUST()
   const assets = useAssetsByNetwork()
 
@@ -47,5 +47,11 @@ export const useMyShortFarming = () => {
   const totalRewards = rewards.short
   const totalRewardsValue = times(rewards.short, price)
 
-  return { ...myLockedUST, dataSource, totalRewards, totalRewardsValue }
+  return {
+    ...myLockedUST,
+    dataSource,
+    totalRewards,
+    totalRewardsValue,
+    isLoading: isLoading || isLoadingRewards,
+  }
 }

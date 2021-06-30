@@ -9,7 +9,7 @@ export const useMyLimitOrder = () => {
   const priceKey = PriceKey.PAIR
 
   const { parseToken, getIsDelisted } = useProtocol()
-  const orders = useLimitOrders()
+  const { contents: orders, isLoading } = useLimitOrders()
   const findPrice = useFindPrice()
 
   const dataSource = orders.map((order) => {
@@ -68,5 +68,5 @@ export const useMyLimitOrder = () => {
 
   const totalValue = sum(dataSource.map(({ offerValue }) => offerValue))
 
-  return { totalValue, dataSource }
+  return { totalValue, dataSource, isLoading }
 }

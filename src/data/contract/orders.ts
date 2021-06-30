@@ -1,7 +1,7 @@
 import { atom, selector } from "recoil"
 import { locationKeyState } from "../app"
 import { getContractQueryQuery } from "../utils/query"
-import { useStoreLoadable } from "../utils/loadable"
+import { useStore } from "../utils/loadable"
 import { iterateAllPage } from "../utils/pagination"
 import { addressState } from "../wallet"
 import { protocolQuery } from "./protocol"
@@ -49,5 +49,5 @@ const limitOrdersState = atom<Order[]>({
 })
 
 export const useLimitOrders = () => {
-  return useStoreLoadable(limitOrdersQuery, limitOrdersState)
+  return useStore(limitOrdersQuery, limitOrdersState)
 }

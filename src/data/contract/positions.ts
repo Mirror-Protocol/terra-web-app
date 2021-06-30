@@ -1,6 +1,6 @@
 import { atom, selector } from "recoil"
 import { getContractQueryQuery } from "../utils/query"
-import { useStoreLoadable } from "../utils/loadable"
+import { useStore } from "../utils/loadable"
 import { iterateAllPage } from "../utils/pagination"
 import { addressState } from "../wallet"
 import { protocolQuery } from "./protocol"
@@ -55,5 +55,5 @@ export const shortPositionsQuery = selector({
 
 /* hooks */
 export const useMintPositions = () => {
-  return useStoreLoadable(mintPositionsQuery, mintPositionsState)
+  return useStore(mintPositionsQuery, mintPositionsState)
 }

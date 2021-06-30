@@ -54,7 +54,7 @@ export const usePagination = <T, Offset = number>(
 
   return {
     idle,
-    loading: state === "loading",
+    isLoading: state === "loading",
     data,
     more: !done
       ? () => setOffset((offset) => next({ offset, data }))

@@ -11,7 +11,7 @@ import { getState } from "../../forms/modules/CollateralRatio"
 export const useMyBorrowing = () => {
   const { getIsDelisted, parseToken } = useProtocol()
   const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
-  const positions = useMintPositions()
+  const { contents: positions, isLoading } = useMintPositions()
   const findPrice = useFindPrice()
   const getMinRatio = useGetMinRatio()
 
@@ -81,5 +81,5 @@ export const useMyBorrowing = () => {
     dataSource.map(({ mintedAsset }) => mintedAsset.value)
   )
 
-  return { dataSource, totalCollateralValue, totalMintedValue }
+  return { dataSource, totalCollateralValue, totalMintedValue, isLoading }
 }

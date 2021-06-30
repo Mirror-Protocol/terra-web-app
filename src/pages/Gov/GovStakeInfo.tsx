@@ -13,7 +13,7 @@ import styles from "./GovStakeInfo.module.scss"
 const GovStakeInfo = () => {
   const { getToken } = useProtocol()
   const address = useAddress()
-  const govStaked = useGovStaked()
+  const { contents: govStaked } = useGovStaked()
   const { contents: tokenBalances } = useTokenBalances()
   const { [getToken("MIR")]: govStakable } = tokenBalances
 

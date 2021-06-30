@@ -6,7 +6,7 @@ import { useFindChange } from "../stats/assets"
 
 export const useMyHolding = () => {
   const { listedAll, getIsDelisted } = useProtocol()
-  const { contents: findBalance } = useFindBalance()
+  const { contents: findBalance, isLoading } = useFindBalance()
   const findPrice = useFindPrice()
   const findChange = useFindChange()
 
@@ -27,5 +27,5 @@ export const useMyHolding = () => {
 
   const totalValue = sum(dataSource.map(({ value }) => value))
 
-  return { dataSource, totalValue }
+  return { dataSource, totalValue, isLoading }
 }
