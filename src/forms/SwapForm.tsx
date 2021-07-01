@@ -581,23 +581,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
         const msgs = {
           [Type.SWAP]: isNativeToken(token1)
             ? [
-                ...insertIf(
-                  !isNativeToken(token2),
-                  newContractMsg(token2, {
-                    increase_allowance: { amount: amount2, spender: pair },
-                  })
-                ),
                 newContractMsg(pair, { swap: { offer_asset: asset } }, [
                   { amount: amount1, denom: getSymbol(symbol1) },
                 ]),
               ]
             : [
-                ...insertIf(
-                  !isNativeToken(token2),
-                  newContractMsg(token2, {
-                    increase_allowance: { amount: amount2, spender: pair },
-                  })
-                ),
                 newContractMsg(token1, {
                   send: {
                     amount: amount1,
