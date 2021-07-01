@@ -1,19 +1,16 @@
 import React from "react"
 import routes from "routes"
-import { WalletProvider, useWalletState } from "hooks/useWallet"
 import { ContractProvider, useContractState } from "hooks/useContract"
 import { ThemeProvider } from "styled-components"
 import variables from "styles/_variables.scss"
+import { useAddress } from "hooks"
 
 const App = () => {
-  const wallet = useWalletState()
-  const contract = useContractState(wallet.address)
-
+  const address = useAddress()
+  const contract = useContractState(address)
   return (
     <ThemeProvider theme={variables}>
-      <WalletProvider value={wallet} key={wallet.address}>
-        <ContractProvider value={contract}>{routes()}</ContractProvider>
-      </WalletProvider>
+      <ContractProvider value={contract}>{routes()}</ContractProvider>
     </ThemeProvider>
   )
 }

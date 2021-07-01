@@ -1,7 +1,8 @@
 import React, { FC } from "react"
+import { useWallet, WalletStatus } from "@terra-money/wallet-provider"
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 import { DefaultOptions } from "@apollo/client"
-import { NetworkProvider, useNetworkState } from "../hooks/useNetwork"
+import useNetwork from "hooks/useNetwork"
 
 export const DefaultApolloClientOptions: DefaultOptions = {
   watchQuery: { notifyOnNetworkStatusChange: true },
@@ -9,7 +10,8 @@ export const DefaultApolloClientOptions: DefaultOptions = {
 }
 
 const Network: FC = ({ children }) => {
-  const network = useNetworkState()
+  const { status } = useWallet()
+  const network = useNetwork()
   const client = new ApolloClient({
     uri: network.mantle,
     cache: new InMemoryCache(),
@@ -18,9 +20,11 @@ const Network: FC = ({ children }) => {
   })
 
   return (
-    <NetworkProvider value={network} key={network.key}>
-      <ApolloProvider client={client}>{children}</ApolloProvider>
-    </NetworkProvider>
+    <>
+      {status === WalletStatus.INITIALIZING ? null : (
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      )}
+    </>
   )
 }
 

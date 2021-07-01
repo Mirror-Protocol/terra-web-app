@@ -5,7 +5,6 @@ import SwapTokens from "./SwapTokens"
 import Modal from "./../components/Modal"
 import SwapCard from "./../components/SwapCard"
 import MESSAGE from "../lang/MESSAGE.json"
-import Container from "../components/Container"
 import { Pair } from "../rest/usePairs"
 
 export interface Config {
@@ -60,20 +59,18 @@ export default (config: Config, pairs: Pair[], type: string) => {
         close={() => setIsOpen(false)}
         isCloseBtn={true}
       >
-        <Container>
-          <SwapCard logoTitle={MESSAGE.Form.Button.SelectToken}>
-            <SwapTokens
-              {...config}
-              isFrom={isFrom}
-              selected={value}
-              onSelect={handleSelect}
-              oppositeValue={oppositeValue}
-              onSelectOpposite={onSelectOpposite}
-              pairs={pairs}
-              type={type}
-            />
-          </SwapCard>
-        </Container>
+        <SwapCard logoTitle={MESSAGE.Form.Button.SelectToken}>
+          <SwapTokens
+            {...config}
+            isFrom={isFrom}
+            selected={value}
+            onSelect={handleSelect}
+            oppositeValue={oppositeValue}
+            onSelectOpposite={onSelectOpposite}
+            pairs={pairs}
+            type={type}
+          />
+        </SwapCard>
       </Modal>
     ) : undefined,
   }

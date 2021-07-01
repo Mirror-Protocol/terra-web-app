@@ -119,8 +119,8 @@ const SwapTokens = ({
                 symbol = tokenInfo ? tokenInfo.symbol : ""
               }
 
-              return [symbol].some((text) =>
-                text.toLowerCase().includes(value.toLowerCase())
+              return [symbol].some(
+                (text) => !!text?.toLowerCase().includes(value?.toLowerCase())
               )
             })
             .sort((a, b) => {

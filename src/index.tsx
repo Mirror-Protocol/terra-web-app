@@ -6,17 +6,20 @@ import ScrollToTop from "./layouts/ScrollToTop"
 import Network from "./layouts/Network"
 import Contract from "./layouts/Contract"
 import App from "./layouts/App"
+import WalletConnectProvider from "./layouts/WalletConnectProvider"
 
 render(
   <StrictMode>
-    <Network>
-      <Contract>
-        <Router>
-          <ScrollToTop />
-          <App />
-        </Router>
-      </Contract>
-    </Network>
+    <WalletConnectProvider>
+      <Network>
+        <Contract>
+          <Router>
+            <ScrollToTop />
+            <App />
+          </Router>
+        </Contract>
+      </Network>
+    </WalletConnectProvider>
   </StrictMode>,
   document.getElementById("terraswap")
 )

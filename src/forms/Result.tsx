@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import classNames from "classnames/bind"
 
-import { TX_POLLING_INTERVAL } from "constants/constants"
-import { PostResponse } from "terra/extension"
+import { MAX_TX_POLLING_RETRY, TX_POLLING_INTERVAL } from "constants/constants"
 import MESSAGE from "lang/MESSAGE.json"
 import { useNetwork } from "hooks"
 
@@ -13,11 +12,20 @@ import Button from "components/Button"
 import SwapTxHash from "./SwapTxHash"
 import SwapTxInfo from "./SwapTxInfo"
 import styles from "./Result.module.scss"
+import {
+  CreateTxFailed,
+  TxFailed,
+  TxResult,
+  TxUnspecifiedError,
+  UserDenied,
+} from "@terra-dev/wallet-types"
+import axios from "rest/request"
 
-export interface ResultProps extends PostResponse {
-  gov?: boolean
-  parserKey: string
+export interface ResultProps {
+  response?: TxResult
+  error?: UserDenied | CreateTxFailed | TxFailed | TxUnspecifiedError | Error
   onFailure: () => void
+  parserKey: string
 }
 
 const cx = classNames.bind(styles)
@@ -28,44 +36,44 @@ enum STATUS {
   FAILURE = "failure",
 }
 
-const Result = ({ success, result, error, ...props }: ResultProps) => {
-  const { parserKey, onFailure } = props
-  const { txhash: hash = "" } = result ?? {}
-
+const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
+  const txHash = response?.result?.txhash ?? ""
+  const raw_log = response?.result?.raw_log ?? ""
   /* polling */
-  const variables = { hash }
-  const [tx, setTx] = useState<SwapTxInfo>()
+  const [txInfo, setTxInfo] = useState<SwapTxInfo>()
 
   const [status, setStatus] = useState<STATUS>(STATUS.LOADING)
   const { fcd } = useNetwork()
 
+  const retryCount = useRef(0)
+
   useEffect(() => {
     const load = async () => {
-      if (variables.hash === "") {
+      if (!txHash) {
         setStatus(STATUS.FAILURE)
         return
       }
-      const response: Response = await fetch(`${fcd}/txs/${variables.hash}`)
-      const res: any = await response.json()
-      if (res?.error && res.error.indexOf("Tx: RPC error -32603") > -1) {
+      try {
+        const { data: res } = await axios.get(`${fcd}/txs/${txHash}`)
+        if (res?.txhash) {
+          setTxInfo(res)
+          setStatus(STATUS.SUCCESS)
+        }
+      } catch (error) {
+        if (retryCount.current >= MAX_TX_POLLING_RETRY) {
+          setStatus(STATUS.FAILURE)
+          retryCount.current = 0
+          return
+        }
+        retryCount.current += 1
         setTimeout(() => {
           load()
         }, TX_POLLING_INTERVAL)
-      } else {
-        setStatus(STATUS.SUCCESS)
       }
-      setTx(res)
     }
     load()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const txInfo = tx
-
-  /* status */
-  // TODO
-  // 1. TIMEOUT - When there is no response for 20 seconds
-  // 2. User denied
 
   /* render */
   const name = {
@@ -91,9 +99,9 @@ const Result = ({ success, result, error, ...props }: ResultProps) => {
   }[status]
 
   const message =
-    result?.raw_log ??
+    raw_log ??
     error?.message ??
-    (error?.code === 1 && MESSAGE.Result.DENIED)
+    (error instanceof UserDenied && MESSAGE.Result.DENIED)
 
   const content = {
     [STATUS.SUCCESS]: txInfo && (
@@ -105,7 +113,7 @@ const Result = ({ success, result, error, ...props }: ResultProps) => {
         <br />
         <br />
         <p className={styles.hash}>
-          <SwapTxHash>{hash}</SwapTxHash>
+          <SwapTxHash>{txHash}</SwapTxHash>
         </p>
       </div>
     ),
