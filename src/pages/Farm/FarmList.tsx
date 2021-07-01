@@ -101,7 +101,7 @@ const FarmList = () => {
                 getSymbol(token) !== "MIR" && (
                   <>
                     <Percent
-                      color={recommended === "short" ? "red" : undefined}
+                      color={recommended === "short" ? "blue" : undefined}
                     >
                       {value}
                     </Percent>
