@@ -776,7 +776,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
                       const taxs = (
                         await getTax({
                           symbol1: formData[Key.symbol1],
-                          value1: formData[Key.max1],
+                          value1:  format(formData[Key.max1], formData[Key.symbol1]),
                           max1: formData[Key.max1],
                         })
                       ).split(",")
