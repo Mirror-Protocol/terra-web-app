@@ -27,8 +27,10 @@ export const PRICES_POLLING_INTERVAL = 30000
 export const TX_POLLING_INTERVAL = 1000
 
 /* outbound */
-export const TRADING_HOURS =
-  "https://www.nasdaq.com/stock-market-trading-hours-for-nasdaq"
+export const TRADING_HOURS = {
+  NASDAQ: "https://www.nasdaq.com/stock-market-trading-hours-for-nasdaq",
+  TSX: "https://www.tsx.com/trading/calendars-and-trading-hours/trading-hours",
+}
 
 /* sentry */
 export const DSN =

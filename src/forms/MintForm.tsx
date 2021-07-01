@@ -247,8 +247,14 @@ const MintForm = ({ position, type }: Props) => {
   const isMarketClosed2 = getIsDelisted(token2) ? false : isClosed(symbol2)
   const isMarketClosed = isMarketClosed1 || isMarketClosed2
 
+  const exchange =
+    (isMarketClosed1 && symbol1 === "mGLXY") ||
+    (isMarketClosed2 && symbol2 === "mGLXY")
+      ? "TSX"
+      : "NASDAQ"
+
   const marketHoursLink = (
-    <ExtLink href={TRADING_HOURS} className={styles.link}>
+    <ExtLink href={TRADING_HOURS[exchange]} className={styles.link}>
       market hours
     </ExtLink>
   )
