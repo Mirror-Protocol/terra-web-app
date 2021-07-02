@@ -382,10 +382,9 @@ const MintForm = ({ position, type }: Props) => {
   }
 
   const PROTOCOL_FEE = 0.015
-  const protocolFee = times(
-    times(price, edit ? abs(diffAsset) : amount2),
-    PROTOCOL_FEE
-  )
+  const protocolFee = lt(diffAsset, 0)
+    ? times(times(price, edit ? times(-1, diffAsset) : amount2), PROTOCOL_FEE)
+    : undefined
 
   const protocolFeeContents = {
     title: "Protocol Fee",
