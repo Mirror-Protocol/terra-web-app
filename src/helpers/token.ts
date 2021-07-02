@@ -15,6 +15,7 @@ import PngINT from "images/Token/INT.png"
 import PngJPT from "images/Token/JPT.png"
 import PngSGT from "images/Token/SGT.png"
 import PngTHT from "images/Token/THT.png"
+
 import {
   AUT,
   CAT,
@@ -196,6 +197,9 @@ export const GetTokenSvg = (symbol: string) => {
         case "mCOIN":
         case "mGLXY":
         case "MINE":
+          res = "/images/CW20/" + symbol + ".png"
+          break
+        case "LOTA":
           res = "/images/CW20/" + symbol + ".png"
           break
         default:
