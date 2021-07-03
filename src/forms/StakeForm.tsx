@@ -181,10 +181,17 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
         ],
   }[type as StakeType]
 
+  const defaultGovUnstakeMessage =
+    "Voting rewards must be claimed before unstaking MIR"
+  const govUnstakeMessages = gt(locked, 0)
+    ? [
+        defaultGovUnstakeMessage,
+        `${formatAsset(locked, "MIR")} are voted in poll ${lockedIds}`,
+      ]
+    : [defaultGovUnstakeMessage]
+
   const messages =
-    gov && type === StakeType.UNSTAKE && gt(locked, 0)
-      ? [`${formatAsset(locked, "MIR")} are voted in poll ${lockedIds}`]
-      : undefined
+    gov && type === StakeType.UNSTAKE ? govUnstakeMessages : undefined
 
   const disabled = invalid
 
