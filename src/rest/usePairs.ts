@@ -281,7 +281,7 @@ export default () => {
                 tokenInfo2?.symbol === "SPEC" &&
                 !(
                   tokenInfo2?.contract_addr ===
-                  "terra1kvsxd94ue6f4rtchv2l6me5k07uh26s7637cza"
+                  "terra1s5eczhe0h0jutf46re52x5z4r03c8hupacxmdr"
                 )
               ) {
                 return
