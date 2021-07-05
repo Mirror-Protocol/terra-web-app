@@ -202,6 +202,9 @@ export const GetTokenSvg = (symbol: string) => {
         case "LOTA":
           res = "/images/CW20/" + symbol + ".png"
           break
+        case "SPEC":
+          res = "/images/CW20/" + symbol + ".png"
+          break
         default:
           break
       }
