@@ -54,7 +54,15 @@ const SwapFormGroup = ({
       const calculatedFontSize =
         (24 * inputRef.current.clientWidth) / elSpan.clientWidth
       document.body.removeChild(elSpan)
-      setInputFontSize(calculatedFontSize > 24 ? 24 : calculatedFontSize)
+      if (calculatedFontSize > 24) {
+        setInputFontSize(24)
+        return
+      }
+      if (calculatedFontSize < 12) {
+        setInputFontSize(12)
+        return
+      }
+      setInputFontSize(calculatedFontSize)
       return
     }
     setInputFontSize(24)
