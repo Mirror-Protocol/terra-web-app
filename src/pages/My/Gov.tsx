@@ -1,9 +1,8 @@
-import { format as formatDate } from "date-fns"
-import { FMT } from "../../constants"
 import Tooltips from "../../lang/Tooltips"
 import { gt } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
 import { capitalize } from "../../libs/utils"
+import { secondsToDate } from "../../libs/date"
 import { useMyGov } from "../../data/my/gov"
 import { getPath, MenuKey } from "../../routes"
 import Table from "../../components/Table"
@@ -52,10 +51,7 @@ const Gov = () => {
           title: ["Title", "Poll ID"],
           render: (title, { id, end_time }) => [
             <h1 className={styles.title}>{title}</h1>,
-            [
-              id,
-              `(End time: ${formatDate(new Date(end_time * 1000), FMT.HHmm)})`,
-            ].join(" "),
+            [id, `(End time: ${secondsToDate(end_time)})`].join(" "),
           ],
           bold: true,
         },

@@ -4,7 +4,9 @@ import { capitalize } from "../../libs/utils"
 import { Poll, PollStatus } from "../../data/gov/poll"
 
 /* end */
-export const toText = (next: number) => {
+export const toText = (next?: number) => {
+  if (!next) return { text: "", toNow: "" }
+
   const date = new Date(next * 1000)
   const text = format(date, FMT.HHmm)
   const toNow = capitalize(formatDistanceToNow(date, { addSuffix: true }))

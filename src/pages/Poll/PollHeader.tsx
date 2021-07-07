@@ -1,4 +1,5 @@
 import classNames from "classnames/bind"
+import { isPast } from "../../libs/date"
 import { Poll, PollStatus } from "../../data/gov/poll"
 import Icon from "../../components/Icon"
 import styles from "./PollHeader.module.scss"
@@ -19,8 +20,6 @@ const PollHeader = ({ titleClassName, ...props }: Props) => {
     [PollStatus.Executed]: "VerifiedSolid",
   }
 
-  const end = end_time * 1000 < Date.now()
-
   return (
     <header className={styles.header}>
       <section className={styles.meta}>
@@ -32,7 +31,7 @@ const PollHeader = ({ titleClassName, ...props }: Props) => {
         className={cx(styles.status, {
           blue: [PollStatus.Passed, PollStatus.Executed].includes(status),
           red: status === PollStatus.Rejected,
-          strike: status === PollStatus.InProgress && end,
+          strike: status === PollStatus.InProgress && isPast(end_time),
         })}
       >
         <Icon name={icons[status as PollStatus]} size={18} />

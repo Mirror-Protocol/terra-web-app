@@ -1,8 +1,7 @@
-import { format as formatDate } from "date-fns"
-import { FMT } from "../../constants"
 import Tooltips from "../../lang/Tooltips"
 import { gt } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
+import { secondsToDate } from "../../libs/date"
 import { useMyShortFarming } from "../../data/my/short"
 
 import Table from "../../components/Table"
@@ -100,7 +99,7 @@ const ShortFarming = () => {
           render: (amount, { unlock_time }) => {
             const formatted = <Formatted symbol="uusd">{amount}</Formatted>
             return gt(amount, 0)
-              ? [formatted, formatDate(new Date(unlock_time * 1000), FMT.HHmm)]
+              ? [formatted, secondsToDate(unlock_time)]
               : formatted
           },
           align: "right",
