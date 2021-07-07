@@ -189,7 +189,7 @@ const missingRewardsTotalQuery = selector({
   key: "missingRewardsTotal",
   get: ({ get }) => {
     const missingRewards = get(missingRewardsQuery)
-    return sum(missingRewards.map(({ reward }) => reward))
+    return sum(missingRewards.map(({ reward }) => reward ?? 0))
   },
 })
 

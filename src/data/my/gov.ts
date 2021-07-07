@@ -5,27 +5,23 @@ import { useStoreLoadable } from "../utils/loadable"
 import { uniqByKey } from "../utils/pagination"
 import { useProtocol } from "../contract/protocol"
 import { useGovStaker } from "../contract/contract"
-import { useMissingRewards } from "../contract/gov"
+import { useMissingRewards, VoteHistoryItem } from "../contract/gov"
 import { useFindPrice, useGovStaked } from "../contract/normalize"
 import { usePollsByIds } from "../gov/polls"
 import { statsAccountQuery, useStatsAccount } from "../stats/account"
-
-interface VoteHistoryItem {
-  id: number
-  title?: string
-  vote?: string
-  amount?: string
-  reward?: string
-}
 
 const useVoteHistory = (): {
   contents: VoteHistoryItem[]
   isLoading: boolean
 } => {
-  const account = useStatsAccount()
-  const missingRewards = useMissingRewards()
-  const voteHistory = account?.voteHistory
   const { contents: govStaker, isLoading: isLoadingStaker } = useGovStaker()
+
+  const { contents: account, isLoading: isStatsAccountLoading } =
+    useStatsAccount()
+  const voteHistory = account?.voteHistory
+
+  const { contents: missingRewards, isLoading: isMissingRewardsLoading } =
+    useMissingRewards()
 
   const ids = !govStaker
     ? []
@@ -37,39 +33,42 @@ const useVoteHistory = (): {
   const { contents: pollsByIds, isLoading: isLoadingPolls } = usePollsByIds(ids)
   const pollsByIdsValues = Object.values(pollsByIds)
 
-  if (!voteHistory || !pollsByIdsValues)
-    return { contents: [], isLoading: false }
+  if (!voteHistory) return { isLoading: true, contents: [] }
 
   return {
+    isLoading:
+      isLoadingStaker ||
+      isStatsAccountLoading ||
+      isMissingRewardsLoading ||
+      isLoadingPolls,
     contents: !govStaker
       ? []
       : uniqByKey(
           [
-            ...govStaker.locked_balance.map(([id, { balance, vote }]) => {
+            ...govStaker.locked_balance.map(([id, voter]) => {
               return {
+                ...pollsByIdsValues.find((poll) => poll.id === id)!,
+                ...voter,
                 id,
-                title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
-                vote,
-                balance,
               }
             }),
             ...govStaker.withdrawable_polls.map(([id, reward]) => {
               const item = voteHistory.find(
                 ({ pollId }) => Number(pollId) === id
-              )
+              )!
+
               return {
-                id,
-                title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
-                vote: item?.voteOption,
-                balance: item?.amount,
+                ...pollsByIdsValues.find((poll) => poll.id === id)!,
+                vote: item.voteOption,
+                balance: item.amount,
                 reward,
+                id,
               }
             }),
             ...missingRewards,
           ],
           "id"
         ).sort(({ id: a }, { id: b }) => b - a),
-    isLoading: isLoadingStaker || isLoadingPolls,
   }
 }
 

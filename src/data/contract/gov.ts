@@ -2,12 +2,16 @@ import { atom, selector } from "recoil"
 import BigNumber from "bignumber.js"
 import { gt } from "../../libs/math"
 import { getContractQueriesQuery } from "../utils/queries"
-import { useStoreLoadable } from "../utils/loadable"
+import { useStore } from "../utils/loadable"
 import { pollsByIdsQuery } from "../gov/polls"
 import { PollData } from "../gov/poll"
 import { addressState } from "../wallet"
 import { protocolQuery } from "./protocol"
 import alias from "./alias"
+
+export interface VoteHistoryItem extends PollData, Voter {
+  reward?: string
+}
 
 /* missing rewards */
 const MISSING_REWARDS = [104, 105, 106, 107]
@@ -36,17 +40,13 @@ const govVoterQuery = selector({
   },
 })
 
-interface MissingRewardItem extends PollData, Voter {
-  reward: string
-}
-
 export const missingRewardsQuery = selector({
   key: "missingRewards",
   get: ({ get }) => {
     const polls = get(pollsByIdsQuery(MISSING_REWARDS))
     const voters = get(govVoterQuery)
 
-    return MISSING_REWARDS.reduce<MissingRewardItem[]>((acc, id) => {
+    return MISSING_REWARDS.reduce<VoteHistoryItem[]>((acc, id) => {
       const poll = polls["poll" + id]
       const voter = voters["voter" + id]
       const reward = calcVotingRewards(poll, voter)
@@ -56,13 +56,13 @@ export const missingRewardsQuery = selector({
   },
 })
 
-const missingRewardsState = atom<MissingRewardItem[]>({
+const missingRewardsState = atom<VoteHistoryItem[]>({
   key: "missingRewardsState",
   default: [],
 })
 
 export const useMissingRewards = () => {
-  return useStoreLoadable(missingRewardsQuery, missingRewardsState)
+  return useStore(missingRewardsQuery, missingRewardsState)
 }
 
 /* helpers */

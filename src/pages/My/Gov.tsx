@@ -1,3 +1,5 @@
+import { format as formatDate } from "date-fns"
+import { FMT } from "../../constants"
 import Tooltips from "../../lang/Tooltips"
 import { gt } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
@@ -48,9 +50,12 @@ const Gov = () => {
           key: "title",
           dataIndex: "title",
           title: ["Title", "Poll ID"],
-          render: (title, { id }) => [
+          render: (title, { id, end_time }) => [
             <h1 className={styles.title}>{title}</h1>,
-            id,
+            [
+              id,
+              `(End time: ${formatDate(new Date(end_time * 1000), FMT.HHmm)})`,
+            ].join(" "),
           ],
           bold: true,
         },
