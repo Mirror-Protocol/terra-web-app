@@ -2,7 +2,8 @@ import { gt, sum, times } from "../../libs/math"
 import { PriceKey, StakingKey } from "../../hooks/contractKeys"
 import { getAssetsHelpers, useAssetsByNetwork } from "../stats/assets"
 import { useProtocol } from "../contract/protocol"
-import { useFindPrice, useFindStaking, useRewards } from "../contract/normalize"
+import { useFindPrice, useFindStaking } from "../contract/normalize"
+import { useRewards } from "./rewards"
 import usePool from "../../forms/modules/usePool"
 
 export const useMyFarming = () => {

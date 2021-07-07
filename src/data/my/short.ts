@@ -1,7 +1,8 @@
 import { gt, max, number, sum, times } from "../../libs/math"
 import { PriceKey, StakingKey } from "../../hooks/contractKeys"
 import { useProtocol } from "../contract/protocol"
-import { useFindPrice, useFindStaking, useRewards } from "../contract/normalize"
+import { useFindPrice, useFindStaking } from "../contract/normalize"
+import { useRewards } from "./rewards"
 import { getAssetsHelpers, useAssetsByNetwork } from "../stats/assets"
 import { useMyLockedUST } from "./locked"
 

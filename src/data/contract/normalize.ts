@@ -1,5 +1,5 @@
 import { atom, selector } from "recoil"
-import { div, gt, sum } from "../../libs/math"
+import { div, gt } from "../../libs/math"
 import { PriceKey, BalanceKey, StakingKey } from "../../hooks/contractKeys"
 import { useStore, useStoreLoadable } from "../utils/loadable"
 import { exchangeRatesQuery } from "../native/exchange"
@@ -12,7 +12,6 @@ import { pairPoolQuery, oraclePriceQuery } from "./contract"
 import { tokenBalanceQuery, lpTokenBalanceQuery } from "./contract"
 import { mintAssetConfigQuery, stakingRewardInfoQuery } from "./contract"
 import { govStakerQuery } from "./contract"
-import { missingRewardsQuery } from "./gov"
 
 /* price */
 export const nativePricesQuery = selector({
@@ -171,44 +170,6 @@ const govStakedState = atom({
   default: "0",
 })
 
-/* reward */
-export const farmingRewardsQuery = selector({
-  key: "farmingRewards",
-  get: ({ get }) => ({
-    long: sum(Object.values(get(lpRewardBalancesQuery) ?? {})),
-    short: sum(Object.values(get(slpRewardBalancesQuery) ?? {})),
-  }),
-})
-
-export const votingRewardsQuery = selector({
-  key: "votingRewards",
-  get: ({ get }) => get(govStakerQuery)?.pending_voting_rewards ?? "0",
-})
-
-const missingRewardsTotalQuery = selector({
-  key: "missingRewardsTotal",
-  get: ({ get }) => {
-    const missingRewards = get(missingRewardsQuery)
-    return sum(missingRewards.map(({ reward }) => reward ?? 0))
-  },
-})
-
-export const rewardsQuery = selector({
-  key: "rewards",
-  get: ({ get }) => {
-    const { long, short } = get(farmingRewardsQuery)
-    const voting = get(votingRewardsQuery)
-    const missing = get(missingRewardsTotalQuery)
-    const total = sum([long, short, voting, missing])
-    return { long, short, voting, missing, total }
-  },
-})
-
-const rewardsState = atom({
-  key: "rewardsState",
-  default: rewardsQuery,
-})
-
 /* protocol - asset info */
 export const minCollateralRatioQuery = selector({
   key: "minCollateralRatio",
@@ -308,10 +269,6 @@ export const useSlpRewardBalances = () => {
 
 export const useGovStaked = () => {
   return useStore(govStakedQuery, govStakedState)
-}
-
-export const useRewards = () => {
-  return useStore(rewardsQuery, rewardsState)
 }
 
 /* store: asset info */
