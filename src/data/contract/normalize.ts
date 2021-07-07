@@ -12,6 +12,7 @@ import { pairPoolQuery, oraclePriceQuery } from "./contract"
 import { tokenBalanceQuery, lpTokenBalanceQuery } from "./contract"
 import { mintAssetConfigQuery, stakingRewardInfoQuery } from "./contract"
 import { govStakerQuery } from "./contract"
+import { missingRewardsQuery } from "./gov"
 
 /* price */
 export const nativePricesQuery = selector({
@@ -184,13 +185,22 @@ export const votingRewardsQuery = selector({
   get: ({ get }) => get(govStakerQuery)?.pending_voting_rewards ?? "0",
 })
 
+const missingRewardsTotalQuery = selector({
+  key: "missingRewardsTotal",
+  get: ({ get }) => {
+    const missingRewards = get(missingRewardsQuery)
+    return sum(missingRewards.map(({ reward }) => reward))
+  },
+})
+
 export const rewardsQuery = selector({
   key: "rewards",
   get: ({ get }) => {
     const { long, short } = get(farmingRewardsQuery)
     const voting = get(votingRewardsQuery)
-    const total = sum([long, short, voting])
-    return { long, short, voting, total }
+    const missing = get(missingRewardsTotalQuery)
+    const total = sum([long, short, voting, missing])
+    return { long, short, voting, missing, total }
   },
 })
 

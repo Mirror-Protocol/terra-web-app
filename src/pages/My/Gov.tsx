@@ -56,7 +56,7 @@ const Gov = () => {
           align: "center",
         },
         {
-          key: "amount",
+          key: "balance",
           title: "Vote MIR",
           render: (amount) => <Formatted symbol="MIR">{amount}</Formatted>,
           align: "right",

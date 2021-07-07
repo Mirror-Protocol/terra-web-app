@@ -2,8 +2,10 @@ import { atom, selector } from "recoil"
 import { gt, times } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useStoreLoadable } from "../utils/loadable"
+import { uniqByKey } from "../utils/pagination"
 import { useProtocol } from "../contract/protocol"
 import { useGovStaker } from "../contract/contract"
+import { useMissingRewards } from "../contract/gov"
 import { useFindPrice, useGovStaked } from "../contract/normalize"
 import { usePollsByIds } from "../gov/polls"
 import { statsAccountQuery, useStatsAccount } from "../stats/account"
@@ -21,6 +23,7 @@ const useVoteHistory = (): {
   isLoading: boolean
 } => {
   const account = useStatsAccount()
+  const missingRewards = useMissingRewards()
   const voteHistory = account?.voteHistory
   const { contents: govStaker, isLoading: isLoadingStaker } = useGovStaker()
 
@@ -40,26 +43,32 @@ const useVoteHistory = (): {
   return {
     contents: !govStaker
       ? []
-      : [
-          ...govStaker.locked_balance.map(([id, { balance, vote }]) => {
-            return {
-              id,
-              title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
-              vote,
-              amount: balance,
-            }
-          }),
-          ...govStaker.withdrawable_polls.map(([id, reward]) => {
-            const item = voteHistory.find(({ pollId }) => Number(pollId) === id)
-            return {
-              id,
-              title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
-              vote: item?.voteOption,
-              amount: item?.amount,
-              reward,
-            }
-          }),
-        ].sort(({ id: a }, { id: b }) => b - a),
+      : uniqByKey(
+          [
+            ...govStaker.locked_balance.map(([id, { balance, vote }]) => {
+              return {
+                id,
+                title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
+                vote,
+                balance,
+              }
+            }),
+            ...govStaker.withdrawable_polls.map(([id, reward]) => {
+              const item = voteHistory.find(
+                ({ pollId }) => Number(pollId) === id
+              )
+              return {
+                id,
+                title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
+                vote: item?.voteOption,
+                balance: item?.amount,
+                reward,
+              }
+            }),
+            ...missingRewards,
+          ],
+          "id"
+        ).sort(({ id: a }, { id: b }) => b - a),
     isLoading: isLoadingStaker || isLoadingPolls,
   }
 }

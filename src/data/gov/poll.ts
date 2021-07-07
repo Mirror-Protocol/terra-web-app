@@ -16,6 +16,7 @@ export interface PollData {
   no_votes?: string
   abstain_votes?: string
   total_balance_at_end_poll?: string
+  voters_reward?: string
 
   title: string
   description: string
