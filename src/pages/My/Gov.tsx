@@ -75,15 +75,17 @@ const Gov = () => {
         {
           key: "actions",
           dataIndex: "id",
-          render: (id) => (
-            <LinkButton
-              to={[getPath(MenuKey.GOV), "poll", id].join("/")}
-              size="xs"
-              outline
-            >
-              Poll Detail
-            </LinkButton>
-          ),
+          render: (id, { reward }) => {
+            const hasReward = reward && gt(reward, 0)
+            const path = getPath(MenuKey.GOV)
+            const to = [path, "poll", id, hasReward ? "claim" : ""].join("/")
+
+            return (
+              <LinkButton to={to} size="xs" outline>
+                {hasReward ? "Claim Reward" : "Poll Detail"}{" "}
+              </LinkButton>
+            )
+          },
           align: "right",
           fixed: "right",
         },

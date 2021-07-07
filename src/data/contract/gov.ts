@@ -1,8 +1,9 @@
-import { atom, selector } from "recoil"
+import { atom, selector, selectorFamily } from "recoil"
 import BigNumber from "bignumber.js"
 import { gt } from "../../libs/math"
-import { getContractQueriesQuery } from "../utils/queries"
 import { useStore } from "../utils/loadable"
+import { getContractQueriesQuery } from "../utils/queries"
+import { getContractQueryQuery } from "../utils/query"
 import { pollsByIdsQuery } from "../gov/polls"
 import { PollData } from "../gov/poll"
 import { addressState } from "../wallet"
@@ -13,11 +14,31 @@ export interface VoteHistoryItem extends PollData, Voter {
   reward?: string
 }
 
+export const govAddressVoterQuery = selectorFamily({
+  key: "govAddressVoter",
+  get:
+    (id: number) =>
+    async ({ get }) => {
+      const address = get(addressState)
+      const { contracts } = get(protocolQuery)
+      const getContractQuery = get(getContractQueryQuery)
+
+      if (address) {
+        const query = {
+          contract: contracts["gov"],
+          msg: { voter: { poll_id: id, address } },
+        }
+
+        return await getContractQuery<Voter>(query, "voter")
+      }
+    },
+})
+
 /* missing rewards */
 const MISSING_REWARDS = [104, 105, 106, 107]
 
-const govVoterQuery = selector({
-  key: "govVoter",
+const govAddressVotersQuery = selector({
+  key: "govAddressVoters",
   get: async ({ get }) => {
     const address = get(addressState)
     const { contracts } = get(protocolQuery)
@@ -30,10 +51,10 @@ const govVoterQuery = selector({
           contract: contracts["gov"],
           msg: { voter: { poll_id: id, address } },
         })),
-        "voter"
+        "voters"
       )
 
-      return (await getContractQueries<Voter>(document, "voter")) ?? {}
+      return (await getContractQueries<Voter>(document, "voters")) ?? {}
     }
 
     return {}
@@ -44,7 +65,7 @@ export const missingRewardsQuery = selector({
   key: "missingRewards",
   get: ({ get }) => {
     const polls = get(pollsByIdsQuery(MISSING_REWARDS))
-    const voters = get(govVoterQuery)
+    const voters = get(govAddressVotersQuery)
 
     return MISSING_REWARDS.reduce<VoteHistoryItem[]>((acc, id) => {
       const poll = polls["poll" + id]
@@ -66,7 +87,7 @@ export const useMissingRewards = () => {
 }
 
 /* helpers */
-const calcVotingRewards = (poll: PollData, voter?: Voter) => {
+export const calcVotingRewards = (poll: PollData, voter?: Voter) => {
   const { voters_reward = 0 } = poll
   const { yes_votes = 0, no_votes = 0, abstain_votes = 0 } = poll
 
