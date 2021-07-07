@@ -255,23 +255,45 @@ export default () => {
               }
 
               if (
-                  networkName === "mainnet" &&
-                  tokenInfo1?.symbol === "LOTA" &&
-                  !(
-                      tokenInfo1?.contract_addr ===
-                      "terra1ez46kxtulsdv07538fh5ra5xj8l68mu8eg24vr"
-                  )
+                networkName === "mainnet" &&
+                tokenInfo1?.symbol === "LOTA" &&
+                !(
+                  tokenInfo1?.contract_addr ===
+                  "terra1ez46kxtulsdv07538fh5ra5xj8l68mu8eg24vr"
+                )
               ) {
                 return
               }
 
               if (
-                  networkName === "mainnet" &&
-                  tokenInfo2?.symbol === "LOTA" &&
-                  !(
-                      tokenInfo2?.contract_addr ===
-                      "terra1ez46kxtulsdv07538fh5ra5xj8l68mu8eg24vr"
-                  )
+                networkName === "mainnet" &&
+                tokenInfo2?.symbol === "LOTA" &&
+                !(
+                  tokenInfo2?.contract_addr ===
+                  "terra1ez46kxtulsdv07538fh5ra5xj8l68mu8eg24vr"
+                )
+              ) {
+                return
+              }
+
+              if (
+                networkName === "mainnet" &&
+                tokenInfo1?.symbol === "SPEC" &&
+                !(
+                  tokenInfo1?.contract_addr ===
+                  "terra1s5eczhe0h0jutf46re52x5z4r03c8hupacxmdr"
+                )
+              ) {
+                return
+              }
+
+              if (
+                networkName === "mainnet" &&
+                tokenInfo2?.symbol === "SPEC" &&
+                !(
+                  tokenInfo2?.contract_addr ===
+                  "terra1s5eczhe0h0jutf46re52x5z4r03c8hupacxmdr"
+                )
               ) {
                 return
               }
