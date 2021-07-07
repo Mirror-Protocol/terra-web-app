@@ -10,6 +10,7 @@ import { TooltipIcon } from "../../components/Tooltip"
 import LinkButton from "../../components/LinkButton"
 import Formatted from "../../components/Formatted"
 import CaptionData from "./CaptionData"
+import styles from "./Gov.module.scss"
 
 const Gov = () => {
   const { dataSource, staked, votingRewards } = useMyGov()
@@ -47,7 +48,10 @@ const Gov = () => {
           key: "title",
           dataIndex: "title",
           title: ["Title", "Poll ID"],
-          render: (title, { id }) => [title, id],
+          render: (title, { id }) => [
+            <h1 className={styles.title}>{title}</h1>,
+            id,
+          ],
           bold: true,
         },
         {
