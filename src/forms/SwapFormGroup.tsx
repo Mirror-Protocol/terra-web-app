@@ -96,7 +96,11 @@ const SwapFormGroup = ({
                     input?.ref && input.ref(e)
                     inputRef.current = e
                   }}
-                  style={{ fontSize: inputFontSize }}
+                  style={{
+                    fontSize: inputFontSize,
+                    height: 38,
+                    lineHeight: 38,
+                  }}
                 />
               ) : textarea ? (
                 <textarea {...textarea} />
