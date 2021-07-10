@@ -8,7 +8,7 @@ import { useConnectModal } from "hooks"
 import SupportModal from "./SupportModal"
 import { useModal } from "components/Modal"
 
-const size = { width: 40, height: "auto" }
+const size = { width: 30, height: "auto" }
 
 const ConnectList = () => {
   const { availableConnectTypes, availableInstallTypes, connect } = useWallet()

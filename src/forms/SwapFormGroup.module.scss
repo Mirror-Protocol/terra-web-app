@@ -2,6 +2,7 @@
 @import "variables";
 
 .component {
+  position: relative;
   input,
   textarea {
     width: 100%;
@@ -110,6 +111,9 @@ $padding: 10px 10px;
   @include flex;
   align-items: unset;
   justify-content: space-between;
+  position: relative;
+  width: 100%;
+  height: auto;
 }
 /* feedback */
 .feedback {
@@ -118,4 +122,5 @@ $padding: 10px 10px;
   font-size: 12px;
   line-height: 14px;
   margin-bottom: 10px;
+  text-align: left;
 }

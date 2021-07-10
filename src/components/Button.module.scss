@@ -117,6 +117,7 @@
   font-weight: 600;
   border-radius: 10px;
   text-transform: none;
+  max-width: 240px;
   @include mobile {
     width: 80%;
   }
