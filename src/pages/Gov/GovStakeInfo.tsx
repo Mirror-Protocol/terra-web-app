@@ -45,7 +45,7 @@ const GovStakeInfo = () => {
       ))}
 
       <Submit>
-        <LinkButton {...stake}>Stake</LinkButton>
+        <LinkButton {...stake}>Manage Stake</LinkButton>
       </Submit>
     </Card>
   )
