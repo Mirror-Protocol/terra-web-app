@@ -2,7 +2,7 @@ import { last } from "ramda"
 import { atomFamily, selectorFamily } from "recoil"
 import { getContractQueriesQuery } from "../utils/queries"
 import { getContractQueryQuery } from "../utils/query"
-import { useStoreLoadable } from "../utils/loadable"
+import { useStore } from "../utils/loadable"
 import { usePagination } from "../utils/pagination"
 import alias from "../contract/alias"
 import { protocolQuery } from "../contract/protocol"
@@ -71,5 +71,5 @@ export const usePolls = () => {
 }
 
 export const usePollsByIds = (ids: PollID[]) => {
-  return useStoreLoadable(pollsByIdsQuery(ids), pollsByIdsState(ids))
+  return useStore(pollsByIdsQuery(ids), pollsByIdsState(ids))
 }

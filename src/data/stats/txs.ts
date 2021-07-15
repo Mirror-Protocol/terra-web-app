@@ -24,20 +24,7 @@ const txsQuery = selectorFamily({
           limit: LIMIT,
         })
 
-        return txs
-          .filter(({ txHash }) => txHash)
-          .filter(
-            ({ type, data }) =>
-              !["TERRA_SEND", "TERRA_RECEIVE"].includes(type) ||
-              data.denom === "uusd"
-          )
-          .filter(
-            ({ type, data }) =>
-              type !== "TERRA_SWAP" ||
-              [data.offer, data.swapCoin].some((string) =>
-                string.endsWith("uusd")
-              )
-          )
+        return txs // Do not filter txs here. It affects the pagination.
       }
     },
 })

@@ -1,5 +1,5 @@
 import { atom, selector } from "recoil"
-import { useStoreLoadable } from "../utils/loadable"
+import { useStore, useStoreLoadable } from "../utils/loadable"
 import { getListedContractQueriesQuery } from "../utils/queries"
 import { getContractQueryQuery } from "../utils/query"
 import { priceKeyIndexState } from "../app"
@@ -144,5 +144,5 @@ export const useStakingRewardInfo = () => {
 }
 
 export const useGovStaker = () => {
-  return useStoreLoadable(govStakerQuery, govStakerState)
+  return useStore(govStakerQuery, govStakerState)
 }

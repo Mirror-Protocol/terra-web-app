@@ -1,128 +1,74 @@
 import { useRecoilValue } from "recoil"
-import { div, minus, plus, times } from "../../libs/math"
-import { formatAsset, lookupSymbol } from "../../libs/parse"
+import { div, times } from "../../libs/math"
+import { formatAsset } from "../../libs/parse"
 import { percent } from "../../libs/num"
 import { useProtocol } from "../../data/contract/protocol"
 import { MintType } from "../../types/Types"
 import { useFindPrice } from "../../data/contract/normalize"
 import { getMintPriceKeyQuery } from "../../data/contract/collateral"
-import { findValueFromLogs, splitTokenText } from "./receiptHelpers"
+import { findPathFromContract, splitTokenText } from "./receiptHelpers"
 
-export default (type: MintType, prev?: MintPosition) => (logs: TxLog[]) => {
+export default (type: MintType) => (logs: TxLog[]) => {
   const borrow = type === MintType.BORROW
   const short = type === MintType.SHORT
-  const edit = type === MintType.EDIT
-  const close = type === MintType.CLOSE
   const open = borrow || short
 
   /* context */
-  const { getSymbol, parseToken } = useProtocol()
+  const { getSymbol } = useProtocol()
   const find = useFindPrice()
   const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
 
-  const val = findValueFromLogs(logs)
+  const fc = findPathFromContract(logs)
 
-  /* prev position */
-  const prevCollateral = prev && parseToken(prev.collateral)
-  const prevAsset = prev && parseToken(prev.asset)
+  const mint = splitTokenText(
+    fc("open_position")("mint_amount") || fc("mint")("mint_amount")
+  )
 
-  const collateral = splitTokenText(val("collateral_amount"))
-  const deposit = splitTokenText(val("deposit_amount", Number(edit)))
-  const withdraw = splitTokenText(val("withdraw_amount", Number(edit || close)))
+  const collateral = splitTokenText(fc("open_position")("collateral_amount"))
+  const deposit = splitTokenText(fc("deposit")("deposit_amount"))
+  const withdraw = splitTokenText(fc("withdraw")("withdraw_amount"))
+  const burn = splitTokenText(fc("burn")("burn_amount"))
+  const tax = splitTokenText(fc("withdraw")("tax_amount"))
+  const protocolFee = splitTokenText(fc("burn")("protocol_fee"))
 
-  const mint = splitTokenText(val("mint_amount"))
-  const burn = splitTokenText(val("burn_amount"))
-  const protocolFee = splitTokenText(val("protocol_fee"))
-
-  const nextCollateral = {
-    [MintType.BORROW]: {
-      amount: collateral.amount,
-      token: collateral.token,
-    },
-    [MintType.SHORT]: {
-      amount: collateral.amount,
-      token: collateral.token,
-    },
-    [MintType.CLOSE]: {
-      amount: minus(prevCollateral?.amount, protocolFee.amount),
-      token: prevCollateral?.token,
-    },
-    [MintType.EDIT]: {
-      amount: minus(
-        deposit.amount
-          ? plus(prevCollateral?.amount, deposit.amount)
-          : withdraw.amount
-          ? minus(prevCollateral?.amount, withdraw.amount)
-          : prevCollateral?.amount,
-        protocolFee.amount
-      ),
-      token: prevCollateral?.token,
-    },
-  }[type]
-
-  const nextAsset = edit
-    ? {
-        amount: mint.amount
-          ? plus(prevAsset?.amount, mint.amount)
-          : burn.amount
-          ? minus(prevAsset?.amount, burn.amount)
-          : prevAsset?.amount,
-        token: prevAsset?.token,
+  const getRatio = () => {
+    if (open) {
+      const nextCollateral = {
+        amount: collateral.amount,
+        token: collateral.token,
       }
-    : open
-    ? { amount: mint.amount, token: mint.token }
-    : { amount: prevAsset?.amount, token: prevAsset?.token }
 
-  const collateralPrice =
-    nextCollateral.token &&
-    find(getPriceKey(nextCollateral.token), nextCollateral.token)
-  const collateralValue = times(nextCollateral.amount, collateralPrice)
+      const nextAsset = {
+        amount: mint.amount,
+        token: mint.token,
+      }
 
-  const mintedPrice =
-    nextAsset.token && find(getPriceKey(nextAsset.token), nextAsset.token)
-  const mintedValue = times(nextAsset.amount, mintedPrice)
-  const ratio = div(collateralValue, mintedValue)
+      const collateralValue = times(
+        nextCollateral.amount,
+        find(getPriceKey(nextCollateral.token), nextCollateral.token)
+      )
+
+      const mintedValue = times(
+        nextAsset.amount,
+        find(getPriceKey(nextAsset.token), nextAsset.token)
+      )
+
+      return div(collateralValue, mintedValue)
+    }
+  }
 
   /* contents */
-  return !close
-    ? [
-        {
-          title: "Collateral Ratio",
-          content: percent(ratio),
-        },
-        {
-          title: "Borrowed Assets",
-          content: formatAsset(nextAsset.amount, getSymbol(nextAsset.token)),
-        },
-        {
-          title: "Collateral",
-          content: formatAsset(
-            nextCollateral.amount,
-            getSymbol(nextCollateral.token)
-          ),
-        },
-      ]
-    : [
-        {
-          title: "Burned Asset",
-          content: formatAsset(
-            burn.amount,
-            lookupSymbol(getSymbol(burn.token))
-          ),
-        },
-        {
-          title: "Withdrawn Collateral",
-          content: formatAsset(
-            withdraw.amount,
-            lookupSymbol(getSymbol(withdraw.token))
-          ),
-        },
-        {
-          title: "Protocol Fee",
-          content: formatAsset(
-            protocolFee.amount,
-            lookupSymbol(getSymbol(protocolFee.token))
-          ),
-        },
-      ]
+  const renderAsset = ({ amount, token }: { amount: string; token: string }) =>
+    formatAsset(amount, getSymbol(token))
+
+  return [
+    { title: "Collateral Ratio", content: percent(getRatio()) },
+    { title: "Borrowed Assets", content: renderAsset(mint) },
+    { title: "Collateral", content: renderAsset(collateral) },
+    { title: "Burned Asset", content: renderAsset(burn) },
+    { title: "Withdrawn Collateral", content: renderAsset(withdraw) },
+    { title: "Deposited Collateral", content: renderAsset(deposit) },
+    { title: "Tax", content: renderAsset(tax) },
+    { title: "Protocol Fee", content: renderAsset(protocolFee) },
+  ]
 }

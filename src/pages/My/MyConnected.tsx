@@ -1,4 +1,4 @@
-import { Fragment } from "react"
+import { Fragment, useCallback, useEffect, useMemo } from "react"
 import { gt } from "../../libs/math"
 import useLocalStorage from "../../libs/useLocalStorage"
 import { useMyHolding } from "../../data/my/holding"
@@ -47,10 +47,23 @@ const MyConnected = () => {
   const gov = useMyGov()
   const txs = useTxs()
 
+  const isLoading = [
+    holding,
+    limitOrder,
+    borrowing,
+    pool,
+    farming,
+    short,
+    gov,
+    txs,
+  ].some(({ isLoading }) => isLoading)
+
   /* tab */
-  const [{ tab }, setTab] = useLocalStorage<{ tab: Tabs }>("myPage", {
+  const [{ tab }, setMyPage] = useLocalStorage<{ tab: Tabs }>("myPage", {
     tab: Tabs.ALL,
   })
+
+  const setTab = useCallback((tab: Tabs) => setMyPage({ tab }), [setMyPage])
 
   const hasHolding = !!holding.dataSource.length
   const hasLimitOrder = !!limitOrder.dataSource.length
@@ -60,45 +73,49 @@ const MyConnected = () => {
   const hasGov = !!gov.dataSource.length || gt(gov.staked, 0)
   const hasTxs = !!txs.data.length
 
-  const tabs = [
-    {
-      label: Tabs.HOLDING,
-      hidden: !hasHolding,
-      component: <Holding />,
-    },
-    {
-      label: Tabs.LIMITORDER,
-      hidden: !hasLimitOrder,
-      component: <LimitOrder />,
-    },
-    {
-      label: Tabs.BORROWING,
-      hidden: !hasBorrowing,
-      component: <Borrowing />,
-    },
-    {
-      label: Tabs.POOL,
-      hidden: !hasPool,
-      component: <Pool />,
-    },
-    {
-      label: Tabs.FARMING,
-      hidden: !hasFarming,
-      component: [<Farming />, <ShortFarming />],
-    },
-    {
-      label: Tabs.GOVERN,
-      hidden: !hasGov,
-      component: <Gov />,
-    },
-    {
-      label: Tabs.HISTORY,
-      hidden: !hasTxs,
-      component: <HistoryList {...txs} />,
-    },
-  ].filter(({ hidden }) => !hidden)
+  const tabs = useMemo(
+    () =>
+      [
+        { label: Tabs.HOLDING, hidden: !hasHolding },
+        { label: Tabs.LIMITORDER, hidden: !hasLimitOrder },
+        { label: Tabs.BORROWING, hidden: !hasBorrowing },
+        { label: Tabs.POOL, hidden: !hasPool },
+        { label: Tabs.FARMING, hidden: !hasFarming },
+        { label: Tabs.GOVERN, hidden: !hasGov },
+        { label: Tabs.HISTORY, hidden: !hasTxs },
+      ].filter(({ hidden }) => !hidden),
+    [
+      hasBorrowing,
+      hasFarming,
+      hasGov,
+      hasHolding,
+      hasLimitOrder,
+      hasPool,
+      hasTxs,
+    ]
+  )
 
-  const contents = tabs.filter(({ label }) => tab === Tabs.ALL || tab === label)
+  const components = {
+    [Tabs.HOLDING]: [<Holding />],
+    [Tabs.LIMITORDER]: [<LimitOrder />],
+    [Tabs.BORROWING]: [<Borrowing />],
+    [Tabs.POOL]: [<Pool />],
+    [Tabs.FARMING]: [<Farming />, <ShortFarming />],
+    [Tabs.GOVERN]: [<Gov />],
+    [Tabs.HISTORY]: [<HistoryList {...txs} />],
+  }
+
+  // set tab as all if stored tab is invalid
+  useEffect(() => {
+    if (!isLoading) {
+      const isValid = !!tabs.find(({ label }) => tab === label)
+      !isValid && tab !== Tabs.ALL && setTab(Tabs.ALL)
+    }
+  }, [isLoading, setTab, tab, tabs])
+
+  const contents = Object.entries(components).filter(
+    ([label]) => tab === Tabs.ALL || label === tab
+  )
 
   return (
     <>
@@ -109,9 +126,9 @@ const MyConnected = () => {
           <Tab
             tabs={[Tabs.ALL, ...tabs.map(({ label }) => label)]}
             current={tab}
-            onClick={(tab) => setTab({ tab: tab as Tabs })}
+            onClick={(tab) => setTab(tab as Tabs)}
           >
-            {contents.map(({ component, label }) =>
+            {contents.map(([label, component]) =>
               Array.isArray(component) ? (
                 <Fragment key={label}>
                   {component.map((component, index) => (

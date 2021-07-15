@@ -10,8 +10,7 @@ export const useStore = <T>(
   const query = useRecoilValueLoadable(recoilValue)
 
   useEffect(() => {
-    const contents = getLoadableContents(query)
-    contents && setState(contents)
+    query.state === "hasValue" && setState(query.contents)
   }, [query, setState])
 
   return { contents: state, isLoading: query.state === "loading" }
@@ -25,8 +24,7 @@ export const useStoreLoadable = <T>(
   const query = useRecoilValueLoadable(recoilValue)
 
   useEffect(() => {
-    const contents = getLoadableContents(query)
-    contents && setState(contents)
+    query.state === "hasValue" && setState(query.contents)
   }, [query, setState])
 
   return state

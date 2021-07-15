@@ -60,7 +60,7 @@ interface RewardInfo {
 
 type PollID = number
 type RewardAmount = string
-type LockedBalance = [PollID, { balance: string; vote: VoteAnswer }]
+type LockedBalance = [PollID, Voter]
 type WithdrawablePolls = [PollID, RewardAmount]
 
 interface GovStaker extends Balance {

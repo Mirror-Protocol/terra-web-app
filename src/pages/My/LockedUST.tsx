@@ -1,8 +1,6 @@
-import { format as formatDate } from "date-fns"
-
-import { FMT } from "../../constants"
 import { gt } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
+import { secondsToDate } from "../../libs/date"
 import { useMyLockedUST } from "../../data/my/locked"
 
 import { getPath, MenuKey } from "../../routes"
@@ -64,7 +62,7 @@ const LockedUST = () => {
           render: (amount, { unlock_time }) => {
             const formatted = <Formatted symbol="uusd">{amount}</Formatted>
             return gt(amount, 0)
-              ? [formatted, formatDate(new Date(unlock_time * 1000), FMT.HHmm)]
+              ? [formatted, secondsToDate(unlock_time)]
               : formatted
           },
           align: "right",

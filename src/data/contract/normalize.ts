@@ -1,5 +1,5 @@
 import { atom, selector } from "recoil"
-import { div, gt, sum } from "../../libs/math"
+import { div, gt } from "../../libs/math"
 import { PriceKey, BalanceKey, StakingKey } from "../../hooks/contractKeys"
 import { useStore, useStoreLoadable } from "../utils/loadable"
 import { exchangeRatesQuery } from "../native/exchange"
@@ -170,35 +170,6 @@ const govStakedState = atom({
   default: "0",
 })
 
-/* reward */
-export const farmingRewardsQuery = selector({
-  key: "farmingRewards",
-  get: ({ get }) => ({
-    long: sum(Object.values(get(lpRewardBalancesQuery) ?? {})),
-    short: sum(Object.values(get(slpRewardBalancesQuery) ?? {})),
-  }),
-})
-
-export const votingRewardsQuery = selector({
-  key: "votingRewards",
-  get: ({ get }) => get(govStakerQuery)?.pending_voting_rewards ?? "0",
-})
-
-export const rewardsQuery = selector({
-  key: "rewards",
-  get: ({ get }) => {
-    const { long, short } = get(farmingRewardsQuery)
-    const voting = get(votingRewardsQuery)
-    const total = sum([long, short, voting])
-    return { long, short, voting, total }
-  },
-})
-
-const rewardsState = atom({
-  key: "rewardsState",
-  default: rewardsQuery,
-})
-
 /* protocol - asset info */
 export const minCollateralRatioQuery = selector({
   key: "minCollateralRatio",
@@ -297,11 +268,7 @@ export const useSlpRewardBalances = () => {
 }
 
 export const useGovStaked = () => {
-  return useStoreLoadable(govStakedQuery, govStakedState)
-}
-
-export const useRewards = () => {
-  return useStoreLoadable(rewardsQuery, rewardsState)
+  return useStore(govStakedQuery, govStakedState)
 }
 
 /* store: asset info */

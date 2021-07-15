@@ -5,7 +5,7 @@ import { useMintPositions } from "../contract/positions"
 
 export const useMyLockedUST = () => {
   const { whitelist, parseAssetInfo } = useProtocol()
-  const mintPositions = useMintPositions()
+  const { contents: mintPositions } = useMintPositions()
   const lockPositionInfo = useLockPositionInfo()
 
   const values = Object.values(lockPositionInfo).sort(

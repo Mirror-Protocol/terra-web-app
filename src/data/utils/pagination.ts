@@ -31,15 +31,9 @@ export const usePagination = <T, Offset = number>(
   const { state, contents } = useRecoilValueLoadable(query(offset))
 
   useEffect(() => {
-    const byKey = (list: T[]) =>
-      list.reduce<T[]>((acc, item) => {
-        const exists = acc.some((prev) => prev[key] === item[key])
-        return exists ? acc : [...acc, item]
-      }, [])
-
     if (state === "hasValue" && contents) {
       setIdle(false)
-      setData((prev) => byKey([...prev, ...contents]))
+      setData((prev) => uniqByKey([...prev, ...contents], key))
       setDone(contents.length < limit)
     }
   }, [state, contents, limit, key])
@@ -54,10 +48,17 @@ export const usePagination = <T, Offset = number>(
 
   return {
     idle,
-    loading: state === "loading",
+    isLoading: state === "loading",
     data,
     more: !done
       ? () => setOffset((offset) => next({ offset, data }))
       : undefined,
   }
 }
+
+/* utils */
+export const uniqByKey = <T>(list: T[], key: keyof T) =>
+  list.reduce<T[]>((acc, item) => {
+    const exists = acc.some((prev) => prev[key] === item[key])
+    return exists ? acc : [...acc, item]
+  }, [])

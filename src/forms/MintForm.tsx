@@ -222,7 +222,7 @@ const MintForm = ({ position, type }: Props) => {
     native: ["uusd", "uluna"],
     showExternal: true,
     validate: (item) => !("status" in item) || item.status !== "PRE_IPO",
-    dim: (token) => (getIsDelisted(token) ? false : isClosed(getSymbol(token))),
+    dim: (token) => isClosed(token),
   })
 
   const select2 = useSelectAsset({
@@ -230,7 +230,7 @@ const MintForm = ({ position, type }: Props) => {
     token: token2,
     onSelect: onSelect(Key.token2),
     validate: ({ symbol }) => symbol !== "MIR",
-    dim: (token) => (getIsDelisted(token) ? false : isClosed(getSymbol(token))),
+    dim: (token) => isClosed(token),
   })
 
   const maxAmountOpen =
@@ -243,12 +243,18 @@ const MintForm = ({ position, type }: Props) => {
     : maxAmountOpen
 
   /* latest price */
-  const isMarketClosed1 = getIsDelisted(token1) ? false : isClosed(symbol1)
-  const isMarketClosed2 = getIsDelisted(token2) ? false : isClosed(symbol2)
-  const isMarketClosed = isMarketClosed1 || isMarketClosed2
+  const isMarketClosed1 = isClosed(token1)
+  const isMarketClosed2 = isClosed(token2)
+  const isMarketClosed = !edit && (isMarketClosed1 || isMarketClosed2)
+
+  const exchangeLink =
+    (isMarketClosed1 && symbol1 === "mGLXY") ||
+    (isMarketClosed2 && symbol2 === "mGLXY")
+      ? TRADING_HOURS.TSX
+      : TRADING_HOURS.NASDAQ
 
   const marketHoursLink = (
-    <ExtLink href={TRADING_HOURS} className={styles.link}>
+    <ExtLink href={exchangeLink} className={styles.link}>
       market hours
     </ExtLink>
   )
@@ -284,18 +290,23 @@ const MintForm = ({ position, type }: Props) => {
         <TooltipIcon content={Tooltips.Mint.Collateral}>Collateral</TooltipIcon>
       ),
       prev: edit ? format(prevCollateral?.amount, symbol1) : undefined,
-      input: {
-        type: "number",
-        step: step(symbol1),
-        placeholder: placeholder(symbol1),
-        autoFocus: true,
-        ref: valueRef,
-      },
+      value: edit && isMarketClosed1 ? value1 : undefined,
+      input:
+        edit && isMarketClosed1
+          ? undefined
+          : {
+              type: "number",
+              step: step(symbol1),
+              placeholder: placeholder(symbol1),
+              autoFocus: true,
+              ref: valueRef,
+            },
       unit: open ? select1.button : symbol1,
       max: gt(maxAmount, 0) ? () => setValue(Key.value1, maxAmount) : undefined,
       assets: select1.assets,
       help: renderBalance(findBalance(token1), symbol1),
       focused: select1.isOpen,
+      info: edit && isMarketClosed1 ? marketClosedMessage : undefined,
     },
 
     [Key.value2]: {
@@ -307,16 +318,21 @@ const MintForm = ({ position, type }: Props) => {
         <TooltipIcon content={Tooltips.Mint.Asset}>Borrowed</TooltipIcon>
       ),
       prev: edit ? format(prevAsset?.amount, symbol2) : undefined,
-      input: {
-        type: "number",
-        step: step(symbol2),
-        placeholder: placeholder(symbol2),
-      },
+      value: edit && isMarketClosed2 ? value2 : undefined,
+      input:
+        edit && isMarketClosed2
+          ? undefined
+          : {
+              type: "number",
+              step: step(symbol2),
+              placeholder: placeholder(symbol2),
+            },
       unit: open ? select2.button : symbol2,
       assets: select2.assets,
       help: open ? undefined : renderBalance(findBalance(token2), symbol2),
       focused: select2.isOpen,
       warn: invalidRepay ? <>{linkToBuy} to repay</> : undefined,
+      info: edit && isMarketClosed2 ? marketClosedMessage : undefined,
     },
 
     [Key.ratio]: {
@@ -376,10 +392,10 @@ const MintForm = ({ position, type }: Props) => {
   }
 
   const PROTOCOL_FEE = 0.015
-  const protocolFee = times(
-    times(price, edit ? abs(diffAsset) : amount2),
-    PROTOCOL_FEE
-  )
+  const protocolFee =
+    lt(diffAsset, 0) || close
+      ? times(times(price, edit ? times(-1, diffAsset) : amount2), PROTOCOL_FEE)
+      : undefined
 
   const protocolFeeContents = {
     title: "Protocol Fee",
@@ -557,7 +573,7 @@ const MintForm = ({ position, type }: Props) => {
   const label = open && short ? "Farm" : type
 
   /* result */
-  const parseTx = useMintReceipt(type, position)
+  const parseTx = useMintReceipt(type)
   const container = {
     attrs,
     contents,

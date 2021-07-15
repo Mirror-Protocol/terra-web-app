@@ -1,6 +1,6 @@
 import { atom, selector } from "recoil"
 import { request } from "graphql-request"
-import { useStoreLoadable } from "../utils/loadable"
+import { useStore } from "../utils/loadable"
 import { locationKeyState } from "../app"
 import { statsURLQuery } from "../network"
 import { addressState } from "../wallet"
@@ -31,5 +31,5 @@ const statsAccountState = atom<StatsAccount | undefined>({
 })
 
 export const useStatsAccount = () => {
-  return useStoreLoadable(statsAccountQuery, statsAccountState)
+  return useStore(statsAccountQuery, statsAccountState)
 }

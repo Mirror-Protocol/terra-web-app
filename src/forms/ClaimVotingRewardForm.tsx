@@ -1,21 +1,27 @@
+import { useRouteMatch } from "react-router-dom"
+import { useRecoilValue } from "recoil"
 import useNewContractMsg from "../libs/useNewContractMsg"
 import { gt, plus } from "../libs/math"
 import { useProtocol } from "../data/contract/protocol"
 import { useFindBalance } from "../data/contract/normalize"
-import { useRewards } from "../data/my/rewards"
+import { calcVotingRewards, govAddressVoterQuery } from "../data/contract/gov"
+import { usePoll } from "../data/gov/poll"
 import Formatted from "../components/Formatted"
 import Container from "../components/Container"
 import useClaimRewardsReceipt from "./receipts/useClaimRewardsReceipt"
 import FormContainer from "./modules/FormContainer"
 
-const ClaimRewardsForm = () => {
+const ClaimVotingRewardForm = () => {
+  const { params } = useRouteMatch<{ id: string }>()
+  const id = Number(params.id)
+
   /* context */
   const { contracts, getToken } = useProtocol()
   const { contents: findBalance } = useFindBalance()
-  const { contents: rewards } = useRewards()
-
+  const poll = usePoll(id)
+  const voter = useRecoilValue(govAddressVoterQuery(id))
   const balance = findBalance(getToken("MIR"))
-  const claiming = rewards.total
+  const claiming = poll && voter ? calcVotingRewards(poll, voter) : "0"
 
   /* confirm */
   const contents = [
@@ -31,14 +37,11 @@ const ClaimRewardsForm = () => {
 
   /* submit */
   const newContractMsg = useNewContractMsg()
-  const withdraw = {
-    staking: newContractMsg(contracts["staking"], { withdraw: {} }),
-    voting: newContractMsg(contracts["gov"], { withdraw_voting_rewards: {} }),
-  }
-
-  const data = gt(rewards.voting, 0)
-    ? [withdraw.staking, withdraw.voting]
-    : [withdraw.staking]
+  const data = [
+    newContractMsg(contracts["gov"], {
+      withdraw_voting_rewards: { poll_id: id },
+    }),
+  ]
 
   const disabled = !gt(claiming, 0)
 
@@ -55,4 +58,4 @@ const ClaimRewardsForm = () => {
   )
 }
 
-export default ClaimRewardsForm
+export default ClaimVotingRewardForm

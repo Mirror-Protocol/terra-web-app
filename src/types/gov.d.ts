@@ -59,8 +59,9 @@ interface Spend {
 /* votes */
 type VoteAnswer = "yes" | "no" | "abstain"
 interface Voter {
+  balance: string
   vote: VoteAnswer
-  voter: string
+  voter?: string
 }
 
 /* config */

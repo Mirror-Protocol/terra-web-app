@@ -1,7 +1,7 @@
 import classNames from "classnames/bind"
 import Tooltips from "../../lang/Tooltips"
 import { plus } from "../../libs/math"
-import { decimal, formatAsset, lookupSymbol } from "../../libs/parse"
+import { formatAsset, lookupSymbol } from "../../libs/parse"
 import { getPath, MenuKey } from "../../routes"
 import { useMyBorrowing } from "../../data/my/borrowing"
 import Table from "../../components/Table"
@@ -155,7 +155,7 @@ const Borrowing = () => {
               <CollateralRatio
                 min={minRatio}
                 safe={plus(minRatio, 0.5)}
-                ratio={decimal(value, 2)}
+                ratio={value}
                 compact
               />
             ),

@@ -1,9 +1,12 @@
-import { useCallback, useState } from "react"
+import { Dispatch, SetStateAction, useCallback, useState } from "react"
 
-export type LocalStorage<T> = [T, (value: T | ((val: T) => T)) => void]
+export type LocalStorage<T> = [T, Dispatch<SetStateAction<T>>]
 
-const useLocalStorage = <T>(key: string, initial?: T): LocalStorage<T> => {
-  const [stored, setStored] = useState<T>(() => {
+const useLocalStorage = <T>(
+  key: string,
+  initial: T | (() => T)
+): LocalStorage<T> => {
+  const init = () => {
     try {
       const item = window.localStorage.getItem(key)
       return item ? JSON.parse(item) : initial
@@ -11,14 +14,16 @@ const useLocalStorage = <T>(key: string, initial?: T): LocalStorage<T> => {
       console.error(error)
       return initial
     }
-  })
+  }
+
+  const [stored, setStored] = useState<T>(init)
 
   const setValue = useCallback(
     (value: T | ((val: T) => T)) => {
       try {
         const next = value instanceof Function ? value(stored) : value
-        setStored(next)
         window.localStorage.setItem(key, JSON.stringify(next))
+        setStored(next)
       } catch (error) {
         console.error(error)
       }

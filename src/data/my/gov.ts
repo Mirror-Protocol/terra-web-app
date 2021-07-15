@@ -2,16 +2,26 @@ import { atom, selector } from "recoil"
 import { gt, times } from "../../libs/math"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useStoreLoadable } from "../utils/loadable"
+import { uniqByKey } from "../utils/pagination"
 import { useProtocol } from "../contract/protocol"
 import { useGovStaker } from "../contract/contract"
+import { useMissingRewards, VoteHistoryItem } from "../contract/gov"
 import { useFindPrice, useGovStaked } from "../contract/normalize"
 import { usePollsByIds } from "../gov/polls"
 import { statsAccountQuery, useStatsAccount } from "../stats/account"
 
-const useVoteHistory = () => {
-  const account = useStatsAccount()
+const useVoteHistory = (): {
+  contents: VoteHistoryItem[]
+  isLoading: boolean
+} => {
+  const { contents: govStaker, isLoading: isLoadingStaker } = useGovStaker()
+
+  const { contents: account, isLoading: isStatsAccountLoading } =
+    useStatsAccount()
   const voteHistory = account?.voteHistory
-  const govStaker = useGovStaker()
+
+  const { contents: missingRewards, isLoading: isMissingRewardsLoading } =
+    useMissingRewards()
 
   const ids = !govStaker
     ? []
@@ -20,33 +30,46 @@ const useVoteHistory = () => {
         ...govStaker.withdrawable_polls.map(([id]) => id),
       ]
 
-  const pollsByIds = usePollsByIds(ids)
+  const { contents: pollsByIds, isLoading: isLoadingPolls } = usePollsByIds(ids)
   const pollsByIdsValues = Object.values(pollsByIds)
 
-  if (!voteHistory || !pollsByIdsValues) return []
+  if (!voteHistory) return { isLoading: true, contents: [] }
 
-  return !govStaker
-    ? []
-    : [
-        ...govStaker.locked_balance.map(([id, { balance, vote }]) => {
-          return {
-            id,
-            title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
-            vote,
-            amount: balance,
-          }
-        }),
-        ...govStaker.withdrawable_polls.map(([id, reward]) => {
-          const item = voteHistory.find(({ pollId }) => Number(pollId) === id)
-          return {
-            id,
-            title: pollsByIdsValues.find((poll) => poll.id === id)?.title,
-            vote: item?.voteOption,
-            amount: item?.amount,
-            reward,
-          }
-        }),
-      ].sort(({ id: a }, { id: b }) => b - a)
+  return {
+    isLoading:
+      isLoadingStaker ||
+      isStatsAccountLoading ||
+      isMissingRewardsLoading ||
+      isLoadingPolls,
+    contents: !govStaker
+      ? []
+      : uniqByKey(
+          [
+            ...govStaker.locked_balance.map(([id, voter]) => {
+              return {
+                ...pollsByIdsValues.find((poll) => poll.id === id)!,
+                ...voter,
+                id,
+              }
+            }),
+            ...govStaker.withdrawable_polls.map(([id, reward]) => {
+              const item = voteHistory.find(
+                ({ pollId }) => Number(pollId) === id
+              )!
+
+              return {
+                ...pollsByIdsValues.find((poll) => poll.id === id)!,
+                vote: item.voteOption,
+                balance: item.amount,
+                reward,
+                id,
+              }
+            }),
+            ...missingRewards,
+          ],
+          "id"
+        ).sort(({ id: a }, { id: b }) => b - a),
+  }
 }
 
 const accGovRewardQuery = selector({
@@ -74,9 +97,9 @@ export const useMyGov = () => {
   const mir = getToken("MIR")
 
   const findPrice = useFindPrice()
-  const govStaked = useGovStaked()
-  const govStaker = useGovStaker()
-  const dataSource = useVoteHistory()
+  const { contents: govStaked, isLoading: isLoadingStaked } = useGovStaked()
+  const { contents: govStaker, isLoading: isLoadingStaker } = useGovStaker()
+  const { contents: dataSource, isLoading: isLoadingHistory } = useVoteHistory()
 
   const price = findPrice(priceKey, mir)
   const valid = gt(govStaked, 1)
@@ -93,5 +116,6 @@ export const useMyGov = () => {
     stakedValue,
     votingRewards,
     votingRewardsValue,
+    isLoading: isLoadingStaked || isLoadingStaker || isLoadingHistory,
   }
 }

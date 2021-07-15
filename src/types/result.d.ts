@@ -7,6 +7,7 @@ interface ReceiptRow {
 type ResultParser = (logs: TxLog[], txInfo: TxInfo) => ReceiptRow[]
 
 interface FromContract extends Dictionary {
+  action?: string
   contract_address?: string
   amount?: string
 }

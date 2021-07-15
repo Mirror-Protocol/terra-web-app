@@ -1,16 +1,17 @@
 import { gt, max, number, sum, times } from "../../libs/math"
 import { PriceKey, StakingKey } from "../../hooks/contractKeys"
 import { useProtocol } from "../contract/protocol"
-import { useFindPrice, useFindStaking, useRewards } from "../contract/normalize"
+import { useFindPrice, useFindStaking } from "../contract/normalize"
+import { useRewards } from "./rewards"
 import { getAssetsHelpers, useAssetsByNetwork } from "../stats/assets"
 import { useMyLockedUST } from "./locked"
 
 export const useMyShortFarming = () => {
   const priceKey = PriceKey.PAIR
   const { listedAll, getToken, getIsDelisted } = useProtocol()
-  const { contents: findStaking } = useFindStaking()
+  const { contents: findStaking, isLoading } = useFindStaking()
   const findPrice = useFindPrice()
-  const rewards = useRewards()
+  const { contents: rewards, isLoading: isLoadingRewards } = useRewards()
   const myLockedUST = useMyLockedUST()
   const assets = useAssetsByNetwork()
 
@@ -47,5 +48,11 @@ export const useMyShortFarming = () => {
   const totalRewards = rewards.short
   const totalRewardsValue = times(rewards.short, price)
 
-  return { ...myLockedUST, dataSource, totalRewards, totalRewardsValue }
+  return {
+    ...myLockedUST,
+    dataSource,
+    totalRewards,
+    totalRewardsValue,
+    isLoading: isLoading || isLoadingRewards,
+  }
 }

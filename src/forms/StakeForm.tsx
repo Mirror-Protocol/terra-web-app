@@ -43,8 +43,8 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
   const { contracts, whitelist, getSymbol } = useProtocol()
   const { contents: findBalance } = useFindBalance()
   const { contents: findStaking } = useFindStaking()
-  const govStaked = useGovStaked()
-  const govStaker = useGovStaker()
+  const { contents: govStaked } = useGovStaked()
+  const { contents: govStaker } = useGovStaker()
   const getPool = usePool()
 
   const getBalance = (token: string) =>
@@ -181,10 +181,12 @@ const StakeForm = ({ type, tab, gov, ...props }: Props) => {
         ],
   }[type as StakeType]
 
+  const govUnstakeMessages = gt(locked, 0)
+    ? [`${formatAsset(locked, "MIR")} are voted in poll ${lockedIds}`]
+    : undefined
+
   const messages =
-    gov && type === StakeType.UNSTAKE && gt(locked, 0)
-      ? [`${formatAsset(locked, "MIR")} are voted in poll ${lockedIds}`]
-      : undefined
+    gov && type === StakeType.UNSTAKE ? govUnstakeMessages : undefined
 
   const disabled = invalid
 

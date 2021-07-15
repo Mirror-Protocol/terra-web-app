@@ -7,7 +7,7 @@ import usePool from "../../forms/modules/usePool"
 export const useMyPool = () => {
   const { listedAll, getIsDelisted } = useProtocol()
 
-  const { contents: findStaking } = useFindStaking()
+  const { contents: findStaking, isLoading } = useFindStaking()
   const getPool = usePool()
 
   const dataSource = listedAll
@@ -29,5 +29,5 @@ export const useMyPool = () => {
     dataSource.map(({ withdrawable }) => withdrawable?.value ?? 0)
   )
 
-  return { dataSource, totalWithdrawableValue }
+  return { dataSource, totalWithdrawableValue, isLoading }
 }
