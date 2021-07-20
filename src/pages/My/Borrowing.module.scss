@@ -1,0 +1,18 @@
+@import "mixins";
+@import "variables";
+
+.ticker {
+  @include flex(flex-start);
+
+  svg {
+    margin-right: 4px;
+  }
+}
+
+.red {
+  color: $red;
+
+  svg {
+    fill: $red;
+  }
+}

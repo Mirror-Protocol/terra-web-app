@@ -1,0 +1,79 @@
+@import "mixins";
+
+.asset {
+  @include flex(flex-start);
+  min-height: 36px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+
+  @include mobile {
+    margin-left: 12px;
+  }
+
+  @include desktop {
+    margin-left: 16px;
+  }
+}
+
+.symbol {
+  color: $white-92;
+  font-weight: 500;
+
+  .lg & {
+    @include mobile {
+      font-size: 18px;
+    }
+
+    @include desktop {
+      font-size: 24px;
+    }
+  }
+}
+
+.content {
+  @include flex(flex-start);
+
+  color: $white-44;
+  margin-top: 2px;
+
+  @include mobile {
+    font-size: 11px;
+  }
+
+  @include desktop {
+    font-size: 12px;
+  }
+
+  .lg & {
+    @include mobile {
+      font-size: 12px;
+    }
+
+    @include desktop {
+      font-size: 14px;
+    }
+  }
+}
+
+.name {
+  @include mobile {
+    width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+  }
+}
+
+/* idle */
+.idle {
+  .symbol,
+  .content {
+    @include idle;
+    display: inline-block;
+  }
+}

@@ -1,0 +1,23 @@
+@import "mixins";
+
+.main {
+  @include mobile {
+    margin-top: 40px;
+  }
+
+  @include desktop {
+    margin-top: 72px;
+  }
+}
+
+.footer {
+  margin-top: 32px;
+  text-align: right;
+}
+
+.disconnect {
+  @include link($white-44);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}

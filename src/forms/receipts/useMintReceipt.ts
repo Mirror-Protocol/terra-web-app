@@ -1,128 +1,74 @@
-import { div, minus, plus, times } from "../../libs/math"
-import { formatAsset, lookupSymbol } from "../../libs/parse"
+import { useRecoilValue } from "recoil"
+import { div, times } from "../../libs/math"
+import { formatAsset } from "../../libs/parse"
 import { percent } from "../../libs/num"
-import { useContract, useContractsAddress, useRefetch } from "../../hooks"
-import { PriceKey } from "../../hooks/contractKeys"
-import { Type } from "../../pages/Mint"
-import { findValue, splitTokenText } from "./receiptHelpers"
+import { useProtocol } from "../../data/contract/protocol"
+import { MintType } from "../../types/Types"
+import { useFindPrice } from "../../data/contract/normalize"
+import { getMintPriceKeyQuery } from "../../data/contract/collateral"
+import { findPathFromContract, splitTokenText } from "./receiptHelpers"
 
-export default (type: Type, prev?: MintPosition) => (logs: TxLog[]) => {
-  const open = type === Type.OPEN
-  const close = type === Type.CLOSE
-  const custom = type === Type.CUSTOM
-  useRefetch([PriceKey.ORACLE, PriceKey.END])
+export default (type: MintType) => (logs: TxLog[]) => {
+  const borrow = type === MintType.BORROW
+  const short = type === MintType.SHORT
+  const open = borrow || short
 
   /* context */
-  const { getSymbol, parseToken, getIsDelisted } = useContractsAddress()
-  const { find } = useContract()
-  const val = findValue(logs)
+  const { getSymbol } = useProtocol()
+  const find = useFindPrice()
+  const getPriceKey = useRecoilValue(getMintPriceKeyQuery)
 
-  /* prev position */
-  const prevCollateral = prev && parseToken(prev.collateral)
-  const prevAsset = prev && parseToken(prev.asset)
+  const fc = findPathFromContract(logs)
 
-  const collateral = splitTokenText(val("collateral_amount"))
-  const deposit = splitTokenText(val("deposit_amount", Number(custom)))
-  const withdraw = splitTokenText(
-    val("withdraw_amount", Number(custom || close))
+  const mint = splitTokenText(
+    fc("open_position")("mint_amount") || fc("mint")("mint_amount")
   )
 
-  const mint = splitTokenText(val("mint_amount"))
-  const burn = splitTokenText(val("burn_amount"))
-  const protocolFee = splitTokenText(val("protocol_fee", Number(custom)))
+  const collateral = splitTokenText(fc("open_position")("collateral_amount"))
+  const deposit = splitTokenText(fc("deposit")("deposit_amount"))
+  const withdraw = splitTokenText(fc("withdraw")("withdraw_amount"))
+  const burn = splitTokenText(fc("burn")("burn_amount"))
+  const tax = splitTokenText(fc("withdraw")("tax_amount"))
+  const protocolFee = splitTokenText(fc("burn")("protocol_fee"))
 
-  const nextCollateral = {
-    [Type.OPEN]: {
-      amount: collateral.amount,
-      token: collateral.token,
-    },
-    [Type.DEPOSIT]: {
-      amount: plus(prevCollateral?.amount, deposit.amount),
-      token: prevCollateral?.token,
-    },
-    [Type.WITHDRAW]: {
-      amount: minus(
-        minus(prevCollateral?.amount, withdraw.amount),
-        protocolFee.amount
-      ),
-      token: prevCollateral?.token,
-    },
-    [Type.CLOSE]: {
-      amount: minus(prevCollateral?.amount, protocolFee.amount),
-      token: prevCollateral?.token,
-    },
-    [Type.CUSTOM]: {
-      amount: deposit.amount
-        ? plus(prevCollateral?.amount, deposit.amount)
-        : withdraw.amount
-        ? minus(
-            minus(prevCollateral?.amount, withdraw.amount),
-            protocolFee.amount
-          )
-        : prevCollateral?.amount,
-      token: prevCollateral?.token,
-    },
-  }[type]
-
-  const nextAsset = custom
-    ? {
-        amount: mint.amount
-          ? plus(prevAsset?.amount, mint.amount)
-          : burn.amount
-          ? minus(prevAsset?.amount, burn.amount)
-          : prevAsset?.amount,
-        token: prevAsset?.token,
+  const getRatio = () => {
+    if (open) {
+      const nextCollateral = {
+        amount: collateral.amount,
+        token: collateral.token,
       }
-    : open
-    ? { amount: mint.amount, token: mint.token }
-    : { amount: prevAsset?.amount, token: prevAsset?.token }
 
-  const getPriceKey = (token: string) =>
-    getIsDelisted(token) ? PriceKey.END : PriceKey.ORACLE
+      const nextAsset = {
+        amount: mint.amount,
+        token: mint.token,
+      }
 
-  const collateralPrice =
-    nextCollateral.token &&
-    find(getPriceKey(nextCollateral.token), nextCollateral.token)
-  const collateralValue = times(nextCollateral.amount, collateralPrice)
+      const collateralValue = times(
+        nextCollateral.amount,
+        find(getPriceKey(nextCollateral.token), nextCollateral.token)
+      )
 
-  const mintedPrice =
-    nextAsset.token && find(getPriceKey(nextAsset.token), nextAsset.token)
-  const mintedValue = times(nextAsset.amount, mintedPrice)
-  const ratio = div(collateralValue, mintedValue)
+      const mintedValue = times(
+        nextAsset.amount,
+        find(getPriceKey(nextAsset.token), nextAsset.token)
+      )
+
+      return div(collateralValue, mintedValue)
+    }
+  }
 
   /* contents */
-  return !close
-    ? [
-        {
-          title: "Collateral Ratio",
-          content: percent(ratio),
-        },
-        {
-          title: "Minted Assets",
-          content: formatAsset(nextAsset.amount, getSymbol(nextAsset.token)),
-        },
-        {
-          title: "Collaterals",
-          content: formatAsset(
-            nextCollateral.amount,
-            getSymbol(nextCollateral.token)
-          ),
-        },
-      ]
-    : [
-        {
-          title: "Burned Asset",
-          content: formatAsset(
-            burn.amount,
-            lookupSymbol(getSymbol(burn.token))
-          ),
-        },
-        {
-          title: "Withdrawn Collateral",
-          content: formatAsset(
-            withdraw.amount,
-            lookupSymbol(getSymbol(withdraw.token))
-          ),
-        },
-      ]
+  const renderAsset = ({ amount, token }: { amount: string; token: string }) =>
+    formatAsset(amount, getSymbol(token))
+
+  return [
+    { title: "Collateral Ratio", content: percent(getRatio()) },
+    { title: "Borrowed Assets", content: renderAsset(mint) },
+    { title: "Collateral", content: renderAsset(collateral) },
+    { title: "Burned Asset", content: renderAsset(burn) },
+    { title: "Withdrawn Collateral", content: renderAsset(withdraw) },
+    { title: "Deposited Collateral", content: renderAsset(deposit) },
+    { title: "Tax", content: renderAsset(tax) },
+    { title: "Protocol Fee", content: renderAsset(protocolFee) },
+  ]
 }

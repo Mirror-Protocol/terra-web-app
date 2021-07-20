@@ -1,0 +1,106 @@
+@import "mixins";
+
+.button {
+  @include flex;
+
+  svg {
+    fill: $white-64;
+  }
+}
+
+.card {
+  padding: 20px;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.list {
+  @include flex;
+}
+
+.item {
+  $color: #232d4b;
+  @include flex;
+  @include transition;
+
+  flex: none;
+  background-color: $gray-18;
+  border: 1px solid $gray-18;
+  border-radius: 20px;
+  font-size: 14px;
+  height: 40px;
+  width: 60px;
+
+  & + & {
+    margin-left: 10px;
+  }
+
+  &:hover {
+    border-color: $blue;
+  }
+}
+
+.input {
+  @include transition(opacity);
+
+  text-align: right;
+
+  &:not(.focused) {
+    opacity: 0.3;
+  }
+}
+
+.group {
+  width: 100px;
+  padding: 0 15px;
+
+  input {
+    flex: 1;
+    width: 0;
+    padding-right: 10px;
+  }
+
+  span {
+    flex: none;
+  }
+
+  &.error {
+    border-color: $red;
+  }
+
+  &.warning {
+    border-color: $orange;
+  }
+
+  &.success {
+    border-color: $blue;
+  }
+}
+
+.active {
+  background-color: $blue;
+  border-color: $blue;
+  color: $gray-11;
+}
+
+.feedback {
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 8px;
+  text-align: right;
+
+  &.error {
+    color: $red;
+  }
+
+  &.warning {
+    color: $orange;
+  }
+}

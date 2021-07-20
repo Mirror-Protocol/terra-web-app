@@ -1,15 +1,8 @@
 @import "mixins";
 
-.dl {
-  margin-bottom: 30px;
-}
-
-.caution {
-  margin-top: 30px;
-}
-
 .message {
   @include flex(flex-start);
+  display: inline-flex;
   white-space: pre;
 
   i {
@@ -22,5 +15,31 @@
   &:hover {
     color: inherit;
     text-decoration: underline;
+  }
+}
+
+.ratio {
+  margin-top: 32px;
+}
+
+.group {
+  @include mobile {
+    > :last-child {
+      margin-top: $card-padding-vertical-mobile;
+    }
+  }
+
+  @include desktop {
+    @include flex;
+
+    > :first-child {
+      flex: 1;
+    }
+
+    > :last-child {
+      flex: none;
+      width: 100px;
+      margin-left: 20px;
+    }
   }
 }

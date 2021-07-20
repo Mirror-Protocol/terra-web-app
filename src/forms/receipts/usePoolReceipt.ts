@@ -1,15 +1,14 @@
 import { formatAsset } from "../../libs/parse"
 import getLpName from "../../libs/getLpName"
-import { useContractsAddress } from "../../hooks"
-import { Type } from "../../pages/Pool"
-import usePoolShare from "../usePoolShare"
-import { findValue, fromContract, parseTokenText } from "./receiptHelpers"
+import { useProtocol } from "../../data/contract/protocol"
+import { PoolType } from "../../types/Types"
+import { findValueFromLogs, findPathFromContract } from "./receiptHelpers"
+import { parseTokenText } from "./receiptHelpers"
 
-export default (type: Type) => (logs: TxLog[]) => {
-  const { getSymbol } = useContractsAddress()
-  const getPoolShare = usePoolShare()
-  const val = findValue(logs)
-  const fc = fromContract(logs)
+export default (type: PoolType) => (logs: TxLog[]) => {
+  const { getSymbol } = useProtocol()
+  const val = findValueFromLogs(logs)
+  const fc = findPathFromContract(logs)
 
   const join = (array: { amount: string; token: string }[]) =>
     array
@@ -20,26 +19,24 @@ export default (type: Type) => (logs: TxLog[]) => {
   const symbol = getSymbol(token)
   const deposit = parseTokenText(val("assets", 1))
   const received = val("share", 1)
-  const poolShare = getPoolShare({ amount: received, token })
   const refund = parseTokenText(val("refund_assets"))
   const withdrawn = val("withdrawn_share")
-  const withdrawnToken = fc[0]?.["transfer"]?.["contract_address"]
+  const withdrawnToken = fc("transfer")("contract_address")
   const withdrawnSymbol = getSymbol(withdrawnToken)
 
   /* contents */
   return {
-    [Type.PROVIDE]: [
+    [PoolType.PROVIDE]: [
       {
         title: "Received",
         content: formatAsset(received, getLpName(symbol)),
-        children: [{ title: "Pool share from Tx", content: poolShare.text }],
       },
       {
         title: "Deposited",
         content: join(deposit),
       },
     ],
-    [Type.WITHDRAW]: [
+    [PoolType.WITHDRAW]: [
       {
         title: "Refund",
         content: join(refund),

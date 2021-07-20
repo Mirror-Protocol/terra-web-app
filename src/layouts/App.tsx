@@ -1,42 +1,56 @@
-import routes from "../routes"
-import Container from "../components/Container"
-import { SettingsProvider, useSettingsState } from "../hooks/useSettings"
-import { WalletProvider, useWalletState } from "../hooks/useWallet"
-import { ContractProvider, useContractState } from "../hooks/useContract"
+import { useAddress } from "../hooks"
 import useAssets from "../hooks/useAssets"
-import { StatsProvider, useStatsState } from "../statistics/useStats"
-import MobileAlert from "./MobileAlert"
-import DelistAlert from "./DelistAlert"
+import { usePollingPrices } from "../data/app"
+import routes from "../routes"
+import { MenuKey, getPath } from "../routes"
+import Menu from "../components/Menu"
+import Boundary, { bound } from "../components/Boundary"
+import { useAlertByNetwork } from "./init"
+import { useInitAddress, useInitNetwork, useLocationKey } from "./init"
+import AlertNetwork from "./AlertNetwork"
 import Airdrop from "./Airdrop"
+import Layout from "./Layout"
+import Nav from "./Nav"
 import Header from "./Header"
 import Footer from "./Footer"
 import "./App.scss"
 
+const icons: Dictionary<IconNames> = {
+  [MenuKey.MY]: "MyPage",
+  [MenuKey.TRADE]: "Trade",
+  [MenuKey.BORROW]: "Borrow",
+  [MenuKey.FARM]: "Farm",
+  [MenuKey.GOV]: "Governance",
+}
+
 const App = () => {
-  const settings = useSettingsState()
-  const wallet = useWalletState()
-  const contract = useContractState(wallet.address)
-  const stats = useStatsState()
+  usePollingPrices()
+  useLocationKey()
+  useInitAddress()
+  useInitNetwork()
+  const alert = useAlertByNetwork()
+  const address = useAddress()
+
+  const menu = Object.entries(icons).map(([key, icon]) => ({
+    icon,
+    attrs: { to: getPath(key as MenuKey), children: key },
+    style: { order: Number(key === MenuKey.MY) },
+  }))
 
   useAssets()
 
-  return (
-    <SettingsProvider value={settings}>
-      <WalletProvider value={wallet} key={wallet.address}>
-        <ContractProvider value={contract}>
-          <StatsProvider value={stats}>
-            <Header />
-            <Container>
-              <MobileAlert />
-              {wallet.address && <DelistAlert />}
-              {routes()}
-            </Container>
-            <Footer />
-            {wallet.address && <Airdrop />}
-          </StatsProvider>
-        </ContractProvider>
-      </WalletProvider>
-    </SettingsProvider>
+  return alert ? (
+    <AlertNetwork />
+  ) : (
+    <Layout
+      nav={<Nav />}
+      menu={<Menu list={menu} />}
+      header={<Header />}
+      banner={address && bound(<Airdrop />)}
+      footer={<Footer />}
+    >
+      <Boundary>{routes()}</Boundary>
+    </Layout>
   )
 }
 

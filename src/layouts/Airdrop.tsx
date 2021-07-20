@@ -1,10 +1,15 @@
-import { gt } from "../libs/math"
-import useAirdrops from "../statistics/useAirdrops"
-import AirdropToast from "../airdrop/AirdropToast"
+import { useLocation } from "react-router-dom"
+import useAirdrop from "../data/stats/airdrop"
+import AirdropToast from "../pages/Airdrop/AirdropToast"
+import { getPath, MenuKey } from "../routes"
 
 const Airdrop = () => {
-  const { amount } = useAirdrops()
-  return !gt(amount, 0) ? null : <AirdropToast />
+  const airdrop = useAirdrop()
+  const { pathname } = useLocation()
+
+  return !airdrop || pathname === getPath(MenuKey.AIRDROP) ? null : (
+    <AirdropToast />
+  )
 }
 
 export default Airdrop

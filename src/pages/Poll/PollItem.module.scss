@@ -22,13 +22,17 @@
 
 .title {
   font-size: 18px;
+  line-height: 1.5;
   margin-bottom: 20px;
+  @include mobile {
+    font-size: 16px;
+  }
 }
 
 /* footer */
 .footer {
-  @include flex(flex-start);
-  color: $slate;
+  @include flex(space-between);
+  color: $gray-34;
   font-size: 12px;
   margin-top: 30px;
   white-space: pre;

@@ -2,14 +2,19 @@
 
 .container {
   margin: 0 auto;
-  padding: 0 $gutter;
-  max-width: ($max-width + 2 * $gutter);
+
+  @include mobile {
+    padding: 0 $container-gutter-horizontal-mobile;
+    max-width: ($max-width + 2 * $container-gutter-horizontal-mobile);
+  }
+
+  @include desktop {
+    padding: 0 $container-gutter-horizontal-desktop;
+    max-width: ($max-width + 2 * $container-gutter-horizontal-desktop);
+  }
 }
 
 .sm {
-  max-width: 620px;
-
-  @include desktop {
-    margin: 60px auto;
-  }
+  max-width: 650px;
+  margin: 0 auto;
 }

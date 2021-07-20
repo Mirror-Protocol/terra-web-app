@@ -1,128 +1,134 @@
-import { useState } from "react"
+import { Fragment, useMemo, useState } from "react"
 import classNames from "classnames/bind"
-import { useQuery } from "@apollo/client"
 import { startOfMinute, subDays, subMonths, subWeeks, subYears } from "date-fns"
 
-import { format } from "../libs/parse"
+import { format, formatAsset } from "../libs/parse"
+import { div, minus } from "../libs/math"
+import { percent } from "../libs/num"
+import { PriceKey } from "../hooks/contractKeys"
+import { useFindPrice } from "../data/contract/normalize"
+import { useAssetHistory } from "../data/stats/asset"
+import { useAssetsHelpersByNetwork, useFindChange } from "../data/stats/assets"
 import Change from "../components/Change"
+import AssetItem from "../components/AssetItem"
+import { CardMain } from "../components/Card"
 
-import { UST } from "../constants"
-import { PRICEHISTORY } from "../statistics/gqldocs"
-import useStatsClient from "../statistics/useStatsClient"
-import { calcChange } from "../statistics/useYesterday"
-import useAssetStats from "../statistics/useAssetStats"
 import ChartContainer from "./ChartContainer"
 import PriceChartDescription from "./PriceChartDescription"
 import styles from "./PriceChart.module.scss"
 
 const cx = classNames.bind(styles)
 
-interface Item {
-  timestamp: number
-  price: number
-}
-
-interface Data {
-  price: string
-  priceAt: string
-  history: Item[]
-}
-
-interface Response {
-  asset: { prices: Data }
-}
-
 const PriceChart = ({ token, symbol }: { token: string; symbol: string }) => {
   const now = startOfMinute(new Date())
-  const yesterday = subDays(now, 1).getTime()
-  const { description } = useAssetStats()
+  const findPrice = useFindPrice()
+  const findChange = useFindChange()
+  const helpers = useAssetsHelpersByNetwork()
 
+  /* request */
   const ranges = [
     {
-      label: "D",
+      label: "Day",
       interval: 60 / 4, // 15 minutes
       from: subDays(now, 1).getTime(),
       fmt: "EEE, LLL dd, HH:mm aa",
     },
     {
-      label: "W",
+      label: "Week",
       interval: 60 * 1, // 1 hour
       from: subWeeks(now, 1).getTime(),
       fmt: "EEE, LLL dd, HH:mm aa",
     },
     {
-      label: "M",
+      label: "Month",
       interval: 60 * 24, // 1 day
       from: subMonths(now, 1).getTime(),
       fmt: "LLL dd, yyyy",
     },
     {
-      label: "Y",
+      label: "Year",
       interval: 60 * 24 * 7, // 1 week
       from: subYears(now, 1).getTime(),
       fmt: "LLL dd, yyyy",
     },
   ]
 
-  /* request */
   const [range, setRange] = useState(ranges[2])
-  const [data, setDate] = useState<Data>()
-  const params = { token, ...range, to: now.getTime(), yesterday }
+  const { interval, from } = range
+  const to = now.getTime()
+  const params = useMemo(
+    () => ({ token, interval, from, to }),
+    [token, interval, from, to]
+  )
 
-  const client = useStatsClient()
-  useQuery<Response>(PRICEHISTORY, {
-    client,
-    variables: params,
-    skip: !token,
-    onCompleted: (data) => setDate(data.asset.prices),
-  })
+  const history = useAssetHistory(params)
 
   /* render */
-  const change = calcChange({ today: data?.price, yesterday: data?.priceAt })
+  const price = findPrice(PriceKey.PAIR, token)
+  const oraclePrice = findPrice(PriceKey.ORACLE, token)
+  const volume = helpers.volume(token)
+  const liquidity = helpers.liquidity(token)
+  const description = helpers.description(token)
+  const premium = oraclePrice ? minus(div(price, oraclePrice), 1) : undefined
+  const change = findChange(PriceKey.PAIR, token)
 
-  return !data ? null : (
+  const details = [
+    {
+      title: "Oracle Price",
+      content: oraclePrice ? `${format(oraclePrice)} UST` : undefined,
+    },
+    { title: "Premium", content: premium ? percent(premium) : undefined },
+    { title: "Volume", content: formatAsset(volume, "uusd") },
+    { title: "Liquidity", content: formatAsset(liquidity, "uusd") },
+  ]
+
+  return (
     <div className={styles.component}>
-      <header className={styles.header}>
-        <section className={styles.token}>
-          <span className={styles.symbol}>{symbol}</span>
-          <Change
-            className={styles.price}
-            price={`${format(data.price)} ${UST}`}
-          >
-            {change}
-          </Change>
-        </section>
+      <CardMain>
+        <AssetItem token={token}>
+          <p>{format(price)} UST</p>
+          <Change inline>{change}</Change>
+        </AssetItem>
 
-        <section className={styles.ranges}>
-          {ranges.map((r) => (
-            <button
-              type="button"
-              className={cx(styles.button, { active: r.label === range.label })}
-              onClick={() => setRange(r)}
-              key={r.label}
-            >
-              {r.label}
-            </button>
-          ))}
-        </section>
-      </header>
+        <dl className={styles.details}>
+          {details.map(
+            ({ title, content }) =>
+              content && (
+                <Fragment key={title}>
+                  <dt>{title}</dt>
+                  <dd>{content}</dd>
+                </Fragment>
+              )
+          )}
+        </dl>
+      </CardMain>
 
       <div className={styles.chart}>
         <ChartContainer
           change={change}
-          datasets={data.history?.map(({ timestamp: t, price: y }) => ({
-            y,
-            t,
+          datasets={history?.map(({ timestamp, price }) => ({
+            y: Number(price),
+            x: timestamp,
           }))}
           fmt={{ t: range.fmt }}
-          compact
         />
       </div>
 
-      <section className={styles.description}>
-        <PriceChartDescription key={token}>
-          {description?.[token]}
-        </PriceChartDescription>
+      <section className={styles.ranges}>
+        {ranges.map((r) => (
+          <button
+            type="button"
+            className={cx(styles.button, { active: r.label === range.label })}
+            onClick={() => setRange(r)}
+            key={r.label}
+          >
+            {r.label}
+          </button>
+        ))}
+      </section>
+
+      <section className={styles.footer}>
+        <PriceChartDescription key={token}>{description}</PriceChartDescription>
       </section>
     </div>
   )

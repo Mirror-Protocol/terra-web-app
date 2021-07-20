@@ -3,63 +3,67 @@
 $padding: 20px;
 
 .component {
-  background: $saturated-blue;
   border-radius: $border-radius;
-  margin-top: $gutter;
 }
 
-.header {
-  @include desktop {
-    @include flex(space-between);
+.details {
+  @include flex(space-between, flex-start);
+  flex-wrap: wrap;
+
+  font-size: 12px;
+  margin-top: 40px;
+
+  dt,
+  dd {
+    width: 50%;
+    margin-bottom: 12px;
   }
 
-  padding: $padding;
-  padding-bottom: 0;
-}
+  dt {
+    color: $white-44;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+  }
 
-.token {
-  @include flex(flex-start);
-  font-size: 12px;
-}
+  dd {
+    color: $white-64;
+    text-align: right;
+  }
 
-.symbol {
-  color: $battleship;
-}
-
-.price {
-  margin-left: 5px;
+  dd p {
+    margin-bottom: 2px;
+  }
 }
 
 .ranges {
-  @include mobile {
-    margin-top: 10px;
-  }
+  @include flex;
 
-  .button:not(:first-child) {
-    margin-left: 10px;
-  }
+  background: $gray-11;
+  padding: 1px 0;
 }
 
 .button {
   @include transition;
 
-  border-width: 1px;
-  border-style: solid;
-  border-color: $battleship;
-  border-radius: 50%;
-  color: $battleship;
+  flex: 1;
+
+  background: $gray-18;
+  color: $white-44;
   font-size: 11px;
   font-weight: 500;
-  width: 20px;
-  height: 20px;
+  letter-spacing: -0.26px;
+  height: 40px;
+  width: 100%;
 
   &.active {
-    border-color: white;
-    color: white;
+    color: $blue;
+  }
+
+  & + & {
+    margin-left: 1px;
   }
 }
 
-.description {
+.footer {
   padding: $padding;
-  padding-top: 0;
 }

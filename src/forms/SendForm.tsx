@@ -3,24 +3,27 @@ import { useLocation } from "react-router-dom"
 import { AccAddress, MsgSend } from "@terra-money/terra.js"
 import { ethers } from "ethers"
 
-import useNewContractMsg from "../terra/useNewContractMsg"
-import { UUSD } from "../constants"
-import Tooltip from "../lang/Tooltip.json"
+import useNewContractMsg from "../libs/useNewContractMsg"
+import Tooltips from "../lang/Tooltips"
 import { div, gt, max, minus, times } from "../libs/math"
 import { formatAsset, lookup, lookupSymbol, toAmount } from "../libs/parse"
-import useForm from "../libs/useForm"
+import useForm, { Values } from "../libs/useForm"
 import { validate as v, placeholder, step } from "../libs/formHelpers"
 import { renderBalance } from "../libs/formHelpers"
-import { useNetwork, useRefetch } from "../hooks"
-import { useWallet, useContractsAddress, useContract } from "../hooks"
-import { PriceKey, BalanceKey } from "../hooks/contractKeys"
-import useTax from "../graphql/useTax"
+import { useNetwork } from "../hooks"
+import { useAddress } from "../hooks"
+import { useProtocol } from "../data/contract/protocol"
+import { PriceKey } from "../hooks/contractKeys"
+import useTax from "../hooks/useTax"
+import { useFindBalance } from "../data/contract/normalize"
+import { useFindPrice } from "../data/contract/normalize"
 
 import FormGroup from "../components/FormGroup"
 import { TooltipIcon } from "../components/Tooltip"
+import Container from "../components/Container"
 import useSendReceipt from "./receipts/useSendReceipt"
-import FormContainer from "./FormContainer"
-import useSelectAsset, { Config } from "./useSelectAsset"
+import FormContainer from "./modules/FormContainer"
+import useSelectAsset, { Config } from "./modules/useSelectAsset"
 
 enum Key {
   to = "to",
@@ -46,22 +49,22 @@ interface Props {
 
 const SendForm = ({ tab, shuttleList }: Props) => {
   const priceKey = PriceKey.PAIR
-  const balanceKey = BalanceKey.TOKEN
 
   /* context */
   const { state } = useLocation<{ token: string }>()
   const { shuttle } = useNetwork()
-  const { address } = useWallet()
-  const { getSymbol } = useContractsAddress()
-  const { find } = useContract()
-  useRefetch([priceKey, balanceKey])
+  const address = useAddress()
+  const { getSymbol } = useProtocol()
+
+  const { contents: findBalance } = useFindBalance()
+  const findPrice = useFindPrice() // to calc shuttle fee
 
   /* form:validate */
   const getIsShuttleAvailable = (network: string, symbol: string) =>
     !network || !!shuttleList[network as ShuttleNetwork]?.[lookupSymbol(symbol)]
 
   const validate = ({ to, token, value, memo, network }: Values<Key>) => {
-    const max = find(balanceKey, token)
+    const max = findBalance(token)
     const symbol = getSymbol(token)
 
     return {
@@ -89,7 +92,7 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   const { to, value, token, memo: $memo, network } = values
   const amount = toAmount(value)
   const symbol = getSymbol(token)
-  const uusd = token === UUSD ? amount : undefined
+  const uusd = token === "uusd" ? amount : undefined
   const isEthereum = ethers.utils.isAddress(to)
   const isTerra = AccAddress.validate(to)
 
@@ -104,26 +107,22 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   }, [isEthereum, isTerra, network, setValues])
 
   /* form:focus input on select asset */
-  const valueRef = useRef<HTMLInputElement>()
+  const valueRef = useRef<HTMLInputElement>(null)
   const onSelect = (token: string) => {
     setValue(Key.token, token)
     !value && valueRef.current?.focus()
   }
 
   /* render:form */
-  const config: Config = {
-    balanceKey,
-    token,
-    onSelect,
-    useUST: true,
-  }
-
+  const config: Config = { token, onSelect, native: ["uusd"] }
   const select = useSelectAsset(config)
-  const balance = find(balanceKey, token)
+  const balance = findBalance(token)
 
   const { getMax } = useTax()
   const maxAmount =
-    symbol === UUSD ? lookup(getMax(balance), UUSD) : lookup(balance, symbol)
+    symbol === "uusd"
+      ? lookup(getMax(balance), "uusd")
+      : lookup(balance, symbol)
 
   const fields = {
     ...getFields({
@@ -181,7 +180,7 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   }
 
   /* confirm */
-  const price = find(priceKey, token)
+  const price = findPrice(priceKey, token)
   const shuttleMinimum = div(1e6, price)
   const shuttleMinimumText = formatAsset(shuttleMinimum, symbol)
   const shuttleEnough = !network || gt(amount, shuttleMinimum)
@@ -194,7 +193,7 @@ const SendForm = ({ tab, shuttleList }: Props) => {
     ? [
         {
           title: (
-            <TooltipIcon content={Tooltip.Send.ShuttleFee}>
+            <TooltipIcon content={Tooltips.Send.ShuttleFee}>
               Shuttle fee (estimated)
             </TooltipIcon>
           ),
@@ -215,7 +214,7 @@ const SendForm = ({ tab, shuttleList }: Props) => {
 
   const data = !(gt(amount, 0) && token)
     ? []
-    : symbol === UUSD
+    : symbol === "uusd"
     ? [new MsgSend(address, recipient, amount + symbol)]
     : [newContractMsg(token, { transfer: { recipient, amount } })]
 
@@ -224,7 +223,9 @@ const SendForm = ({ tab, shuttleList }: Props) => {
     ? [`${lookupSymbol(symbol)} is not available on ${getNetworkName(network)}`]
     : !shuttleEnough
     ? [`Transactions must be larger than ${shuttleMinimumText}`]
-    : ["Double check if the above transaction requires a memo"]
+    : isTerra
+    ? ["Double check if the above transaction requires a memo"]
+    : []
 
   const disabled = invalid || !isShuttleAvailable || !shuttleEnough
 
@@ -234,12 +235,19 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   const container = { tab, attrs, contents, messages, disabled, data, memo }
 
   return (
-    <FormContainer {...container} label="send" pretax={uusd} parseTx={parseTx}>
-      <FormGroup {...fields[Key.network]} />
-      <FormGroup {...fields[Key.to]} />
-      <FormGroup {...fields[Key.value]} />
-      {isTerra && <FormGroup {...fields[Key.memo]} />}
-    </FormContainer>
+    <Container sm>
+      <FormContainer
+        {...container}
+        label="send"
+        pretax={uusd}
+        parseTx={parseTx}
+      >
+        <FormGroup {...fields[Key.network]} />
+        <FormGroup {...fields[Key.to]} />
+        <FormGroup {...fields[Key.value]} />
+        {isTerra && <FormGroup {...fields[Key.memo]} />}
+      </FormContainer>
+    </Container>
   )
 }
 

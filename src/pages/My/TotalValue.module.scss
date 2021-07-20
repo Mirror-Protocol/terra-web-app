@@ -1,0 +1,32 @@
+@import "mixins";
+
+.send {
+  @include flex;
+  color: $blue;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+
+  svg {
+    fill: $blue;
+    margin-right: 4px;
+  }
+}
+
+.muted {
+  margin-top: 4px;
+
+  @include mobile {
+    font-size: 12px;
+    margin-bottom: 40px;
+  }
+
+  @include desktop {
+    font-size: 14px;
+    margin-bottom: 36px;
+  }
+}
+
+.footer {
+  text-align: center;
+}

@@ -1,9 +1,8 @@
 import { useEffect } from "react"
-import { getIcon } from "../components/TokenPair"
-import { useContractsAddress } from "./useContractsAddress"
+import { useProtocol } from "../data/contract/protocol"
 
 const useAssets = () => {
-  const { listed, listedAll } = useContractsAddress()
+  const { listed, listedAll, getIcon } = useProtocol()
   const tokens = JSON.stringify(
     listedAll.reduce((acc, { symbol, name, token, status }) => {
       const suffix = status === "DELISTED" ? " (Delisted)" : ""
@@ -15,7 +14,7 @@ const useAssets = () => {
           symbol: symbol + suffix,
           name,
           token,
-          icon: getIcon(symbol),
+          icon: getIcon(token).replace("images", "icon"),
         },
       }
     }, {})

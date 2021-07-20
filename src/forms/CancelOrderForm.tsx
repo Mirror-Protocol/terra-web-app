@@ -1,21 +1,21 @@
-import useNewContractMsg from "../terra/useNewContractMsg"
+import useNewContractMsg from "../libs/useNewContractMsg"
 import { minus } from "../libs/math"
-import { useContractsAddress } from "../hooks"
-import Count from "../components/Count"
-import { MenuKey } from "../pages/LimitOrder"
-import FormContainer from "./FormContainer"
+import { useProtocol } from "../data/contract/protocol"
+import Formatted from "../components/Formatted"
+import Container from "../components/Container"
+import { MenuKey } from "../pages/Txs/LimitOrder"
+import FormContainer from "./modules/FormContainer"
 import useCancelOrderReceipt from "./receipts/useCancelOrderReceipt"
 
 interface Props {
   order: Order
-  contract: string
 }
 
-const CancelOrderForm = ({ order, contract }: Props) => {
+const CancelOrderForm = ({ order }: Props) => {
   const { order_id, offer_asset, filled_offer_amount } = order
 
   /* context */
-  const { parseToken } = useContractsAddress()
+  const { contracts, parseToken } = useProtocol()
   const { amount, symbol } = parseToken(offer_asset)
 
   /* confirm */
@@ -27,7 +27,9 @@ const CancelOrderForm = ({ order, contract }: Props) => {
     {
       title: "Returned Assets",
       content: (
-        <Count symbol={symbol}>{minus(amount, filled_offer_amount)}</Count>
+        <Formatted symbol={symbol}>
+          {minus(amount, filled_offer_amount)}
+        </Formatted>
       ),
     },
   ]
@@ -35,17 +37,21 @@ const CancelOrderForm = ({ order, contract }: Props) => {
   /* submit */
   const newContractMsg = useNewContractMsg()
   const data = [
-    newContractMsg(contract, { cancel_order: { order_id: order_id } }),
+    newContractMsg(contracts["limitOrder"], {
+      cancel_order: { order_id: order_id },
+    }),
   ]
 
   const parseTx = useCancelOrderReceipt()
 
   /* result */
   const container = { contents, disabled: false, data, parseTx }
-  const label = MenuKey.CANCEL
-  const props = { tab: { tabs: [label], current: label }, label }
 
-  return <FormContainer {...container} {...props} />
+  return (
+    <Container sm>
+      <FormContainer {...container} label={MenuKey.CANCEL} />
+    </Container>
+  )
 }
 
 export default CancelOrderForm

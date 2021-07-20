@@ -1,9 +1,16 @@
 import { useNetwork } from "../hooks"
-import AppFooter from "../components/AppFooter"
+import Community from "../components/Community"
+import DocsLink from "./DocsLink"
 
 const Footer = () => {
   const { name } = useNetwork()
-  return <AppFooter network={name} project="mirror-web-app" />
+  return (
+    <>
+      <DocsLink />
+      <hr />
+      <Community network={name} project="mirror-web-app" />
+    </>
+  )
 }
 
 export default Footer

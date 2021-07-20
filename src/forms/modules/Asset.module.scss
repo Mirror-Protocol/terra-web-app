@@ -1,0 +1,73 @@
+@import "mixins";
+@import "variables";
+
+@include mobile {
+  $line-height: 1.5;
+
+  .asset {
+    height: 66px;
+    padding: 0 $gutter-horizontal-mobile;
+  }
+
+  .price {
+    font-size: 12px;
+  }
+
+  .balance {
+    font-size: 12px;
+  }
+}
+
+@include desktop {
+  $line-height: 1.5;
+
+  .asset {
+    height: 68px;
+    padding: 0 $gutter-horizontal-desktop;
+  }
+
+  .price {
+    font-size: 14px;
+  }
+
+  .balance {
+    font-size: 12px;
+  }
+}
+
+.asset {
+  @include flex(space-between);
+}
+
+.header {
+  text-align: left;
+}
+
+.symbol {
+  font-weight: 500;
+}
+
+.name {
+  color: $gray-34;
+  font-weight: normal;
+}
+
+.footer {
+  text-align: right;
+}
+
+.price + .balance {
+  margin-top: 2px;
+}
+
+.balance {
+  @include flex;
+
+  color: $white-44;
+  font-weight: 500;
+
+  svg {
+    fill: $blue;
+    margin-right: 6px;
+  }
+}

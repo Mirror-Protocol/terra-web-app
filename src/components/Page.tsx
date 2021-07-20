@@ -1,55 +1,49 @@
 import { FC, ReactNode } from "react"
-import { DOCS } from "../constants"
+import Boundary from "./Boundary"
 import Container from "./Container"
-import ExtLink from "./ExtLink"
-import Icon from "./Icon"
+import Select, { Props as SelectProps } from "./Select"
 import styles from "./Page.module.scss"
+import Notifications from "../layouts/Notifications"
 
 interface Props {
   title?: ReactNode
   description?: ReactNode
   action?: ReactNode
-  select?: ReactNode
+  select?: SelectProps
   doc?: string
   sm?: boolean
-  noBreak?: boolean
 }
 
 const Page: FC<Props> = ({ title, description, children, ...props }) => {
-  const { doc, action, select, sm, noBreak } = props
+  const { action, select, sm } = props
+  const getSelectAttrs = (select: SelectProps) => ({
+    ...select,
+    attrs: { ...select.attrs, className: styles.select },
+  })
 
   return (
     <article className={styles.article}>
       {title && (
         <header className={styles.header}>
           <section className={styles.heading}>
-            <h1 className={styles.title}>{title}</h1>
+            <h1 className={styles.title}>
+              {title}
+              {description && (
+                <span className={styles.description}>{description}</span>
+              )}
+            </h1>
 
-            {select && (
-              <div className={styles.select}>
-                {select}
-                <Icon name="arrow_drop_down" size={18} />
-              </div>
-            )}
-
-            {doc && (
-              <ExtLink href={DOCS + doc} className={styles.doc}>
-                <Icon name="article" size={12} className={styles.icon} />
-                Docs
-              </ExtLink>
-            )}
+            {select && <Select {...getSelectAttrs(select)} />}
           </section>
+
           {action && <section className={styles.action}>{action}</section>}
         </header>
       )}
 
-      {description && (
-        <section className={styles.description}>{description}</section>
-      )}
-
-      {!!title && !noBreak && <hr />}
-
-      {sm ? <Container sm>{children}</Container> : children}
+      <Boundary>
+        {sm ? <Container sm>{children}</Container> : children}
+        <Notifications />
+      </Boundary>
     </article>
   )
 }

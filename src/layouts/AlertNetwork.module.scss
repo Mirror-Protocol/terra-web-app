@@ -1,0 +1,22 @@
+@import "mixins";
+
+.article {
+  @include flex;
+  flex-direction: column;
+
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--white-92);
+
+  position: fixed;
+  top: 0;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+
+  svg {
+    margin-bottom: 10px;
+  }
+}

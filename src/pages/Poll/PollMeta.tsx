@@ -1,13 +1,14 @@
 import { truncate } from "../../libs/text"
 import { useNetwork } from "../../hooks"
+import { Poll } from "../../data/gov/poll"
 import Dl from "../../components/Dl"
 import ExtLink from "../../components/ExtLink"
-import useEstimateTime from "./useEstimateTime"
+import usePollTimeText from "./usePollTimeText"
 import styles from "./PollMeta.module.scss"
 
 const PollMeta = (poll: Poll) => {
   const { finder } = useNetwork()
-  const estimatedTime = useEstimateTime(poll)
+  const pollTimeText = usePollTimeText(poll)
   const { creator } = poll
 
   return (
@@ -21,8 +22,8 @@ const PollMeta = (poll: Poll) => {
             ),
           },
           {
-            title: estimatedTime.label,
-            content: estimatedTime.text,
+            title: pollTimeText.label,
+            content: pollTimeText.text,
           },
         ]}
         className={styles.dl}

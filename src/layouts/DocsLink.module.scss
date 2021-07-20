@@ -1,0 +1,28 @@
+@import "mixins";
+
+.link {
+  @include flex(flex-start);
+
+  color: $white-44;
+  font-size: 14px;
+  font-weight: 500;
+
+  &,
+  svg {
+    @include transition;
+  }
+
+  svg {
+    fill: $white-44;
+    margin-right: 4px;
+  }
+}
+
+.link:hover {
+  color: white;
+  text-decoration: none;
+
+  svg {
+    fill: white;
+  }
+}

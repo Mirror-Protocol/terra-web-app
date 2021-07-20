@@ -1,29 +1,27 @@
 export enum PriceKey {
-  // Dictionary<string>
+  NATIVE = "price",
   PAIR = "pair",
   ORACLE = "oracle",
+  PRE = "pre",
   END = "end",
-}
-
-export enum AssetInfoKey {
-  // Dictionary<string>
-  LIQUIDITY = "liquidity",
-  MINCOLLATERALRATIO = "minCollateralRatio",
-  LPTOTALSTAKED = "lpTotalStaked",
-  LPTOTALSUPPLY = "lpTotalSupply",
+  EXTERNAL = "external",
 }
 
 export enum BalanceKey {
-  // Dictionary<string>
+  NATIVE = "balance",
   TOKEN = "token",
-  LPTOTAL = "lpTotal",
-  LPSTAKABLE = "lpStakable",
-  LPSTAKED = "lpStaked",
-  MIRGOVSTAKED = "MIRGovStaked",
-  REWARD = "reward",
+  EXTERNAL = "external",
 }
 
-export enum AccountInfoKey {
-  // string
-  UUSD = "uusd",
+export enum StakingKey {
+  LPSTAKABLE = "lpStakable",
+  LPSTAKED = "lpStaked",
+  SLPSTAKED = "slpStaked",
+  LPREWARD = "reward",
+  SLPREWARD = "slpReward",
+}
+
+export enum AssetInfoKey {
+  MINCOLLATERALRATIO = "minCollateralRatio",
+  MULTIPLIER = "multiplier",
 }

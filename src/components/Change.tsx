@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import { isNil } from "ramda"
 import classNames from "classnames/bind"
 import { abs, gt, gte, lt } from "../libs/math"
 import { percent } from "../libs/num"
@@ -8,32 +8,32 @@ import styles from "./Change.module.scss"
 const cx = classNames.bind(styles)
 
 interface Props {
-  price?: ReactNode
-  className?: string
-  children?: string
+  children?: number
+  align?: "left" | "center" | "right"
+  inline?: boolean
+  idle?: boolean
 }
 
-const Change = ({ price, className, children }: Props) => {
-  const change = children && (gte(abs(children), 0.0001) ? children : "0")
+const Change = ({ children, align = "left", inline, idle }: Props) => {
+  const change = children && (gte(abs(children), 0.0001) ? children : 0)
+  const className = cx(styles.flex, styles.change, align, { inline })
 
-  const render = (change: string) => {
+  const render = (change: number) => {
     const up = gt(change, 0)
     const down = lt(change, 0)
-    const icon = up ? "trending_up" : down ? "trending_down" : "arrow_right_alt"
+    const icon: IconNames | "" = up ? "UpSolid" : down ? "DownSolid" : ""
+
     return (
-      <span className={cx(styles.flex, styles.change, { up, down })}>
-        <Icon name={icon} size="150%" />
-        {percent(abs(change))}
+      <span className={cx(className, { up, down })}>
+        {icon && <Icon name={icon} size={10} />}
+        {percent(abs(change), 2)}
       </span>
     )
   }
 
-  return price ? (
-    <span className={cx(styles.flex, className)}>
-      <span className={styles.price}>{price}</span>
-      {change && render(change)}
-    </span>
-  ) : change ? (
+  return idle ? (
+    <span className={classNames(className, styles.idle)}>0</span>
+  ) : !isNil(change) ? (
     render(change)
   ) : null
 }

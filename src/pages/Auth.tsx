@@ -1,21 +1,24 @@
-import { useEffect } from "react"
-import { useHistory } from "react-router-dom"
-import { getPath, MenuKey } from "../routes"
-import { useWallet } from "../hooks"
+import { ConnectType, useWallet } from "@terra-money/wallet-provider"
+import MESSAGE from "../lang/MESSAGE.json"
+import { useAddress } from "../hooks"
 import Page from "../components/Page"
-import GlanceForm from "../forms/GlanceForm"
+import Button from "../components/Button"
 
 const Auth = () => {
-  const { address } = useWallet()
-  const { replace } = useHistory()
+  const address = useAddress()
+  const { connect, disconnect } = useWallet()
 
-  useEffect(() => {
-    address && replace(getPath(MenuKey.MY))
-  }, [address, replace])
-
-  return address ? null : (
-    <Page>
-      <GlanceForm />
+  return (
+    <Page title="Auth">
+      {address ? (
+        <Button onClick={disconnect} color="red" outline>
+          Disconnect
+        </Button>
+      ) : (
+        <Button onClick={() => connect(ConnectType.READONLY)} outline>
+          {MESSAGE.Form.Button.ConnectWallet}
+        </Button>
+      )}
     </Page>
   )
 }

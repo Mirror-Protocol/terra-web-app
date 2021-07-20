@@ -1,16 +1,20 @@
 @import "mixins";
-@import "variables";
 
 .card {
-  background: $darkblue;
+  background: $card;
 
   border-radius: $border-radius;
   position: relative;
   overflow: hidden;
 
   &.lg {
-    border-radius: 20px;
+    border-radius: 8px;
   }
+}
+
+.flex {
+  @include flex(space-between, stretch);
+  flex-direction: column;
 }
 
 .shadow {
@@ -30,36 +34,27 @@
 
 /* main */
 .main {
-  padding: $card-padding-main;
-  height: 100%;
-
-  .lg & {
-    padding: $gutter $card-padding-horizontal;
+  @include mobile {
+    padding: $card-padding-main-mobile;
   }
 
-  .full & {
-    padding: unset;
+  @include desktop {
+    padding: $card-padding-main-desktop;
+  }
+
+  &:first-child {
+    @include mobile {
+      padding-top: $card-padding-vertical-mobile;
+    }
+
+    @include desktop {
+      padding-top: $card-padding-vertical-desktop;
+    }
   }
 }
 
-/* badges */
-.badges {
-  @include flex(flex-start);
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.badge {
-  @include flex;
-  display: inline-flex;
-  font-size: 11px;
-  height: 20px;
-  padding: 0 15px;
-}
-
-@each $name, $color in $colors {
-  .bg-#{$name} {
-    background: fade-out($color, 0.5);
-  }
+/* confirm */
+.confirm {
+  background-color: $gray-14;
+  border-top: 1px solid $bg;
 }

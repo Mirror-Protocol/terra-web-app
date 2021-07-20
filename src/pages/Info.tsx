@@ -1,20 +1,19 @@
-import { Dictionary } from "ramda"
-import { UST, UUSD } from "../constants"
+import { useRecoilValue } from "recoil"
 import { plus, times } from "../libs/math"
 import { format } from "../libs/parse"
-import { useContract, useContractsAddress, useRefetch } from "../hooks"
+import { useProtocol } from "../data/contract/protocol"
 import { PriceKey } from "../hooks/contractKeys"
-import { parsePairPool } from "../graphql/useNormalize"
+import { pairPoolQuery } from "../data/contract/contract"
+import { parsePairPool, useFindPrice } from "../data/contract/normalize"
 import Page from "../components/Page"
-import Card from "../components/Card"
 import Table from "../components/Table"
+import Caption from "../components/Caption"
 
-const Data = () => {
+const Info = () => {
   const priceKey = PriceKey.PAIR
-  const { listed } = useContractsAddress()
-  const { parsed, find } = useContract()
-  const pairPool: Dictionary<PairPool> | undefined = parsed[priceKey]
-  const { loading } = useRefetch([priceKey])
+  const { listed } = useProtocol()
+  const find = useFindPrice()
+  const pairPool = useRecoilValue(pairPoolQuery)
 
   const dataSource = !pairPool
     ? []
@@ -29,39 +28,39 @@ const Data = () => {
 
   return (
     <Page title="Info">
-      <Card title="Pair Pool" loading={loading}>
-        <Table
-          columns={[
-            { key: "symbol", title: "Ticker", bold: true },
-            { key: "name", title: "Underlying Name" },
-            {
-              key: "uusd",
-              title: UST,
-              render: (value) => format(value, UUSD, { integer: true }),
-              align: "right",
-            },
-            {
-              key: "asset",
-              render: (value, { symbol }) =>
-                format(value, symbol, { integer: true }),
-              align: "right",
-            },
-            {
-              key: "price",
-              render: (value) => `${format(value)} ${UST}`,
-              align: "right",
-            },
-            {
-              key: "total",
-              render: (value) => format(value, UUSD, { integer: true }),
-              align: "right",
-            },
-          ]}
-          dataSource={dataSource}
-        />
-      </Card>
+      <Table
+        rowKey="token"
+        caption={<Caption title="Pair Pool" />}
+        columns={[
+          { key: "symbol", title: "Ticker", bold: true },
+          { key: "name", title: "Underlying Name" },
+          {
+            key: "uusd",
+            title: "UST",
+            render: (value) => format(value, "uusd", { integer: true }),
+            align: "right",
+          },
+          {
+            key: "asset",
+            render: (value, { symbol }) =>
+              format(value, symbol, { integer: true }),
+            align: "right",
+          },
+          {
+            key: "price",
+            render: (value) => `${format(value)} UST`,
+            align: "right",
+          },
+          {
+            key: "total",
+            render: (value) => format(value, "uusd", { integer: true }),
+            align: "right",
+          },
+        ]}
+        dataSource={dataSource}
+      />
     </Page>
   )
 }
 
-export default Data
+export default Info

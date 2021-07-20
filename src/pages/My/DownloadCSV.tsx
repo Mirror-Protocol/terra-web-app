@@ -1,16 +1,9 @@
 import Tippy from "@tippyjs/react"
-import useDownloadCSV from "../../statistics/useDownloadCSV"
+import useDownloadCSV from "../../hooks/useDownloadCSV"
 import { DropdownTippyProps } from "../../components/Tooltip"
-import { getAttrs } from "../../components/Button"
 import Dropdown from "../../components/Dropdown"
 import ExtLink from "../../components/ExtLink"
-
-const button: ButtonProps = {
-  className: "desktop",
-  color: "aqua",
-  size: "sm",
-  outline: true,
-}
+import { CaptionAction } from "../../components/Caption"
 
 const DownloadCSV = ({ txs }: { txs: Tx[] }) => {
   const list = useDownloadCSV(txs)
@@ -27,7 +20,7 @@ const DownloadCSV = ({ txs }: { txs: Tx[] }) => {
 
   return (
     <Tippy {...DropdownTippyProps} render={() => <Dropdown list={links} />}>
-      <button {...getAttrs(button)}>Download CSV</button>
+      <CaptionAction className="desktop">Download CSV</CaptionAction>
     </Tippy>
   )
 }

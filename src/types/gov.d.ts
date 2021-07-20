@@ -1,43 +1,13 @@
-interface PollsData {
-  polls: PollData[]
-}
-
-interface PollData {
-  id: number
-  end_height: number
-  status: PollStatus
-  creator: string
-
-  deposit_amount: string
-
-  yes_votes?: string
-  no_votes?: string
-  total_balance_at_end_poll?: string
-
-  title: string
-  description: string
-  link?: string
-
-  execute_data: {
-    contract: string
-    msg: EncodedExecuteMsg
-  }
-}
-
 type EncodedExecuteMsg = string
 type EncodedPassCommandMsg = string
 
-interface Poll extends PollData {
-  type?: string
-  msg?: object
-  params?: object
-}
-
 type DecodedExecuteMsg =
   | { whitelist: Whitelist }
+  | { revoke_asset: RevokeAsset }
   | { pass_command: PassCommand }
   | { update_weight: UpdateWeight }
   | { update_config: Partial<GovConfig> }
+  | { update_collateral_multiplier: UpdateCollateralMultiplier }
   | { spend: Spend }
 
 interface Whitelist {
@@ -47,9 +17,17 @@ interface Whitelist {
   params: AssetParams
 }
 
+interface RevokeAsset {
+  asset_token: string
+  end_price: string
+}
+
 interface AssetParams {
   auction_discount: string
   min_collateral_ratio: string
+  min_collateral_ratio_after_migration: string
+  mint_period: number
+  pre_ipo_price: string
 }
 
 interface UpdateAsset extends Partial<AssetParams> {
@@ -68,16 +46,22 @@ interface PassCommand {
 
 type DecodedPassCommandMsg = { update_asset: UpdateAsset }
 
+interface UpdateCollateralMultiplier {
+  asset: AssetInfo
+  multiplier: number
+}
+
 interface Spend {
   recipient: string
   amount: string
 }
 
 /* votes */
-type VoteAnswer = "yes" | "no"
+type VoteAnswer = "yes" | "no" | "abstain"
 interface Voter {
+  balance: string
   vote: VoteAnswer
-  voter: string
+  voter?: string
 }
 
 /* config */
@@ -89,6 +73,7 @@ interface GovConfig {
   quorum: string
   threshold: string
   proposal_deposit: string
+  voter_weight: string
 }
 
 /* state */

@@ -8,8 +8,9 @@
 }
 
 .input {
+  flex: none;
   @include flex;
-  border: solid 1px $slate;
+  border: solid 1px $gray-34;
   border-radius: 3px;
   margin-right: 5px;
   width: 18px;

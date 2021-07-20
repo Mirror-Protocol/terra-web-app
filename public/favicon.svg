@@ -1,10 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <style>
-    .favicon { fill: #172240; }
-
-    @media (prefers-color-scheme: dark) {
-      .favicon { fill: #FFFFFF; }
-    }
-  </style>
-  <path class="favicon" d="M20.2 6.2V1.1L15.7 0v5.1L11.2 4v5.1l-4.4-1v16.6l4.5 1.1v5.1l4.5 1.1v-5.1l4.5 1.1v-5.1l4.5 1.1V7.3l-4.6-1.1zm-3.6 17.5l-6.3-1.5v-9.7l6.3 1.5v9.7z"/>
+  <path fill="#1b1b1b" d="M0 0h32v32H0z"/>
+  <path fill="#fff" d="M19.1 8.6V4.8L15.7 4v3.8L12.3 7v3.8L9 10.1v12.5l3.4.8v3.8l3.4.8v-3.8l3.4.8v-3.8l3.4.8V9.5c-.1 0-3.5-.8-3.5-.9zm-2.7 13.2l-4.7-1.1v-7.3l4.7 1.1v7.3z"/>
 </svg>

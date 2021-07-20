@@ -1,13 +1,13 @@
 import { plus } from "../../libs/math"
 import { formatAsset } from "../../libs/parse"
-import { useContractsAddress } from "../../hooks"
-import { findValue, splitTokenText } from "./receiptHelpers"
+import { useProtocol } from "../../data/contract/protocol"
+import { findValueFromLogs, splitTokenText } from "./receiptHelpers"
 
 export default () => (logs: TxLog[]) => {
-  const { getSymbol } = useContractsAddress()
+  const { getSymbol } = useProtocol()
 
-  const reduced = logs.reduce<Dictionary<string>>((acc, cur, index) => {
-    const value = findValue(logs)
+  const reduced = logs.reduce<Dictionary>((acc, cur, index) => {
+    const value = findValueFromLogs(logs)
     const refund = value("refund_collateral_amount", index)
     const { amount, token } = splitTokenText(refund)
     const prevValue = acc[token] ?? 0

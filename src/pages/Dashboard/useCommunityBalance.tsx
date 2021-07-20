@@ -1,35 +1,17 @@
 import BigNumber from "bignumber.js"
 import { GENESIS } from "../../constants"
-import { times } from "../../libs/math"
+import { useMirrorTokenCommunityBalance } from "../../data/contract/info"
+import { gt, times } from "../../libs/math"
 import { toAmount } from "../../libs/parse"
-import { useContractsAddress } from "../../hooks"
-import useContractQuery from "../../graphql/useContractQuery"
 
 const COMMUNITY_BALANCE_TOTAL = 128.1 // Million
 const COMMUNITY_BALANCES_ANNUAL = [36.6, 54.9, 91.5, 128.1] // Million
 
-const useCommunityCurrentBalance = () => {
-  const { contracts } = useContractsAddress()
-
-  const query = {
-    contract: contracts["mirrorToken"],
-    msg: { balance: { address: contracts["community"] } },
-  }
-
-  const result = useContractQuery<{ balance: string }>(
-    query,
-    `CommunityMirrorTokenBalance`
-  )
-
-  return result
-}
-
 const useCommunityBalance = () => {
-  const { parsed: current } = useCommunityCurrentBalance()
+  const current = useMirrorTokenCommunityBalance()
   const totalSupply = parseMillion(COMMUNITY_BALANCE_TOTAL)
   const fundAnnual = parseMillion(getFundAnnual())
-  const currentBalance = current?.balance
-  return currentBalance && calc({ fundAnnual, totalSupply, currentBalance })
+  return gt(current, 0) ? calc({ fundAnnual, totalSupply, current }) : "0"
 }
 
 export default useCommunityBalance
@@ -46,11 +28,11 @@ const getFundAnnual = (now = Date.now()) => {
 interface Params {
   fundAnnual: string
   totalSupply: string
-  currentBalance: string
+  current: string
 }
 
-const calc = ({ fundAnnual, totalSupply, currentBalance }: Params) => {
-  const used = new BigNumber(totalSupply).minus(currentBalance)
+const calc = ({ fundAnnual, totalSupply, current }: Params) => {
+  const used = new BigNumber(totalSupply).minus(current)
   const result = new BigNumber(fundAnnual).minus(used)
   return result.toString()
 }

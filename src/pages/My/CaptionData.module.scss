@@ -1,0 +1,35 @@
+@import "mixins";
+
+.list {
+  @include desktop {
+    @include flex(flex-end);
+
+    & + & {
+      margin-top: 8px;
+    }
+  }
+}
+
+.article {
+  font-size: 12px;
+
+  @include mobile {
+    @include flex(flex-start);
+    margin-top: 8px;
+  }
+
+  @include desktop {
+    @include flex(flex-end);
+    margin-left: 20px;
+  }
+}
+
+.title {
+  color: $white-44;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.content {
+  color: $white-92;
+}

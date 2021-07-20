@@ -1,56 +1,81 @@
+/* Palette */
+$blue: #66adff;
+$blue-38: #4a5460;
+$blue-62: #55779d;
+$red: #f15e7e;
+$orange: #eda34d;
+
+$gray-08: #141414;
+$gray-11: #1c1c1c;
+$gray-14: #242424;
+$gray-18: #2d2d2e;
+$gray-22: #373738;
+$gray-24: #3d3d3d;
+$gray-34: #555557;
+
+$white-44: #707070;
+$white-52: #858585;
+$white-64: #a4a4a4;
+$white-80: #cccccc;
+$white-92: #ebebeb;
+
+$gray: $white-64;
+$muted: $white-44;
+
 /* Colors */
-$bg: #121a2f !default;
-$darkblue: #172240 !default;
-$airdrop: #1a314c !default;
-
-$gray: #cccccc !default;
-$brown: #a0a0a0 !default;
-$light: #f0f0f0 !default;
-$battleship: #6d738c !default;
-$slate: #505466 !default;
-
-$blue: #1eb2ff !default;
-$aqua: #47d7e2 !default;
-$red: #e64c57 !default;
-$orange: #dd794a !default;
-
-$text: $gray;
+$bg: $gray-11 !default;
+$sidebar: $gray-14 !default;
+$card: $gray-18 !default;
+$text: $white-92 !default;
 $button: white !default;
-$header: $darkblue !default;
-$saturated-blue: saturate(darken($darkblue, 2%), 6%);
 
 $colors: (
   "bg": $bg,
-  "darkblue": $darkblue,
-  "battleship": $battleship,
-  "slate": $slate,
   "blue": $blue,
-  "aqua": $aqua,
   "red": $red,
   "orange": $orange,
+  "gray": $gray,
 );
 
-$hr-shadow: fade-out(black, 0.8);
-$hr: fade-out(white, 0.92);
-$border: 1px solid fade-out($slate, 0.8);
-$border-radius: 10px;
+$hr: $gray-24;
+$border: 1px solid fade-out($gray-34, 0.8);
+$border-radius: 6px;
 
 /* Fonts */
-$font-size: 14px;
-$font-family: "Poppins";
+$font-size-mobile: 14px;
+$font-size-desktop: 16px;
+$font-family: "Gotham SSm A", "Gotham SSm B";
 
 /* Sizes */
-$max-width: 1200px !default;
+$max-width: 1080px !default;
 $breakpoint: 992px;
-$gutter: 30px;
-$line-height: 1.5;
-$nav-height: 70px;
-$footer-height: 50px;
-$footer-height-mobile: 100px;
+$container-gutter-horizontal-mobile: 16px;
+$container-gutter-horizontal-desktop: 32px;
 
-$card-padding-horizontal: 25px;
-$card-padding-header: 20px $card-padding-horizontal;
-$card-padding-main: $card-padding-header;
+$gutter-horizontal-mobile: 20px;
+$gutter-horizontal-desktop: 20px;
+$gutter-vertical-mobile: 12px;
+$gutter-vertical-desktop: 20px;
+
+$header-height-mobile: 60px;
+$header-height-desktop: 60px;
+$navigate-height-mobile: 64px;
+
+$card-padding-horizontal-mobile: 20px;
+$card-padding-vertical-mobile: 28px;
+$card-padding-header-mobile: $card-padding-vertical-mobile
+  $card-padding-horizontal-mobile 0px;
+$card-padding-main-mobile: 8px $gutter-horizontal-mobile
+  $card-padding-vertical-mobile;
+
+$card-padding-horizontal-desktop: 32px;
+$card-padding-vertical-desktop: 40px;
+$card-padding-header-desktop: $card-padding-vertical-desktop
+  $card-padding-horizontal-desktop 0px;
+$card-padding-main-desktop: 8px $card-padding-horizontal-desktop
+  $card-padding-vertical-desktop;
+
+$modal-width: 650px;
 
 /* Transitions */
 $transition-duration: 0.2s;

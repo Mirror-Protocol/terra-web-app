@@ -1,18 +1,10 @@
 import { CHROME, EXTENSION } from "../constants"
-import { useWallet } from "../hooks"
 import Modal from "../containers/Modal"
 import Card from "../components/Card"
 import ExtLinkButton from "../components/ExtLinkButton"
 import styles from "./SupportModal.module.scss"
 
 const SupportModal = (modal: Modal) => {
-  const { install } = useWallet()
-
-  const handleInstalled = () => {
-    install()
-    window.location.reload()
-  }
-
   return (
     <Modal {...modal}>
       {!navigator.userAgent.includes("Chrome") ? (
@@ -41,7 +33,10 @@ const SupportModal = (modal: Modal) => {
             </article>
           </Card>
 
-          <button className={styles.installed} onClick={handleInstalled}>
+          <button
+            className={styles.installed}
+            onClick={() => window.location.reload()}
+          >
             I installed it.
           </button>
         </>

@@ -1,0 +1,33 @@
+@import "mixins";
+@import "variables";
+
+.wrapper {
+  background-color: $gray-14;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+}
+
+.row {
+  @include flex(space-between);
+  padding: 10px 0;
+}
+
+.title,
+.content {
+  color: $white-92;
+  font-weight: normal;
+
+  .children & {
+    color: $white-52;
+    font-size: 12px;
+    font-weight: normal;
+  }
+}
+
+.footer {
+  border-top: 1px dashed $gray-24;
+  border-bottom: 1px dashed $gray-24;
+  margin-top: 40px;
+  padding: 20px;
+}

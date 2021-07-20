@@ -1,12 +1,17 @@
 @import "mixins";
 
+$width: 48px;
+$height: 24px;
+$gutter: 2px;
+$inner: $height - 2 * $gutter;
+
 .track {
   @include transition(background-color);
 
-  background-color: $slate;
-  border-radius: 10px;
-  width: 38px;
-  height: 20px;
+  background-color: $gray-34;
+  border-radius: 12px;
+  width: $width;
+  height: $height;
 
   position: relative;
 }
@@ -18,16 +23,16 @@
 .thumb {
   @include transition(left);
 
-  background-color: $light;
+  background-color: $white-80;
   border-radius: 50%;
-  width: 16px;
-  height: 16px;
+  width: $inner;
+  height: $inner;
 
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: $gutter;
+  left: $gutter;
 }
 
 .on .thumb {
-  left: 20px;
+  left: ($width - $inner - $gutter);
 }

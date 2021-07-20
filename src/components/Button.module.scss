@@ -1,9 +1,8 @@
+@use "sass:math";
 @import "mixins";
-@import "variables";
 
 .button {
   @include flex;
-  @include button;
   @include transition;
 
   display: inline-flex;
@@ -26,6 +25,10 @@
   &.loading {
     opacity: 0.5;
   }
+
+  svg {
+    margin-right: 8px;
+  }
 }
 
 @mixin hover {
@@ -42,8 +45,21 @@
     background-color: fade-out($blue, 0.25);
   }
 
+  &.secondary {
+    background-color: $gray-14;
+    color: $blue;
+
+    svg {
+      fill: $blue;
+    }
+
+    @include hover {
+      background-color: fade-out($gray-14, 0.25);
+    }
+  }
+
   &.disabled {
-    background-color: $slate;
+    background-color: $gray-34;
   }
 }
 
@@ -68,7 +84,7 @@
   }
 
   &.secondary {
-    @include button-outline-variant(fade-out(white, 0.4));
+    @include button-outline-variant($gray-14);
   }
 }
 
@@ -78,38 +94,64 @@
 }
 
 /* sizes */
-@mixin button-size($font-size, $height, $padding) {
-  border-radius: ($height / 2);
-  font-size: $font-size;
-  height: $height;
+@mixin button-size(
+  $font-size-mobile,
+  $font-size-desktop,
+  $height-mobile,
+  $height-desktop,
+  $padding
+) {
+  border-radius: 8px;
   padding: 0 $padding;
+
+  @include mobile {
+    font-size: $font-size-mobile;
+    height: $height-mobile;
+  }
+
+  @include desktop {
+    font-size: $font-size-desktop;
+    height: $height-desktop;
+  }
 }
 
 .xs {
-  @include button-size(10px, 22px, 10px);
+  @include button-size(12px, 12px, 32px, 32px, 10px);
+  min-width: 90px;
 }
 
 .sm {
-  @include button-size(12px, 26px, 10px);
-  min-width: 74px;
+  @include button-size(14px, 14px, 36px, 36px, 10px);
+  width: 100%;
 }
 
 .md {
-  @include button-size(14px, 36px, 20px);
+  @include button-size(14px, 14px, 48px, 56px, 20px);
+  width: 100%;
   min-width: 160px;
+  max-width: 360px;
 }
 
 .lg {
-  @include button-size(16px, 50px, 30px);
+  @include button-size(16px, 18px, 56px, 64px, 30px);
   width: 100%;
+  max-width: 360px;
 }
 
 /* theme */
 .submit {
-  margin-top: 30px;
+  @include mobile {
+    margin: 24px auto 0;
+  }
+
+  @include desktop {
+    margin: 56px auto 0;
+  }
+
+  text-align: center;
 }
 
 /* label */
-.progress {
-  margin-right: 10px;
+.progress svg {
+  margin-right: 0;
 }

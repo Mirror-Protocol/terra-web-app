@@ -1,24 +1,35 @@
-import { FC } from "react"
-import classNames from "classnames"
+import { FC, forwardRef } from "react"
+import classNames from "classnames/bind"
 import Icon from "./Icon"
 import styles from "./ConnectButton.module.scss"
 
+const cx = classNames.bind(styles)
+
 interface Props {
-  address?: string
+  connected?: boolean
   className?: string
-  onClick: () => void
+  onClick?: () => void
 }
 
-const ConnectButton: FC<Props> = (props) => {
-  const { address, className, children, ...attrs } = props
+const ConnectButton: FC<Props> = forwardRef(
+  ({ connected, className, onClick, children }, ref: any) => {
+    const attrs = {
+      className: cx(styles.component, className, { connected }),
+      children: (
+        <>
+          <section className={styles.wrapper}>
+            <Icon name="Wallet" size={14} />
+            {children}
+          </section>
 
-  return (
-    <button {...attrs} className={classNames(styles.button, className)}>
-      <Icon name="account_balance_wallet" size={14} />
-      {address && <span className={styles.address}>{address}</span>}
-      {children}
-    </button>
-  )
-}
+          <Icon name="ChevronRight" size={8} />
+        </>
+      ),
+      ref,
+    }
+
+    return <button {...attrs} onClick={onClick} />
+  }
+)
 
 export default ConnectButton

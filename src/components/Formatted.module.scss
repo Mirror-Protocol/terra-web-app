@@ -1,0 +1,10 @@
+@import "mixins";
+
+.component small {
+  font-size: 12px;
+}
+
+.big {
+  font-size: 32px;
+  font-weight: 500;
+}

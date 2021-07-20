@@ -10,9 +10,12 @@
   }
 }
 
+.muted {
+  color: $white-44;
+}
+
 .empty {
-  color: $brown;
-  font-size: 16px;
+  color: $white-44;
   padding: 40px 0;
   text-align: center;
 }

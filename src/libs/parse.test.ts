@@ -1,4 +1,3 @@
-import { Dictionary } from "ramda"
 import { format, lookup, lookupSymbol, toAmount, validateDp } from "./parse"
 
 test("validateDp", () => {

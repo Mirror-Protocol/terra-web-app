@@ -1,42 +1,24 @@
 import { uniq } from "ramda"
-import { useContractsAddress } from "../hooks"
-import useMy from "../pages/My/useMy"
+import { useProtocol } from "../data/contract/protocol"
+import { useMyTotal } from "../data/my/total"
 import DelistModal from "./DelistModal"
 
 const DelistAlert = () => {
-  const { delist } = useContractsAddress()
+  const { delist } = useProtocol()
+  const filter = (token: string) => !!delist[token]
 
-  const filter = <T extends { token: string }>({ token }: T) => !!delist[token]
-
-  const my = useMy()
-  const { holdings, mint, pool, stake, orders } = my
-
-  const delistedHoldings = holdings.dataSource.filter(filter).map(getToken)
-
-  const delistedMintTokens = mint.dataSource.reduce<string[]>(
-    (acc, { collateral, asset }) =>
-      acc
-        .concat(delist[collateral.token] ? collateral.token : [])
-        .concat(delist[asset.token] ? asset.token : []),
-    []
-  )
-
-  const delistedPoolTokens = pool.dataSource.filter(filter).map(getToken)
-  const delistedStakedTokens = stake.dataSource.filter(filter).map(getToken)
-  const delistedOrderTokens = orders.dataSource.filter(filter).map(getToken)
+  const { holding, borrowing, farming, short, limitOrder } = useMyTotal()
 
   const delistedTokens = uniq([
-    ...delistedHoldings,
-    ...delistedMintTokens,
-    ...delistedPoolTokens,
-    ...delistedStakedTokens,
-    ...delistedOrderTokens,
-  ])
+    ...holding.dataSource.map(({ token }) => token),
+    ...borrowing.dataSource.map(({ collateralAsset }) => collateralAsset.token),
+    ...borrowing.dataSource.map(({ mintedAsset }) => mintedAsset.token),
+    ...farming.dataSource.map(({ token }) => token),
+    ...short.dataSource.map(({ token }) => token),
+    ...limitOrder.dataSource.map(({ token }) => token),
+  ]).filter(filter)
 
   return delistedTokens.length ? <DelistModal tokens={delistedTokens} /> : null
 }
 
 export default DelistAlert
-
-/* helpers */
-const getToken = <T extends { token: string }>({ token }: T) => token

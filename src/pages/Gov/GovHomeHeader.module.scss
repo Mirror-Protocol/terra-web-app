@@ -1,16 +1,11 @@
 @import "mixins";
 
-.sm {
-  @include flex;
-  flex-direction: column;
-  align-items: stretch;
-  flex: 1;
-
-  > * {
-    flex: 1;
+.grid {
+  > :first-child {
+    flex: 3;
   }
-}
 
-.lg {
-  flex: 3;
+  > :last-child {
+    flex: 2;
+  }
 }

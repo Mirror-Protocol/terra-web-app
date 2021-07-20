@@ -1,12 +1,12 @@
 import { div } from "../../libs/math"
 import { format, formatAsset, lookupSymbol } from "../../libs/parse"
-import { useContractsAddress } from "../../hooks"
-import { Type } from "../../pages/Trade"
-import { findValue, splitTokenText } from "./receiptHelpers"
+import { useProtocol } from "../../data/contract/protocol"
+import { TradeType } from "../../types/Types"
+import { findValueFromLogs, splitTokenText } from "./receiptHelpers"
 
-export default (type: Type, simulatedPrice?: string) => (logs: TxLog[]) => {
-  const { getSymbol } = useContractsAddress()
-  const val = findValue(logs)
+export default (type: TradeType, simulatedPrice?: string) => (logs: TxLog[]) => {
+  const { getSymbol } = useProtocol()
+  const val = findValueFromLogs(logs)
 
   const order_id = val("order_id")
   const offer = splitTokenText(val("offer_asset"))
@@ -16,8 +16,8 @@ export default (type: Type, simulatedPrice?: string) => (logs: TxLog[]) => {
   const rtnSymbol = getSymbol(rtn.token)
 
   const price = {
-    [Type.BUY]: div(offer.amount, rtn.amount),
-    [Type.SELL]: div(rtn.amount, offer.amount),
+    [TradeType.BUY]: div(offer.amount, rtn.amount),
+    [TradeType.SELL]: div(rtn.amount, offer.amount),
   }[type]
 
   /* contents */
@@ -27,11 +27,11 @@ export default (type: Type, simulatedPrice?: string) => (logs: TxLog[]) => {
   }
 
   const priceContents = {
-    [Type.BUY]: {
+    [TradeType.BUY]: {
       title: `Limit price per ${lookupSymbol(rtnSymbol)}`,
       content: `${format(price)} ${lookupSymbol(offerSymbol)}`,
     },
-    [Type.SELL]: {
+    [TradeType.SELL]: {
       title: `Limit price per ${lookupSymbol(offerSymbol)}`,
       content: `${format(price)} ${lookupSymbol(rtnSymbol)}`,
     },
