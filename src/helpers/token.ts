@@ -197,12 +197,12 @@ export const GetTokenSvg = (symbol: string) => {
         case "mCOIN":
         case "mGLXY":
         case "MINE":
-          res = "/images/CW20/" + symbol + ".png"
-          break
         case "LOTA":
-          res = "/images/CW20/" + symbol + ".png"
-          break
         case "SPEC":
+        case "mARKK":
+        case "mDOT":
+        case "mSQ":
+        case "mAMD":
           res = "/images/CW20/" + symbol + ".png"
           break
         default:
