@@ -104,6 +104,7 @@ const ChartContainer = ({ change, datasets = [], ...props }: Props) => {
       },
 
       yAxes: {
+        beginAtZero: true,
         display: false,
         position: "right",
         grid: {
