@@ -23,10 +23,11 @@ interface Props {
   fmt?: { t: string }
   compact?: boolean
   bar?: boolean
+  beginAtZero?: boolean
 }
 
 const ChartContainer = ({ change, datasets = [], ...props }: Props) => {
-  const { fmt, compact, bar } = props
+  const { fmt, compact, bar, beginAtZero = false } = props
 
   const last = datasets[datasets.length - 1]?.y
   const head = datasets[0]?.y
@@ -104,7 +105,7 @@ const ChartContainer = ({ change, datasets = [], ...props }: Props) => {
       },
 
       yAxes: {
-        beginAtZero: true,
+        beginAtZero,
         display: false,
         position: "right",
         grid: {

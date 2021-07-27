@@ -81,5 +81,9 @@ export const toDatasets = (data: ChartItem[], symbol?: string) =>
   })
 
 export const renderChart = (data: ChartItem[], bar?: boolean) => (
-  <ChartContainer datasets={data ? toDatasets(data, "uusd") : []} bar={bar} />
+  <ChartContainer
+    datasets={data ? toDatasets(data, "uusd") : []}
+    bar={bar}
+    beginAtZero
+  />
 )
