@@ -60,8 +60,8 @@ const SendForm = ({ tab, shuttleList }: Props) => {
   const findPrice = useFindPrice() // to calc shuttle fee
 
   /* form:validate */
-  const getIsShuttleAvailable = (network: string, symbol: string) =>
-    !network || !!shuttleList[network as ShuttleNetwork]?.[lookupSymbol(symbol)]
+  const getIsShuttleAvailable = (network: string, token: string) =>
+    !network || !!shuttleList[network as ShuttleNetwork]?.[token]
 
   const validate = ({ to, token, value, memo, network }: Values<Key>) => {
     const max = findBalance(token)
@@ -218,7 +218,7 @@ const SendForm = ({ tab, shuttleList }: Props) => {
     ? [new MsgSend(address, recipient, amount + symbol)]
     : [newContractMsg(token, { transfer: { recipient, amount } })]
 
-  const isShuttleAvailable = getIsShuttleAvailable(network, symbol)
+  const isShuttleAvailable = getIsShuttleAvailable(network, token)
   const messages = !isShuttleAvailable
     ? [`${lookupSymbol(symbol)} is not available on ${getNetworkName(network)}`]
     : !shuttleEnough
