@@ -71,6 +71,10 @@
     {
       "contract_addr": "terra1587zn7hagaylrp22x5edz25zpqfn6szfmvtym4",
       "comment": "dummy ANC"
+    },
+    {
+      "contract_addr": "terra1zp3a6q6q4953cz376906g5qfmxnlg77hx3te45",
+      "comment": "delisted mVIXY"
     }
   ]
 }
