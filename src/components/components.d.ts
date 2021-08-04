@@ -70,6 +70,7 @@ type IconNames =
   | "Github"
   | "Governance"
   | "GridViewSolid"
+  | "Guard"
   | "InfoCircle"
   | "ListView"
   | "Medium"

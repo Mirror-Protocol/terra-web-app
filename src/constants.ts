@@ -32,6 +32,8 @@ export const TRADING_HOURS = {
   TSX: "https://www.tsx.com/trading/calendars-and-trading-hours/trading-hours",
 }
 
+export const INSURANCE_COVERAGE = "https://app.insurace.io/Insurance/BuyCovers"
+
 /* sentry */
 export const DSN =
   "https://b1532961e54e491fbb57e67805cb36a4@o247107.ingest.sentry.io/5540998"

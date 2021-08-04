@@ -29,6 +29,7 @@ import { ReactComponent as Farm } from "../styles/icons/Farm.svg"
 import { ReactComponent as Github } from "../styles/icons/Github.svg"
 import { ReactComponent as Governance } from "../styles/icons/Governance.svg"
 import { ReactComponent as GridViewSolid } from "../styles/icons/GridViewSolid.svg"
+import { ReactComponent as Guard } from "../styles/icons/Guard.svg"
 import { ReactComponent as InfoCircle } from "../styles/icons/InfoCircle.svg"
 import { ReactComponent as ListView } from "../styles/icons/ListView.svg"
 import { ReactComponent as Medium } from "../styles/icons/Medium.svg"
@@ -91,6 +92,7 @@ const Icon = ({ name, size = 16, className }: Props) => {
     Github: <Github {...props} />,
     Governance: <Governance {...props} />,
     GridViewSolid: <GridViewSolid {...props} />,
+    Guard: <Guard {...props} />,
     InfoCircle: <InfoCircle {...props} />,
     ListView: <ListView {...props} />,
     Medium: <Medium {...props} />,

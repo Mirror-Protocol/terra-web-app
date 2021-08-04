@@ -20,6 +20,7 @@ import LiquidityHistoryChart from "./LiquidityHistoryChart"
 import VolumeHistoryChart from "./VolumeHistoryChart"
 import DashboardFooter from "./DashboardFooter"
 import TVLTotal from "./TVLTotal"
+import InsuaranceCoverageLink from "./InsuaranceCoverageLink"
 import styles from "./Dashboard.module.scss"
 
 const Dashboard = () => {
@@ -42,6 +43,7 @@ const Dashboard = () => {
       title={MenuKey.DASHBOARD}
       select={selectAttrs}
       doc={"/user-guide/getting-started"}
+      action={<InsuaranceCoverageLink />}
     >
       <section className={styles.mobile}>
         <TVLTotal />
