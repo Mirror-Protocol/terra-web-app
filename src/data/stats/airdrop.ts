@@ -1,7 +1,6 @@
-import { atom, selector } from "recoil"
+import { selector, useRecoilValue } from "recoil"
 import { request } from "graphql-request"
 import { gt } from "../../libs/math"
-import { useStore } from "../utils/loadable"
 import { addressState } from "../wallet"
 import { statsURLQuery } from "../network"
 import { locationKeyState } from "../app"
@@ -26,13 +25,8 @@ const airdropQuery = selector({
   },
 })
 
-const airdropState = atom<Airdrop | undefined>({
-  key: "airdropState",
-  default: undefined,
-})
-
 const useAirdrop = () => {
-  return useStore(airdropQuery, airdropState)
+  return useRecoilValue(airdropQuery)
 }
 
 export default useAirdrop

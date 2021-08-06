@@ -4,12 +4,10 @@ import AirdropToast from "../pages/Airdrop/AirdropToast"
 import { getPath, MenuKey } from "../routes"
 
 const Airdrop = () => {
-  const { isLoading, contents } = useAirdrop()
+  const airdrop = useAirdrop()
   const { pathname } = useLocation()
 
-  if (isLoading) return null
-
-  return !contents || pathname === getPath(MenuKey.AIRDROP) ? null : (
+  return !airdrop || pathname === getPath(MenuKey.AIRDROP) ? null : (
     <AirdropToast />
   )
 }
