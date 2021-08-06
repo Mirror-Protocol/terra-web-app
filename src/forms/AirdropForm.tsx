@@ -8,7 +8,7 @@ import FormContainer from "./modules/FormContainer"
 const AirdropForm = () => {
   /* context */
   const { contracts } = useProtocol()
-  const airdrop = useAirdrop()
+  const { contents: airdrop } = useAirdrop()
 
   /* confirm */
   const contents = !airdrop
