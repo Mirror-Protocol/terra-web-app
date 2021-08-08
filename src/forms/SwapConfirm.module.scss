@@ -17,8 +17,20 @@
 .title {
   color: $brown;
   font-weight: normal;
+  text-align: left;
 }
 
 .content {
+  display: block;
+  overflow-x: hidden;
   color: $deepgray;
+  text-align: right;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  @include desktop {
+    max-width: 246px;
+  }
+  @include mobile {
+    max-width: 166px;
+  }
 }

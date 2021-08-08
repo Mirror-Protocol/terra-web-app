@@ -4,7 +4,7 @@
 .card {
   background: $darkblue;
 
-  border-radius: 10px;
+  border-radius: 15px;
   position: relative;
 
   &.lg {
@@ -31,6 +31,11 @@
 .main {
   padding: $card-padding-main;
   height: 100%;
+
+  @include mobile {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
 
   .lg & {
     padding: $gutter $card-padding-horizontal;

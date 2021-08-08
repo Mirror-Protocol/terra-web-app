@@ -45,16 +45,16 @@
 /* assets */
 .list {
   flex: 1;
-  margin: 0 0 0 -20px;
+  margin: 0;
   overflow-y: scroll;
 }
 
 .button {
-  padding: 10px 30px;
+  padding: 8px 0;
   width: 100%;
 
   &:not(.disabled):hover {
-    background: fade-out(white, 0.95);
+    background-color: $semiblue;
   }
 
   &.disabled {

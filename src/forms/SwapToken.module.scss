@@ -1,7 +1,7 @@
 @import "mixins";
 @import "variables";
 
-$symbol: 18px;
+$symbol: 16px;
 $name: 12px;
 
 .asset {
@@ -37,7 +37,7 @@ $name: 12px;
   font-size: $symbol;
   font-weight: 500;
   float: left;
-  line-height: 20px;
+  line-height: 24px;
 }
 
 .footer {

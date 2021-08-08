@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react"
+import React, { FC, useEffect, useState } from "react"
 import classNames from "classnames/bind"
 import styles from "./FeeCombobox.module.scss"
 import { NATIVE_TOKENS } from "constants/constants"
@@ -25,11 +25,28 @@ const FeeCombobox: FC<Props> = ({ selected, onSelect }) => {
     setIsOpen(false)
   }
 
+  useEffect(() => {
+    const handleWindowClick = () => {
+      setIsOpen(false)
+    }
+    if (isOpen) {
+      window.addEventListener("click", handleWindowClick)
+    }
+    return () => {
+      window.removeEventListener("click", handleWindowClick)
+    }
+  }, [isOpen])
+
   return (
     <div className={cx(styles.body)}>
       <div className={cx(styles.label)}>Fee:</div>
       <div className={cx(styles.container)} onClick={toggling}>
-        <div className={cx(styles.header)}>
+        <div
+          className={[
+            cx(styles.header),
+            isOpen ? cx(styles["header--open"]) : "",
+          ].join(" ")}
+        >
           <div>
             {selectedOption ? tokenInfos.get(selectedOption)?.symbol : ""}
           </div>

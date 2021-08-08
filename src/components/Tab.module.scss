@@ -39,4 +39,8 @@ $radius: 10px;
 
 .content {
   padding: 30px;
+
+  @include mobile {
+    padding: 30px 16px;
+  }
 }
