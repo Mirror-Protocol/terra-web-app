@@ -99,7 +99,7 @@ const SwapFormGroup = ({
                   style={{
                     fontSize: inputFontSize,
                     height: 38,
-                    lineHeight: 38,
+                    lineHeight: "38px",
                   }}
                 />
               ) : textarea ? (
