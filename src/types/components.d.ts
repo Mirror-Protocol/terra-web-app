@@ -55,15 +55,23 @@ type ButtonAttrs = ButtonHTMLAttributes<HTMLButtonElement>
 type Button = ButtonProps & ButtonAttrs
 
 /* Tab */
-interface Tab {
-  tabs: string[]
-  tooltips?: string[]
-  current?: string
+interface TabViewProps {
+  tabs: { name: string; title?: string; tooltip?: string }[]
+  selectedTabName?: string
   shadow?: boolean
+  extra?: { iconUrl: string; onClick: () => void }[]
+  side?: {
+    component: ReactNode
+    visible: boolean
+    isModalOnMobile?: boolean
+    onOpen?: () => void
+    onClose?: () => void
+  }[]
 }
 
 /* Modal */
 interface Modal {
+  className?: string
   isOpen: boolean
   open: () => void
   close: () => void

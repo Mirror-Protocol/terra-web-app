@@ -5,16 +5,26 @@ import Icon from "./Icon"
 
 ReactModal.setAppElement("#terraswap")
 
-const Modal: FC<Modal> = ({ isOpen, close, children, isCloseBtn=false }) => (
+const Modal: FC<Modal> = ({
+  className,
+  isOpen,
+  close,
+  children,
+  isCloseBtn = false,
+}) => (
   <ReactModal
-    className={styles.modal}
-    overlayClassName={styles.overlay}
+    className={`${styles.modal} ${className || ""}`}
+    overlayClassName={`${styles.overlay} ${className || ""}`}
     isOpen={isOpen}
     onRequestClose={close}
   >
-    {isCloseBtn && <div className={styles.close}>
-      <span onClick={close}><Icon name="close" size={30} color={"#0222BA"}/></span>
-    </div>}
+    {isCloseBtn && (
+      <div className={styles.close}>
+        <span onClick={close}>
+          <Icon name="close" size={30} color={"#0222BA"} />
+        </span>
+      </div>
+    )}
     {children}
   </ReactModal>
 )

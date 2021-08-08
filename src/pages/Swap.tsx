@@ -21,9 +21,12 @@ export enum Type {
 const Swap = () => {
   const { hash: type } = useHash<Type>(Type.SWAP)
   const tabs = {
-    tabs: [Type.SWAP, Type.PROVIDE, Type.WITHDRAW],
-    tooltips: ["", "", ""],
-    current: type,
+    tabs: [
+      { name: Type.SWAP },
+      { name: Type.PROVIDE },
+      { name: Type.WITHDRAW },
+    ],
+    selectedTabName: type,
   }
 
   return (
@@ -31,9 +34,7 @@ const Swap = () => {
       <div id="terra">
         <SwapHeader />
         <Container>
-          <SwapPage>
-            {type && <SwapForm type={type} tabs={tabs} key={type} />}
-          </SwapPage>
+          <SwapPage>{type && <SwapForm type={type} tabs={tabs} />}</SwapPage>
         </Container>
         <SwapFooter />
       </div>
