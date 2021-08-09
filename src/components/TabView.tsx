@@ -95,7 +95,7 @@ const TabView: FC<TabViewProps> = ({
                 <Modal
                   className={styles["side__view--hide-on-desktop"]}
                   isOpen={item.visible}
-                  isCloseBtn
+                  isCloseBtn={false}
                   open={() => item.onOpen && item.onOpen()}
                   close={() => item.onClose && item.onClose()}
                 >

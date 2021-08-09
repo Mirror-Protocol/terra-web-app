@@ -94,9 +94,10 @@ $radius: 10px;
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
     transform: rotate(0deg);
+    margin-left: 10px;
 
     &:hover {
-      transform: rotate(45deg);
+      transform: rotate(135deg);
     }
   }
 }
@@ -133,7 +134,7 @@ $radius: 10px;
     height: auto;
     position: relative;
     transition: all 0.2s cubic-bezier(1, 0, 0, 1);
-
+    overflow-x: hidden;
     &--invisible {
       transform: translate(-12px, -12px);
       opacity: 0;

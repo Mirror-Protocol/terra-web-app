@@ -30,32 +30,34 @@ import {
   step,
   renderBalance,
   calcTax,
-} from "./formHelpers";
-import useSwapSimulate from "rest/useSwapSimulate";
-import useSwapSelectToken from "./useSwapSelectToken";
-import SwapFormGroup from "./SwapFormGroup";
-import usePairs, { tokenInfos, lpTokenInfos, InitLP } from "rest/usePairs";
-import useBalance from "rest/useBalance";
-import { minus, gte, times, ceil } from "libs/math";
-import { TooltipIcon } from "components/Tooltip";
-import Tooltip from "lang/Tooltip.json";
-import useGasPrice from "rest/useGasPrice";
-import { hasTaxToken } from "helpers/token";
-import { Coin, Coins, StdFee } from "@terra-money/terra.js";
-import { Type } from "pages/Swap";
-import usePool from "rest/usePool";
-import { insertIf } from "libs/utils";
-import { percent } from "libs/num";
-import SvgArrow from "images/arrow.svg";
-import SvgPlus from "images/plus.svg";
-import Button from "components/Button";
-import MESSAGE from "lang/MESSAGE.json";
-import SwapConfirm from "./SwapConfirm";
-import useAPI from "rest/useAPI";
-import { TxResult, useWallet } from "@terra-money/wallet-provider";
-import iconSettings from "images/icon-settings.svg";
-import { useModal } from "components/Modal";
-import Settings, { SettingValues } from "components/Settings";
+} from "./formHelpers"
+import useSwapSimulate from "rest/useSwapSimulate"
+import useSwapSelectToken from "./useSwapSelectToken"
+import SwapFormGroup from "./SwapFormGroup"
+import usePairs, { tokenInfos, lpTokenInfos, InitLP } from "rest/usePairs"
+import useBalance from "rest/useBalance"
+import { minus, gte, times, ceil } from "libs/math"
+import { TooltipIcon } from "components/Tooltip"
+import Tooltip from "lang/Tooltip.json"
+import useGasPrice from "rest/useGasPrice"
+import { hasTaxToken } from "helpers/token"
+import { Coin, Coins, StdFee } from "@terra-money/terra.js"
+import { Type } from "pages/Swap"
+import usePool from "rest/usePool"
+import { insertIf } from "libs/utils"
+import { percent } from "libs/num"
+import SvgArrow from "images/arrow.svg"
+import SvgPlus from "images/plus.svg"
+import Button from "components/Button"
+import MESSAGE from "lang/MESSAGE.json"
+import SwapConfirm from "./SwapConfirm"
+import useAPI from "rest/useAPI"
+import { TxResult, useWallet } from "@terra-money/wallet-provider"
+import iconSettings from "images/icon-settings.svg"
+import iconReload from "images/icon-reload.svg"
+import { useModal } from "components/Modal"
+import Settings, { SettingValues } from "components/Settings"
+import useLocalStorage from "libs/useLocalStorage"
 
 enum Key {
   token1 = "token1",
@@ -87,16 +89,18 @@ const Wrapper = styled.div`
 `;
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
-  const connectModal = useConnectModal();
-  const { getSymbol } = useContractsAddress();
-  const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI();
-  const { state } = useLocation<{ symbol: string }>();
-  const { fee } = useNetwork();
-  const { find } = useContract();
-  const walletAddress = useAddress();
-  const { post: terraExtensionPost } = useWallet();
-  const settingsModal = useModal();
-  const [slippageSettings, setSlippageSettings] = useState<SettingValues>({
+  const connectModal = useConnectModal()
+  const { getSymbol } = useContractsAddress()
+  const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI()
+  const { state } = useLocation<{ symbol: string }>()
+  const { fee } = useNetwork()
+  const { find } = useContract()
+  const walletAddress = useAddress()
+  const { post: terraExtensionPost } = useWallet()
+  const settingsModal = useModal()
+  const [slippageSettings, setSlippageSettings] = useLocalStorage<
+    SettingValues
+  >("slippage", {
     slippage: "0.1",
     custom: "",
   });
@@ -699,6 +703,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                   return;
                 }
                 settingsModal.open();
+              },
+            },
+            {
+              iconUrl: iconReload,
+              onClick: () => {
+                window.location.reload()
               },
             },
           ]}

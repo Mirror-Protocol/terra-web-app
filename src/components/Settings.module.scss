@@ -5,6 +5,10 @@
   width: 100%;
   height: auto;
   position: relative;
+
+  @include mobile {
+    max-width: 280px;
+  }
 }
 
 .title {
@@ -70,6 +74,10 @@
       font-style: normal;
       line-height: normal;
       letter-spacing: normal;
+
+      @include mobile {
+        padding: 8px;
+      }
 
       & input {
         width: 48px;
