@@ -17,8 +17,12 @@ $radius: 10px;
 .header {
   @include flex(space-between);
   align-items: center;
-  padding: $gutter;
+  padding: 30px;
   padding-bottom: 0;
+  @include mobile {
+    padding: 30px 16px;
+    padding-bottom: 0;
+  }
   width: 100%;
   height: auto;
 }
@@ -127,6 +131,7 @@ $radius: 10px;
 
   &--invisible {
     max-width: 0;
+    margin-left: 0;
   }
 
   &__view {

@@ -6,6 +6,10 @@
   max-width: $modal-width;
   outline: 0;
   position: relative;
+
+  @include mobile {
+    margin: 0 auto;
+  }
 }
 
 .overlay {

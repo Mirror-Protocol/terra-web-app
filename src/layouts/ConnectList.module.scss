@@ -1,9 +1,12 @@
 @import "mixins";
 
+.wrapper {
+  width: 100vw;
+  max-width: $modal-width;
+}
+
 .component {
   padding: 0;
-  max-width: $modal-width;
-  margin: 0 auto;
 }
 
 .title {
@@ -22,7 +25,7 @@
   color: $deepgray;
   font-size: 18px;
   font-weight: 700;
-  padding: 24px 0;
+  padding: 24px 24px;
   width: 100%;
 
   & + & {
