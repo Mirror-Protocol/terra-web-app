@@ -101,9 +101,19 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const [slippageSettings, setSlippageSettings] = useLocalStorage<
     SettingValues
   >("slippage", {
-    slippage: "0.1",
+    slippage: `${MAX_SPREAD}`,
     custom: "",
-  });
+  })
+  const slippageTolerance = useMemo(() => {
+    // 1% = 0.01
+    return `${(
+      parseFloat(
+        (slippageSettings?.slippage === "custom"
+          ? slippageSettings.custom
+          : slippageSettings.slippage) || "1.0"
+      ) / 100
+    ).toFixed(2)}`
+  }, [slippageSettings])
 
   const { pairs } = usePairs();
   const balanceKey = {
@@ -265,7 +275,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       ? calc.minimumReceived({
           offer_amount: toAmount(formData[Key.value1]),
           belief_price: decimal(simulatedData?.price, 18),
-          max_spread: String(MAX_SPREAD),
+          max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
         })
       : "10";
@@ -341,8 +351,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           </Count>
         ),
       },
-    ];
-  }, [find, formData, poolResult, simulatedData, type]);
+    ]
+  }, [find, formData, poolResult, simulatedData, slippageTolerance, type])
 
   const { gasPrice } = useGasPrice(formData[Key.feeSymbol]);
   const getTax = useCallback(
@@ -598,10 +608,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               amount: `${value1}`,
               from: `${token1}`,
               to: `${token2}`,
-              max_spread:
-                slippageSettings?.slippage === "custom"
-                  ? slippageSettings.custom
-                  : slippageSettings.slippage,
+              max_spread: slippageTolerance,
               belief_price: `${value2}`,
             },
             [Type.PROVIDE]: {
@@ -610,10 +617,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               amount: `${value1}`,
               from: `${token1}`,
               to: `${token2}`,
-              slippage:
-                slippageSettings?.slippage === "custom"
-                  ? slippageSettings.custom
-                  : slippageSettings.slippage,
+              slippage: slippageTolerance,
             },
             [Type.WITHDRAW]: {
               type: Type.WITHDRAW,
@@ -663,9 +667,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     },
     [
       generateContractMessages,
+      slippageTolerance,
       walletAddress,
       getSymbol,
-      slippageSettings,
       lpContract,
       type,
       fee,
@@ -675,6 +679,16 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   );
 
   const [result, setResult] = useState<TxResult | undefined>();
+
+  useEffect(() => {
+    const handleResize = () => {
+      settingsModal.close()
+    }
+    window.addEventListener("resize", handleResize)
+    return () => {
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [settingsModal])
 
   return (
     <Wrapper>
