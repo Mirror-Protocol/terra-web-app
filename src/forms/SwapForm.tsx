@@ -15,9 +15,7 @@ import {
   useAddress,
   useConnectModal,
 } from "hooks"
-import { format, lookup } from "libs/parse"
-import { decimal } from "libs/parse"
-import { toAmount } from "libs/parse"
+import { lookup, decimal, toAmount } from "libs/parse"
 import calc from "helpers/calc"
 import { PriceKey, BalanceKey, AssetInfoKey } from "hooks/contractKeys"
 import Count from "components/Count"
@@ -755,7 +753,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
                       if (type === Type.WITHDRAW) {
                         setValue(
                           Key.value1,
-                          format(formData[Key.max1], formData[Key.symbol1])
+                          lookup(formData[Key.max1], formData[Key.symbol1])
                         )
                         trigger(Key.value1)
                         return
@@ -764,7 +762,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
                       const taxs = (
                         await getTax({
                           symbol1: formData[Key.symbol1],
-                          value1:  format(formData[Key.max1], formData[Key.symbol1]),
+                          value1:  lookup(formData[Key.max1], formData[Key.symbol1]),
                           max1: formData[Key.max1],
                         })
                       ).split(",")
