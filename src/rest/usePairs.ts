@@ -232,6 +232,13 @@ export default () => {
                 }
               }
 
+              if (tokenInfo1?.symbol === "BETH") {
+                tokenInfo1.symbol = "bETH"
+              }
+              if (tokenInfo2?.symbol === "BETH") {
+                tokenInfo2.symbol = "bETH"
+              }
+
               if (
                 networkName === "mainnet" &&
                 tokenInfo1?.symbol === "MINE" &&
