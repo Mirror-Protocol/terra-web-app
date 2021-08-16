@@ -109,10 +109,10 @@ export const validate = {
       feeValue === undefined ||
       gt(feeValue, maxFee)
     ) {
-      return `must be at least ${formatAsset(
+      return `You don't have enough balance to pay for ${formatAsset(
         feeValue,
         feeSymbol
-      )} to pay the fee.`
+      )} fee.`
     }
 
     if (type === Type.PROVIDE) {
