@@ -321,15 +321,27 @@ export default () => {
     async (
       query:
         | {
-            type: Type.PROVIDE | Type.SWAP
+            type: Type.SWAP
             from: string
             to: string
             amount: number | string
+            max_spread: number | string
+            belief_price: number | string
+            sender: string
+          }
+        | {
+            type: Type.PROVIDE
+            from: string
+            to: string
+            amount: number | string
+            slippage: number | string
+            sender: string
           }
         | {
             type: Type.WITHDRAW
             lpAddr: string
             amount: number | string
+            sender: string
           }
     ) => {
       const { type, ...params } = query
@@ -337,7 +349,8 @@ export default () => {
       const res: any[] = (await axios.get(url, { params })).data
 
       return res.map((item) => {
-        return Msg.fromData(item)
+        console.log(item)
+        return Msg.fromData(Array.isArray(item) ? item[0] : item)
       })
     },
     [service]

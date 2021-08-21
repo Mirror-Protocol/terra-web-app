@@ -562,84 +562,39 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
         token1,
         token2,
         value1,
-        // value2,
-        // symbol1,
-        // symbol2,
+        value2,
         feeValue,
         feeSymbol,
         gasPrice,
       } = values
-      // const amount1 = toAmount(value1);
-      // const amount2 = toAmount(value2);
-      // const asset = toToken({ symbol: token1, amount: amount1 });
       try {
         const msgs = await generateContractMessages(
-          type === Type.WITHDRAW
-            ? { type, lpAddr: lpContract, amount: value1 }
-            : { type, from: token1, to: token2, amount: value1 }
+          {
+            [Type.SWAP]: {
+              type: Type.SWAP,
+              sender: `${walletAddress}`,
+              amount: `${value1}`,
+              from: `${token1}`,
+              to: `${token2}`,
+              max_spread: "0.1",
+              belief_price: `${value2}`,
+            },
+            [Type.PROVIDE]: {
+              type: Type.PROVIDE,
+              sender: `${walletAddress}`,
+              amount: `${value1}`,
+              from: `${token1}`,
+              to: `${token2}`,
+              slippage: "0.1",
+            },
+            [Type.WITHDRAW]: {
+              type: Type.WITHDRAW,
+              sender: `${walletAddress}`,
+              amount: `${value1}`,
+              lpAddr: `${lpContract}`,
+            },
+          }[type] as any
         )
-        // const msgs2 = {
-        //   [Type.SWAP]: isNativeToken(token1)
-        //     ? [
-        //         newContractMsg(pair, { swap: { offer_asset: asset } }, [
-        //           { amount: amount1, denom: getSymbol(symbol1) },
-        //         ]),
-        //       ]
-        //     : [
-        //         newContractMsg(token1, {
-        //           send: {
-        //             amount: amount1,
-        //             contract: pair,
-        //             msg: toBase64({ swap: {} }),
-        //           },
-        //         }),
-        //       ],
-        //   [Type.PROVIDE]: [
-        //     ...insertIf(
-        //       !isNativeToken(token1),
-        //       newContractMsg(token1, {
-        //         increase_allowance: { amount: amount1, spender: pair },
-        //       })
-        //     ),
-        //     ...insertIf(
-        //       !isNativeToken(token2),
-        //       newContractMsg(token2, {
-        //         increase_allowance: { amount: amount2, spender: pair },
-        //       })
-        //     ),
-        //     newContractMsg(
-        //       pair,
-        //       {
-        //         provide_liquidity: {
-        //           assets: [
-        //             toToken({ amount: amount1, symbol: token1 }),
-        //             toToken({ amount: amount2, symbol: token2 }),
-        //           ],
-        //           slippage_tolerance: "0.1",
-        //         },
-        //       },
-        //       [
-        //         ...insertIf(isNativeToken(token1), {
-        //           amount: amount1,
-        //           denom: getSymbol(symbol1),
-        //         }),
-        //         ...insertIf(isNativeToken(token2), {
-        //           amount: amount2,
-        //           denom: getSymbol(symbol2),
-        //         }),
-        //       ]
-        //     ),
-        //   ],
-        //   [Type.WITHDRAW]: [
-        //     newContractMsg(lpContract, {
-        //       send: {
-        //         amount: amount1,
-        //         contract: pair,
-        //         msg: toBase64({ withdraw_liquidity: {} }),
-        //       },
-        //     }),
-        //   ],
-        // }[type];
         const symbol = getSymbol(feeSymbol)
         const gas = fee.gas
         const amount = feeValue
@@ -680,8 +635,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
     },
     [
       generateContractMessages,
-      type,
+      walletAddress,
       lpContract,
+      type,
       getSymbol,
       fee,
       tax,
@@ -762,7 +718,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
                       const taxs = (
                         await getTax({
                           symbol1: formData[Key.symbol1],
-                          value1:  lookup(formData[Key.max1], formData[Key.symbol1]),
+                          value1: lookup(
+                            formData[Key.max1],
+                            formData[Key.symbol1]
+                          ),
                           max1: formData[Key.max1],
                         })
                       ).split(",")
