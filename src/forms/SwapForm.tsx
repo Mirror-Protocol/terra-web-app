@@ -1,29 +1,23 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import styled from "styled-components";
-import Container from "components/Container";
-import { useForm } from "react-hook-form";
-import Result from "./Result";
-import TabView from "components/TabView";
-import { useLocation } from "react-router-dom";
-import { isNil } from "ramda";
-import { LP, LUNA, MAX_SPREAD, ULUNA } from "constants/constants";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import styled from "styled-components"
+import Container from "components/Container"
+import { useForm } from "react-hook-form"
+import Result from "./Result"
+import TabView from "components/TabView"
+import { useLocation } from "react-router-dom"
+import { isNil } from "ramda"
+import { LP, LUNA, MAX_SPREAD, ULUNA } from "constants/constants"
 import {
   useNetwork,
   useContractsAddress,
   useContract,
   useAddress,
   useConnectModal,
-} from "hooks";
-import { lookup, decimal, toAmount } from "libs/parse";
-import calc from "helpers/calc";
-import { PriceKey, BalanceKey, AssetInfoKey } from "hooks/contractKeys";
-import Count from "components/Count";
+} from "hooks"
+import { lookup, decimal, toAmount } from "libs/parse"
+import calc from "helpers/calc"
+import { PriceKey, BalanceKey, AssetInfoKey } from "hooks/contractKeys"
+import Count from "components/Count"
 import {
   validate as v,
   placeholder,
@@ -78,15 +72,15 @@ enum Key {
   poolLoading = "poolLoading",
 }
 
-const priceKey = PriceKey.PAIR;
-const infoKey = AssetInfoKey.COMMISSION;
+const priceKey = PriceKey.PAIR
+const infoKey = AssetInfoKey.COMMISSION
 
 const Wrapper = styled.div`
   width: 100%;
   height: auto;
   position: relative;
   margin-top: 60px;
-`;
+`
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
@@ -115,12 +109,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     ).toFixed(2)}`
   }, [slippageSettings])
 
-  const { pairs } = usePairs();
+  const { pairs } = usePairs()
   const balanceKey = {
     [Type.SWAP]: BalanceKey.TOKEN,
     [Type.PROVIDE]: BalanceKey.TOKEN,
     [Type.WITHDRAW]: BalanceKey.LPSTAKABLE,
-  }[type];
+  }[type]
 
   const form = useForm({
     defaultValues: {
@@ -141,44 +135,44 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     },
     mode: "all",
     reValidateMode: "onChange",
-  });
-  const { register, watch, setValue, setFocus, formState, trigger } = form;
-  const [isReversed, setIsReversed] = useState(false);
-  const formData = watch();
+  })
+  const { register, watch, setValue, setFocus, formState, trigger } = form
+  const [isReversed, setIsReversed] = useState(false)
+  const formData = watch()
 
   const handleToken1Select = (token: string) => {
-    setValue(Key.token1, token);
+    setValue(Key.token1, token)
     if (!formData[Key.value1]) {
-      setFocus(Key.value1);
+      setFocus(Key.value1)
     }
-  };
+  }
   const handleToken2Select = (token: string) => {
-    setValue(Key.token2, token);
+    setValue(Key.token2, token)
     if (!formData[Key.value2]) {
-      setFocus(Key.value2);
+      setFocus(Key.value2)
     }
-  };
+  }
 
   const tokenInfo1 = useMemo(() => {
-    return tokenInfos.get(formData[Key.token1]);
-  }, [formData]);
+    return tokenInfos.get(formData[Key.token1])
+  }, [formData])
 
   const tokenInfo2 = useMemo(() => {
-    return tokenInfos.get(formData[Key.token2]);
-  }, [formData]);
+    return tokenInfos.get(formData[Key.token2])
+  }, [formData])
 
   const { balance: balance1 } = useBalance(
     formData[Key.token1],
     formData[Key.symbol1]
-  );
+  )
   const { balance: balance2 } = useBalance(
     formData[Key.token2],
     formData[Key.symbol2]
-  );
+  )
   const { balance: maxFeeBalance } = useBalance(
     tokenInfos.get(formData[Key.feeSymbol])?.contract_addr || "",
     formData[Key.feeSymbol]
-  );
+  )
 
   const selectToken1 = useSwapSelectToken(
     {
@@ -193,7 +187,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     },
     pairs,
     type
-  );
+  )
 
   const selectToken2 = useSwapSelectToken(
     {
@@ -208,48 +202,48 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     },
     pairs,
     type
-  );
+  )
 
   const { pair, lpContract, poolSymbol1, poolSymbol2 } = useMemo(() => {
     const info1 =
       type === Type.WITHDRAW
         ? lpTokenInfos.get(formData[Key.token1])?.[0]
-        : tokenInfo1;
+        : tokenInfo1
     const info2 =
       type === Type.WITHDRAW
         ? lpTokenInfos.get(formData[Key.token1])?.[1]
-        : tokenInfo2;
+        : tokenInfo2
 
     const selected = pairs.find((item) => {
       return (
         item.pair.find((s) => s.contract_addr === info1?.contract_addr) &&
         item.pair.find((s) => s.contract_addr === info2?.contract_addr)
-      );
-    });
+      )
+    })
 
-    const contract = selected?.contract || "";
-    const lpContract = selected?.liquidity_token || "";
-    const lpTokenInfo = lpTokenInfos.get(lpContract);
+    const contract = selected?.contract || ""
+    const lpContract = selected?.liquidity_token || ""
+    const lpTokenInfo = lpTokenInfos.get(lpContract)
 
     return {
       pair: contract,
       lpContract,
       poolSymbol1: lpTokenInfo?.[0]?.symbol,
       poolSymbol2: lpTokenInfo?.[1]?.symbol,
-    };
-  }, [formData, pairs, tokenInfo1, tokenInfo2, type]);
+    }
+  }, [formData, pairs, tokenInfo1, tokenInfo2, type])
 
   const simulation = useSwapSimulate({
     amount: toAmount(formData[!isReversed ? Key.value1 : Key.value2]),
     token: formData[!isReversed ? Key.token1 : Key.token2],
     pair,
     reverse: isReversed,
-  });
+  })
   const {
     simulated: simulatedData,
     simulating: isSimulating,
     error: simulationError,
-  } = simulation;
+  } = simulation
 
   const { result: poolResult, poolLoading } = usePool(
     pair,
@@ -257,7 +251,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     formData[Key.value1],
     type,
     balance1
-  );
+  )
 
   const simulationContents = useMemo(() => {
     if (
@@ -268,7 +262,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         (type !== Type.WITHDRAW ? formData[Key.symbol2] : true)
       )
     ) {
-      return [];
+      return []
     }
 
     const minimumReceived = simulatedData
@@ -278,7 +272,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
         })
-      : "10";
+      : "10"
 
     return [
       ...insertIf(type === Type.SWAP, {
@@ -354,20 +348,20 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     ]
   }, [find, formData, poolResult, simulatedData, slippageTolerance, type])
 
-  const { gasPrice } = useGasPrice(formData[Key.feeSymbol]);
+  const { gasPrice } = useGasPrice(formData[Key.feeSymbol])
   const getTax = useCallback(
     async ({ symbol1, symbol2, value1, value2, max1, max2 }) => {
-      let newTax = "0";
+      let newTax = "0"
 
-      const taxCap1 = await loadTaxInfo(symbol1);
-      const taxCap2 = await loadTaxInfo(symbol2);
-      const taxRate = await loadTaxRate();
+      const taxCap1 = await loadTaxInfo(symbol1)
+      const taxCap2 = await loadTaxInfo(symbol2)
+      const taxRate = await loadTaxRate()
       if (hasTaxToken(getSymbol(symbol1)) && taxCap1 && taxRate && max1) {
-        const tax1 = calcTax(toAmount(value1), taxCap1, taxRate);
+        const tax1 = calcTax(toAmount(value1), taxCap1, taxRate)
         newTax =
           newTax === "0"
             ? tax1 + getSymbol(symbol1)
-            : newTax + "," + tax1 + getSymbol(symbol1);
+            : newTax + "," + tax1 + getSymbol(symbol1)
       }
       if (
         type === Type.PROVIDE &&
@@ -376,24 +370,24 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         taxRate &&
         max2
       ) {
-        const tax2 = calcTax(toAmount(value2), taxCap2, taxRate);
+        const tax2 = calcTax(toAmount(value2), taxCap2, taxRate)
         newTax =
           newTax === "0"
             ? tax2 + getSymbol(symbol2)
-            : newTax + "," + tax2 + getSymbol(symbol2);
+            : newTax + "," + tax2 + getSymbol(symbol2)
       }
-      return newTax;
+      return newTax
     },
     [getSymbol, loadTaxInfo, loadTaxRate, type]
-  );
+  )
 
-  const [tax, setTax] = useState("");
-  const isTaxCalculating = useRef<boolean>(false);
+  const [tax, setTax] = useState("")
+  const isTaxCalculating = useRef<boolean>(false)
   useEffect(() => {
     if (isTaxCalculating?.current) {
-      return;
+      return
     }
-    isTaxCalculating.current = true;
+    isTaxCalculating.current = true
     getTax({
       symbol1: formData[Key.symbol1],
       symbol2: formData[Key.symbol2],
@@ -403,15 +397,15 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       max2: formData[Key.max2],
     })
       .then((value) => {
-        setTax(value);
+        setTax(value)
       })
       .catch(() => {
-        setTax("");
+        setTax("")
       })
       .finally(() => {
-        isTaxCalculating.current = false;
-      });
-  }, [formData, getTax]);
+        isTaxCalculating.current = false
+      })
+  }, [formData, getTax])
 
   const validateForm = async (
     key:
@@ -434,11 +428,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       feeValue,
       feeSymbol,
       maxFee,
-    } = { ...formData, ...(newValues || {}) };
+    } = { ...formData, ...(newValues || {}) }
 
     if (key === Key.value1) {
-      const taxCap = await loadTaxInfo(symbol1);
-      const taxRate = await loadTaxRate();
+      const taxCap = await loadTaxInfo(symbol1)
+      const taxRate = await loadTaxRate()
       return (
         v.amount(value1, {
           symbol: symbol1,
@@ -453,12 +447,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           taxRate,
           type,
         }) || true
-      );
+      )
     }
 
     if (key === Key.value2) {
       if (!symbol2) {
-        return true;
+        return true
       }
       if (type !== Type.WITHDRAW) {
         return (
@@ -473,66 +467,63 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             maxFee: "0",
             type,
           }) || true
-        );
+        )
       }
       if (isReversed || type === Type.WITHDRAW) {
-        return v.required(value2) || true;
+        return v.required(value2) || true
       }
     }
-    return true;
-  };
+    return true
+  }
 
   useEffect(() => {
-    setValue(Key.symbol1, tokenInfo1?.symbol || "");
-  }, [setValue, tokenInfo1]);
+    setValue(Key.symbol1, tokenInfo1?.symbol || "")
+  }, [setValue, tokenInfo1])
 
   useEffect(() => {
-    setValue(Key.symbol2, tokenInfo2?.symbol || "");
-  }, [setValue, tokenInfo2]);
+    setValue(Key.symbol2, tokenInfo2?.symbol || "")
+  }, [setValue, tokenInfo2])
 
   useEffect(() => {
-    setValue(Key.max1, balance1 || "");
-  }, [balance1, setValue]);
+    setValue(Key.max1, balance1 || "")
+  }, [balance1, setValue])
 
   useEffect(() => {
-    setValue(Key.max2, balance2 || "");
-  }, [balance2, setValue]);
+    setValue(Key.max2, balance2 || "")
+  }, [balance2, setValue])
 
   useEffect(() => {
-    setValue(Key.maxFee, maxFeeBalance || "");
-  }, [maxFeeBalance, setValue]);
+    setValue(Key.maxFee, maxFeeBalance || "")
+  }, [maxFeeBalance, setValue])
 
   useEffect(() => {
     switch (type) {
       case Type.SWAP:
-        const key = isReversed ? Key.value1 : Key.value2;
-        const symbol = isReversed ? tokenInfo1?.symbol : tokenInfo2?.symbol;
+        const key = isReversed ? Key.value1 : Key.value2
+        const symbol = isReversed ? tokenInfo1?.symbol : tokenInfo2?.symbol
         const value = simulationError
           ? "0"
-          : lookup(simulatedData?.amount, symbol);
+          : lookup(simulatedData?.amount, symbol)
 
         // Safe to use as deps
         if (!isNil(value)) {
-          setValue(key, value);
+          setValue(key, value)
           setTimeout(() => {
-            trigger(Key.value1);
-            trigger(Key.value2);
-          }, 100);
+            trigger(Key.value1)
+            trigger(Key.value2)
+          }, 100)
         }
-        break;
+        break
       case Type.PROVIDE:
         if (poolResult && !poolLoading) {
-          setValue(
-            Key.value2,
-            lookup(poolResult.estimated, tokenInfo2?.symbol)
-          );
+          setValue(Key.value2, lookup(poolResult.estimated, tokenInfo2?.symbol))
           setTimeout(() => {
-            trigger(Key.value1);
-            trigger(Key.value2);
-          }, 100);
-          return;
+            trigger(Key.value1)
+            trigger(Key.value2)
+          }, 100)
+          return
         }
-        break;
+        break
       case Type.WITHDRAW:
         if (
           poolResult !== undefined &&
@@ -540,7 +531,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           poolSymbol1 &&
           poolSymbol2
         ) {
-          const amounts = poolResult.estimated.split("-");
+          const amounts = poolResult.estimated.split("-")
           setValue(
             Key.value2,
             lookup(amounts[0], poolSymbol1) +
@@ -548,11 +539,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               " - " +
               lookup(amounts[1], poolSymbol2) +
               poolSymbol2
-          );
+          )
           setTimeout(() => {
-            trigger(Key.value1);
-            trigger(Key.value2);
-          }, 100);
+            trigger(Key.value1)
+            trigger(Key.value2)
+          }, 100)
         }
     }
   }, [
@@ -568,25 +559,25 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     poolSymbol1,
     poolSymbol2,
     trigger,
-  ]);
+  ])
   useEffect(() => {
-    setValue(Key.gasPrice, gasPrice || "");
-    setValue(Key.feeValue, gasPrice ? ceil(times(fee.gas, gasPrice)) : "");
-  }, [fee.gas, gasPrice, setValue]);
+    setValue(Key.gasPrice, gasPrice || "")
+    setValue(Key.feeValue, gasPrice ? ceil(times(fee.gas, gasPrice)) : "")
+  }, [fee.gas, gasPrice, setValue])
 
   useEffect(() => {
-    setValue(Key.feeValue, ceil(times(fee?.gas, gasPrice)) || "");
-  }, [fee, gasPrice, setValue]);
+    setValue(Key.feeValue, ceil(times(fee?.gas, gasPrice)) || "")
+  }, [fee, gasPrice, setValue])
 
   const handleFailure = useCallback(() => {
     setTimeout(() => {
       form.reset(form.getValues(), {
         keepIsSubmitted: false,
         keepSubmitCount: false,
-      });
-    }, 125);
-    setResult(undefined);
-  }, [form]);
+      })
+    }, 125)
+    setResult(undefined)
+  }, [form])
 
   const handleSubmit = useCallback(
     async (values) => {
@@ -598,7 +589,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         feeValue,
         feeSymbol,
         gasPrice,
-      } = values;
+      } = values
       try {
         const msgs = await generateContractMessages(
           {
@@ -626,43 +617,43 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               lpAddr: `${lpContract}`,
             },
           }[type] as any
-        );
-        const symbol = getSymbol(feeSymbol);
-        const gas = fee.gas;
-        const amount = feeValue;
-        const feeCoins = new Coins({});
-        feeCoins.set(symbol, ceil(amount));
+        )
+        const symbol = getSymbol(feeSymbol)
+        const gas = fee.gas
+        const amount = feeValue
+        const feeCoins = new Coins({})
+        feeCoins.set(symbol, ceil(amount))
         tax.split(",").every((item) => {
           if (item === "0") {
-            return false;
+            return false
           }
-          const taxCoin = Coin.fromString(item);
-          const feeCoin = feeCoins.get(taxCoin.denom);
+          const taxCoin = Coin.fromString(item)
+          const feeCoin = feeCoins.get(taxCoin.denom)
           if (feeCoin === undefined) {
-            feeCoins.set(taxCoin.denom, taxCoin.amount);
+            feeCoins.set(taxCoin.denom, taxCoin.amount)
           } else {
-            feeCoins.set(taxCoin.denom, feeCoin.amount.add(taxCoin.amount));
+            feeCoins.set(taxCoin.denom, feeCoin.amount.add(taxCoin.amount))
           }
-          return true;
-        });
+          return true
+        })
 
         const txOptions = {
-          msgs,
+          msgs: [msgs[0]],
           memo: undefined,
           purgeQueue: true,
           gasPrices: `${gasPrice}${getSymbol(feeSymbol)}`,
           fee: new StdFee(parseInt(gas), feeCoins),
-        };
-        const extensionResult = await terraExtensionPost(txOptions);
+        }
+        const extensionResult = await terraExtensionPost(txOptions)
 
         // const extensionResult = await postTerraExtension(options, txFee);
         if (extensionResult) {
-          setResult(extensionResult);
-          return;
+          setResult(extensionResult)
+          return
         }
       } catch (error) {
-        console.log(error);
-        setResult(error);
+        console.log(error)
+        setResult(error)
       }
     },
     [
@@ -676,9 +667,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       tax,
       terraExtensionPost,
     ]
-  );
+  )
 
-  const [result, setResult] = useState<TxResult | undefined>();
+  const [result, setResult] = useState<TxResult | undefined>()
 
   useEffect(() => {
     const handleResize = () => {
@@ -713,10 +704,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               iconUrl: iconSettings,
               onClick: () => {
                 if (settingsModal.isOpen) {
-                  settingsModal.close();
-                  return;
+                  settingsModal.close()
+                  return
                 }
-                settingsModal.open();
+                settingsModal.open()
               },
             },
             {
@@ -733,7 +724,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                   <Settings
                     values={slippageSettings}
                     onChange={(settings) => {
-                      setSlippageSettings(settings);
+                      setSlippageSettings(settings)
                     }}
                   />
                 </Container>
@@ -741,7 +732,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               visible: settingsModal.isOpen,
               isModalOnMobile: true,
               onClose: () => {
-                settingsModal.close();
+                settingsModal.close()
               },
             },
           ]}
@@ -760,7 +751,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                 autoComplete: "off",
                 type: "number",
                 onKeyDown: () => {
-                  setIsReversed(false);
+                  setIsReversed(false)
                 },
               }}
               error={
@@ -769,11 +760,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                   : undefined
               }
               feeSelect={(symbol) => {
-                setValue(Key.feeSymbol, symbol);
-                setFocus(Key.value1);
+                setValue(Key.feeSymbol, symbol)
+                setFocus(Key.value1)
                 setTimeout(() => {
-                  trigger(Key.value1);
-                }, 250);
+                  trigger(Key.value1)
+                }, 250)
               }}
               feeSymbol={formData[Key.feeSymbol]}
               help={renderBalance(balance1 || "0", formData[Key.symbol1])}
@@ -794,11 +785,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                         setValue(
                           Key.value1,
                           lookup(formData[Key.max1], formData[Key.symbol1])
-                        );
-                        trigger(Key.value1);
-                        return;
+                        )
+                        trigger(Key.value1)
+                        return
                       }
-                      let taxVal = "0";
+                      let taxVal = "0"
                       const taxs = (
                         await getTax({
                           symbol1: formData[Key.symbol1],
@@ -808,36 +799,33 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                           ),
                           max1: formData[Key.max1],
                         })
-                      ).split(",");
+                      ).split(",")
                       for (let i = 0; i < taxs.length; i++) {
                         if (taxs[i] === "0") {
-                          break;
+                          break
                         }
-                        const coin = Coin.fromString(taxs[i]);
+                        const coin = Coin.fromString(taxs[i])
                         if (coin.denom === getSymbol(formData[Key.symbol1])) {
-                          taxVal = coin.toData().amount;
-                          break;
+                          taxVal = coin.toData().amount
+                          break
                         }
                       }
 
-                      let maxBalance = minus(formData[Key.max1], taxVal);
+                      let maxBalance = minus(formData[Key.max1], taxVal)
                       // fee
                       if (formData[Key.symbol1] === formData[Key.feeSymbol]) {
                         if (gte(maxBalance, formData[Key.feeValue])) {
-                          maxBalance = minus(
-                            maxBalance,
-                            formData[Key.feeValue]
-                          );
+                          maxBalance = minus(maxBalance, formData[Key.feeValue])
                         } else {
-                          maxBalance = minus(maxBalance, maxBalance);
+                          maxBalance = minus(maxBalance, maxBalance)
                         }
                       }
 
                       maxBalance = lookup(maxBalance, formData[Key.symbol1], {
                         dp: 6,
-                      });
-                      setValue(Key.value1, maxBalance);
-                      trigger(Key.value1);
+                      })
+                      setValue(Key.value1, maxBalance)
+                      trigger(Key.value1)
                     }
                   : undefined
               }
@@ -881,7 +869,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                   [Type.PROVIDE, Type.WITHDRAW].includes(type) ||
                   (!isReversed && isSimulating),
                 onKeyDown: () => {
-                  setIsReversed(true);
+                  setIsReversed(true)
                 },
               }}
               error={
@@ -945,7 +933,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         </TabView>
       </form>
     </Wrapper>
-  );
-};
+  )
+}
 
-export default SwapForm;
+export default SwapForm
