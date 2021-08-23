@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import styles from "./Settings.module.scss"
 
@@ -17,6 +17,17 @@ const Settings = ({ values, onChange }: SettingsProps) => {
     defaultValues: values,
     mode: "onChange",
   })
+  const isDangerous = useMemo(() => {
+    if (values?.slippage === "custom") {
+      if (parseFloat(`${values?.custom}`) < 0.5) {
+        return true
+      }
+      return false
+    }
+    if (parseFloat(`${values?.slippage}`) < 0.5) {
+      return true
+    }
+  }, [values])
   const [formData, setFormData] = useState<SettingValues>()
   form.watch((data) => {
     setFormData((current) => {
@@ -62,7 +73,14 @@ const Settings = ({ values, onChange }: SettingsProps) => {
           </label>
         ))}
       </div>
-      <div className={styles.caption}>Your transaction may fail.</div>
+      <div
+        className={[
+          styles.caption,
+          !isDangerous && styles["caption--invisible"],
+        ].join(" ")}
+      >
+        Your transaction may fail.
+      </div>
     </div>
   )
 }

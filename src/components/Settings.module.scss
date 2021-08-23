@@ -25,6 +25,10 @@
 }
 
 .caption {
+  width: auto;
+  height: auto;
+  display: inline-block;
+  overflow: hidden;
   font-size: 14px;
   font-weight: normal;
   font-stretch: normal;
@@ -33,6 +37,13 @@
   letter-spacing: normal;
   text-align: left;
   color: $deepgray;
+  max-height: 9999px;
+  transition: all 0.2s ease-in-out;
+
+  &--invisible {
+    max-height: 0;
+    opacity: 0;
+  }
 }
 
 .radio-group {
