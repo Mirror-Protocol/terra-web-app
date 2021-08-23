@@ -106,7 +106,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           ? slippageSettings.custom
           : slippageSettings.slippage) || "1.0"
       ) / 100
-    ).toFixed(2)}`
+    ).toFixed(3)}`
   }, [slippageSettings])
 
   const { pairs } = usePairs()
