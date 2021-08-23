@@ -605,7 +605,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             [Type.PROVIDE]: {
               type: Type.PROVIDE,
               sender: `${walletAddress}`,
-              amount: `${value1}`,
+              fromAmount: `${value1}`,
+              toAmount: `${value2}`,
               from: `${token1}`,
               to: `${token2}`,
               slippage: slippageTolerance,

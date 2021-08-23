@@ -333,7 +333,8 @@ export default () => {
             type: Type.PROVIDE
             from: string
             to: string
-            amount: number | string
+            fromAmount: number | string
+            toAmount: number | string
             slippage: number | string
             sender: string
           }
