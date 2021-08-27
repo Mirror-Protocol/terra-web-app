@@ -45,7 +45,7 @@ const SwapToken = ({ symbol, balance, contract_addr,  formatTokenName }: Props) 
             ) : undefined}
             </div>
             <div className={styles.address}>
-              {truncate(contract_addr, [8, 8])}
+              {window.outerWidth < 1024 && symbols.length > 1 ? truncate(contract_addr, [0, 6]) : truncate(contract_addr, [8, 8])}
             </div>
         </div>
       </header>
