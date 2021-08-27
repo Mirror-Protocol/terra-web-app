@@ -11,9 +11,9 @@ import Wait, { STATUS } from "../../components/Wait"
 import { getTxInfosQuery } from "../../data/native/tx"
 import { bankBalanceIndexState } from "../../data/native/balance"
 import { concatFromContract } from "../receipts/receiptHelpers"
-import TxHash from "./TxHash"
 import TxInfo from "./TxInfo"
 import { PostError } from "./FormContainer"
+import Broadcasting from "./Broadcasting"
 
 interface Props {
   response?: TxResult
@@ -79,14 +79,12 @@ const Result = ({ response, error, parseTx, onFailure, gov }: Props) => {
 
   const content = {
     [STATUS.SUCCESS]: txInfo && <TxInfo txInfo={txInfo} parser={parseTx} />,
-    [STATUS.LOADING]: null,
+    [STATUS.LOADING]: <Broadcasting txhash={hash} />,
     [STATUS.FAILURE]: message,
   }[status]
 
   const wait = {
     status,
-
-    hash: status === STATUS.LOADING && <TxHash>{hash}</TxHash>,
 
     link:
       status === STATUS.SUCCESS

@@ -1,0 +1,75 @@
+@import "mixins";
+
+.component {
+  text-align: center;
+}
+
+.header {
+  margin: 10px 0 30px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.timestamp {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.card {
+  background: $gray-24;
+  border-radius: 8px;
+  padding: 20px;
+  padding-top: 36px;
+}
+
+.processing {
+  @include flex;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 36px;
+  white-space: nowrap;
+
+  .item {
+    margin: 0 10px;
+  }
+
+  .text {
+    width: 6em;
+    flex: none;
+  }
+}
+
+.icons {
+  @include flex;
+}
+
+.icon {
+  margin: 0 4px;
+
+  &:nth-child(2) {
+    opacity: 0.66;
+  }
+
+  &:nth-child(3) {
+    opacity: 0.33;
+  }
+}
+
+.muted {
+  opacity: 0.33;
+}
+
+.desc {
+  font-size: 14px;
+}
+
+.footer {
+  border-top: 1px solid $gray-34;
+  margin-top: 20px;
+  padding-top: 20px;
+}

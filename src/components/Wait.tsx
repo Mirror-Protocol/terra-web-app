@@ -1,11 +1,11 @@
-import { FC, ReactNode } from "react"
+import { FC, useEffect, useMemo, useState } from "react"
+import { intervalToDuration, startOfSecond } from "date-fns"
 import classNames from "classnames/bind"
 import Card from "./Card"
 import Icon from "./Icon"
 import Loading from "./Loading"
 import Button, { ButtonInterface, Submit } from "./Button"
 import LinkButton, { LinkProps } from "./LinkButton"
-import ResultFooter from "./ResultFooter"
 import styles from "./Wait.module.scss"
 
 const cx = classNames.bind(styles)
@@ -18,15 +18,14 @@ export enum STATUS {
 
 interface Props {
   status: STATUS
-  hash?: ReactNode
   link?: LinkProps
   button?: ButtonInterface
 }
 
-const Wait: FC<Props> = ({ status, hash, link, button, children }) => {
+const Wait: FC<Props> = ({ status, link, button, children }) => {
   const title = {
     [STATUS.SUCCESS]: "Complete!",
-    [STATUS.LOADING]: "Wait for receipt...",
+    [STATUS.LOADING]: "Broadcasting transaction...",
     [STATUS.FAILURE]: "Failed",
   }[status]
 
@@ -42,14 +41,13 @@ const Wait: FC<Props> = ({ status, hash, link, button, children }) => {
     <Loading size={40} />
   )
 
+  const fromLastSeen = useFromLastSeen()
+  const description = status === STATUS.LOADING && fromLastSeen
+
   return (
     <article>
-      <Card icon={icon} title={title} lg>
+      <Card icon={icon} title={title} description={description} lg>
         <section className={styles.contents}>
-          {hash && (
-            <ResultFooter list={[{ title: "Tx Hash", content: hash }]} />
-          )}
-
           {status === STATUS.FAILURE ? (
             <p className={styles.feedback}>{children}</p>
           ) : (
@@ -72,3 +70,16 @@ const Wait: FC<Props> = ({ status, hash, link, button, children }) => {
 }
 
 export default Wait
+
+/* hooks */
+const useFromLastSeen = () => {
+  const lastSeen = useMemo(() => startOfSecond(new Date()), [])
+  const [now, setNow] = useState(lastSeen)
+
+  useEffect(() => {
+    setInterval(() => setNow(startOfSecond(new Date())), 1000)
+  }, [])
+
+  const { minutes, seconds } = intervalToDuration({ start: lastSeen, end: now })
+  return [minutes, seconds].map((n) => String(n).padStart(2, "0")).join(":")
+}

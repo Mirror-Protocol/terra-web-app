@@ -21,8 +21,10 @@
   }
 }
 
-.description:not(:empty) {
-  margin-top: 5px;
+.description {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 8px;
 }
 
 /* theme */
@@ -42,11 +44,11 @@
 .icon {
   text-align: center;
   @include mobile {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
   }
 
   @include desktop {
-    margin-bottom: 60px;
+    margin-bottom: 32px;
   }
 
   .wrapper {

@@ -48,6 +48,9 @@ const CardHeader: FC<Props> = ({ header, title, ...props }) => {
       <>
         <section className={styles.wrapper}>{icon}</section>
         <h1 className={styles.title}>{title}</h1>
+        {description && (
+          <section className={styles.description}>{description}</section>
+        )}
       </>
     ),
   }[headerType]
