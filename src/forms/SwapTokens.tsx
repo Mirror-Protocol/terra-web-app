@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import classNames from "classnames/bind"
 import { gt } from "../libs/math"
-import { useContract, useCombineKeys } from "../hooks"
+import { useContract, useCombineKeys, useContractsAddress } from "../hooks"
 import { Config } from "./useSelectAsset"
 import SwapToken from "./SwapToken"
 import styles from "./SwapTokens.module.scss"
@@ -37,6 +37,7 @@ const SwapTokens = ({
 
   const { find } = useContract()
   const { loading } = useCombineKeys([priceKey, balanceKey])
+  const { isNativeToken} = useContractsAddress()
 
   /* search */
   const [value, setValue] = useState("")
@@ -134,6 +135,7 @@ const SwapTokens = ({
               let swapToken = {
                 symbol: "",
                 name: "",
+                contract_addr: "",
               }
 
               if (type === Type.WITHDRAW) {
@@ -143,6 +145,7 @@ const SwapTokens = ({
                     ? tokenInfoList[0].symbol + "-" + tokenInfoList[1].symbol
                     : "",
                   name: "",
+                  contract_addr: item,
                 }
               } else {
                 const tokenInfo = tokenInfos.get(item)
@@ -150,6 +153,7 @@ const SwapTokens = ({
                 swapToken = {
                   symbol: tokenInfo?.symbol || "",
                   name: tokenInfo?.name || "",
+                  contract_addr: isNativeToken(item) ? "" : item,
                 }
               }
 
