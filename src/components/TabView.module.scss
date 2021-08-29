@@ -103,6 +103,12 @@ $radius: 10px;
     &:hover {
       transform: rotate(135deg);
     }
+
+    &:disabled {
+      opacity: 0.5;
+      transform: rotate(0deg);
+      cursor: not-allowed;
+    }
   }
 }
 

@@ -481,6 +481,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       Key.token1,
       type !== Type.WITHDRAW ? state?.symbol ?? ULUNA : InitLP
     )
+
+    if (type === Type.WITHDRAW) {
+      setValue(Key.token2, "")
+      setValue(Key.value2, "")
+    }
   }, [type, setValue, state])
 
   useEffect(() => {
@@ -598,6 +603,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         gasPrice,
       } = values
       try {
+        settingsModal.close()
         const msgs = await generateContractMessages(
           {
             [Type.SWAP]: {
@@ -665,12 +671,13 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       }
     },
     [
+      settingsModal,
       generateContractMessages,
-      slippageTolerance,
       walletAddress,
-      getSymbol,
+      slippageTolerance,
       lpContract,
       type,
+      getSymbol,
       fee,
       tax,
       terraExtensionPost,
@@ -717,12 +724,14 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                 }
                 settingsModal.open()
               },
+              disabled: formState.isSubmitting,
             },
             {
               iconUrl: iconReload,
               onClick: () => {
                 window.location.reload()
               },
+              disabled: formState.isSubmitting,
             },
           ]}
           side={[

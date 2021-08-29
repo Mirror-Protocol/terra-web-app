@@ -59,7 +59,7 @@ interface TabViewProps {
   tabs: { name: string; title?: string; tooltip?: string }[]
   selectedTabName?: string
   shadow?: boolean
-  extra?: { iconUrl: string; onClick: () => void }[]
+  extra?: { iconUrl: string; onClick: () => void; disabled?: boolean }[]
   side?: {
     component: ReactNode
     visible: boolean

@@ -52,13 +52,14 @@ const TabView: FC<TabViewProps> = ({
           </div>
           {extra?.length && (
             <div className={styles.extra}>
-              {extra.map(({ iconUrl, onClick }) => (
+              {extra.map(({ iconUrl, onClick, disabled }) => (
                 <button
                   key={iconUrl}
                   className={styles.extra__item}
                   type="button"
                   style={{ backgroundImage: `url('${iconUrl}')` }}
                   onClick={onClick}
+                  disabled={disabled}
                 />
               ))}
             </div>
