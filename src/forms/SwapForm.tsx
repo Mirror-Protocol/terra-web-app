@@ -104,7 +104,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       parseFloat(
         (slippageSettings?.slippage === "custom"
           ? slippageSettings.custom
-          : slippageSettings.slippage) || "1.0"
+          : slippageSettings.slippage) || `${DEFAULT_MAX_SPREAD}`
       ) / 100
     ).toFixed(3)}`
   }, [slippageSettings])

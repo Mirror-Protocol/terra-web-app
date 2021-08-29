@@ -62,7 +62,7 @@ export const NATIVE_TOKENS = [
 ]
 
 /* terraswap:configs */
-export const DEFAULT_MAX_SPREAD = 0.05
+export const DEFAULT_MAX_SPREAD = 0.5
 export const MAX_MSG_LENGTH = 1024
 
 /* network:settings */
