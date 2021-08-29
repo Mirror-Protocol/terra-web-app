@@ -6,7 +6,7 @@ import Result from "./Result"
 import TabView from "components/TabView"
 import { useLocation } from "react-router-dom"
 import { isNil } from "ramda"
-import { LP, LUNA, MAX_SPREAD, ULUNA } from "constants/constants"
+import { LP, LUNA, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
 import {
   useNetwork,
   useContractsAddress,
@@ -95,7 +95,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const [slippageSettings, setSlippageSettings] = useLocalStorage<
     SettingValues
   >("slippage", {
-    slippage: `${MAX_SPREAD}`,
+    slippage: `${DEFAULT_MAX_SPREAD}`,
     custom: "",
   })
   const slippageTolerance = useMemo(() => {

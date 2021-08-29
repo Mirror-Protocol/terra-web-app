@@ -12,6 +12,8 @@ interface SwapTxInfo {
     }
   }
 
+  raw_log?: string
+
   logs: SwapTxLog[]
 }
 

@@ -57,7 +57,6 @@ const Settings = ({ values, onChange }: SettingsProps) => {
               {value === "custom" ? (
                 <input
                   type="number"
-                  max={100}
                   min={0}
                   step={0.01}
                   onFocus={() => {
