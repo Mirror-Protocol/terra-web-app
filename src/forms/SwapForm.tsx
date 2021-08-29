@@ -177,7 +177,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const selectToken1 = useSwapSelectToken(
     {
       value: formData[Key.token1],
-      symbol: formData[Key.symbol2],
+      symbol: formData[Key.symbol1],
       onSelect: handleToken1Select,
       priceKey,
       balanceKey,
@@ -475,6 +475,13 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     }
     return true
   }
+
+  useEffect(() => {
+    setValue(
+      Key.token1,
+      type !== Type.WITHDRAW ? state?.symbol ?? ULUNA : InitLP
+    )
+  }, [type, setValue, state])
 
   useEffect(() => {
     setValue(Key.symbol1, tokenInfo1?.symbol || "")
