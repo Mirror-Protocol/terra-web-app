@@ -304,6 +304,7 @@ export default () => {
               ) {
                 return
               }
+           
               const lpTokenInfo = await getTokenInfo({
                 token: { contract_addr: pairResult.liquidity_token },
               })

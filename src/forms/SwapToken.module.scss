@@ -12,6 +12,7 @@ $name: 12px;
 
 .header {
   text-align: left;
+  width: 100%;
 }
 
 .symbol {
@@ -27,6 +28,12 @@ $name: 12px;
   line-height: 20px;
 }
 
+.symbol_name {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
 .logo {
   float: left;
 }
@@ -37,6 +44,13 @@ $name: 12px;
   font-size: $symbol;
   font-weight: 500;
   float: left;
+  line-height: 24px;
+}
+
+.address {
+  color: $deepgray;
+  margin-right: 8px;
+  font-size: 14px;
   line-height: 24px;
 }
 
