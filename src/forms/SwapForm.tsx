@@ -589,6 +589,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       })
     }, 125)
     setResult(undefined)
+    window.location.reload()
   }, [form])
 
   const handleSubmit = useCallback(
