@@ -3,11 +3,10 @@ import styled from "styled-components"
 import Container from "components/Container"
 import { useForm } from "react-hook-form"
 import Result from "./Result"
-import Tab from "components/Tab"
+import TabView from "components/TabView"
 import { useLocation } from "react-router-dom"
 import { isNil } from "ramda"
-import useNewContractMsg from "terra/useNewContractMsg"
-import { LP, LUNA, MAX_SPREAD, ULUNA } from "constants/constants"
+import { LP, LUNA, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
 import {
   useNetwork,
   useContractsAddress,
@@ -24,7 +23,6 @@ import {
   placeholder,
   step,
   renderBalance,
-  toBase64,
   calcTax,
 } from "./formHelpers"
 import useSwapSimulate from "rest/useSwapSimulate"
@@ -49,6 +47,11 @@ import MESSAGE from "lang/MESSAGE.json"
 import SwapConfirm from "./SwapConfirm"
 import useAPI from "rest/useAPI"
 import { TxResult, useWallet } from "@terra-money/wallet-provider"
+import iconSettings from "images/icon-settings.svg"
+import iconReload from "images/icon-reload.svg"
+import { useModal } from "components/Modal"
+import Settings, { SettingValues } from "components/Settings"
+import useLocalStorage from "libs/useLocalStorage"
 
 enum Key {
   token1 = "token1",
@@ -76,17 +79,35 @@ const Wrapper = styled.div`
   width: 100%;
   height: auto;
   position: relative;
+  margin-top: 60px;
 `
 
-const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
+const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
-  const { toToken, isNativeToken, getSymbol } = useContractsAddress()
-  const { loadTaxInfo, loadTaxRate } = useAPI()
+  const { getSymbol } = useContractsAddress()
+  const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI()
   const { state } = useLocation<{ symbol: string }>()
   const { fee } = useNetwork()
   const { find } = useContract()
   const walletAddress = useAddress()
   const { post: terraExtensionPost } = useWallet()
+  const settingsModal = useModal()
+  const [slippageSettings, setSlippageSettings] = useLocalStorage<
+    SettingValues
+  >("slippage", {
+    slippage: `${DEFAULT_MAX_SPREAD}`,
+    custom: "",
+  })
+  const slippageTolerance = useMemo(() => {
+    // 1% = 0.01
+    return `${(
+      parseFloat(
+        (slippageSettings?.slippage === "custom"
+          ? slippageSettings.custom
+          : slippageSettings.slippage) || `${DEFAULT_MAX_SPREAD}`
+      ) / 100
+    ).toFixed(3)}`
+  }, [slippageSettings])
 
   const { pairs } = usePairs()
   const balanceKey = {
@@ -156,7 +177,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
   const selectToken1 = useSwapSelectToken(
     {
       value: formData[Key.token1],
-      symbol: formData[Key.symbol2],
+      symbol: formData[Key.symbol1],
       onSelect: handleToken1Select,
       priceKey,
       balanceKey,
@@ -248,7 +269,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
       ? calc.minimumReceived({
           offer_amount: toAmount(formData[Key.value1]),
           belief_price: decimal(simulatedData?.price, 18),
-          max_spread: String(MAX_SPREAD),
+          max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
         })
       : "10"
@@ -325,7 +346,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
         ),
       },
     ]
-  }, [find, formData, poolResult, simulatedData, type])
+  }, [find, formData, poolResult, simulatedData, slippageTolerance, type])
 
   const { gasPrice } = useGasPrice(formData[Key.feeSymbol])
   const getTax = useCallback(
@@ -456,6 +477,18 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
   }
 
   useEffect(() => {
+    setValue(
+      Key.token1,
+      type !== Type.WITHDRAW ? state?.symbol ?? ULUNA : InitLP
+    )
+
+    if (type === Type.WITHDRAW) {
+      setValue(Key.token2, "")
+      setValue(Key.value2, "")
+    }
+  }, [type, setValue, state])
+
+  useEffect(() => {
     setValue(Key.symbol1, tokenInfo1?.symbol || "")
   }, [setValue, tokenInfo1])
 
@@ -556,8 +589,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
       })
     }, 125)
     setResult(undefined)
+    window.location.reload()
   }, [form])
-  const newContractMsg = useNewContractMsg()
 
   const handleSubmit = useCallback(
     async (values) => {
@@ -566,78 +599,40 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
         token2,
         value1,
         value2,
-        symbol1,
-        symbol2,
         feeValue,
         feeSymbol,
         gasPrice,
       } = values
-      const amount1 = toAmount(value1)
-      const amount2 = toAmount(value2)
-      const asset = toToken({ symbol: token1, amount: amount1 })
       try {
-        const msgs = {
-          [Type.SWAP]: isNativeToken(token1)
-            ? [
-                newContractMsg(pair, { swap: { offer_asset: asset } }, [
-                  { amount: amount1, denom: getSymbol(symbol1) },
-                ]),
-              ]
-            : [
-                newContractMsg(token1, {
-                  send: {
-                    amount: amount1,
-                    contract: pair,
-                    msg: toBase64({ swap: {} }),
-                  },
-                }),
-              ],
-          [Type.PROVIDE]: [
-            ...insertIf(
-              !isNativeToken(token1),
-              newContractMsg(token1, {
-                increase_allowance: { amount: amount1, spender: pair },
-              })
-            ),
-            ...insertIf(
-              !isNativeToken(token2),
-              newContractMsg(token2, {
-                increase_allowance: { amount: amount2, spender: pair },
-              })
-            ),
-            newContractMsg(
-              pair,
-              {
-                provide_liquidity: {
-                  assets: [
-                    toToken({ amount: amount1, symbol: token1 }),
-                    toToken({ amount: amount2, symbol: token2 }),
-                  ],
-                  slippage_tolerance: "0.1",
-                },
-              },
-              [
-                ...insertIf(isNativeToken(token1), {
-                  amount: amount1,
-                  denom: getSymbol(symbol1),
-                }),
-                ...insertIf(isNativeToken(token2), {
-                  amount: amount2,
-                  denom: getSymbol(symbol2),
-                }),
-              ]
-            ),
-          ],
-          [Type.WITHDRAW]: [
-            newContractMsg(lpContract, {
-              send: {
-                amount: amount1,
-                contract: pair,
-                msg: toBase64({ withdraw_liquidity: {} }),
-              },
-            }),
-          ],
-        }[type]
+        settingsModal.close()
+        const msgs = await generateContractMessages(
+          {
+            [Type.SWAP]: {
+              type: Type.SWAP,
+              sender: `${walletAddress}`,
+              amount: `${value1}`,
+              from: `${token1}`,
+              to: `${token2}`,
+              max_spread: slippageTolerance,
+              belief_price: `${value2}`,
+            },
+            [Type.PROVIDE]: {
+              type: Type.PROVIDE,
+              sender: `${walletAddress}`,
+              fromAmount: `${value1}`,
+              toAmount: `${value2}`,
+              from: `${token1}`,
+              to: `${token2}`,
+              slippage: slippageTolerance,
+            },
+            [Type.WITHDRAW]: {
+              type: Type.WITHDRAW,
+              sender: `${walletAddress}`,
+              amount: `${value1}`,
+              lpAddr: `${lpContract}`,
+            },
+          }[type] as any
+        )
         const symbol = getSymbol(feeSymbol)
         const gas = fee.gas
         const amount = feeValue
@@ -658,7 +653,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
         })
 
         const txOptions = {
-          msgs,
+          msgs: [msgs[0]],
           memo: undefined,
           purgeQueue: true,
           gasPrices: `${gasPrice}${getSymbol(feeSymbol)}`,
@@ -672,41 +667,95 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
           return
         }
       } catch (error) {
+        console.log(error)
         setResult(error)
       }
     },
     [
-      toToken,
-      isNativeToken,
-      newContractMsg,
-      pair,
-      getSymbol,
+      settingsModal,
+      generateContractMessages,
+      walletAddress,
+      slippageTolerance,
       lpContract,
       type,
-      tax,
+      getSymbol,
       fee,
+      tax,
       terraExtensionPost,
     ]
   )
 
   const [result, setResult] = useState<TxResult | undefined>()
 
+  useEffect(() => {
+    const handleResize = () => {
+      settingsModal.close()
+    }
+    window.addEventListener("resize", handleResize)
+    return () => {
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [settingsModal])
+
   return (
     <Wrapper>
-      <Container sm>
-        {formState.isSubmitted && result && (
+      {formState.isSubmitted && result && (
+        <Container sm>
           <Result
             response={result}
             error={result instanceof Error ? result : undefined}
             parserKey={type || "default"}
             onFailure={handleFailure}
           />
-        )}
-        <form
-          onSubmit={form.handleSubmit(handleSubmit, handleFailure)}
-          style={{ display: formState.isSubmitted ? "none" : "block" }}
+        </Container>
+      )}
+      <form
+        onSubmit={form.handleSubmit(handleSubmit, handleFailure)}
+        style={{ display: formState.isSubmitted ? "none" : "block" }}
+      >
+        <TabView
+          {...tabs}
+          extra={[
+            {
+              iconUrl: iconSettings,
+              onClick: () => {
+                if (settingsModal.isOpen) {
+                  settingsModal.close()
+                  return
+                }
+                settingsModal.open()
+              },
+              disabled: formState.isSubmitting,
+            },
+            {
+              iconUrl: iconReload,
+              onClick: () => {
+                window.location.reload()
+              },
+              disabled: formState.isSubmitting,
+            },
+          ]}
+          side={[
+            {
+              component: (
+                <Container sm>
+                  <Settings
+                    values={slippageSettings}
+                    onChange={(settings) => {
+                      setSlippageSettings(settings)
+                    }}
+                  />
+                </Container>
+              ),
+              visible: settingsModal.isOpen,
+              isModalOnMobile: true,
+              onClose: () => {
+                settingsModal.close()
+              },
+            },
+          ]}
         >
-          <Tab {...tabs}>
+          <Container sm>
             <SwapFormGroup
               input={{
                 ...register(Key.value1, {
@@ -762,7 +811,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
                       const taxs = (
                         await getTax({
                           symbol1: formData[Key.symbol1],
-                          value1:  lookup(formData[Key.max1], formData[Key.symbol1]),
+                          value1: lookup(
+                            formData[Key.max1],
+                            formData[Key.symbol1]
+                          ),
                           max1: formData[Key.max1],
                         })
                       ).split(",")
@@ -895,9 +947,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: Tab }) => {
                 submit
               />
             </div>
-          </Tab>
-        </form>
-      </Container>
+          </Container>
+        </TabView>
+      </form>
     </Wrapper>
   )
 }

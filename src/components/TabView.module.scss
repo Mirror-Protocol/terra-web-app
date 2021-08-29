@@ -1,0 +1,166 @@
+@import "mixins";
+@import "variables";
+
+$radius: 10px;
+
+.wrapper {
+  @include flex(center);
+  align-items: flex-start;
+  width: 100%;
+  height: auto;
+  @include mobile {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.header {
+  @include flex(space-between);
+  align-items: center;
+  padding: 30px;
+  padding-bottom: 0;
+  @include mobile {
+    padding: 30px 16px;
+    padding-bottom: 0;
+  }
+  width: 100%;
+  height: auto;
+}
+
+.tabs {
+  @include flex(flex-start);
+
+  &__item {
+    @include flex;
+    @include link;
+
+    position: relative;
+    color: $blue;
+    font-size: 16px;
+    background: #ffffff;
+    margin-right: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: 400;
+    transition: font-weight 0.2s ease-in-out;
+    &::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      width: 0%;
+      height: 2px;
+      background-color: $blue;
+      opacity: 0;
+      transition: all 0.2s ease-in-out;
+      transform: translateX(-50%);
+    }
+
+    &__sizer {
+      font-weight: 700;
+      opacity: 0;
+    }
+
+    &__label {
+      position: absolute;
+    }
+
+    &:only-child {
+      height: unset;
+    }
+
+    &.active {
+      color: $blue;
+      font-weight: 700;
+      &::after {
+        width: 100%;
+        opacity: 1;
+      }
+    }
+
+    &:hover {
+      font-weight: 700;
+      color: $blue;
+    }
+  }
+}
+
+.extra {
+  @include flex(flex-end);
+  &__item {
+    width: 24px;
+    height: 24px;
+    background-size: contain;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    color: $blue;
+    display: inline-block;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    transform: rotate(0deg);
+    margin-left: 10px;
+
+    &:hover {
+      transform: rotate(135deg);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      transform: rotate(0deg);
+      cursor: not-allowed;
+    }
+  }
+}
+
+.content {
+  padding: 30px;
+
+  @include mobile {
+    padding: 30px 16px;
+  }
+}
+
+.side {
+  width: 100%;
+  height: auto;
+  position: relative;
+  max-width: 310px;
+  margin-left: 10px;
+  transition: max-width 0.2s ease-in-out;
+
+  @include mobile {
+    margin-left: 0;
+    margin-top: 10px;
+    max-width: unset;
+    width: unset;
+  }
+
+  &--invisible {
+    max-width: 0;
+    margin-left: 0;
+  }
+
+  &__view {
+    width: 100%;
+    height: auto;
+    position: relative;
+    transition: all 0.2s cubic-bezier(1, 0, 0, 1);
+    overflow-x: hidden;
+    &--invisible {
+      transform: translate(-12px, -12px);
+      opacity: 0;
+      height: 0;
+    }
+
+    &--hide-on-mobile {
+      @include mobile {
+        display: none !important;
+      }
+    }
+    &--hide-on-desktop {
+      @include desktop {
+        display: none !important;
+      }
+    }
+  }
+}

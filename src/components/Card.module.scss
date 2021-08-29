@@ -3,8 +3,8 @@
 
 .card {
   background: $darkblue;
-
   border-radius: 15px;
+  max-width: 100%;
   position: relative;
 
   &.lg {

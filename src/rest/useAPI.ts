@@ -21,6 +21,8 @@ import { useCallback } from "react"
 import useURL from "graphql/useURL"
 import terraswapConfig from "constants/terraswap.json"
 import axios from "./request"
+import { Type } from "pages/Swap"
+import { Msg } from "@terra-money/terra.js"
 interface DenomBalanceResponse {
   height: string
   result: DenomInfo[]
@@ -224,12 +226,15 @@ export default () => {
       const res: PairsResult = (await axios.get(url)).data
 
       if (res.pairs.length !== 0) {
-        res.pairs.filter((pair) => 
-          !isBlacklisted(pair?.asset_infos?.[0]) &&
-          !isBlacklisted(pair?.asset_infos?.[1])
-        ).forEach((pair) => {
-          result.pairs.push(pair)
-        })
+        res.pairs
+          .filter(
+            (pair) =>
+              !isBlacklisted(pair?.asset_infos?.[0]) &&
+              !isBlacklisted(pair?.asset_infos?.[1])
+          )
+          .forEach((pair) => {
+            result.pairs.push(pair)
+          })
 
         return result
       }
@@ -272,6 +277,16 @@ export default () => {
     return res
   }, [service])
 
+  const loadSwappableTokenAddresses = useCallback(
+    async (from: string) => {
+      const res: string[] = (
+        await axios.get(`${service}/tokens/swap`, { params: { from } })
+      ).data
+      return res
+    },
+    [service]
+  )
+
   const loadTokenInfo = useCallback(
     async (contract: string): Promise<TokenResult> => {
       const url = getURL(contract, { token_info: {} })
@@ -302,6 +317,46 @@ export default () => {
     [getURL]
   )
 
+  const generateContractMessages = useCallback(
+    async (
+      query:
+        | {
+            type: Type.SWAP
+            from: string
+            to: string
+            amount: number | string
+            max_spread: number | string
+            belief_price: number | string
+            sender: string
+          }
+        | {
+            type: Type.PROVIDE
+            from: string
+            to: string
+            fromAmount: number | string
+            toAmount: number | string
+            slippage: number | string
+            sender: string
+          }
+        | {
+            type: Type.WITHDRAW
+            lpAddr: string
+            amount: number | string
+            sender: string
+          }
+    ) => {
+      const { type, ...params } = query
+      const url = `${service}/tx/${type}`.toLowerCase()
+      const res: any[] = (await axios.get(url, { params })).data
+
+      return res.map((item) => {
+        console.log(item)
+        return Msg.fromData(Array.isArray(item) ? item[0] : item)
+      })
+    },
+    [service]
+  )
+
   // useTax
   const loadTaxInfo = useCallback(
     async (symbol: string) => {
@@ -328,9 +383,11 @@ export default () => {
     loadGasPrice,
     loadPairs,
     loadTokensInfo,
+    loadSwappableTokenAddresses,
     loadTokenInfo,
     loadPool,
     querySimulate,
+    generateContractMessages,
     loadTaxInfo,
     loadTaxRate,
   }

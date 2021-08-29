@@ -2,10 +2,14 @@
 @import "variables";
 
 .modal {
-  width: calc(100% - #{$gutter * 2});
+  width: auto;
   max-width: $modal-width;
   outline: 0;
   position: relative;
+
+  @include mobile {
+    margin: 0 auto;
+  }
 }
 
 .overlay {

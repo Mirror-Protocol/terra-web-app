@@ -1,0 +1,125 @@
+@import "mixins";
+@import "variables";
+
+.wrapper {
+  width: 100%;
+  height: auto;
+  position: relative;
+
+  @include mobile {
+    max-width: 280px;
+  }
+}
+
+.title {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: $deepgray;
+  margin-bottom: 16px;
+}
+
+.caption {
+  width: auto;
+  height: auto;
+  display: inline-block;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  color: $deepgray;
+  max-height: 9999px;
+  transition: all 0.2s ease-in-out;
+
+  &--invisible {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+.radio-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  &__item {
+    margin-right: 4px;
+    &:last-child {
+      margin-right: unset;
+    }
+    & input[type="radio"] {
+      width: 0%;
+      height: 0%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      visibility: collapse;
+      opacity: 0;
+    }
+
+    & div {
+      min-width: 52px;
+      display: inline-block;
+      border-radius: 8px;
+      background-color: #ffffff;
+      color: $blue;
+      border: 1px solid $blue;
+      padding: 4px 8px;
+      text-align: center;
+      transition: all 0.125s ease-in-out;
+      cursor: pointer;
+      user-select: none;
+      font-size: 12px;
+      font-weight: bold;
+      font-stretch: normal;
+      font-style: normal;
+      line-height: normal;
+      letter-spacing: normal;
+
+      @include mobile {
+        padding: 8px;
+      }
+
+      & input {
+        width: 48px;
+        border: none;
+        background-color: transparent;
+        color: $blue;
+        font-size: 12px;
+        font-weight: bold;
+        font-stretch: normal;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: normal;
+        text-align: right;
+        padding-right: 8px;
+      }
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    & input:checked + div,
+    & input:hover + div {
+      background-color: $blue;
+      &,
+      & * {
+        color: #ffffff;
+      }
+    }
+    & input:checked + div {
+      opacity: 1;
+    }
+  }
+}

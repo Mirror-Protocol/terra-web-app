@@ -55,6 +55,11 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
       }
       try {
         const { data: res } = await axios.get(`${fcd}/txs/${txHash}`)
+        if (res?.code) {
+          setTxInfo(res)
+          setStatus(STATUS.FAILURE)
+          return
+        }
         if (res?.txhash) {
           setTxInfo(res)
           setStatus(STATUS.SUCCESS)
@@ -117,7 +122,12 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
         </p>
       </div>
     ),
-    [STATUS.FAILURE]: <p className={styles.feedback}>{message}</p>,
+    [STATUS.FAILURE]: (
+      <>
+        {txInfo && <SwapTxInfo txInfo={txInfo} parserKey={parserKey} />}
+        <p className={styles.feedback}>{txInfo?.raw_log || message}</p>
+      </>
+    ),
   }[status]
 
   const button = {
