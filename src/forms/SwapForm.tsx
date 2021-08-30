@@ -656,7 +656,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         })
 
         const txOptions = {
-          msgs: [msgs[0]],
+          msgs,
           memo: undefined,
           purgeQueue: true,
           gasPrices: `${gasPrice}${getSymbol(feeSymbol)}`,

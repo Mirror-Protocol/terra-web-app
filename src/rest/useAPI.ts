@@ -347,12 +347,10 @@ export default () => {
     ) => {
       const { type, ...params } = query
       const url = `${service}/tx/${type}`.toLowerCase()
-      const res: any[] = (await axios.get(url, { params })).data
+      const res = (await axios.get(url, { params })).data
 
-      return res.map((item) => {
-        console.log(item)
-        return Msg.fromData(Array.isArray(item) ? item[0] : item)
-      })
+      const data = Array.isArray(res[0]) ? res[0] : res
+      return data.map((item: Msg.Data) => Msg.fromData(item))
     },
     [service]
   )
