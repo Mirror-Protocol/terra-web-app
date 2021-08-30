@@ -30,7 +30,7 @@ import useSwapSelectToken from "./useSwapSelectToken"
 import SwapFormGroup from "./SwapFormGroup"
 import usePairs, { tokenInfos, lpTokenInfos, InitLP } from "rest/usePairs"
 import useBalance from "rest/useBalance"
-import { minus, gte, times, ceil } from "libs/math"
+import { minus, gte, times, ceil, div } from "libs/math"
 import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
@@ -268,7 +268,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     const minimumReceived = simulatedData
       ? calc.minimumReceived({
           offer_amount: toAmount(formData[Key.value1]),
-          belief_price: decimal(simulatedData?.price, 18),
+          belief_price: decimal(
+            div(toAmount(formData[Key.value1]), simulatedData?.price),
+            18
+          ),
           max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
         })
@@ -614,7 +617,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               from: `${token1}`,
               to: `${token2}`,
               max_spread: slippageTolerance,
-              belief_price: `${value2}`,
+              belief_price: `${decimal(div(value1, value2), 18)}`,
             },
             [Type.PROVIDE]: {
               type: Type.PROVIDE,
@@ -653,7 +656,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         })
 
         const txOptions = {
-          msgs: [msgs[0]],
+          msgs,
           memo: undefined,
           purgeQueue: true,
           gasPrices: `${gasPrice}${getSymbol(feeSymbol)}`,
