@@ -1,10 +1,14 @@
+import { useEffect, useMemo, useState } from "react"
 import classNames from "classnames"
-import Icon from "../../components/Icon"
+import { intervalToDuration, startOfSecond } from "date-fns"
 import ResultFooter from "../../components/ResultFooter"
+import { ReactComponent as Icon } from "./Queued.svg"
 import TxHash from "./TxHash"
 import styles from "./Broadcasting.module.scss"
 
 const Broadcasting = ({ txhash }: { txhash: string }) => {
+  const fromLastSeen = useFromLastSeen()
+
   return (
     <article className={styles.component}>
       <div className={styles.card}>
@@ -14,20 +18,12 @@ const Broadcasting = ({ txhash }: { txhash: string }) => {
           </div>
 
           <div className={classNames(styles.item, styles.icons)}>
-            <Icon name="ChevronRight" className={styles.icon} />
-            <Icon name="ChevronRight" className={styles.icon} />
-            <Icon name="ChevronRight" className={styles.icon} />
-          </div>
-
-          <div className={classNames(styles.item, styles.text, styles.muted)}>
-            <h2>Processed</h2>
+            <Icon className={styles.icon} />
           </div>
         </section>
 
-        <p className={styles.desc}>
-          The transaction has been successfully queued and will be processed
-          shortly.
-        </p>
+        <p className={styles.timestamp}>{fromLastSeen}</p>
+        <p className={styles.desc}>This transaction is in process</p>
 
         <footer className={styles.footer}>
           <ResultFooter
@@ -40,3 +36,16 @@ const Broadcasting = ({ txhash }: { txhash: string }) => {
 }
 
 export default Broadcasting
+
+/* hooks */
+const useFromLastSeen = () => {
+  const lastSeen = useMemo(() => startOfSecond(new Date()), [])
+  const [now, setNow] = useState(lastSeen)
+
+  useEffect(() => {
+    setInterval(() => setNow(startOfSecond(new Date())), 1000)
+  }, [])
+
+  const { minutes, seconds } = intervalToDuration({ start: lastSeen, end: now })
+  return [minutes, seconds].map((n) => String(n).padStart(2, "0")).join(":")
+}

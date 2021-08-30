@@ -15,8 +15,9 @@
 }
 
 .timestamp {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
+  margin-bottom: 20px;
 }
 
 .card {
@@ -31,16 +32,11 @@
   font-size: 14px;
   font-weight: bold;
   text-transform: uppercase;
-  margin-bottom: 36px;
+  margin-bottom: 8px;
   white-space: nowrap;
 
   .item {
-    margin: 0 10px;
-  }
-
-  .text {
-    width: 6em;
-    flex: none;
+    margin-left: 5px;
   }
 }
 
