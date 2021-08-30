@@ -270,7 +270,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       ? calc.minimumReceived({
           offer_amount: toAmount(formData[Key.value1]),
           belief_price: decimal(
-            div(simulatedData?.price, toAmount(formData[Key.value1])),
+            div(toAmount(formData[Key.value1]), simulatedData?.price),
             18
           ),
           max_spread: String(slippageTolerance),
@@ -620,7 +620,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               from: `${token1}`,
               to: `${token2}`,
               max_spread: slippageTolerance,
-              belief_price: `${decimal(div(value2, value1), 18)}`,
+              belief_price: `${decimal(div(value1, value2), 18)}`,
             },
             [Type.PROVIDE]: {
               type: Type.PROVIDE,
