@@ -6,7 +6,6 @@ import Result from "./Result"
 import TabView from "components/TabView"
 import { useLocation } from "react-router-dom"
 import { isNil } from "ramda"
-import useNewContractMsg from "terra/useNewContractMsg"
 import { LP, LUNA, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
 import {
   useNetwork,
@@ -85,7 +84,7 @@ const Wrapper = styled.div`
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
-  const { getSymbol, isNativeToken } = useContractsAddress()
+  const { getSymbol } = useContractsAddress()
   const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI()
   const { state } = useLocation<{ symbol: string }>()
   const { fee } = useNetwork()
@@ -596,8 +595,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     window.location.reload()
   }, [form])
 
-  const newContractMsg = useNewContractMsg()
-
   const handleSubmit = useCallback(
     async (values) => {
       const {
@@ -611,7 +608,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       } = values
       try {
         settingsModal.close()
-        let msgs = await generateContractMessages(
+        const msgs = await generateContractMessages(
           {
             [Type.SWAP]: {
               type: Type.SWAP,
@@ -658,28 +655,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           return true
         })
 
-        let msg = {
-          [Type.SWAP]: [msgs[0]],
-          [Type.WITHDRAW]: [msgs[0]],
-          [Type.PROVIDE]: [
-            ...insertIf(
-              !isNativeToken(token1),
-              newContractMsg(token1, {
-                increase_allowance: { amount: toAmount(value1), spender: pair },
-              })
-            ),
-            ...insertIf(
-              !isNativeToken(token2),
-              newContractMsg(token2, {
-                increase_allowance: { amount: toAmount(value2), spender: pair },
-              })
-            ),
-            msgs[0],
-          ],
-        }[type] as any
-
         const txOptions = {
-          msgs: msg,
+          msgs: [msgs[0]],
           memo: undefined,
           purgeQueue: true,
           gasPrices: `${gasPrice}${getSymbol(feeSymbol)}`,
