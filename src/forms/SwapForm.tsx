@@ -268,10 +268,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     const minimumReceived = simulatedData
       ? calc.minimumReceived({
           offer_amount: toAmount(formData[Key.value1]),
-          belief_price: decimal(
-            div(toAmount(formData[Key.value1]), simulatedData?.price),
-            18
-          ),
+          belief_price: decimal(simulatedData?.price, 18),
           max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
         })
