@@ -40,7 +40,7 @@
       "Gov": "Total value of staked MIR and unclaimed voting rewards"
     },
 
-    "TotalRewards": "Total number of claimable MIR from Farming positions and governance",
+    "TotalRewards": "Total number of claimable MIR from Farming positions and voting",
 
     "Holding": "List of mAssets held",
     "Borrowing": "List of borrowing and short positions",

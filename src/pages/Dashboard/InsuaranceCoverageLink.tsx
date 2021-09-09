@@ -6,7 +6,7 @@ import styles from "./InsuaranceCoverageLink.module.scss"
 const InsuaranceCoverageLink = () => (
   <ExtLink href={INSURANCE_COVERAGE} className={styles.link}>
     <Icon name="Guard" />
-    Get Insurance Coverage
+    Get Coverage
   </ExtLink>
 )
 
