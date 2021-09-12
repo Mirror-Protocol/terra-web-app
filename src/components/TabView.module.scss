@@ -29,6 +29,10 @@ $radius: 10px;
 
 .tabs {
   @include flex(flex-start);
+  max-width: 60vw;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 2px;
 
   &__item {
     @include flex;
@@ -54,6 +58,10 @@ $radius: 10px;
       opacity: 0;
       transition: all 0.2s ease-in-out;
       transform: translateX(-50%);
+    }
+
+    @include mobile {
+      margin-right: 10px;
     }
 
     &__sizer {
@@ -87,6 +95,7 @@ $radius: 10px;
 
 .extra {
   @include flex(flex-end);
+  flex: 1;
   &__item {
     width: 24px;
     height: 24px;

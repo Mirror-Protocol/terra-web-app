@@ -52,6 +52,18 @@ $name: 12px;
   margin-right: 8px;
   font-size: 14px;
   line-height: 24px;
+
+  &--mobile {
+    @include desktop {
+      display: none;
+    }
+  }
+
+  &--desktop {
+    @include mobile {
+      display: none;
+    }
+  }
 }
 
 .footer {

@@ -10,7 +10,12 @@ interface Props extends AssetItem {
   formatTokenName?: (symbol: string) => string
 }
 
-const SwapToken = ({ symbol, balance, contract_addr,  formatTokenName }: Props) => {
+const SwapToken = ({
+  symbol,
+  balance,
+  contract_addr,
+  formatTokenName,
+}: Props) => {
   const symbols = symbol.split("-")
   return (
     <article className={styles.asset}>
@@ -18,7 +23,12 @@ const SwapToken = ({ symbol, balance, contract_addr,  formatTokenName }: Props) 
         <div className={styles.symbol_name}>
           <div className={styles.symbol}>
             <div className={styles.logo}>
-              <img src={GetTokenSvg(symbols[0])} width={25} height={25} alt="" />
+              <img
+                src={GetTokenSvg(symbols[0])}
+                width={25}
+                height={25}
+                alt=""
+              />
             </div>
             <div className={styles.name}>
               {formatTokenName?.(symbols[0]) ?? lookupSymbol(symbols[0])}
@@ -43,10 +53,15 @@ const SwapToken = ({ symbol, balance, contract_addr,  formatTokenName }: Props) 
                 {formatTokenName?.(symbols[1]) ?? lookupSymbol(symbols[1])}
               </div>
             ) : undefined}
-            </div>
-            <div className={styles.address}>
-              {window.outerWidth < 1024 && symbols.length > 1 ? truncate(contract_addr, [0, 6]) : truncate(contract_addr, [8, 8])}
-            </div>
+          </div>
+          <div className={styles.address}>
+            <span className={styles["address--mobile"]}>
+              {truncate(contract_addr, [0, 6])}
+            </span>
+            <span className={styles["address--desktop"]}>
+              {truncate(contract_addr, [8, 8])}
+            </span>
+          </div>
         </div>
       </header>
 
