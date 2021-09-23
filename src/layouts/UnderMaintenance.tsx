@@ -3,7 +3,7 @@ import Button from "../components/Button"
 import ExtLinkButton from "../components/ExtLinkButton"
 import styles from "./UnderMaintenance.module.scss"
 
-const TWITTER = "https://twitter.com/mirror_protocol/status/1408074072232062989"
+const TWITTER = "https://twitter.com/mirror_protocol"
 
 enum Status {
   UNAVAILABLE,
@@ -14,7 +14,7 @@ const current: Status = Status.AVAILABLE
 
 const UnderMaintenance = ({ onHide }: { onHide: () => void }) => {
   const content = {
-    [Status.UNAVAILABLE]: "Mirror Web App is being upgraded to v2.",
+    [Status.UNAVAILABLE]: "Mirror Web App is being upgraded.",
     [Status.AVAILABLE]:
       "Mirror Web App is being tested now. Use at your own risk.",
   }[current]
