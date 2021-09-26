@@ -52,6 +52,7 @@ import iconReload from "images/icon-reload.svg"
 import { useModal } from "components/Modal"
 import Settings, { SettingValues } from "components/Settings"
 import useLocalStorage from "libs/useLocalStorage"
+import useAutoRouter from "rest/useAutoRouter"
 
 enum Key {
   token1 = "token1",
@@ -233,6 +234,13 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     }
   }, [formData, pairs, tokenInfo1, tokenInfo2, type])
 
+  const { isLoading: isAutoRouterLoading, profitableQuery } = useAutoRouter({
+    from: formData[Key.token1],
+    to: formData[Key.token2],
+    amount: formData[Key.value1],
+    type,
+  })
+
   const simulation = useSwapSimulate({
     amount: toAmount(formData[!isReversed ? Key.value1 : Key.value2]),
     token: formData[!isReversed ? Key.token1 : Key.token2],
@@ -345,6 +353,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           </Count>
         ),
       },
+      // ...insertIf(type === Type.SWAP, {
+      //   title: <TooltipIcon content="route">Route</TooltipIcon>,
+      //   content: JSON.stringify(profitableQuery),
+      // }),
     ]
   }, [find, formData, poolResult, simulatedData, slippageTolerance, type])
 
@@ -605,34 +617,36 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       } = values
       try {
         settingsModal.close()
-        const msgs = await generateContractMessages(
-          {
-            [Type.SWAP]: {
-              type: Type.SWAP,
-              sender: `${walletAddress}`,
-              amount: `${value1}`,
-              from: `${token1}`,
-              to: `${token2}`,
-              max_spread: slippageTolerance,
-              belief_price: `${decimal(div(value1, value2), 18)}`,
-            },
-            [Type.PROVIDE]: {
-              type: Type.PROVIDE,
-              sender: `${walletAddress}`,
-              fromAmount: `${value1}`,
-              toAmount: `${value2}`,
-              from: `${token1}`,
-              to: `${token2}`,
-              slippage: slippageTolerance,
-            },
-            [Type.WITHDRAW]: {
-              type: Type.WITHDRAW,
-              sender: `${walletAddress}`,
-              amount: `${value1}`,
-              lpAddr: `${lpContract}`,
-            },
-          }[type] as any
-        )
+        const msgs = (
+          await generateContractMessages(
+            {
+              [Type.SWAP]: {
+                type: Type.SWAP,
+                sender: `${walletAddress}`,
+                amount: `${value1}`,
+                from: `${token1}`,
+                to: `${token2}`,
+                max_spread: slippageTolerance,
+                belief_price: `${decimal(div(value1, value2), 18)}`,
+              },
+              [Type.PROVIDE]: {
+                type: Type.PROVIDE,
+                sender: `${walletAddress}`,
+                fromAmount: `${value1}`,
+                toAmount: `${value2}`,
+                from: `${token1}`,
+                to: `${token2}`,
+                slippage: slippageTolerance,
+              },
+              [Type.WITHDRAW]: {
+                type: Type.WITHDRAW,
+                sender: `${walletAddress}`,
+                amount: `${value1}`,
+                lpAddr: `${lpContract}`,
+              },
+            }[type] as any
+          )
+        )[profitableQuery?.index || 0]
         const symbol = getSymbol(feeSymbol)
         const gas = fee.gas
         const amount = feeValue
@@ -678,6 +692,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       slippageTolerance,
       lpContract,
       type,
+      profitableQuery,
       getSymbol,
       fee,
       tax,
@@ -935,7 +950,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                         (type === Type.SWAP &&
                           (simulationError ||
                             Number.isNaN(simulatedData?.amount || "") ||
-                            parseFloat(simulatedData?.amount || "") <= 0)),
+                            parseFloat(simulatedData?.amount || "") <= 0 ||
+                            isAutoRouterLoading)),
                       type: "submit",
                     }
                   : {

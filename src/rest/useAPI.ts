@@ -23,6 +23,7 @@ import terraswapConfig from "constants/terraswap.json"
 import axios from "./request"
 import { Type } from "pages/Swap"
 import { Msg } from "@terra-money/terra.js"
+import { AxiosError } from "axios"
 interface DenomBalanceResponse {
   height: string
   result: DenomInfo[]
@@ -309,10 +310,15 @@ export default () => {
   // useSwapSimulate
   const querySimulate = useCallback(
     async (variables: { contract: string; msg: any }) => {
-      const { contract, msg } = variables
-      const url = getURL(contract, msg)
-      const res: SimulatedResponse = (await axios.get(url)).data
-      return res
+      try {
+        const { contract, msg } = variables
+        const url = getURL(contract, msg)
+        const res: SimulatedResponse = (await axios.get(url)).data
+        return res
+      } catch (error) {
+        const { response }: AxiosError = error
+        return response?.data
+      }
     },
     [getURL]
   )
@@ -348,9 +354,11 @@ export default () => {
       const { type, ...params } = query
       const url = `${service}/tx/${type}`.toLowerCase()
       const res = (await axios.get(url, { params })).data
-
-      const data = Array.isArray(res[0]) ? res[0] : res
-      return data.map((item: Msg.Data) => Msg.fromData(item))
+      return res.map((data: Msg.Data | Msg.Data[]) => {
+        return (Array.isArray(data) ? data : [data]).map((item: Msg.Data) =>
+          Msg.fromData(item)
+        )
+      })
     },
     [service]
   )
