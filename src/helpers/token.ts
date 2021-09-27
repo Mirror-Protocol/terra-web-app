@@ -210,6 +210,7 @@ export const GetTokenSvg = (symbol: string) => {
         case "LOOP":
         case "LOOPR":
         case "STT":
+        case "AGB":
           res = "/images/CW20/" + symbol + ".png"
           break
         default:
