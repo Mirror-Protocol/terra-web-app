@@ -4,9 +4,7 @@ import routes from "../routes"
 import { MenuKey, getPath } from "../routes"
 import Menu from "../components/Menu"
 import Boundary, { bound } from "../components/Boundary"
-import { useAlertByNetwork } from "./init"
 import { useInitAddress, useInitNetwork, useLocationKey } from "./init"
-import AlertNetwork from "./AlertNetwork"
 import Airdrop from "./Airdrop"
 import Layout from "./Layout"
 import Nav from "./Nav"
@@ -32,7 +30,6 @@ const App = () => {
   useLocationKey()
   useInitAddress()
   useInitNetwork()
-  const alert = useAlertByNetwork()
   const address = useAddress()
 
   const menu = Object.entries(icons).map(([key, icon]) => ({
@@ -46,8 +43,6 @@ const App = () => {
 
   return !hideMaintenance ? (
     <UnderMaintenance onHide={() => setHideMaintenance(true)} />
-  ) : alert ? (
-    <AlertNetwork />
   ) : (
     <Layout
       nav={<Nav />}
