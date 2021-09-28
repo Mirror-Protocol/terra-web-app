@@ -47,6 +47,25 @@ const testnet: Protocol = {
   },
 }
 
+const bombay: Protocol = {
+  contracts: {
+    anchorMarket: "terra15dwd5mj8v59wpj0wvt233mf5efdff808c5tkal",
+  },
+  assets: {
+    terra1ajt556dpzvjwl0kl5tzku3fc3p3knkg9mkv8jl: {
+      symbol: "aUST",
+      token: "terra1ajt556dpzvjwl0kl5tzku3fc3p3knkg9mkv8jl",
+      icon: "https://whitelist.anchorprotocol.com/logo/aUST.png",
+    },
+    terra1747mad58h0w4y589y3sk84r5efqdev9q4r02pc: {
+      symbol: "ANC",
+      token: "terra1747mad58h0w4y589y3sk84r5efqdev9q4r02pc",
+      pair: "terra1wfvczps2865j0awnurk9m04u7wdmd6qv3fdnvz",
+      icon: "https://whitelist.anchorprotocol.com/logo/ANC.png",
+    },
+  },
+}
+
 const placeholder: Protocol = {
   contracts: { anchorMarket: "" },
   assets: {},
@@ -56,7 +75,7 @@ export const anchorProtocolQuery = selector({
   key: "anchorProtocol",
   get: ({ get }) => {
     const networkName = get(networkNameState)
-    const protocol = { mainnet, testnet }[networkName] ?? placeholder
+    const protocol = { mainnet, testnet, bombay }[networkName] ?? placeholder
     const getToken = (symbol: string) =>
       Object.values(protocol?.assets ?? {}).find(
         (item) => item.symbol === symbol
