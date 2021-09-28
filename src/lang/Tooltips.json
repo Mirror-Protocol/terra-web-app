@@ -162,7 +162,6 @@
     "Threshold": "Minimum percentage of YES votes to pass a poll (in percentage)",
     "VotingPeriod": "Length of poll (in units of seconds)",
     "EffectiveDelay": "Length of delay before protocol integration for a passed poll (in units of seconds)",
-    "ExpirationPeriod": "Length of expiration period when for a failed poll (in units of seconds)",
     "ProposalDeposit": "Minimum deposit to start a poll (in units of MIR)",
 
     "VoterWeight": "Ratio of protocol fee reward to be distributed to voters",

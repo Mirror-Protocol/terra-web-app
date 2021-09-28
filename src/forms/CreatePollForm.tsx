@@ -58,7 +58,6 @@ enum Key {
   threshold = "threshold",
   votingPeriod = "votingPeriod",
   effectiveDelay = "effectiveDelay",
-  expirationPeriod = "expirationPeriod",
   proposalDeposit = "proposalDeposit",
   voterWeight = "voterWeight",
 
@@ -163,7 +162,6 @@ const CreatePollForm = ({ type, headings }: Props) => {
         Key.threshold,
         Key.votingPeriod,
         Key.effectiveDelay,
-        Key.expirationPeriod,
         Key.proposalDeposit,
         Key.voterWeight,
       ],
@@ -206,7 +204,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
     const { weight, auctionDiscount, minCollateralRatio } = values
     const { mintPeriod, minCollateralRatioAfterIPO, price } = values
     const { owner, quorum, threshold, votingPeriod } = values
-    const { effectiveDelay, expirationPeriod, proposalDeposit } = values
+    const { effectiveDelay, proposalDeposit } = values
     const { voterWeight, multiplier, recipient, amount } = values
     const { listed, reference } = values
 
@@ -297,9 +295,6 @@ const CreatePollForm = ({ type, headings }: Props) => {
         [Key.effectiveDelay]: !effectiveDelay
           ? ""
           : v.integer(effectiveDelay, "Effective Delay"),
-        [Key.expirationPeriod]: !expirationPeriod
-          ? ""
-          : v.integer(expirationPeriod, "Expiration Period"),
         [Key.proposalDeposit]: !proposalDeposit
           ? ""
           : v.amount(proposalDeposit, { symbol: "MIR" }),
@@ -335,7 +330,7 @@ const CreatePollForm = ({ type, headings }: Props) => {
   const { weight, auctionDiscount, minCollateralRatio } = values
   const { mintPeriod, minCollateralRatioAfterIPO, price } = values
   const { owner, quorum, threshold, votingPeriod } = values
-  const { effectiveDelay, expirationPeriod, proposalDeposit } = values
+  const { effectiveDelay, proposalDeposit } = values
   const { voterWeight, multiplier, recipient, amount } = values
 
   const deposit = config?.proposal_deposit ?? "0"
@@ -388,7 +383,6 @@ const CreatePollForm = ({ type, headings }: Props) => {
     [Key.threshold]: times(config?.threshold, 100),
     [Key.votingPeriod]: String(config?.voting_period) ?? "",
     [Key.effectiveDelay]: String(config?.effective_delay) ?? "",
-    [Key.expirationPeriod]: String(config?.expiration_period) ?? "",
     [Key.proposalDeposit]: lookup(config?.proposal_deposit, "MIR") ?? "",
     [Key.voterWeight]: config?.voter_weight ?? "",
   }
@@ -603,16 +597,6 @@ const CreatePollForm = ({ type, headings }: Props) => {
         unit: "Second(s)",
         unitAfterValue: true,
       },
-      [Key.expirationPeriod]: {
-        label: (
-          <TooltipIcon content={Tooltips.Gov.ExpirationPeriod}>
-            Expiration Period (Optional)
-          </TooltipIcon>
-        ),
-        input: { placeholder: configPlaceholders[Key.expirationPeriod] },
-        unit: "Second(s)",
-        unitAfterValue: true,
-      },
       [Key.proposalDeposit]: {
         label: (
           <TooltipIcon content={Tooltips.Gov.ProposalDeposit}>
@@ -723,7 +707,6 @@ const CreatePollForm = ({ type, headings }: Props) => {
     threshold: threshold ? div(threshold, 100) : undefined,
     voting_period: votingPeriod ? Number(votingPeriod) : undefined,
     effective_delay: effectiveDelay ? Number(effectiveDelay) : undefined,
-    expiration_period: expirationPeriod ? Number(expirationPeriod) : undefined,
     proposal_deposit: proposalDeposit ? toAmount(proposalDeposit) : undefined,
     voter_weight: voterWeight || undefined,
   }

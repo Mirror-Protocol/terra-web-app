@@ -94,7 +94,7 @@ const parsePollQuery = selector({
     })
 
     const parseUpdateConfig = (config: Partial<GovConfig>) => {
-      const { voting_period, expiration_period, effective_delay } = config
+      const { voting_period, effective_delay } = config
       const { quorum, threshold } = config
       const { proposal_deposit, voter_weight, owner } = config
 
@@ -103,7 +103,6 @@ const parsePollQuery = selector({
           ...parseContents({
             owner,
             voting_period: getBlocks(voting_period),
-            expiration_period: getBlocks(expiration_period),
             effective_delay: getBlocks(effective_delay),
             proposal_deposit: proposal_deposit
               ? formatAsset(proposal_deposit, "MIR")
