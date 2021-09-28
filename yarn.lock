@@ -1722,28 +1722,10 @@
     bowser "^2.11.0"
     rxjs "^7.3.0"
 
-"@terra-money/terra.js@^1.8.0 || ^2.0.0":
+"@terra-money/terra.js@1.8.9", "@terra-money/terra.js@^1.8.0 || ^2.0.0":
   version "1.8.9"
   resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-1.8.9.tgz#570c4dc797b37a6f83239f1723417dbf8a203d52"
   integrity sha512-vOBzn6qEWmWDsDngABr1YEwrLXfZjOSCcw/41twSluhspa25zNjLhFPsUexeAozOENbylwPkvEPEbzeFUCbIDg==
-  dependencies:
-    axios "^0.21.1"
-    bech32 "^2.0.0"
-    bip32 "^2.0.6"
-    bip39 "^3.0.3"
-    bufferutil "^4.0.3"
-    decimal.js "^10.2.1"
-    jscrypto "^1.0.1"
-    readable-stream "^3.6.0"
-    secp256k1 "^4.0.2"
-    tmp "^0.2.1"
-    utf-8-validate "^5.0.5"
-    ws "^7.4.2"
-
-"@terra-money/terra.js@^1.8.9":
-  version "1.8.10"
-  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-1.8.10.tgz#50f4f28b5592847201b64aa952ff2331809dcbc0"
-  integrity sha512-5tXblDZvXYVxS/z64nPX45m49e0M28eoIaBIaKJjui0JJBEuNS7sFBDZrU572Pl4er1n2xaEAjrfzsNjTYORWg==
   dependencies:
     axios "^0.21.1"
     bech32 "^2.0.0"
