@@ -38,6 +38,22 @@ const networks: Record<string, MirrorNetworkInfo> = {
       process.env.REACT_APP_TESTNET_SERVICE_URL ||
       "https://api-tequila.terraswap.io/",
   },
+  bombay: {
+    name: "bombay",
+    chainID: "bombay-11",
+    lcd: "https://bombay-lcd.terra.dev",
+    fcd: "https://bombay-fcd.terra.dev",
+    id: "bombay-11",
+    contract: "/tequila.json",
+    swap: "/swap.json",
+    mantle: "https://bombay-mantle.terra.dev/",
+    stats: "https://bombay-fcd.terra.dev/",
+    fee: { gasPrice: "0.15", amount: "50000", gas: "450000" }, // 0.050000 UST
+    factory: "terra18qpjm4zkvqnpjpw0zn0tdr8gdzvt8au35v45xf",
+    service:
+      process.env.REACT_APP_TESTNET_SERVICE_URL ||
+      "https://api-bombay.terraswap.io/",
+  }
 }
 
 export default networks
