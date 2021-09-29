@@ -1,0 +1,29 @@
+@import "mixins";
+
+.article {
+  background: $bg;
+  border: $border;
+  border-radius: $border-radius;
+  margin-top: 20px;
+  padding: 20px;
+
+  h2 {
+    margin-bottom: 4px;
+  }
+
+  p {
+    margin-bottom: 16px;
+  }
+
+  h2,
+  p {
+    color: $muted;
+    font-size: small;
+  }
+
+  .close {
+    text-align: right;
+    margin-top: 16px;
+    margin-bottom: 0;
+  }
+}
