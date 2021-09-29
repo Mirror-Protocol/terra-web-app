@@ -3,9 +3,14 @@ import Modal, { useModal } from "../containers/Modal"
 import styles from "./Notice.module.scss"
 
 const LINK = "https://twitter.com/mirror_protocol/status/1442972339524698114"
+const LOCAL_STORAGE_KEY = "doNotShowAgainColumbus5"
 
 const Notice = () => {
-  const modal = useModal(true)
+  const modal = useModal(!localStorage.getItem(LOCAL_STORAGE_KEY))
+  const doNotShowAgain = () => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, String(Date.now()))
+    modal.close()
+  }
 
   return (
     <Modal {...modal}>
@@ -26,7 +31,7 @@ const Notice = () => {
         </p>
 
         <p className={styles.close}>
-          <button onClick={modal.close}>Close</button>
+          <button onClick={doNotShowAgain}>Do not show again</button>
         </p>
       </article>
     </Modal>

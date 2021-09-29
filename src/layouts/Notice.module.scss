@@ -4,6 +4,7 @@
   background: $bg;
   border: $border;
   border-radius: $border-radius;
+  font-size: small;
   margin-top: 20px;
   padding: 20px;
 
@@ -15,13 +16,8 @@
     margin-bottom: 16px;
   }
 
-  h2,
-  p {
-    color: $muted;
-    font-size: small;
-  }
-
   .close {
+    color: $muted;
     text-align: right;
     margin-top: 16px;
     margin-bottom: 0;
