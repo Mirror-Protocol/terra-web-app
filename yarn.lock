@@ -1722,10 +1722,10 @@
     bowser "^2.11.0"
     rxjs "^7.3.0"
 
-"@terra-money/terra.js@1.8.9", "@terra-money/terra.js@^1.8.0 || ^2.0.0":
-  version "1.8.9"
-  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-1.8.9.tgz#570c4dc797b37a6f83239f1723417dbf8a203d52"
-  integrity sha512-vOBzn6qEWmWDsDngABr1YEwrLXfZjOSCcw/41twSluhspa25zNjLhFPsUexeAozOENbylwPkvEPEbzeFUCbIDg==
+"@terra-money/terra.js@^1.8.0 || ^2.0.0", "@terra-money/terra.js@^2.0.11":
+  version "2.0.11"
+  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-2.0.11.tgz#f44d80ee67a1dd9eb2da3f26f47961dec96b3fb7"
+  integrity sha512-33MrW3SGEmbHzjAA93dw1VA6IKbp6gYJbOTUkQzQbi+msIUf4m9ZewB6v5b8UZJfTfEe/T5RjXCWQHmANsz11w==
   dependencies:
     axios "^0.21.1"
     bech32 "^2.0.0"
@@ -1740,7 +1740,7 @@
     utf-8-validate "^5.0.5"
     ws "^7.4.2"
 
-"@terra-money/wallet-provider@2.1.0":
+"@terra-money/wallet-provider@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@terra-money/wallet-provider/-/wallet-provider-2.1.0.tgz#11c4fd2e7a7162a6966e077c6845ef3d4e6b3a0a"
   integrity sha512-vYZR/S2C37rchfea0zYPkdXDoa39kw7/ZeGXscDZnlq2oggRgxTVf0AOO2/gzhIL2Xc71im3gZ1nz1t9nu4yWQ==
@@ -3551,9 +3551,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001020, caniuse-lite@^1.0.30001035:
-  version "1.0.30001202"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001202.tgz"
-  integrity sha512-ZcijQNqrcF8JNLjzvEiXqX4JUYxoZa7Pvcsd9UD8Kz4TvhTonOSNRsK+qtvpVL4l6+T1Rh4LFtLfnNWg6BGWCQ==
+  version "1.0.30001261"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001261.tgz"
+  integrity sha512-vM8D9Uvp7bHIN0fZ2KQ4wnmYFpJo/Etb4Vwsuc+ka0tfGDHvOPrFm6S/7CCNLSOkAUjenT2HnUPESdOIL91FaA==
 
 capture-exit@^2.0.0:
   version "2.0.0"
