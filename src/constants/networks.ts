@@ -9,10 +9,10 @@ type MirrorNetworkInfo = NetworkInfo & NetworkConfig
 const networks: Record<string, MirrorNetworkInfo> = {
   mainnet: {
     name: "mainnet",
-    chainID: "columbus-4",
+    chainID: "columbus-5",
     lcd: "https://lcd.terra.dev",
     fcd: "https://fcd.terra.dev",
-    id: "columbus-4",
+    id: "columbus-5",
     contract: "/tequila.json",
     swap: "/swap.json",
     mantle: "https://fcd.terra.dev/",
@@ -24,23 +24,7 @@ const networks: Record<string, MirrorNetworkInfo> = {
   },
   testnet: {
     name: "testnet",
-    chainID: "tequila-0004",
-    lcd: "https://tequila-lcd.terra.dev",
-    fcd: "https://tequila-fcd.terra.dev",
-    id: "tequila-0004",
-    contract: "/tequila.json",
-    swap: "/swap.json",
-    mantle: "https://tequila-mantle.terra.dev/",
-    stats: "https://tequila-fcd.terra.dev/",
-    fee: { gasPrice: "0.15", amount: "50000", gas: "450000" }, // 0.050000 UST
-    factory: "terra18qpjm4zkvqnpjpw0zn0tdr8gdzvt8au35v45xf",
-    service:
-      process.env.REACT_APP_TESTNET_SERVICE_URL ||
-      "https://api-tequila.terraswap.io/",
-  },
-  bombay: {
-    name: "bombay",
-    chainID: "bombay-11",
+    chainID: "bombay-12",
     lcd: "https://bombay-lcd.terra.dev",
     fcd: "https://bombay-fcd.terra.dev",
     id: "bombay-11",
@@ -53,7 +37,7 @@ const networks: Record<string, MirrorNetworkInfo> = {
     service:
       process.env.REACT_APP_TESTNET_SERVICE_URL ||
       "https://api-bombay.terraswap.io/",
-  }
+  },
 }
 
 export default networks
