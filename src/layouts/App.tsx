@@ -10,7 +10,6 @@ import Layout from "./Layout"
 import Nav from "./Nav"
 import Header from "./Header"
 import Footer from "./Footer"
-import Notice from "./Notice"
 import "./App.scss"
 
 const icons: Dictionary<IconNames> = {
@@ -42,10 +41,7 @@ const App = () => {
       banner={address && bound(<Airdrop />)}
       footer={<Footer />}
     >
-      <Boundary>
-        {routes()}
-        <Notice />
-      </Boundary>
+      <Boundary>{routes()}</Boundary>
     </Layout>
   )
 }
