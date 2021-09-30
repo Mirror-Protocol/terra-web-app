@@ -2,8 +2,8 @@ import ExtLink from "../components/ExtLink"
 import Modal, { useModal } from "../containers/Modal"
 import styles from "./Notice.module.scss"
 
-const LINK = "https://twitter.com/mirror_protocol/status/1442972339524698114"
-const LOCAL_STORAGE_KEY = "doNotShowAgainColumbus5"
+const LINK = "https://twitter.com/mirror_protocol/status/1438352057660936200"
+const LOCAL_STORAGE_KEY = "doNotShowAgainColumbus5Oracle"
 
 const Notice = () => {
   const modal = useModal(!localStorage.getItem(LOCAL_STORAGE_KEY))
@@ -16,18 +16,17 @@ const Notice = () => {
     <Modal {...modal}>
       <article className={styles.article}>
         <p>
-          Due to Columbus-5 chain migration, Mirror web App will halt at block
-          height 4,724,000.
+          Price oracle feed is expected to resume at Thu Sep 30 2021 17:30:00
+          UTC.
         </p>
 
-        <section>
-          <h2>Estimated Halt Time</h2>
-          <p>Thu Sep 30 2021 07:00:00 UTC ~ 09:00:00 UTC</p>
-        </section>
+        <p>
+          Operations requiring price oracle feed (Borrow, Short and Withdraw
+          Collateral) will resume at the time mentioned above.
+        </p>
 
         <p>
-          Read the details to the migration process and risks{" "}
-          <ExtLink href={LINK}>here</ExtLink>.
+          For more information, read <ExtLink href={LINK}>here</ExtLink>.
         </p>
 
         <p className={styles.close}>
