@@ -369,11 +369,16 @@ export const dict = <Data, Item = string>(
   )
 
 /* helpers */
-export const parsePairPool = ({ assets, total_share }: PairPool) => ({
-  uusd: assets.find(({ info }) => "native_token" in info)?.amount ?? "0",
-  asset: assets.find(({ info }) => "token" in info)?.amount ?? "0",
-  total: total_share ?? "0",
-})
+export const parsePairPool = (pool?: PairPool) => {
+  if (!pool) return { uusd: "0", asset: "0", total: "0" }
+
+  const { assets, total_share } = pool
+  return {
+    uusd: assets.find(({ info }) => "native_token" in info)?.amount ?? "0",
+    asset: assets.find(({ info }) => "token" in info)?.amount ?? "0",
+    total: total_share ?? "0",
+  }
+}
 
 export const calcPairPrice = (param: PairPool) => {
   const { uusd, asset } = parsePairPool(param)

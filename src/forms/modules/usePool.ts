@@ -22,9 +22,7 @@ const usePool = () => {
     const price = gt(pair, 0) ? pair : oracle
 
     /* pair pool */
-    const pairPool = pairs
-      ? parsePairPool(pairs[token])
-      : { uusd: "0", asset: "0", total: "0" }
+    const pairPool = parsePairPool(pairs?.[token])
 
     /* estimate uusd */
     const estimated = gt(amount, 0) ? floor(times(amount, price)) : "0"
