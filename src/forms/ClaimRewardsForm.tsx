@@ -36,9 +36,12 @@ const ClaimRewardsForm = () => {
     voting: newContractMsg(contracts["gov"], { withdraw_voting_rewards: {} }),
   }
 
-  const data = gt(rewards.voting, 0)
-    ? [withdraw.staking, withdraw.voting]
-    : [withdraw.staking]
+  const data =
+    gt(plus(rewards.long, rewards.short), 0) && gt(rewards.voting, 0)
+      ? [withdraw.staking, withdraw.voting]
+      : gt(rewards.voting, 0)
+      ? [withdraw.voting]
+      : [withdraw.staking]
 
   const disabled = !gt(claiming, 0)
 
