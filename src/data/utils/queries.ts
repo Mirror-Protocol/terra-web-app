@@ -1,6 +1,6 @@
 import { selector, selectorFamily } from "recoil"
 import { request } from "graphql-request"
-import { RequestDocument } from "graphql-request/dist/types"
+import { ClientError, RequestDocument } from "graphql-request/dist/types"
 import alias from "../contract/alias"
 import { protocolQuery } from "../contract/protocol"
 import { locationKeyState } from "../app"
@@ -72,7 +72,7 @@ export const getContractQueriesQuery = selector({
 
         return result ? parseResults<Parsed>(result) : undefined
       } catch (error) {
-        const result = error.response.data
+        const result = (error as ClientError).response.data
         return result ? parseResults<Parsed>(result) : undefined
       }
     }

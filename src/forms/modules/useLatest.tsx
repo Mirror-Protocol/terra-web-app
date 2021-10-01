@@ -16,7 +16,7 @@ const useLatest = () => {
         const json: { states: Dictionary<State> } = await response.json()
         setClosed(json.states)
       } catch (error) {
-        setError(error)
+        setError(error as Error)
       }
     }
 

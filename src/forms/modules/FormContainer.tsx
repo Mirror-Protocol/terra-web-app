@@ -124,7 +124,7 @@ export const Component = ({ data: msgs, memo, gasAdjust, ...props }: Props) => {
       const response = await post(txOptions)
       setResponse(response)
     } catch (error) {
-      setError(error)
+      setError(error as Error)
     }
   }
 

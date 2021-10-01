@@ -65,7 +65,7 @@ export default (params: Params, isLimitOrder: boolean) => {
           })
         }
       } catch (error) {
-        setError(error)
+        setError(error as Error)
       }
 
       setLoading(false)

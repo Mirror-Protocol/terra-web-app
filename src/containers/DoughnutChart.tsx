@@ -53,7 +53,7 @@ const DoughnutChart = ({ format, ...props }: Props) => {
       </ul>
 
       <section className={styles.chart}>
-        <Doughnut type="doughnut" data={data} options={options} />
+        <Doughnut datatype="doughnut" data={data} options={options} />
       </section>
     </div>
   )

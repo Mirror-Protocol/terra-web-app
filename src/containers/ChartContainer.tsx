@@ -122,9 +122,9 @@ const ChartContainer = ({ change, datasets = [], ...props }: Props) => {
   const chartProps = { data, options, height: compact ? 24 : undefined }
   const render = () =>
     bar ? (
-      <Bar type="bar" {...chartProps} />
+      <Bar datatype="bar" {...chartProps} />
     ) : (
-      <Line type="line" {...chartProps} />
+      <Line datatype="line" {...chartProps} />
     )
 
   return (
