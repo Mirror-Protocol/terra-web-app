@@ -245,7 +245,9 @@ const MintForm = ({ position, type }: Props) => {
   /* latest price */
   const isMarketClosed1 = isClosed(token1)
   const isMarketClosed2 = isClosed(token2)
-  const isMarketClosed = !edit && (isMarketClosed1 || isMarketClosed2)
+  const isMarketClosed = isMarketClosed1 || isMarketClosed2
+  const isTryingToWithdrawOnMarketClosed =
+    isMarketClosed && prevCollateral && lt(amount1, prevCollateral.amount)
 
   const exchangeLink =
     (isMarketClosed1 && symbol1 === "mGLXY") ||
@@ -550,13 +552,14 @@ const MintForm = ({ position, type }: Props) => {
       ? [<>{linkToBuy} to close position</>]
       : undefined
 
-  const messages = isMarketClosed
-    ? [marketClosedMessage]
-    : touched[Key.ratio]
-    ? ratioMessages
-    : close
-    ? closeMessages
-    : undefined
+  const messages =
+    isMarketClosed && !edit
+      ? [marketClosedMessage]
+      : touched[Key.ratio]
+      ? ratioMessages
+      : close
+      ? closeMessages
+      : undefined
 
   const warnings = [
     `A 1.5% fee of the minted value will be levied when the ${
@@ -566,7 +569,8 @@ const MintForm = ({ position, type }: Props) => {
 
   const disabled =
     findBalanceStore.isLoading ||
-    isMarketClosed ||
+    (isMarketClosed && !edit) ||
+    isTryingToWithdrawOnMarketClosed ||
     invalidRepay ||
     (!close ? invalid : !!closeMessages)
 
