@@ -35,7 +35,7 @@ import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import { Coin, Coins, StdFee } from "@terra-money/terra.js"
+import { Coin, Coins, StdFee, CreateTxOptions} from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import { insertIf } from "libs/utils"
@@ -666,13 +666,13 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           return true
         })
 
-        const txOptions = {
+        const txOptions: CreateTxOptions = {
           msgs,
           memo: undefined,
-          purgeQueue: true,
           gasPrices: `${gasPrice}${getSymbol(feeSymbol)}`,
           fee: new StdFee(parseInt(gas), feeCoins),
         }
+
         const extensionResult = await terraExtensionPost(txOptions)
 
         // const extensionResult = await postTerraExtension(options, txFee);

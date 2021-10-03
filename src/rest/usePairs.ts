@@ -304,6 +304,28 @@ export default () => {
               ) {
                 return
               }
+              
+              if (
+                networkName === "mainnet" &&
+                tokenInfo1?.symbol === "AGB" &&
+                !(
+                  tokenInfo1?.contract_addr ===
+                  "terra12qxyx2l90c37kylw4jqe8t40ppnrnu8wqmx940"
+                )
+              ) {
+                return
+              }
+              
+              if (
+                networkName === "mainnet" &&
+                tokenInfo2?.symbol === "AGB" &&
+                !(
+                  tokenInfo2?.contract_addr ===
+                  "terra12qxyx2l90c37kylw4jqe8t40ppnrnu8wqmx940"
+                )
+              ) {
+                return
+              }
            
               const lpTokenInfo = await getTokenInfo({
                 token: { contract_addr: pairResult.liquidity_token },
