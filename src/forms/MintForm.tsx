@@ -552,14 +552,15 @@ const MintForm = ({ position, type }: Props) => {
       ? [<>{linkToBuy} to close position</>]
       : undefined
 
-  const messages =
-    isMarketClosed && !edit
-      ? [marketClosedMessage]
-      : touched[Key.ratio]
-      ? ratioMessages
-      : close
-      ? closeMessages
-      : undefined
+  const messages = isTryingToWithdrawOnMarketClosed
+    ? ["Withdrawal is only available during market hours"]
+    : isMarketClosed && !edit
+    ? [marketClosedMessage]
+    : touched[Key.ratio]
+    ? ratioMessages
+    : close
+    ? closeMessages
+    : undefined
 
   const warnings = [
     `A 1.5% fee of the minted value will be levied when the ${
