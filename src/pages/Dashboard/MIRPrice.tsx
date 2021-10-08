@@ -2,8 +2,9 @@ import { isNil } from "ramda"
 import Tooltips from "../../lang/Tooltips"
 import { PriceKey } from "../../hooks/contractKeys"
 import { useProtocol } from "../../data/contract/protocol"
+import { useFindPrice } from "../../data/contract/normalize"
 import { useFindChange } from "../../data/stats/assets"
-import { useDashboard } from "../../data/stats/statistic"
+// import { useDashboard } from "../../data/stats/statistic"
 import Card from "../../components/Card"
 import Formatted from "../../components/Formatted"
 import Change from "../../components/Change"
@@ -11,8 +12,10 @@ import { TooltipIcon } from "../../components/Tooltip"
 
 const MIRPrice = () => {
   const { getToken } = useProtocol()
-  const { mirPrice: price } = useDashboard()
+  // const { mirPrice: price } = useDashboard()
+  const findPrice = useFindPrice()
   const token = getToken("MIR")
+  const price = findPrice(PriceKey.PAIR, token)
 
   const findChange = useFindChange()
   const change = findChange(PriceKey.PAIR, token)
