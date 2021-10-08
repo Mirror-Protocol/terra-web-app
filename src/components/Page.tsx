@@ -4,18 +4,20 @@ import Container from "./Container"
 import Select, { Props as SelectProps } from "./Select"
 import styles from "./Page.module.scss"
 import Notifications from "../layouts/Notifications"
+import Banner from "./Banner"
 
 interface Props {
   title?: ReactNode
   description?: ReactNode
   action?: ReactNode
+  banner?: ReactNode
   select?: SelectProps
   doc?: string
   sm?: boolean
 }
 
 const Page: FC<Props> = ({ title, description, children, ...props }) => {
-  const { action, select, sm } = props
+  const { action, banner, select, sm } = props
   const getSelectAttrs = (select: SelectProps) => ({
     ...select,
     attrs: { ...select.attrs, className: styles.select },
@@ -23,6 +25,8 @@ const Page: FC<Props> = ({ title, description, children, ...props }) => {
 
   return (
     <article className={styles.article}>
+      {banner && <Banner>{banner}</Banner>}
+
       {title && (
         <header className={styles.header}>
           <section className={styles.heading}>
