@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import classNames from "classnames/bind"
 import { gt } from "../libs/math"
 import { useContract, useCombineKeys, useContractsAddress } from "../hooks"
@@ -9,6 +9,7 @@ import { lpTokenInfos, Pair } from "../rest/usePairs"
 import { Type } from "../pages/Swap"
 import { tokenInfos } from "../rest/usePairs"
 import Loading from "components/Loading"
+import useAPI from "rest/useAPI"
 
 const cx = classNames.bind(styles)
 
@@ -32,61 +33,105 @@ const SwapTokens = ({
   type,
   ...props
 }: Props) => {
-  const { priceKey, balanceKey } = props
-  const { formatTokenName } = props
+  const { priceKey, balanceKey, formatTokenName } = props
 
   const { find } = useContract()
   const { loading } = useCombineKeys([priceKey, balanceKey])
-  const { isNativeToken} = useContractsAddress()
+  const { loadSwappableTokenAddresses } = useAPI()
+
+  const { isNativeToken } = useContractsAddress()
 
   /* search */
   const [value, setValue] = useState("")
 
-  const selectedList = (value: string | undefined) => {
-    let assetItemMap: Set<string> = new Set<string>()
+  const [addressList, setAddressList] = useState<string[]>([])
 
-    pairs.forEach((pair) => {
-      if (
-        value === pair.pair[0].contract_addr &&
-        !assetItemMap.has(pair.pair[1].contract_addr)
-      ) {
-        assetItemMap.add(pair.pair[1].contract_addr)
-      }
-
-      if (
-        value === pair.pair[1].contract_addr &&
-        !assetItemMap.has(pair.pair[0].contract_addr)
-      ) {
-        assetItemMap.add(pair.pair[0].contract_addr)
-      }
-    })
-
-    return Array.from(assetItemMap.values())
-  }
-
-  const allList = () => {
-    let assetItemMap: Set<string> = new Set<string>()
-    pairs.forEach((pair) => {
-      if (type === Type.WITHDRAW) {
-        const tokeninfo = tokenInfos.get(pair.liquidity_token)
-        if (tokeninfo !== undefined) {
-          assetItemMap.add(tokeninfo.contract_addr)
-        }
-      } else {
-        pair.pair.forEach((tokenInfo) => {
-          if (!assetItemMap.has(tokenInfo.symbol)) {
-            assetItemMap.add(tokenInfo.contract_addr)
+  useEffect(() => {
+    let isCancelled = false
+    const fetchAddressList = async () => {
+      if (oppositeValue) {
+        const res = await loadSwappableTokenAddresses(oppositeValue)
+        if (Array.isArray(res)) {
+          if (!isCancelled) {
+            setAddressList(res)
           }
-        })
+        }
+        return
       }
-    })
 
-    return Array.from(assetItemMap.values())
-  }
+      const assetItemMap: Set<string> = new Set<string>()
+      pairs.forEach((pair) => {
+        if (type === Type.WITHDRAW) {
+          const tokeninfo = tokenInfos.get(pair.liquidity_token)
+          if (tokeninfo !== undefined) {
+            assetItemMap.add(tokeninfo.contract_addr)
+          }
+        } else {
+          pair.pair.forEach((tokenInfo) => {
+            if (!assetItemMap.has(tokenInfo.symbol)) {
+              assetItemMap.add(tokenInfo.contract_addr)
+            }
+          })
+        }
+      })
 
-  const list: string[] = !(oppositeValue === undefined || oppositeValue === "")
-    ? selectedList(oppositeValue)
-    : allList()
+      if (!isCancelled) {
+        setAddressList(Array.from(assetItemMap.values()))
+      }
+    }
+
+    fetchAddressList()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [loadSwappableTokenAddresses, oppositeValue, pairs, type])
+
+  // const selectedList = (value: string | undefined) => {
+  //   let assetItemMap: Set<string> = new Set<string>()
+
+  //   pairs.forEach((pair) => {
+  //     if (
+  //       value === pair.pair[0].contract_addr &&
+  //       !assetItemMap.has(pair.pair[1].contract_addr)
+  //     ) {
+  //       assetItemMap.add(pair.pair[1].contract_addr)
+  //     }
+
+  //     if (
+  //       value === pair.pair[1].contract_addr &&
+  //       !assetItemMap.has(pair.pair[0].contract_addr)
+  //     ) {
+  //       assetItemMap.add(pair.pair[0].contract_addr)
+  //     }
+  //   })
+
+  //   return Array.from(assetItemMap.values())
+  // }
+
+  // const allList = () => {
+  //   let assetItemMap: Set<string> = new Set<string>()
+  //   pairs.forEach((pair) => {
+  //     if (type === Type.WITHDRAW) {
+  //       const tokeninfo = tokenInfos.get(pair.liquidity_token)
+  //       if (tokeninfo !== undefined) {
+  //         assetItemMap.add(tokeninfo.contract_addr)
+  //       }
+  //     } else {
+  //       pair.pair.forEach((tokenInfo) => {
+  //         if (!assetItemMap.has(tokenInfo.symbol)) {
+  //           assetItemMap.add(tokenInfo.contract_addr)
+  //         }
+  //       })
+  //     }
+  //   })
+
+  //   return Array.from(assetItemMap.values())
+  // }
+
+  // const list: string[] = !(oppositeValue === undefined || oppositeValue === "")
+  //   ? selectedList(oppositeValue)
+  //   : allList()
 
   const handleSelect = (contractAddr: string) => {
     onSelect(contractAddr)
@@ -106,8 +151,8 @@ const SwapTokens = ({
       </section>
 
       <ul className={classNames(styles.list, { loading })}>
-        {list && list.length > 0 ? (
-          list
+        {addressList && addressList.length > 0 ? (
+          addressList
             .filter((contractAddr) => {
               let symbol = ""
               if (type === Type.WITHDRAW) {
@@ -155,6 +200,10 @@ const SwapTokens = ({
                   name: tokenInfo?.name || "",
                   contract_addr: isNativeToken(item) ? "" : item,
                 }
+              }
+
+              if (!swapToken.symbol) {
+                return undefined
               }
 
               return (
