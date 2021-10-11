@@ -35,7 +35,7 @@ import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import { Coin, Coins, StdFee, CreateTxOptions} from "@terra-money/terra.js"
+import { Coin, Coins, StdFee, CreateTxOptions } from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import { insertIf } from "libs/utils"
@@ -82,6 +82,25 @@ const Wrapper = styled.div`
   position: relative;
   margin-top: 60px;
 `
+
+const getMsgs = (
+  _msg: any,
+  {
+    amount,
+    minimumReceived,
+  }: { amount?: string | number; minimumReceived?: string | number }
+) => {
+  console.log(_msg)
+  const msg = Array.isArray(_msg) ? _msg[0] : _msg
+  console.log(msg)
+  if (msg?.execute_msg?.execute_swap_operations) {
+    msg.execute_msg.execute_swap_operations.minimum_receive = toAmount(
+      `${minimumReceived}`
+    )
+    msg.execute_msg.execute_swap_operations.offer_amount = toAmount(`${amount}`)
+  }
+  return [msg]
+}
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
@@ -609,6 +628,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       const {
         token1,
         token2,
+        symbol2,
         value1,
         value2,
         feeValue,
@@ -617,36 +637,85 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       } = values
       try {
         settingsModal.close()
-        const msgs = (
-          await generateContractMessages(
-            {
-              [Type.SWAP]: {
-                type: Type.SWAP,
-                sender: `${walletAddress}`,
-                amount: `${value1}`,
-                from: `${token1}`,
-                to: `${token2}`,
-                max_spread: slippageTolerance,
-                belief_price: `${decimal(div(value1, value2), 18)}`,
-              },
-              [Type.PROVIDE]: {
-                type: Type.PROVIDE,
-                sender: `${walletAddress}`,
-                fromAmount: `${value1}`,
-                toAmount: `${value2}`,
-                from: `${token1}`,
-                to: `${token2}`,
-                slippage: slippageTolerance,
-              },
-              [Type.WITHDRAW]: {
-                type: Type.WITHDRAW,
-                sender: `${walletAddress}`,
-                amount: `${value1}`,
-                lpAddr: `${lpContract}`,
-              },
-            }[type] as any
-          )
-        )[profitableQuery?.index || 0]
+
+        let msgs: any = {}
+        if (type === Type.SWAP) {
+          const res = await generateContractMessages({
+            type: Type.SWAP,
+            sender: `${walletAddress}`,
+            amount: `${value1}`,
+            from: `${token1}`,
+            to: `${token2}`,
+            max_spread: slippageTolerance,
+            belief_price: `${decimal(div(value1, value2), 18)}`,
+          })
+
+          console.log(res)
+          console.log(profitableQuery?.index)
+          console.log(res[profitableQuery?.index || 0])
+
+          console.log(getMsgs(res[profitableQuery?.index || 0], value1))
+          msgs = getMsgs(res[profitableQuery?.index || 0], {
+            amount: value1,
+            minimumReceived: simulatedData
+              ? calc.minimumReceived({
+                  offer_amount: toAmount(value1),
+                  belief_price: `${decimal(div(value1, value2), 18)}`,
+                  max_spread: String(slippageTolerance),
+                  commission: find(infoKey, symbol2),
+                })
+              : "10",
+          })
+          // const a = isNativeToken(token1)
+          //   ? [
+          //       ...insertIf(
+          //         !isNativeToken(token2),
+          //         newContractMsg(token2, {
+          //           increase_allowance: { amount: amount2, spender: pair },
+          //         })
+          //       ),
+          //       newContractMsg(pair, { swap: { offer_asset: asset } }, [
+          //         { amount: amount1, denom: getSymbol(symbol1) },
+          //       ]),
+          //     ]
+          //   : [
+          //       ...insertIf(
+          //         !isNativeToken(token2),
+          //         newContractMsg(token2, {
+          //           increase_allowance: { amount: amount2, spender: pair },
+          //         })
+          //       ),
+          //       newContractMsg(token1, {
+          //         send: {
+          //           amount: amount1,
+          //           contract: pair,
+          //           msg: toBase64({ swap: {} }),
+          //         },
+          //       }),
+          //     ];
+        } else {
+          msgs = (
+            await generateContractMessages(
+              {
+                [Type.PROVIDE]: {
+                  type: Type.PROVIDE,
+                  sender: `${walletAddress}`,
+                  fromAmount: `${value1}`,
+                  toAmount: `${value2}`,
+                  from: `${token1}`,
+                  to: `${token2}`,
+                  slippage: slippageTolerance,
+                },
+                [Type.WITHDRAW]: {
+                  type: Type.WITHDRAW,
+                  sender: `${walletAddress}`,
+                  amount: `${value1}`,
+                  lpAddr: `${lpContract}`,
+                },
+              }[type] as any
+            )
+          )[profitableQuery?.index || 0]
+        }
         const symbol = getSymbol(feeSymbol)
         const gas = fee.gas
         const amount = feeValue
@@ -687,16 +756,18 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     },
     [
       settingsModal,
-      generateContractMessages,
-      walletAddress,
-      slippageTolerance,
-      lpContract,
       type,
-      profitableQuery,
       getSymbol,
       fee,
       tax,
       terraExtensionPost,
+      generateContractMessages,
+      walletAddress,
+      slippageTolerance,
+      profitableQuery,
+      simulatedData,
+      find,
+      lpContract,
     ]
   )
 
