@@ -213,6 +213,7 @@ export const GetTokenSvg = (symbol: string) => {
         case "AGB":
         case "TWD":
         case "MIAW":
+        case "VKR":          
           res = "/images/CW20/" + symbol + ".png"
           break
         default:
