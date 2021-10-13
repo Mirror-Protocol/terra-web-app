@@ -83,28 +83,9 @@ const Wrapper = styled.div`
   margin-top: 60px;
 `
 
-const getMsgs = (
-  _msg: any,
-  {
-    amount,
-    minimumReceived,
-  }: { amount?: string | number; minimumReceived?: string | number }
-) => {
-  console.log(_msg)
-  const msg = Array.isArray(_msg) ? _msg[0] : _msg
-  console.log(msg)
-  if (msg?.execute_msg?.execute_swap_operations) {
-    msg.execute_msg.execute_swap_operations.minimum_receive = toAmount(
-      `${minimumReceived}`
-    )
-    msg.execute_msg.execute_swap_operations.offer_amount = toAmount(`${amount}`)
-  }
-  return [msg]
-}
-
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
-  const { getSymbol } = useContractsAddress()
+  const { getSymbol, isNativeToken } = useContractsAddress()
   const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI()
   const { state } = useLocation<{ symbol: string }>()
   const { fee } = useNetwork()
@@ -378,6 +359,42 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       // }),
     ]
   }, [find, formData, poolResult, simulatedData, slippageTolerance, type])
+
+  const getMsgs = useCallback(
+    (
+      _msg: any,
+      {
+        amount,
+        symbol,
+        minimumReceived,
+      }: {
+        amount?: string | number
+        symbol?: string
+        minimumReceived?: string | number
+      }
+    ) => {
+      console.log(_msg)
+      console.log("symbol")
+      console.log(symbol)
+      const msg = Array.isArray(_msg) ? _msg[0] : _msg
+      console.log(msg)
+      if (msg?.execute_msg?.execute_swap_operations) {
+        msg.execute_msg.execute_swap_operations.minimum_receive = parseInt(
+          `${minimumReceived}`,
+          10
+        ).toString()
+        msg.execute_msg.execute_swap_operations.offer_amount = toAmount(
+          `${amount}`
+        )
+
+        if (isNativeToken(symbol || "")) {
+          msg.coins = Coins.fromString(toAmount(`${amount}`) + symbol)
+        }
+      }
+      return [msg]
+    },
+    [isNativeToken]
+  )
 
   const { gasPrice } = useGasPrice(formData[Key.feeSymbol])
   const getTax = useCallback(
@@ -654,9 +671,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           console.log(profitableQuery?.index)
           console.log(res[profitableQuery?.index || 0])
 
-          console.log(getMsgs(res[profitableQuery?.index || 0], value1))
           msgs = getMsgs(res[profitableQuery?.index || 0], {
-            amount: value1,
+            amount: `${value1}`,
             minimumReceived: simulatedData
               ? calc.minimumReceived({
                   offer_amount: toAmount(value1),
@@ -665,7 +681,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                   commission: find(infoKey, symbol2),
                 })
               : "10",
+            symbol: token1,
           })
+          console.log(msgs)
           // const a = isNativeToken(token1)
           //   ? [
           //       ...insertIf(
@@ -765,6 +783,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       walletAddress,
       slippageTolerance,
       profitableQuery,
+      getMsgs,
       simulatedData,
       find,
       lpContract,
