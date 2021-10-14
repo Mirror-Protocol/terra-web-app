@@ -44,16 +44,6 @@ const Dashboard = () => {
       select={selectAttrs}
       doc={"/user-guide/getting-started"}
       action={<InsuaranceCoverageLink />}
-      banner={
-        <p>
-          Due to the Columbus-5 mainnet upgrade, we are reindexing data shown on
-          the webapp.
-          <br />
-          The values may be incorrect.
-          <br />
-          Values will return to normal once the reindexing has been complete.
-        </p>
-      }
     >
       <section className={styles.mobile}>
         <TVLTotal />
