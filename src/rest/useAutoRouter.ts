@@ -1,4 +1,5 @@
 import { Msg } from "@terra-money/terra.js"
+import { div } from "libs/math"
 import { toAmount } from "libs/parse"
 import { Type } from "pages/Swap"
 import { useEffect, useMemo, useState } from "react"
@@ -12,8 +13,8 @@ type Params = {
 }
 
 const useAutoRouter = (params: Params) => {
-  const { from, to, amount, type } = params
-
+  const { from, to, type } = params
+  const amount = 1
   const { generateContractMessages, querySimulate } = useAPI()
   const [isLoading, setIsLoading] = useState(false)
   const [msgs, setMsgs] = useState<Msg[]>([])
@@ -21,9 +22,12 @@ const useAutoRouter = (params: Params) => {
   const profitableQuery = useMemo(() => {
     if (simulatedAmounts?.length > 0) {
       const index = simulatedAmounts.indexOf(Math.max(...simulatedAmounts))
+      const simulatedAmount = simulatedAmounts[index]
       return {
         msg: msgs[index],
         index,
+        simulatedAmount,
+        price: div(amount, simulatedAmount),
       }
     }
     return undefined

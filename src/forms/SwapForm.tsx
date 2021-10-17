@@ -25,7 +25,7 @@ import {
   renderBalance,
   calcTax,
 } from "./formHelpers"
-import useSwapSimulate from "rest/useSwapSimulate"
+// import useSwapSimulate from "rest/useSwapSimulate";
 import useSwapSelectToken from "./useSwapSelectToken"
 import SwapFormGroup from "./SwapFormGroup"
 import usePairs, { tokenInfos, lpTokenInfos, InitLP } from "rest/usePairs"
@@ -241,17 +241,17 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     type,
   })
 
-  const simulation = useSwapSimulate({
-    amount: toAmount(formData[!isReversed ? Key.value1 : Key.value2]),
-    token: formData[!isReversed ? Key.token1 : Key.token2],
-    pair,
-    reverse: isReversed,
-  })
-  const {
-    simulated: simulatedData,
-    simulating: isSimulating,
-    error: simulationError,
-  } = simulation
+  // const simulation = useSwapSimulate({
+  //   amount: toAmount(formData[!isReversed ? Key.value1 : Key.value2]),
+  //   token: formData[!isReversed ? Key.token1 : Key.token2],
+  //   pair,
+  //   reverse: isReversed,
+  // });
+  // const {
+  //   simulated: simulatedData,
+  //   simulating: isSimulating,
+  //   error: simulationError,
+  // } = simulation;
 
   const { result: poolResult, poolLoading } = usePool(
     pair,
@@ -273,10 +273,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       return []
     }
 
-    const minimumReceived = simulatedData
+    const minimumReceived = profitableQuery
       ? calc.minimumReceived({
           offer_amount: toAmount(formData[Key.value1]),
-          belief_price: decimal(simulatedData?.price, 18),
+          belief_price: decimal(times(profitableQuery?.price, 1000000), 18),
           max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
         })
@@ -285,7 +285,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     return [
       ...insertIf(type === Type.SWAP, {
         title: <TooltipIcon content={Tooltip.Swap.Rate}>Rate</TooltipIcon>,
-        content: `${decimal(simulatedData?.price, 6)} ${
+        content: `${decimal(times(profitableQuery?.price, 1000000), 6)} ${
           formData[Key.symbol1]
         } per ${formData[Key.symbol2]}`,
       }),
@@ -319,7 +319,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         ),
         content: (
           <Count symbol={formData[Key.symbol2]}>
-            {simulatedData?.commission}
+            {find(infoKey, formData[Key.symbol2])}
           </Count>
         ),
       }),
@@ -358,7 +358,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       //   content: JSON.stringify(profitableQuery),
       // }),
     ]
-  }, [find, formData, poolResult, simulatedData, slippageTolerance, type])
+  }, [find, formData, poolResult, profitableQuery, slippageTolerance, type])
 
   const getMsgs = useCallback(
     (
@@ -561,9 +561,25 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       case Type.SWAP:
         const key = isReversed ? Key.value1 : Key.value2
         const symbol = isReversed ? tokenInfo1?.symbol : tokenInfo2?.symbol
-        const value = simulationError
-          ? "0"
-          : lookup(simulatedData?.amount, symbol)
+        // const value = simulationError
+        //   ? "0"
+        //   : lookup(simulatedData?.amount, symbol)
+
+        const inputValue = !isReversed
+          ? form.getValues(Key.value1)
+          : form.getValues(Key.value2)
+        console.log("inputValue")
+        console.log(inputValue)
+        console.log("profitableQuery?.simulatedAmount")
+        console.log(profitableQuery?.simulatedAmount)
+        const value = !isReversed
+          ? lookup(
+              times(`${profitableQuery?.simulatedAmount}`, inputValue),
+              symbol
+            )
+          : lookup(
+              div(toAmount(inputValue), `${profitableQuery?.simulatedAmount}`)
+            )
 
         // Safe to use as deps
         if (!isNil(value)) {
@@ -606,10 +622,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           }, 100)
         }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    simulatedData,
     isReversed,
-    simulationError,
+    // simulationError,
     poolLoading,
     type,
     tokenInfo1,
@@ -619,6 +635,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     poolSymbol1,
     poolSymbol2,
     trigger,
+    // form,
+    profitableQuery,
   ])
   useEffect(() => {
     setValue(Key.gasPrice, gasPrice || "")
@@ -645,7 +663,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       const {
         token1,
         token2,
-        symbol2,
         value1,
         value2,
         feeValue,
@@ -673,12 +690,15 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
           msgs = getMsgs(res[profitableQuery?.index || 0], {
             amount: `${value1}`,
-            minimumReceived: simulatedData
+            minimumReceived: profitableQuery
               ? calc.minimumReceived({
-                  offer_amount: toAmount(value1),
-                  belief_price: `${decimal(div(value1, value2), 18)}`,
+                  offer_amount: toAmount(formData[Key.value1]),
+                  belief_price: decimal(
+                    times(profitableQuery?.price, 1000000),
+                    18
+                  ),
                   max_spread: String(slippageTolerance),
-                  commission: find(infoKey, symbol2),
+                  commission: find(infoKey, formData[Key.symbol2]),
                 })
               : "10",
             symbol: token1,
@@ -776,7 +796,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       settingsModal,
       type,
       getSymbol,
-      fee,
+      fee.gas,
       tax,
       terraExtensionPost,
       generateContractMessages,
@@ -784,7 +804,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       slippageTolerance,
       profitableQuery,
       getMsgs,
-      simulatedData,
+      formData,
       find,
       lpContract,
     ]
@@ -990,7 +1010,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                 autoComplete: "off",
                 readOnly:
                   [Type.PROVIDE, Type.WITHDRAW].includes(type) ||
-                  (!isReversed && isSimulating),
+                  (!isReversed && isAutoRouterLoading),
                 onKeyDown: () => {
                   setIsReversed(true)
                 },
@@ -1038,10 +1058,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                         formState.isValidating ||
                         simulationContents?.length <= 0 ||
                         (type === Type.SWAP &&
-                          (simulationError ||
-                            Number.isNaN(simulatedData?.amount || "") ||
-                            parseFloat(simulatedData?.amount || "") <= 0 ||
-                            isAutoRouterLoading)),
+                          (!profitableQuery || isAutoRouterLoading)),
                       type: "submit",
                     }
                   : {
