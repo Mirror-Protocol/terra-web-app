@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { ReactNode, HTMLAttributes, FormEvent } from "react"
 import { useLocation } from "react-router-dom"
-import { Msg, StdFee } from "@terra-money/terra.js"
+import { Msg, Fee } from "@terra-money/terra.js"
 import { useWallet } from "@terra-money/wallet-provider"
 import { TxResult } from "@terra-money/wallet-provider"
 import { UserDenied, CreateTxFailed } from "@terra-money/wallet-provider"
@@ -117,7 +117,7 @@ export const Component = ({ data: msgs, memo, gasAdjust, ...props }: Props) => {
         msgs,
         memo,
         gasPrices: `${gasPrice}uusd`,
-        fee: new StdFee(gas, { uusd: plus(amount, !deduct ? tax : undefined) }),
+        fee: new Fee(gas, { uusd: plus(amount, !deduct ? tax : undefined) }),
         purgeQueue: true,
       }
 
