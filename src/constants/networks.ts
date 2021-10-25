@@ -21,6 +21,7 @@ const networks: Record<string, MirrorNetworkInfo> = {
     factory: "terra1ulgw0td86nvs4wtpsc80thv6xelk76ut7a7apj",
     service:
       process.env.REACT_APP_MAINNET_SERVICE_URL || "https://api.terraswap.io/",
+    router: "terra19qx5xe6q9ll4w0890ux7lv2p4mf3csd4qvt3ex",
   },
   testnet: {
     name: "testnet",
@@ -32,11 +33,12 @@ const networks: Record<string, MirrorNetworkInfo> = {
     swap: "/swap.json",
     mantle: "https://bombay-mantle.terra.dev/",
     stats: "https://bombay-fcd.terra.dev/",
-    fee: { gasPrice: "0.00506", amount: "1518", gas: "1000000" }, // 0.050000 UST
+    fee: { gasPrice: "0.00506", amount: "1518", gas: "2000000" }, // 0.050000 UST
     factory: "terra18qpjm4zkvqnpjpw0zn0tdr8gdzvt8au35v45xf",
     service:
       process.env.REACT_APP_TESTNET_SERVICE_URL ||
       "https://api-bombay.terraswap.io/",
+    router: "terra14z80rwpd0alzj4xdtgqdmcqt9wd9xj5ffd60wp",
   },
 }
 
