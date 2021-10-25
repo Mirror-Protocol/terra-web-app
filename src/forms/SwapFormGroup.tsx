@@ -4,6 +4,7 @@ import classNames from "classnames/bind"
 import styles from "./SwapFormGroup.module.scss"
 import Button from "../components/Button"
 import FeeCombobox from "./FeeCombobox"
+import Loading from "components/Loading"
 
 const cx = classNames.bind(styles)
 
@@ -12,6 +13,7 @@ const SwapFormGroup = ({
   textarea,
   select,
   value,
+  isLoading,
   ...props
 }: FormGroup) => {
   const {
@@ -89,6 +91,7 @@ const SwapFormGroup = ({
         <section className={cx(type === 2 && border)}>
           <section className={styles.wrapper}>
             <section className={styles.field}>
+              {isLoading && <Loading />}
               {input ? (
                 <input
                   {...input}

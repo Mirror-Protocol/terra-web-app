@@ -17,7 +17,7 @@ const networks: Record<string, MirrorNetworkInfo> = {
     swap: "/swap.json",
     mantle: "https://fcd.terra.dev/",
     stats: "https://fcd.terra.dev/",
-    fee: { gasPrice: "0.00506", amount: "1518", gas: "1000000" }, // 0.000500 UST
+    fee: { gasPrice: "0.00506", amount: "1518", gas: "2000000" }, // 0.000500 UST
     factory: "terra1ulgw0td86nvs4wtpsc80thv6xelk76ut7a7apj",
     service:
       process.env.REACT_APP_MAINNET_SERVICE_URL || "https://api.terraswap.io/",

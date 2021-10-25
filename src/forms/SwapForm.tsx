@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import Result from "./Result"
 import TabView from "components/TabView"
 import { useLocation } from "react-router-dom"
-import { isNil } from "ramda"
 import { LP, LUNA, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
 import {
   useNetwork,
@@ -280,7 +279,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
         })
-      : "10"
+      : "0"
 
     return [
       ...insertIf(type === Type.SWAP, {
@@ -311,18 +310,18 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           <Count symbol={formData[Key.symbol2]}>{minimumReceived}</Count>
         ),
       }),
-      ...insertIf(type === Type.SWAP, {
-        title: (
-          <TooltipIcon content={Tooltip.Swap.TradingFee}>
-            Trading Fee
-          </TooltipIcon>
-        ),
-        content: (
-          <Count symbol={formData[Key.symbol2]}>
-            {find(infoKey, formData[Key.symbol2])}
-          </Count>
-        ),
-      }),
+      // ...insertIf(type === Type.SWAP, {
+      //   title: (
+      //     <TooltipIcon content={Tooltip.Swap.TradingFee}>
+      //       Trading Fee
+      //     </TooltipIcon>
+      //   ),
+      //   content: (
+      //     <Count symbol={formData[Key.symbol2]}>
+      //       {find(infoKey, formData[Key.symbol2])}
+      //     </Count>
+      //   ),
+      // }),
       ...insertIf(type === Type.PROVIDE, {
         title: (
           <TooltipIcon content={Tooltip.Pool.LPfromTx}>LP from Tx</TooltipIcon>
@@ -353,10 +352,19 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           </Count>
         ),
       },
-      // ...insertIf(type === Type.SWAP, {
-      //   title: <TooltipIcon content="route">Route</TooltipIcon>,
-      //   content: JSON.stringify(profitableQuery),
-      // }),
+      ...insertIf(type === Type.SWAP && profitableQuery?.token_route?.length, {
+        title: (
+          <TooltipIcon content="Optimized route for your optimal gain">
+            Route
+          </TooltipIcon>
+        ),
+        content: profitableQuery?.token_route?.map((token, index, array) => (
+          <>
+            {tokenInfos.get(token)?.symbol}
+            {index >= array.length - 1 ? "" : " → "}
+          </>
+        )),
+      }),
     ]
   }, [find, formData, poolResult, profitableQuery, slippageTolerance, type])
 
@@ -478,6 +486,19 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       maxFee,
     } = { ...formData, ...(newValues || {}) }
 
+    console.log("validateForm")
+    console.log({
+      value1,
+      value2,
+      symbol1,
+      symbol2,
+      max1,
+      max2,
+      feeValue,
+      feeSymbol,
+      maxFee,
+    })
+
     if (key === Key.value1) {
       const taxCap = await loadTaxInfo(symbol1)
       const taxRate = await loadTaxRate()
@@ -541,6 +562,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   }, [setValue, tokenInfo1])
 
   useEffect(() => {
+    console.log(tokenInfo2?.symbol)
     setValue(Key.symbol2, tokenInfo2?.symbol || "")
   }, [setValue, tokenInfo2])
 
@@ -556,39 +578,120 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     setValue(Key.maxFee, maxFeeBalance || "")
   }, [maxFeeBalance, setValue])
 
+  const watchCallback = useCallback(
+    (data, { name: watchName, value: watchValue, type: eventType }) => {
+      console.log(watchName, watchValue, eventType)
+      console.log(data)
+      console.log(tokenInfos.get(data.token2)?.symbol)
+      if (!eventType && [Key.value1, Key.value2].includes(watchName as Key)) {
+        return
+      }
+      if (type === Type.SWAP) {
+        if (
+          [Key.value1, Key.token1, Key.token2, Key.feeSymbol].includes(
+            watchName as Key
+          )
+        ) {
+          console.log("hello")
+          console.log(profitableQuery)
+          // console.log(
+          //   lookup(
+          //     times(
+          //       `${profitableQuery?.simulatedAmount}`,
+          //       `${data[Key.value1]}`
+          //     ),
+          //     tokenInfos.get(data.token2)?.symbol
+          //   )
+          // );
+          // setValue(
+          //   Key.value2,
+          //   lookup(
+          //     times(
+          //       `${profitableQuery?.simulatedAmount}`,
+          //       `${data[Key.value1]}`
+          //     ),
+          //     tokenInfos.get(data.token2)?.symbol
+          //   )
+          // );
+          console.log(
+            lookup(
+              `${profitableQuery?.simulatedAmount}`,
+              tokenInfos.get(data.token2)?.symbol
+            )
+          )
+          setValue(
+            Key.value2,
+            lookup(
+              `${profitableQuery?.simulatedAmount}`,
+              tokenInfos.get(data.token2)?.symbol
+            )
+          )
+          trigger(Key.value2)
+        }
+        if (watchName === Key.value2) {
+          setValue(
+            Key.value1,
+            lookup(
+              div(
+                toAmount(`${data[Key.value2]}`),
+                `${profitableQuery?.simulatedAmount}`
+              )
+            )
+          )
+          trigger(Key.value1)
+        }
+      }
+    },
+    [profitableQuery, setValue, trigger, type]
+  )
+
+  useEffect(() => {
+    if (profitableQuery) {
+      console.log("profitableQuery changed")
+      console.log(profitableQuery)
+      watchCallback(form.getValues(), { name: Key.token2 })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profitableQuery, watchCallback])
+
+  useEffect(() => {
+    const subscription = watch(watchCallback)
+    return () => subscription.unsubscribe()
+  }, [watch, watchCallback, profitableQuery])
+
   useEffect(() => {
     switch (type) {
       case Type.SWAP:
-        const key = isReversed ? Key.value1 : Key.value2
-        const symbol = isReversed ? tokenInfo1?.symbol : tokenInfo2?.symbol
-        // const value = simulationError
-        //   ? "0"
-        //   : lookup(simulatedData?.amount, symbol)
+        // const key = isReversed ? Key.value1 : Key.value2;
+        // const symbol = isReversed ? tokenInfo1?.symbol : tokenInfo2?.symbol;
+        // // const value = simulationError
+        // //   ? "0"
+        // //   : lookup(simulatedData?.amount, symbol)
 
-        const inputValue = !isReversed
-          ? form.getValues(Key.value1)
-          : form.getValues(Key.value2)
-        console.log("inputValue")
-        console.log(inputValue)
-        console.log("profitableQuery?.simulatedAmount")
-        console.log(profitableQuery?.simulatedAmount)
-        const value = !isReversed
-          ? lookup(
-              times(`${profitableQuery?.simulatedAmount}`, inputValue),
-              symbol
-            )
-          : lookup(
-              div(toAmount(inputValue), `${profitableQuery?.simulatedAmount}`)
-            )
+        // const inputValue = !isReversed
+        //   ? form.getValues(Key.value1)
+        //   : form.getValues(Key.value2);
+        // console.log("inputValue");
+        // console.log(inputValue);
+        // console.log("profitableQuery?.simulatedAmount");
+        // console.log(profitableQuery?.simulatedAmount);
+        // const value = !isReversed
+        //   ? lookup(
+        //       times(`${profitableQuery?.simulatedAmount}`, inputValue),
+        //       symbol
+        //     )
+        //   : lookup(
+        //       div(toAmount(inputValue), `${profitableQuery?.simulatedAmount}`)
+        //     );
 
-        // Safe to use as deps
-        if (!isNil(value)) {
-          setValue(key, value)
-          setTimeout(() => {
-            trigger(Key.value1)
-            trigger(Key.value2)
-          }, 100)
-        }
+        // // Safe to use as deps
+        // if (!isNil(value)) {
+        //   setValue(key, value);
+        //   setTimeout(() => {
+        //     trigger(Key.value1);
+        //     trigger(Key.value2);
+        //   }, 100);
+        // }
         break
       case Type.PROVIDE:
         if (poolResult && !poolLoading) {
@@ -700,7 +803,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                   max_spread: String(slippageTolerance),
                   commission: find(infoKey, formData[Key.symbol2]),
                 })
-              : "10",
+              : "0",
             symbol: token1,
           })
           console.log(msgs)
@@ -1008,9 +1111,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                       type: "text",
                     }),
                 autoComplete: "off",
-                readOnly:
-                  [Type.PROVIDE, Type.WITHDRAW].includes(type) ||
-                  (!isReversed && isAutoRouterLoading),
+                readOnly: true,
+                // [Type.PROVIDE, Type.WITHDRAW].includes(type) ||
+                // (!isReversed && isAutoRouterLoading),
                 onKeyDown: () => {
                   setIsReversed(true)
                 },
@@ -1035,6 +1138,13 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               unit={type !== Type.WITHDRAW && selectToken2.button}
               assets={type !== Type.WITHDRAW && selectToken2.assets}
               focused={selectToken2.isOpen}
+              isLoading={
+                type === Type.SWAP &&
+                !!formData[Key.value1] &&
+                !!formData[Key.token1] &&
+                !!formData[Key.token2] &&
+                isAutoRouterLoading
+              }
             />
             <SwapConfirm list={simulationContents} />
             <div>
