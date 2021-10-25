@@ -2,11 +2,20 @@ import { ConnectType, useWallet } from "@terra-money/wallet-provider"
 import React from "react"
 import { ReactNode } from "react"
 import { ReactComponent as TerraLogo } from "images/Token/Terra.svg"
+import { ReactComponent as XDefiLogo } from "images/Wallets/xdefi.svg"
 import WalletConnect from "images/WalletConnect.png"
 import styles from "./ConnectList.module.scss"
 import { useConnectModal } from "hooks"
 import SupportModal from "./SupportModal"
 import { useModal } from "components/Modal"
+
+declare global {
+  interface Window {
+    xfi: {
+      terra: any
+    }
+  }
+}
 
 const size = { width: 30, height: "auto" }
 
@@ -16,51 +25,79 @@ const ConnectList = () => {
   const supportModal = useModal()
 
   type Button = { label: string; image: ReactNode; onClick: () => void }
-  const buttons = ([] as Button[])
-    .concat(
-      availableInstallTypes.includes(ConnectType.CHROME_EXTENSION)
-        ? {
-            label: "Terra Station (extension)",
-            image: <TerraLogo {...size} />,
-            onClick: () => {
-              supportModal.open()
-            },
-          }
-        : []
-    )
-    .concat(
-      availableConnectTypes.includes(ConnectType.WEBEXTENSION)
-        ? {
-            label: "Terra Station (extension)",
-            image: <TerraLogo {...size} />,
-            onClick: () => {
-              connect(ConnectType.WEBEXTENSION)
-              connectModal.close()
-            },
-          }
-        : availableConnectTypes.includes(ConnectType.CHROME_EXTENSION)
-        ? {
-            label: "Terra Station (extension)",
-            image: <TerraLogo {...size} />,
-            onClick: () => {
-              connect(ConnectType.CHROME_EXTENSION)
-              connectModal.close()
-            },
-          }
-        : []
-    )
-    .concat(
-      availableConnectTypes.includes(ConnectType.WALLETCONNECT)
-        ? {
-            label: "Terra Station (mobile)",
-            image: <img src={WalletConnect} {...size} alt="WalletConnect" />,
-            onClick: () => {
-              connect(ConnectType.WALLETCONNECT)
-              connectModal.close()
-            },
-          }
-        : []
-    )
+
+  const buttons: Button[] = []
+
+  if (availableInstallTypes.includes(ConnectType.CHROME_EXTENSION)) {
+    buttons.push({
+      label: "Terra Station (extension)",
+      image: <TerraLogo {...size} />,
+      onClick: () => {
+        supportModal.open()
+      },
+    })
+
+    buttons.push({
+      label: "XDEFI Wallet (extension)",
+      image: <XDefiLogo {...size} />,
+      onClick: () => {
+        supportModal.open()
+      },
+    })
+  }
+
+  if (availableConnectTypes.includes(ConnectType.WEBEXTENSION)) {
+    buttons.push({
+      label: "Terra Station (extension)",
+      image: <TerraLogo {...size} />,
+      onClick: () => {
+        connect(ConnectType.WEBEXTENSION)
+        connectModal.close()
+      },
+    })
+  } else if (availableConnectTypes.includes(ConnectType.CHROME_EXTENSION)) {
+    // NOTE: We are not able to identify if Terra Station is available, IF XDeFi
+    // is available as well, because they both set `window.isTerraExtensionAvailable = true`
+    // so even if Terra Station not available, XDeFi Wallet will popup.
+    buttons.push({
+      label: "Terra Station (extension)",
+      image: <TerraLogo {...size} />,
+      onClick: () => {
+        connect(ConnectType.CHROME_EXTENSION)
+        connectModal.close()
+      },
+    })
+
+    if (window.xfi?.terra) {
+      buttons.push({
+        label: "XDEFI Wallet (extension)",
+        image: <XDefiLogo {...size} />,
+        onClick: () => {
+          connect(ConnectType.CHROME_EXTENSION)
+          connectModal.close()
+        },
+      })
+    } else {
+      buttons.push({
+        label: "XDEFI Wallet (extension)",
+        image: <XDefiLogo {...size} />,
+        onClick: () => {
+          supportModal.open()
+        },
+      })
+    }
+  }
+
+  if (availableConnectTypes.includes(ConnectType.WALLETCONNECT)) {
+    buttons.push({
+      label: "Terra Station (mobile)",
+      image: <img src={WalletConnect} {...size} alt="WalletConnect" />,
+      onClick: () => {
+        connect(ConnectType.WALLETCONNECT)
+        connectModal.close()
+      },
+    })
+  }
 
   return (
     <article className={styles.component}>
