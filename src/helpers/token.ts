@@ -207,6 +207,7 @@ export const GetTokenSvg = (symbol: string) => {
         case "ALTE":
         case "mHOOD":
         case "DPH":
+        case "tSHIBA":
         case "LOOP":
         case "LOOPR":
         case "STT":
