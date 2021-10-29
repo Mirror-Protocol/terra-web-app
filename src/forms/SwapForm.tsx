@@ -386,6 +386,18 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       console.log(symbol)
       const msg = Array.isArray(_msg) ? _msg[0] : _msg
       console.log(msg)
+      if (msg?.execute_msg?.send?.msg?.execute_swap_operations) {
+        msg.execute_msg.send.msg.execute_swap_operations.minimum_receive = parseInt(
+          `${minimumReceived}`,
+          10
+        ).toString()
+        // msg.execute_msg.send.msg.execute_swap_operations.offer_amount = toAmount(
+        //   `${amount}`
+        // );
+        if (isNativeToken(symbol || "")) {
+          msg.coins = Coins.fromString(toAmount(`${amount}`) + symbol)
+        }
+      }
       if (msg?.execute_msg?.execute_swap_operations) {
         msg.execute_msg.execute_swap_operations.minimum_receive = parseInt(
           `${minimumReceived}`,

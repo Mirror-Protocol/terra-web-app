@@ -28,7 +28,9 @@ const useAutoRouter = (params: Params) => {
   const [autoRefreshTicker, setAutoRefreshTicker] = useState(false)
   const profitableQuery = useMemo(() => {
     if (simulatedAmounts?.length > 0) {
-      const index = simulatedAmounts.indexOf(Math.max(...simulatedAmounts))
+      const index = simulatedAmounts.indexOf(
+        Math.max(...simulatedAmounts.map((item) => (!item ? -1 : item)))
+      )
       const simulatedAmount = simulatedAmounts[index]
       if (simulatedAmount < 0) {
         return undefined
@@ -91,7 +93,7 @@ const useAutoRouter = (params: Params) => {
   }, [profitableQuery])
   useEffect(() => {
     console.log("simulatedAmounts")
-    console.log(simulatedAmounts)
+    console.log(JSON.parse(JSON.stringify(simulatedAmounts)))
   }, [simulatedAmounts])
   useEffect(() => {
     console.log("msgs")
@@ -147,9 +149,18 @@ const useAutoRouter = (params: Params) => {
   useEffect(() => {
     const request = async () => {
       const simulateQueries = msgs.map((msg) => {
-        const { contract, execute_msg } = (Array.isArray(msg)
+        let { contract, execute_msg } = (Array.isArray(msg)
           ? msg[0]
           : msg) as any
+
+        if (execute_msg?.send) {
+          contract = execute_msg?.send?.contract
+          execute_msg = execute_msg?.send?.msg
+        }
+        console.log("contract")
+        console.log(contract)
+        console.log("execute_msg")
+        console.log(execute_msg)
         if (execute_msg?.execute_swap_operations) {
           const { operations } = execute_msg.execute_swap_operations
           console.log("operations")
@@ -192,10 +203,10 @@ const useAutoRouter = (params: Params) => {
             result
               .map((item) => {
                 if (item?.result?.return_amount) {
-                  return parseInt(item?.result?.return_amount)
+                  return parseInt(item?.result?.return_amount, 10)
                 }
                 if (item?.result?.amount) {
-                  return parseInt(item?.result?.amount)
+                  return parseInt(item?.result?.amount, 10)
                 }
                 return -1
               })
