@@ -4,6 +4,7 @@ import ConfirmDetails from "./ConfirmDetails"
 import TxHash from "./SwapTxHash"
 import { tokenInfos } from "../rest/usePairs"
 import { formatAsset } from "../libs/parse"
+import { useNetwork } from "hooks"
 
 interface Props {
   txInfo: SwapTxInfo
@@ -13,6 +14,8 @@ interface Props {
 const TxInfo = ({ txInfo, parserKey }: Props) => {
   const { txhash: hash, tx } = txInfo
   const logs = txInfo?.logs
+
+  const { router } = useNetwork()
 
   let contents: Content[][] = []
   contents.push([{ title: "Tx Hash", content: <TxHash>{hash}</TxHash> }])
@@ -60,6 +63,8 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
               ({ key, value }) => key === "action" && value === "swap"
             )
             if (!action) return
+
+            const sender = fromContract.find(({ key }) => key === "sender")
 
             const offerAsset = fromContract.find(
               ({ key }) => key === "offer_asset"
@@ -113,6 +118,11 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
                   key: "* Tax",
                   value: formatAsset(tax.value, symbol),
                 })
+              }
+
+              if (sender && sender?.value === router) {
+                reconstructed = []
+                reconstructed.push({ key: "Info", value: "Router swap" })
               }
             }
           } else if (parserKey === "Provide") {
