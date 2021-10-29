@@ -237,7 +237,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     from: formData[Key.token1],
     to: formData[Key.token2],
     amount: formData[Key.value1],
-    type,
+    type: formState.isSubmitted ? undefined : type,
   })
 
   // const simulation = useSwapSimulate({
