@@ -3,7 +3,6 @@ import { gt } from "../libs/math"
 import { format, lookupSymbol } from "../libs/parse"
 import styles from "./SwapToken.module.scss"
 import { GetTokenSvg } from "../helpers/token"
-import { truncate } from "libs/text"
 
 interface Props extends AssetItem {
   contract_addr?: string
@@ -22,16 +21,16 @@ const SwapToken = ({
       <header className={styles.header}>
         <div className={styles.symbol_name}>
           <div className={styles.symbol}>
-            <div className={styles.logo}>
-              <img
-                src={GetTokenSvg(symbols[0])}
-                width={25}
-                height={25}
-                alt=""
-              />
-            </div>
+            <img
+              className={styles.logo}
+              src={GetTokenSvg(symbols[0])}
+              width={25}
+              height={25}
+              alt=""
+            />
             <div className={styles.name}>
-              {formatTokenName?.(symbols[0]) ?? lookupSymbol(symbols[0])}
+              <p>{formatTokenName?.(symbols[0]) ?? lookupSymbol(symbols[0])}</p>
+              <p className={styles.address}>{contract_addr}</p>
             </div>
             {symbols.length > 1 ? (
               <div className={styles.divide}>
@@ -53,14 +52,6 @@ const SwapToken = ({
                 {formatTokenName?.(symbols[1]) ?? lookupSymbol(symbols[1])}
               </div>
             ) : undefined}
-          </div>
-          <div className={styles.address}>
-            <span className={styles["address--mobile"]}>
-              {truncate(contract_addr, [0, 6])}
-            </span>
-            <span className={styles["address--desktop"]}>
-              {truncate(contract_addr, [8, 8])}
-            </span>
           </div>
         </div>
       </header>

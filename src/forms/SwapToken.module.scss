@@ -16,6 +16,8 @@ $name: 12px;
 }
 
 .symbol {
+  display: flex;
+  align-items: center;
 }
 
 .divide {
@@ -35,34 +37,25 @@ $name: 12px;
 }
 
 .logo {
-  float: left;
+  margin-left: 1rem;
 }
 
 .name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   color: $deepgray;
   margin-left: 15px;
   font-size: $symbol;
   font-weight: 500;
-  float: left;
-  line-height: 24px;
 }
 
 .address {
-  color: $deepgray;
-  margin-right: 8px;
-  font-size: 14px;
-  line-height: 24px;
+  color: $brown;
+  font-size: 11px;
 
-  &--mobile {
-    @include desktop {
-      display: none;
-    }
-  }
-
-  &--desktop {
-    @include mobile {
-      display: none;
-    }
+  @include mobile {
+    font-size: 9px;
   }
 }
 
