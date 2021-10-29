@@ -304,7 +304,7 @@ export default () => {
               ) {
                 return
               }
-              
+
               if (
                 networkName === "mainnet" &&
                 tokenInfo1?.symbol === "AGB" &&
@@ -315,7 +315,7 @@ export default () => {
               ) {
                 return
               }
-              
+
               if (
                 networkName === "mainnet" &&
                 tokenInfo2?.symbol === "AGB" &&
@@ -326,7 +326,29 @@ export default () => {
               ) {
                 return
               }
-           
+
+              if (
+                networkName === "mainnet" &&
+                tokenInfo1?.symbol === "DKWON" &&
+                !(
+                  tokenInfo1?.contract_addr ===
+                  "terra14f7u8z4eqpxcrp4xr6knhgfp5n4h68nwy3yzg5"
+                )
+              ) {
+                return
+              }
+
+              if (
+                networkName === "mainnet" &&
+                tokenInfo2?.symbol === "DKWON" &&
+                !(
+                  tokenInfo2?.contract_addr ===
+                  "terra14f7u8z4eqpxcrp4xr6knhgfp5n4h68nwy3yzg5"
+                )
+              ) {
+                return
+              }
+
               const lpTokenInfo = await getTokenInfo({
                 token: { contract_addr: pairResult.liquidity_token },
               })
