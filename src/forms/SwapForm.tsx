@@ -397,6 +397,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         if (isNativeToken(symbol || "")) {
           msg.coins = Coins.fromString(toAmount(`${amount}`) + symbol)
         }
+
+        msg.execute_msg.send.msg = btoa(
+          JSON.stringify(msg.execute_msg.send.msg)
+        )
       }
       if (msg?.execute_msg?.execute_swap_operations) {
         msg.execute_msg.execute_swap_operations.minimum_receive = parseInt(
