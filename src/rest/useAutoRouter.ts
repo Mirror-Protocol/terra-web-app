@@ -208,6 +208,13 @@ const useAutoRouter = (params: Params) => {
         }
 
         if (index >= simulateQueries.length - 1) {
+          // wait for all query done
+          for (let i = 0; i < 30; i++) {
+            if (JSON.parse(JSON.stringify(result)).includes(null)) {
+              await sleep(100)
+            }
+          }
+
           setSimulatedAmounts(
             result
               .map((item) => {
@@ -219,7 +226,7 @@ const useAutoRouter = (params: Params) => {
                 }
                 return -1
               })
-              .map((item) => (Number.isNaN(item) ? -1 : item))
+              .map((item) => (Number.isNaN(Number(item)) ? -1 : item))
           )
           setIsLoading(false)
         }
