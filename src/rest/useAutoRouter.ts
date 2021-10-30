@@ -101,8 +101,9 @@ const useAutoRouter = (params: Params) => {
   }, [msgs])
 
   useEffect(() => {
+    let isCanceled = false
     const fetchMessages = async () => {
-      if (!from || !to || !amount) {
+      if (!from || !to || !amount || !type) {
         return
       }
       if (type === Type.PROVIDE || type === Type.WITHDRAW) {
@@ -119,7 +120,7 @@ const useAutoRouter = (params: Params) => {
         max_spread: 0,
         belief_price: 0,
       })
-      if (Array.isArray(res)) {
+      if (Array.isArray(res) && !isCanceled) {
         setMsgs(res)
       }
     }
@@ -132,6 +133,7 @@ const useAutoRouter = (params: Params) => {
 
     return () => {
       clearTimeout(timerId)
+      isCanceled = true
     }
   }, [amount, from, generateContractMessages, to, type, autoRefreshTicker])
 
@@ -147,6 +149,7 @@ const useAutoRouter = (params: Params) => {
   }, [amount, from, to, type])
 
   useEffect(() => {
+    let isCanceled = false
     const request = async () => {
       const simulateQueries = msgs.map((msg) => {
         let { contract, execute_msg } = (Array.isArray(msg)
@@ -189,6 +192,9 @@ const useAutoRouter = (params: Params) => {
 
       const result: any[] = []
       simulateQueries.forEach(async (query, index) => {
+        if (isCanceled) {
+          return
+        }
         await sleep(100 * index)
         const res = await querySimulate({
           contract: `${query?.contract}`,
@@ -196,6 +202,9 @@ const useAutoRouter = (params: Params) => {
         })
         if (res) {
           result[index] = res
+        }
+        if (isCanceled) {
+          return
         }
 
         if (index >= simulateQueries.length - 1) {
@@ -215,19 +224,14 @@ const useAutoRouter = (params: Params) => {
           setIsLoading(false)
         }
       })
-
-      // const res = await Promise.all(
-      //   simulateQueries.map((query) =>
-      //     querySimulate({
-      //       contract: `${query?.contract}`,
-      //       msg: query?.msg,
-      //     })
-      //   )
-      // );
     }
 
     setSimulatedAmounts([])
     request()
+
+    return () => {
+      isCanceled = true
+    }
   }, [amount, msgs, querySimulate])
 
   return {
