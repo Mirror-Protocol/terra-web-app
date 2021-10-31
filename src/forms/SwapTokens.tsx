@@ -50,33 +50,56 @@ const SwapTokens = ({
     let isCancelled = false
     const fetchAddressList = async () => {
       if (oppositeValue) {
-        const res = await loadSwappableTokenAddresses(oppositeValue)
-        if (Array.isArray(res)) {
-          if (!isCancelled) {
-            setAddressList(res)
-          }
-        }
-        return
-      }
-
-      const assetItemMap: Set<string> = new Set<string>()
-      pairs.forEach((pair) => {
-        if (type === Type.WITHDRAW) {
-          const tokeninfo = tokenInfos.get(pair.liquidity_token)
-          if (tokeninfo !== undefined) {
-            assetItemMap.add(tokeninfo.contract_addr)
-          }
-        } else {
-          pair.pair.forEach((tokenInfo) => {
-            if (!assetItemMap.has(tokenInfo.symbol)) {
-              assetItemMap.add(tokenInfo.contract_addr)
+        if (type === Type.SWAP) {
+          const res = await loadSwappableTokenAddresses(oppositeValue)
+          if (Array.isArray(res)) {
+            if (!isCancelled) {
+              setAddressList(res)
             }
-          })
+          }
+          return
         }
-      })
 
-      if (!isCancelled) {
-        setAddressList(Array.from(assetItemMap.values()))
+        const assetItemMap: Set<string> = new Set<string>()
+        pairs.forEach((pair) => {
+          if (
+            oppositeValue === pair.pair[0].contract_addr &&
+            !assetItemMap.has(pair.pair[1].contract_addr)
+          ) {
+            assetItemMap.add(pair.pair[1].contract_addr)
+          }
+
+          if (
+            oppositeValue === pair.pair[1].contract_addr &&
+            !assetItemMap.has(pair.pair[0].contract_addr)
+          ) {
+            assetItemMap.add(pair.pair[0].contract_addr)
+          }
+        })
+
+        if (!isCancelled) {
+          setAddressList(Array.from(assetItemMap.values()))
+        }
+      } else {
+        const assetItemMap: Set<string> = new Set<string>()
+        pairs.forEach((pair) => {
+          if (type === Type.WITHDRAW) {
+            const tokeninfo = tokenInfos.get(pair.liquidity_token)
+            if (tokeninfo !== undefined) {
+              assetItemMap.add(tokeninfo.contract_addr)
+            }
+          } else {
+            pair.pair.forEach((tokenInfo) => {
+              if (!assetItemMap.has(tokenInfo.symbol)) {
+                assetItemMap.add(tokenInfo.contract_addr)
+              }
+            })
+          }
+        })
+
+        if (!isCancelled) {
+          setAddressList(Array.from(assetItemMap.values()))
+        }
       }
     }
 
@@ -86,52 +109,6 @@ const SwapTokens = ({
       isCancelled = true
     }
   }, [loadSwappableTokenAddresses, oppositeValue, pairs, type])
-
-  // const selectedList = (value: string | undefined) => {
-  //   let assetItemMap: Set<string> = new Set<string>()
-
-  //   pairs.forEach((pair) => {
-  //     if (
-  //       value === pair.pair[0].contract_addr &&
-  //       !assetItemMap.has(pair.pair[1].contract_addr)
-  //     ) {
-  //       assetItemMap.add(pair.pair[1].contract_addr)
-  //     }
-
-  //     if (
-  //       value === pair.pair[1].contract_addr &&
-  //       !assetItemMap.has(pair.pair[0].contract_addr)
-  //     ) {
-  //       assetItemMap.add(pair.pair[0].contract_addr)
-  //     }
-  //   })
-
-  //   return Array.from(assetItemMap.values())
-  // }
-
-  // const allList = () => {
-  //   let assetItemMap: Set<string> = new Set<string>()
-  //   pairs.forEach((pair) => {
-  //     if (type === Type.WITHDRAW) {
-  //       const tokeninfo = tokenInfos.get(pair.liquidity_token)
-  //       if (tokeninfo !== undefined) {
-  //         assetItemMap.add(tokeninfo.contract_addr)
-  //       }
-  //     } else {
-  //       pair.pair.forEach((tokenInfo) => {
-  //         if (!assetItemMap.has(tokenInfo.symbol)) {
-  //           assetItemMap.add(tokenInfo.contract_addr)
-  //         }
-  //       })
-  //     }
-  //   })
-
-  //   return Array.from(assetItemMap.values())
-  // }
-
-  // const list: string[] = !(oppositeValue === undefined || oppositeValue === "")
-  //   ? selectedList(oppositeValue)
-  //   : allList()
 
   const handleSelect = (contractAddr: string) => {
     onSelect(contractAddr)
