@@ -1,5 +1,5 @@
 import { MsgExecuteContract } from "@terra-money/terra.js"
-import { div } from "libs/math"
+import { div, times } from "libs/math"
 import { toAmount } from "libs/parse"
 import { Type } from "pages/Swap"
 import { useEffect, useMemo, useState } from "react"
@@ -81,24 +81,11 @@ const useAutoRouter = (params: Params) => {
         index,
         simulatedAmount,
         token_route,
-        price: div(amount, simulatedAmount),
+        price: div(times(amount, 1e6), simulatedAmount),
       }
     }
     return undefined
   }, [amount, msgs, simulatedAmounts])
-
-  useEffect(() => {
-    console.log("profitableQuery")
-    console.log(profitableQuery)
-  }, [profitableQuery])
-  useEffect(() => {
-    console.log("simulatedAmounts")
-    console.log(JSON.parse(JSON.stringify(simulatedAmounts)))
-  }, [simulatedAmounts])
-  useEffect(() => {
-    console.log("msgs")
-    console.log(msgs)
-  }, [msgs])
 
   useEffect(() => {
     let isCanceled = false
@@ -109,8 +96,6 @@ const useAutoRouter = (params: Params) => {
       if (type === Type.PROVIDE || type === Type.WITHDRAW) {
         return
       }
-      console.log("fetchMessages")
-      console.log({ amount, from, to })
       const res: MsgExecuteContract[] = await generateContractMessages({
         type: Type.SWAP,
         amount,
@@ -160,14 +145,8 @@ const useAutoRouter = (params: Params) => {
           contract = execute_msg?.send?.contract
           execute_msg = execute_msg?.send?.msg
         }
-        console.log("contract")
-        console.log(contract)
-        console.log("execute_msg")
-        console.log(execute_msg)
         if (execute_msg?.execute_swap_operations) {
           const { operations } = execute_msg.execute_swap_operations
-          console.log("operations")
-          console.log(operations)
           return {
             contract,
             msg: {

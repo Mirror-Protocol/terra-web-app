@@ -24,7 +24,6 @@ import {
   renderBalance,
   calcTax,
 } from "./formHelpers"
-// import useSwapSimulate from "rest/useSwapSimulate";
 import useSwapSelectToken from "./useSwapSelectToken"
 import SwapFormGroup from "./SwapFormGroup"
 import usePairs, { tokenInfos, lpTokenInfos, InitLP } from "rest/usePairs"
@@ -240,18 +239,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     type: formState.isSubmitted ? undefined : type,
   })
 
-  // const simulation = useSwapSimulate({
-  //   amount: toAmount(formData[!isReversed ? Key.value1 : Key.value2]),
-  //   token: formData[!isReversed ? Key.token1 : Key.token2],
-  //   pair,
-  //   reverse: isReversed,
-  // });
-  // const {
-  //   simulated: simulatedData,
-  //   simulating: isSimulating,
-  //   error: simulationError,
-  // } = simulation;
-
   const { result: poolResult, poolLoading } = usePool(
     pair,
     formData[Key.symbol1],
@@ -275,7 +262,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     const minimumReceived = profitableQuery
       ? calc.minimumReceived({
           offer_amount: toAmount(formData[Key.value1]),
-          belief_price: decimal(times(profitableQuery?.price, 1000000), 18),
+          belief_price: decimal(profitableQuery?.price, 18),
           max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
         })
@@ -284,7 +271,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     return [
       ...insertIf(type === Type.SWAP, {
         title: <TooltipIcon content={Tooltip.Swap.Rate}>Rate</TooltipIcon>,
-        content: `${decimal(times(profitableQuery?.price, 1000000), 6)} ${
+        content: `${decimal(profitableQuery?.price, 6)} ${
           formData[Key.symbol1]
         } per ${formData[Key.symbol2]}`,
       }),
@@ -381,19 +368,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         minimumReceived?: string | number
       }
     ) => {
-      console.log(_msg)
-      console.log("symbol")
-      console.log(symbol)
       const msg = Array.isArray(_msg) ? _msg[0] : _msg
-      console.log(msg)
       if (msg?.execute_msg?.send?.msg?.execute_swap_operations) {
         msg.execute_msg.send.msg.execute_swap_operations.minimum_receive = parseInt(
           `${minimumReceived}`,
           10
         ).toString()
-        // msg.execute_msg.send.msg.execute_swap_operations.offer_amount = toAmount(
-        //   `${amount}`
-        // );
         if (isNativeToken(symbol || "")) {
           msg.coins = Coins.fromString(toAmount(`${amount}`) + symbol)
         }
@@ -502,19 +482,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       maxFee,
     } = { ...formData, ...(newValues || {}) }
 
-    console.log("validateForm")
-    console.log({
-      value1,
-      value2,
-      symbol1,
-      symbol2,
-      max1,
-      max2,
-      feeValue,
-      feeSymbol,
-      maxFee,
-    })
-
     if (key === Key.value1) {
       const taxCap = await loadTaxInfo(symbol1)
       const taxRate = await loadTaxRate()
@@ -578,7 +545,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   }, [setValue, tokenInfo1])
 
   useEffect(() => {
-    console.log(tokenInfo2?.symbol)
     setValue(Key.symbol2, tokenInfo2?.symbol || "")
   }, [setValue, tokenInfo2])
 
@@ -596,9 +562,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
   const watchCallback = useCallback(
     (data, { name: watchName, value: watchValue, type: eventType }) => {
-      console.log(watchName, watchValue, eventType)
-      console.log(data)
-      console.log(tokenInfos.get(data.token2)?.symbol)
       if (!eventType && [Key.value1, Key.value2].includes(watchName as Key)) {
         return
       }
@@ -608,33 +571,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             watchName as Key
           )
         ) {
-          console.log("hello")
-          console.log(profitableQuery)
-          // console.log(
-          //   lookup(
-          //     times(
-          //       `${profitableQuery?.simulatedAmount}`,
-          //       `${data[Key.value1]}`
-          //     ),
-          //     tokenInfos.get(data.token2)?.symbol
-          //   )
-          // );
-          // setValue(
-          //   Key.value2,
-          //   lookup(
-          //     times(
-          //       `${profitableQuery?.simulatedAmount}`,
-          //       `${data[Key.value1]}`
-          //     ),
-          //     tokenInfos.get(data.token2)?.symbol
-          //   )
-          // );
-          console.log(
-            lookup(
-              `${profitableQuery?.simulatedAmount}`,
-              tokenInfos.get(data.token2)?.symbol
-            )
-          )
           setValue(
             Key.value2,
             lookup(
@@ -663,8 +599,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
   useEffect(() => {
     if (profitableQuery) {
-      console.log("profitableQuery changed")
-      console.log(profitableQuery)
       watchCallback(form.getValues(), { name: Key.token2 })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -678,36 +612,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   useEffect(() => {
     switch (type) {
       case Type.SWAP:
-        // const key = isReversed ? Key.value1 : Key.value2;
-        // const symbol = isReversed ? tokenInfo1?.symbol : tokenInfo2?.symbol;
-        // // const value = simulationError
-        // //   ? "0"
-        // //   : lookup(simulatedData?.amount, symbol)
-
-        // const inputValue = !isReversed
-        //   ? form.getValues(Key.value1)
-        //   : form.getValues(Key.value2);
-        // console.log("inputValue");
-        // console.log(inputValue);
-        // console.log("profitableQuery?.simulatedAmount");
-        // console.log(profitableQuery?.simulatedAmount);
-        // const value = !isReversed
-        //   ? lookup(
-        //       times(`${profitableQuery?.simulatedAmount}`, inputValue),
-        //       symbol
-        //     )
-        //   : lookup(
-        //       div(toAmount(inputValue), `${profitableQuery?.simulatedAmount}`)
-        //     );
-
-        // // Safe to use as deps
-        // if (!isNil(value)) {
-        //   setValue(key, value);
-        //   setTimeout(() => {
-        //     trigger(Key.value1);
-        //     trigger(Key.value2);
-        //   }, 100);
-        // }
         break
       case Type.PROVIDE:
         if (poolResult && !poolLoading) {
@@ -741,10 +645,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           }, 100)
         }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     isReversed,
-    // simulationError,
     poolLoading,
     type,
     tokenInfo1,
@@ -754,7 +656,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     poolSymbol1,
     poolSymbol2,
     trigger,
-    // form,
     profitableQuery,
   ])
   useEffect(() => {
@@ -803,53 +704,18 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             belief_price: `${decimal(div(value1, value2), 18)}`,
           })
 
-          console.log(res)
-          console.log(profitableQuery?.index)
-          console.log(res[profitableQuery?.index || 0])
-
           msgs = getMsgs(res[profitableQuery?.index || 0], {
             amount: `${value1}`,
             minimumReceived: profitableQuery
               ? calc.minimumReceived({
                   offer_amount: toAmount(formData[Key.value1]),
-                  belief_price: decimal(
-                    times(profitableQuery?.price, 1000000),
-                    18
-                  ),
+                  belief_price: decimal(profitableQuery?.price, 18),
                   max_spread: String(slippageTolerance),
                   commission: find(infoKey, formData[Key.symbol2]),
                 })
               : "0",
             symbol: token1,
           })
-          console.log(msgs)
-          // const a = isNativeToken(token1)
-          //   ? [
-          //       ...insertIf(
-          //         !isNativeToken(token2),
-          //         newContractMsg(token2, {
-          //           increase_allowance: { amount: amount2, spender: pair },
-          //         })
-          //       ),
-          //       newContractMsg(pair, { swap: { offer_asset: asset } }, [
-          //         { amount: amount1, denom: getSymbol(symbol1) },
-          //       ]),
-          //     ]
-          //   : [
-          //       ...insertIf(
-          //         !isNativeToken(token2),
-          //         newContractMsg(token2, {
-          //           increase_allowance: { amount: amount2, spender: pair },
-          //         })
-          //       ),
-          //       newContractMsg(token1, {
-          //         send: {
-          //           amount: amount1,
-          //           contract: pair,
-          //           msg: toBase64({ swap: {} }),
-          //         },
-          //       }),
-          //     ];
         } else {
           msgs = (
             await generateContractMessages(
@@ -907,7 +773,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           return
         }
       } catch (error) {
-        console.log(error)
         setResult(error)
       }
     },
