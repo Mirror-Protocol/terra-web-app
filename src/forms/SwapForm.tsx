@@ -339,18 +339,23 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           </Count>
         ),
       },
-      ...insertIf(type === Type.SWAP && profitableQuery?.token_route?.length, {
+      ...insertIf(type === Type.SWAP && profitableQuery?.tokenRoutes?.length, {
         title: (
           <TooltipIcon content="Optimized route for your optimal gain">
             Route
           </TooltipIcon>
         ),
-        content: profitableQuery?.token_route?.map((token, index, array) => (
-          <>
-            {tokenInfos.get(token)?.symbol}
-            {index >= array.length - 1 ? "" : " → "}
-          </>
-        )),
+        content: (
+          <span
+            title={profitableQuery?.tokenRoutes
+              ?.map((token) => tokenInfos.get(token)?.symbol)
+              .join(" → ")}
+          >
+            {profitableQuery?.tokenRoutes
+              ?.map((token) => tokenInfos.get(token)?.symbol)
+              .join(" → ")}
+          </span>
+        ),
       }),
     ]
   }, [find, formData, poolResult, profitableQuery, slippageTolerance, type])

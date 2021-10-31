@@ -38,49 +38,48 @@ const useAutoRouter = (params: Params) => {
       const msg = msgs[index]
       const execute_msg = (Array.isArray(msg) ? msg[0] : msg)
         ?.execute_msg as any
-      const token_route: string[] = []
-      if (execute_msg?.execute_swap_operations?.operations) {
-        const operations: any[] =
-          execute_msg?.execute_swap_operations?.operations
-        if (operations) {
-          operations.forEach((operation, index) => {
-            if (operation?.terra_swap?.offer_asset_info?.native_token?.denom) {
-              token_route.push(
-                operation?.terra_swap?.offer_asset_info?.native_token?.denom
+      const tokenRoutes: string[] = []
+      const operations: any[] =
+        execute_msg?.execute_swap_operations?.operations ||
+        execute_msg?.send?.msg?.execute_swap_operations?.operations
+      if (operations) {
+        operations.forEach((operation, index) => {
+          if (operation?.terra_swap?.offer_asset_info?.native_token?.denom) {
+            tokenRoutes.push(
+              operation?.terra_swap?.offer_asset_info?.native_token?.denom
+            )
+          } else if (
+            operation?.terra_swap?.offer_asset_info?.token?.contract_addr
+          ) {
+            tokenRoutes.push(
+              operation?.terra_swap?.offer_asset_info?.token?.contract_addr
+            )
+          } else if (operation?.native_swap?.offer_denom) {
+            tokenRoutes.push(operation?.native_swap?.offer_denom)
+          }
+
+          if (index >= operations.length - 1) {
+            if (operation?.terra_swap?.ask_asset_info?.native_token?.denom) {
+              tokenRoutes.push(
+                operation?.terra_swap?.ask_asset_info?.native_token?.denom
               )
             } else if (
-              operation?.terra_swap?.offer_asset_info?.token?.contract_addr
+              operation?.terra_swap?.ask_asset_info?.token?.contract_addr
             ) {
-              token_route.push(
-                operation?.terra_swap?.offer_asset_info?.token?.contract_addr
-              )
-            } else if (operation?.native_swap?.offer_denom) {
-              token_route.push(operation?.native_swap?.offer_denom)
-            }
-
-            if (index >= operations.length - 1) {
-              if (operation?.terra_swap?.ask_asset_info?.native_token?.denom) {
-                token_route.push(
-                  operation?.terra_swap?.ask_asset_info?.native_token?.denom
-                )
-              } else if (
+              tokenRoutes.push(
                 operation?.terra_swap?.ask_asset_info?.token?.contract_addr
-              ) {
-                token_route.push(
-                  operation?.terra_swap?.ask_asset_info?.token?.contract_addr
-                )
-              } else if (operation?.native_swap?.ask_denom) {
-                token_route.push(operation?.native_swap?.ask_denom)
-              }
+              )
+            } else if (operation?.native_swap?.ask_denom) {
+              tokenRoutes.push(operation?.native_swap?.ask_denom)
             }
-          })
-        }
+          }
+        })
       }
       return {
         msg,
         index,
         simulatedAmount,
-        token_route,
+        tokenRoutes,
         price: div(times(amount, 1e6), simulatedAmount),
       }
     }
