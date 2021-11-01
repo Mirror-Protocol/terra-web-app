@@ -157,7 +157,17 @@ const useAutoRouter = (params: Params) => {
           }
         }
         if (execute_msg?.swap) {
-          const { offer_asset } = execute_msg.swap
+          let { offer_asset } = execute_msg.swap
+          if (offer_asset === undefined) {
+            offer_asset = {
+              amount: toAmount(`${amount}`),
+              info: {
+                token: {
+                  contract_addr: from,
+                },
+              },
+            }
+          }
           return {
             contract,
             msg: {
