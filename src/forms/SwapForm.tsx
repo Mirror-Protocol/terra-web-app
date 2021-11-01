@@ -33,7 +33,13 @@ import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import { Coin, Coins, StdFee, CreateTxOptions } from "@terra-money/terra.js"
+import {
+  Coin,
+  Coins,
+  StdFee,
+  CreateTxOptions,
+  MsgSwapSend,
+} from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import { insertIf } from "libs/utils"
@@ -726,27 +732,28 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             symbol: token1,
           })
         } else {
-          msgs = (
-            await generateContractMessages(
-              {
-                [Type.PROVIDE]: {
-                  type: Type.PROVIDE,
-                  sender: `${walletAddress}`,
-                  fromAmount: `${value1}`,
-                  toAmount: `${value2}`,
-                  from: `${token1}`,
-                  to: `${token2}`,
-                  slippage: slippageTolerance,
-                },
-                [Type.WITHDRAW]: {
-                  type: Type.WITHDRAW,
-                  sender: `${walletAddress}`,
-                  amount: `${value1}`,
-                  lpAddr: `${lpContract}`,
-                },
-              }[type] as any
-            )
-          )[profitableQuery?.index || 0]
+          msgs = await generateContractMessages(
+            {
+              [Type.PROVIDE]: {
+                type: Type.PROVIDE,
+                sender: `${walletAddress}`,
+                fromAmount: `${value1}`,
+                toAmount: `${value2}`,
+                from: `${token1}`,
+                to: `${token2}`,
+                slippage: slippageTolerance,
+              },
+              [Type.WITHDRAW]: {
+                type: Type.WITHDRAW,
+                sender: `${walletAddress}`,
+                amount: `${value1}`,
+                lpAddr: `${lpContract}`,
+              },
+            }[type] as any
+          )
+          msgs = msgs.map((msg: any) => {
+            return Array.isArray(msg) ? msg[0] : msg
+          })
         }
         const symbol = getSymbol(feeSymbol)
         const gas = fee.gas
