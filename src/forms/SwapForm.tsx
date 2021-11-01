@@ -33,13 +33,7 @@ import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import {
-  Coin,
-  Coins,
-  StdFee,
-  CreateTxOptions,
-  MsgSwapSend,
-} from "@terra-money/terra.js"
+import { Coin, Coins, StdFee, CreateTxOptions } from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import { insertIf } from "libs/utils"
@@ -392,7 +386,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         msg.execute_msg.send.msg = btoa(
           JSON.stringify(msg.execute_msg.send.msg)
         )
-      } else if (msg?.execute_msg?.send !== undefined) {
+      } else if (msg?.execute_msg?.send?.msg) {
         msg.execute_msg.send.msg = btoa(
           JSON.stringify(msg.execute_msg.send.msg)
         )
