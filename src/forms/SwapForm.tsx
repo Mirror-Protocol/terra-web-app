@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import Result from "./Result"
 import TabView from "components/TabView"
 import { useLocation } from "react-router-dom"
-import { isNil } from "ramda"
 import { LP, LUNA, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
 import {
   useNetwork,
@@ -25,7 +24,6 @@ import {
   renderBalance,
   calcTax,
 } from "./formHelpers"
-import useSwapSimulate from "rest/useSwapSimulate"
 import useSwapSelectToken from "./useSwapSelectToken"
 import SwapFormGroup from "./SwapFormGroup"
 import usePairs, { tokenInfos, lpTokenInfos, InitLP } from "rest/usePairs"
@@ -35,7 +33,7 @@ import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import { Coin, Coins, StdFee, CreateTxOptions} from "@terra-money/terra.js"
+import { Coin, Coins, StdFee, CreateTxOptions } from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import { insertIf } from "libs/utils"
@@ -52,6 +50,7 @@ import iconReload from "images/icon-reload.svg"
 import { useModal } from "components/Modal"
 import Settings, { SettingValues } from "components/Settings"
 import useLocalStorage from "libs/useLocalStorage"
+import useAutoRouter from "rest/useAutoRouter"
 
 enum Key {
   token1 = "token1",
@@ -84,7 +83,7 @@ const Wrapper = styled.div`
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
-  const { getSymbol } = useContractsAddress()
+  const { getSymbol, isNativeToken } = useContractsAddress()
   const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI()
   const { state } = useLocation<{ symbol: string }>()
   const { fee } = useNetwork()
@@ -233,17 +232,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     }
   }, [formData, pairs, tokenInfo1, tokenInfo2, type])
 
-  const simulation = useSwapSimulate({
-    amount: toAmount(formData[!isReversed ? Key.value1 : Key.value2]),
-    token: formData[!isReversed ? Key.token1 : Key.token2],
-    pair,
-    reverse: isReversed,
+  const { isLoading: isAutoRouterLoading, profitableQuery } = useAutoRouter({
+    from: formData[Key.token1],
+    to: formData[Key.token2],
+    amount: formData[Key.value1],
+    type: formState.isSubmitted ? undefined : type,
   })
-  const {
-    simulated: simulatedData,
-    simulating: isSimulating,
-    error: simulationError,
-  } = simulation
 
   const { result: poolResult, poolLoading } = usePool(
     pair,
@@ -265,19 +259,19 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       return []
     }
 
-    const minimumReceived = simulatedData
+    const minimumReceived = profitableQuery
       ? calc.minimumReceived({
           offer_amount: toAmount(formData[Key.value1]),
-          belief_price: decimal(simulatedData?.price, 18),
+          belief_price: decimal(profitableQuery?.price, 18),
           max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
         })
-      : "10"
+      : "0"
 
     return [
       ...insertIf(type === Type.SWAP, {
         title: <TooltipIcon content={Tooltip.Swap.Rate}>Rate</TooltipIcon>,
-        content: `${decimal(simulatedData?.price, 6)} ${
+        content: `${decimal(profitableQuery?.price, 6)} ${
           formData[Key.symbol1]
         } per ${formData[Key.symbol2]}`,
       }),
@@ -303,18 +297,18 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           <Count symbol={formData[Key.symbol2]}>{minimumReceived}</Count>
         ),
       }),
-      ...insertIf(type === Type.SWAP, {
-        title: (
-          <TooltipIcon content={Tooltip.Swap.TradingFee}>
-            Trading Fee
-          </TooltipIcon>
-        ),
-        content: (
-          <Count symbol={formData[Key.symbol2]}>
-            {simulatedData?.commission}
-          </Count>
-        ),
-      }),
+      // ...insertIf(type === Type.SWAP, {
+      //   title: (
+      //     <TooltipIcon content={Tooltip.Swap.TradingFee}>
+      //       Trading Fee
+      //     </TooltipIcon>
+      //   ),
+      //   content: (
+      //     <Count symbol={formData[Key.symbol2]}>
+      //       {find(infoKey, formData[Key.symbol2])}
+      //     </Count>
+      //   ),
+      // }),
       ...insertIf(type === Type.PROVIDE, {
         title: (
           <TooltipIcon content={Tooltip.Pool.LPfromTx}>LP from Tx</TooltipIcon>
@@ -345,8 +339,75 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           </Count>
         ),
       },
+      ...insertIf(type === Type.SWAP && profitableQuery?.tokenRoutes?.length, {
+        title: (
+          <TooltipIcon content="Optimized route for your optimal gain">
+            Route
+          </TooltipIcon>
+        ),
+        content: (
+          <span
+            title={profitableQuery?.tokenRoutes
+              ?.map((token) => tokenInfos.get(token)?.symbol)
+              .join(" → ")}
+          >
+            {profitableQuery?.tokenRoutes
+              ?.map((token) => tokenInfos.get(token)?.symbol)
+              .join(" → ")}
+          </span>
+        ),
+      }),
     ]
-  }, [find, formData, poolResult, simulatedData, slippageTolerance, type])
+  }, [find, formData, poolResult, profitableQuery, slippageTolerance, type])
+
+  const getMsgs = useCallback(
+    (
+      _msg: any,
+      {
+        amount,
+        symbol,
+        minimumReceived,
+      }: {
+        amount?: string | number
+        symbol?: string
+        minimumReceived?: string | number
+      }
+    ) => {
+      const msg = Array.isArray(_msg) ? _msg[0] : _msg
+      if (msg?.execute_msg?.send?.msg?.execute_swap_operations) {
+        msg.execute_msg.send.msg.execute_swap_operations.minimum_receive = parseInt(
+          `${minimumReceived}`,
+          10
+        ).toString()
+        if (isNativeToken(symbol || "")) {
+          msg.coins = Coins.fromString(toAmount(`${amount}`) + symbol)
+        }
+
+        msg.execute_msg.send.msg = btoa(
+          JSON.stringify(msg.execute_msg.send.msg)
+        )
+      } else if (msg?.execute_msg?.send?.msg) {
+        msg.execute_msg.send.msg = btoa(
+          JSON.stringify(msg.execute_msg.send.msg)
+        )
+      }
+      if (msg?.execute_msg?.execute_swap_operations) {
+        msg.execute_msg.execute_swap_operations.minimum_receive = parseInt(
+          `${minimumReceived}`,
+          10
+        ).toString()
+        msg.execute_msg.execute_swap_operations.offer_amount = toAmount(
+          `${amount}`
+        )
+
+        if (isNativeToken(symbol || "")) {
+          msg.coins = Coins.fromString(toAmount(`${amount}`) + symbol)
+        }
+      }
+      return [msg]
+    },
+    [isNativeToken]
+  )
 
   const { gasPrice } = useGasPrice(formData[Key.feeSymbol])
   const getTax = useCallback(
@@ -508,23 +569,58 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     setValue(Key.maxFee, maxFeeBalance || "")
   }, [maxFeeBalance, setValue])
 
+  const watchCallback = useCallback(
+    (data, { name: watchName, value: watchValue, type: eventType }) => {
+      if (!eventType && [Key.value1, Key.value2].includes(watchName as Key)) {
+        return
+      }
+      if (type === Type.SWAP) {
+        if (
+          [Key.value1, Key.token1, Key.token2, Key.feeSymbol].includes(
+            watchName as Key
+          )
+        ) {
+          setValue(
+            Key.value2,
+            lookup(
+              `${profitableQuery?.simulatedAmount}`,
+              tokenInfos.get(data.token2)?.symbol
+            )
+          )
+          trigger(Key.value2)
+        }
+        if (watchName === Key.value2) {
+          setValue(
+            Key.value1,
+            lookup(
+              div(
+                toAmount(`${data[Key.value2]}`),
+                `${profitableQuery?.simulatedAmount}`
+              )
+            )
+          )
+          trigger(Key.value1)
+        }
+      }
+    },
+    [profitableQuery, setValue, trigger, type]
+  )
+
+  useEffect(() => {
+    if (profitableQuery) {
+      watchCallback(form.getValues(), { name: Key.token2 })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profitableQuery, watchCallback])
+
+  useEffect(() => {
+    const subscription = watch(watchCallback)
+    return () => subscription.unsubscribe()
+  }, [watch, watchCallback, profitableQuery])
+
   useEffect(() => {
     switch (type) {
       case Type.SWAP:
-        const key = isReversed ? Key.value1 : Key.value2
-        const symbol = isReversed ? tokenInfo1?.symbol : tokenInfo2?.symbol
-        const value = simulationError
-          ? "0"
-          : lookup(simulatedData?.amount, symbol)
-
-        // Safe to use as deps
-        if (!isNil(value)) {
-          setValue(key, value)
-          setTimeout(() => {
-            trigger(Key.value1)
-            trigger(Key.value2)
-          }, 100)
-        }
         break
       case Type.PROVIDE:
         if (poolResult && !poolLoading) {
@@ -559,9 +655,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         }
     }
   }, [
-    simulatedData,
     isReversed,
-    simulationError,
     poolLoading,
     type,
     tokenInfo1,
@@ -571,6 +665,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     poolSymbol1,
     poolSymbol2,
     trigger,
+    profitableQuery,
   ])
   useEffect(() => {
     setValue(Key.gasPrice, gasPrice || "")
@@ -605,34 +700,55 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       } = values
       try {
         settingsModal.close()
-        const msgs = await generateContractMessages(
-          {
-            [Type.SWAP]: {
-              type: Type.SWAP,
-              sender: `${walletAddress}`,
-              amount: `${value1}`,
-              from: `${token1}`,
-              to: `${token2}`,
-              max_spread: slippageTolerance,
-              belief_price: `${decimal(div(value1, value2), 18)}`,
-            },
-            [Type.PROVIDE]: {
-              type: Type.PROVIDE,
-              sender: `${walletAddress}`,
-              fromAmount: `${value1}`,
-              toAmount: `${value2}`,
-              from: `${token1}`,
-              to: `${token2}`,
-              slippage: slippageTolerance,
-            },
-            [Type.WITHDRAW]: {
-              type: Type.WITHDRAW,
-              sender: `${walletAddress}`,
-              amount: `${value1}`,
-              lpAddr: `${lpContract}`,
-            },
-          }[type] as any
-        )
+
+        let msgs: any = {}
+        if (type === Type.SWAP) {
+          const res = await generateContractMessages({
+            type: Type.SWAP,
+            sender: `${walletAddress}`,
+            amount: `${value1}`,
+            from: `${token1}`,
+            to: `${token2}`,
+            max_spread: slippageTolerance,
+            belief_price: `${decimal(div(value1, value2), 18)}`,
+          })
+
+          msgs = getMsgs(res[profitableQuery?.index || 0], {
+            amount: `${value1}`,
+            minimumReceived: profitableQuery
+              ? calc.minimumReceived({
+                  offer_amount: toAmount(formData[Key.value1]),
+                  belief_price: decimal(profitableQuery?.price, 18),
+                  max_spread: String(slippageTolerance),
+                  commission: find(infoKey, formData[Key.symbol2]),
+                })
+              : "0",
+            symbol: token1,
+          })
+        } else {
+          msgs = await generateContractMessages(
+            {
+              [Type.PROVIDE]: {
+                type: Type.PROVIDE,
+                sender: `${walletAddress}`,
+                fromAmount: `${value1}`,
+                toAmount: `${value2}`,
+                from: `${token1}`,
+                to: `${token2}`,
+                slippage: slippageTolerance,
+              },
+              [Type.WITHDRAW]: {
+                type: Type.WITHDRAW,
+                sender: `${walletAddress}`,
+                amount: `${value1}`,
+                lpAddr: `${lpContract}`,
+              },
+            }[type] as any
+          )
+          msgs = msgs.map((msg: any) => {
+            return Array.isArray(msg) ? msg[0] : msg
+          })
+        }
         const symbol = getSymbol(feeSymbol)
         const gas = fee.gas
         const amount = feeValue
@@ -667,21 +783,24 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           return
         }
       } catch (error) {
-        console.log(error)
         setResult(error)
       }
     },
     [
       settingsModal,
+      type,
+      getSymbol,
+      fee.gas,
+      tax,
+      terraExtensionPost,
       generateContractMessages,
       walletAddress,
       slippageTolerance,
+      profitableQuery,
+      getMsgs,
+      formData,
+      find,
       lpContract,
-      type,
-      getSymbol,
-      fee,
-      tax,
-      terraExtensionPost,
     ]
   )
 
@@ -883,9 +1002,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                       type: "text",
                     }),
                 autoComplete: "off",
-                readOnly:
-                  [Type.PROVIDE, Type.WITHDRAW].includes(type) ||
-                  (!isReversed && isSimulating),
+                readOnly: true,
+                // [Type.PROVIDE, Type.WITHDRAW].includes(type) ||
+                // (!isReversed && isAutoRouterLoading),
                 onKeyDown: () => {
                   setIsReversed(true)
                 },
@@ -910,6 +1029,13 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               unit={type !== Type.WITHDRAW && selectToken2.button}
               assets={type !== Type.WITHDRAW && selectToken2.assets}
               focused={selectToken2.isOpen}
+              isLoading={
+                type === Type.SWAP &&
+                !!formData[Key.value1] &&
+                !!formData[Key.token1] &&
+                !!formData[Key.token2] &&
+                isAutoRouterLoading
+              }
             />
             <SwapConfirm list={simulationContents} />
             <div>
@@ -933,9 +1059,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                         formState.isValidating ||
                         simulationContents?.length <= 0 ||
                         (type === Type.SWAP &&
-                          (simulationError ||
-                            Number.isNaN(simulatedData?.amount || "") ||
-                            parseFloat(simulatedData?.amount || "") <= 0)),
+                          (!profitableQuery || isAutoRouterLoading)),
                       type: "submit",
                     }
                   : {

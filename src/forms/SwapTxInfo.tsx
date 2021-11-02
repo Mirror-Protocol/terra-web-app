@@ -4,6 +4,7 @@ import ConfirmDetails from "./ConfirmDetails"
 import TxHash from "./SwapTxHash"
 import { tokenInfos } from "../rest/usePairs"
 import { formatAsset } from "../libs/parse"
+import { useNetwork } from "hooks"
 
 interface Props {
   txInfo: SwapTxInfo
@@ -13,6 +14,8 @@ interface Props {
 const TxInfo = ({ txInfo, parserKey }: Props) => {
   const { txhash: hash, tx } = txInfo
   const logs = txInfo?.logs
+
+  const { router } = useNetwork()
 
   let contents: Content[][] = []
   contents.push([{ title: "Tx Hash", content: <TxHash>{hash}</TxHash> }])
@@ -35,6 +38,10 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
         const fromContract = event.find(({ type }) => type === "from_contract")
           ?.attributes
 
+        const executeContract = event.find(
+          ({ type }) => type === "execute_contract"
+        )?.attributes
+
         const format = (str: string) => {
           const target = str.trim()
           const idx = target.search(`[^0-9]+`)
@@ -47,6 +54,7 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
         }
 
         let reconstructed: SwapAttribute[] = []
+
         // fromContract can be undefined if pair is not whitelisted
         if (fromContract) {
           {
@@ -60,6 +68,8 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
               ({ key, value }) => key === "action" && value === "swap"
             )
             if (!action) return
+
+            const sender = fromContract.find(({ key }) => key === "sender")
 
             const offerAsset = fromContract.find(
               ({ key }) => key === "offer_asset"
@@ -114,6 +124,14 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
                   value: formatAsset(tax.value, symbol),
                 })
               }
+
+              if (sender && sender?.value === router) {
+                reconstructed = []
+                reconstructed.push({
+                  key: "Info",
+                  value: "Through terraswap router",
+                })
+              }
             }
           } else if (parserKey === "Provide") {
             const action = fromContract.find(
@@ -164,6 +182,20 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
           }
         } else {
           reconstructed.push({ key: "Info", value: "Not whitelisted pair" })
+        }
+
+        if (executeContract) {
+          const contract_address = executeContract.find(
+            ({ key }) => key === "contract_address"
+          )
+
+          if (contract_address && contract_address?.value === router) {
+            reconstructed = []
+            reconstructed.push({
+              key: "Info",
+              value: "Through terraswap router",
+            })
+          }
         }
 
         return (

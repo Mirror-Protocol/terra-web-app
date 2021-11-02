@@ -33,6 +33,7 @@ interface FormGroup {
   skipFeedback?: boolean
   feeSymbol?: string
   feeSelect?: (symbol: string) => void
+  isLoading?: boolean
 }
 
 /* Buttons */

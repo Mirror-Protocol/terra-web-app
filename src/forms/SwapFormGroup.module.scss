@@ -61,6 +61,13 @@ $padding: 10px 10px;
     flex: 1;
   }
 
+  .field {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+  }
+
   .help,
   .unit {
     flex: none;
