@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import Result from "./Result"
 import TabView from "components/TabView"
 import { useLocation } from "react-router-dom"
-import { LP, LUNA, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
+import { LP, UST, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
 import {
   useNetwork,
   useContractsAddress,
@@ -122,7 +122,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       [Key.token1]: type !== Type.WITHDRAW ? state?.symbol ?? ULUNA : InitLP,
       [Key.token2]: state?.symbol ?? "",
       [Key.feeValue]: "",
-      [Key.feeSymbol]: LUNA,
+      [Key.feeSymbol]: UST,
       [Key.load]: "",
       [Key.symbol1]: "",
       [Key.symbol2]: "",
