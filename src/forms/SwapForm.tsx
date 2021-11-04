@@ -151,6 +151,19 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       setFocus(Key.value2)
     }
   }
+  const handleSwitchToken = () => {
+    if (!pairSwitchable) {
+      return
+    }
+    const token1 = formData[Key.token1]
+    const token2 = formData[Key.token2]
+    const key = isReversed ? Key.value1 : Key.value2
+    const value = isReversed ? formData[Key.value2] : formData[Key.value1]
+    handleToken1Select(token2)
+    handleToken2Select(token1)
+    setIsReversed(!isReversed)
+    setValue(key, value)
+  }
 
   const tokenInfo1 = useMemo(() => {
     return tokenInfos.get(formData[Key.token1])
@@ -159,6 +172,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const tokenInfo2 = useMemo(() => {
     return tokenInfos.get(formData[Key.token2])
   }, [formData])
+
+  const pairSwitchable = useMemo(
+    () => formData[Key.token1] !== "" && formData[Key.token2] !== "",
+    [formData]
+  )
 
   const { balance: balance1 } = useBalance(
     formData[Key.token1],
@@ -979,7 +997,16 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               {type === Type.PROVIDE ? (
                 <img src={SvgPlus} width={24} height={24} alt="Provide" />
               ) : (
-                <img src={SvgArrow} width={24} height={24} alt="To" />
+                <img
+                  src={SvgArrow}
+                  width={24}
+                  height={24}
+                  alt="To"
+                  onClick={handleSwitchToken}
+                  style={{
+                    cursor: pairSwitchable ? "pointer" : "auto",
+                  }}
+                />
               )}
             </div>
 
