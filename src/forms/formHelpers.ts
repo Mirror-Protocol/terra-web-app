@@ -1,25 +1,19 @@
 import { AccAddress } from "@terra-money/terra.js"
 import MESSAGE from "lang/MESSAGE.json"
-import { UUSD } from "constants/constants"
 import { ceil, gt, gte, lte, min, times, minus, plus } from "libs/math"
 import { getLength, omitEmpty } from "libs/utils"
-import {
-  dp,
-  validateDp,
-  lookup,
-  format,
-  toAmount,
-  formatAsset,
-} from "libs/parse"
+import { lookup, format, toAmount, formatAsset, validateDp } from "libs/parse"
 import { getSymbol, hasTaxToken } from "helpers/token"
 import { Type } from "pages/Swap"
 
 /* forms */
-export const placeholder = (symbol?: string) =>
-  !symbol || symbol === UUSD ? "0.00" : "0.000000"
+export const step = (decimals = 6) => {
+  return (1 / Math.pow(10, decimals)).toFixed(decimals)
+}
 
-export const step = (symbol?: string) =>
-  !symbol || symbol === UUSD ? "0.01" : "0.000001"
+export const placeholder = (decimals?: number) => {
+  return step(decimals).replace("1", "0")
+}
 
 export const renderBalance = (
   balance?: string,
@@ -53,6 +47,7 @@ interface AmountRange {
   feeSymbol?: string
   maxFee?: string
   type?: string
+  decimals?: number
 }
 
 export const validate = {
@@ -95,6 +90,7 @@ export const validate = {
       feeSymbol,
       maxFee,
       type,
+      decimals,
     } = range
     const amount = symbol ? toAmount(value) : value
     let tax = "0"
@@ -129,8 +125,8 @@ export const validate = {
       ? `${label} must be greater than 0`
       : min && !gte(amount, min)
       ? `${label} must be greater than ${min}`
-      : !validateDp(value, symbol)
-      ? `${label} must be within ${dp(symbol)} decimal points`
+      : !validateDp(value, decimals)
+      ? `${label} must be within ${decimals} decimal points`
       : (type === Type.SWAP &&
           isFrom === true &&
           (max === "" || max === "0")) ||

@@ -285,7 +285,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     ) {
       return []
     }
-
+    console.log("decimal(profitableQuery?.price, 18)")
+    console.log(decimal(profitableQuery?.price, 18))
     const minimumReceived = profitableQuery
       ? calc.minimumReceived({
           offer_amount: toAmount(formData[Key.value1], formData[Key.token1]),
@@ -298,7 +299,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     return [
       ...insertIf(type === Type.SWAP, {
         title: <TooltipIcon content={Tooltip.Swap.Rate}>Rate</TooltipIcon>,
-        content: `${decimal(profitableQuery?.price, 6)} ${
+        content: `${decimal(profitableQuery?.price, tokenInfo1?.decimals)} ${
           formData[Key.symbol1]
         } per ${formData[Key.symbol2]}`,
       }),
@@ -393,6 +394,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     slippageTolerance,
     type,
     lpContract,
+    tokenInfo1,
   ])
 
   const getMsgs = useCallback(
@@ -543,6 +545,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           taxCap,
           taxRate,
           type,
+          decimals: tokenInfo1?.decimals,
         }) || true
       )
     }
@@ -563,6 +566,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             feeSymbol,
             maxFee: "0",
             type,
+            decimals: tokenInfo2?.decimals,
           }) || true
         )
       }
@@ -921,8 +925,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                       await validateForm(Key.value1, { [Key.value1]: value }),
                   },
                 }),
-                step: step(formData[Key.symbol1]),
-                placeholder: placeholder(formData[Key.symbol1]),
+                step: step(tokenInfo1?.decimals),
+                placeholder: placeholder(tokenInfo1?.decimals),
                 autoComplete: "off",
                 type: "number",
                 onKeyDown: () => {
@@ -1027,7 +1031,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                 />
               )}
             </div>
-
             <SwapFormGroup
               input={{
                 ...register(Key.value2, {
@@ -1038,8 +1041,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                 }),
                 ...(type !== Type.WITHDRAW
                   ? {
-                      step: step(formData[Key.symbol2]),
-                      placeholder: placeholder(formData[Key.symbol2]),
+                      step: step(tokenInfo2?.decimals),
+                      placeholder: placeholder(tokenInfo2?.decimals),
                       type: "number",
                     }
                   : {

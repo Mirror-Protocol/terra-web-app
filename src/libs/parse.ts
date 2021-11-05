@@ -11,16 +11,22 @@ type Formatter = (
 
 const rm = BigNumber.ROUND_DOWN
 export const dp = (contract_addr?: string) => {
-  if (!contract_addr) {
-    return 6
+  if (contract_addr) {
+    const tokenInfo = tokenInfos.get(contract_addr)
+    return tokenInfo?.decimals || 6
   }
-
-  const tokenInfo = tokenInfos.get(contract_addr)
-  return tokenInfo ? tokenInfo.decimals : 6
+  return 6
 }
-export const validateDp = (value: string, contract_addr?: string) =>
+export const validateDp = (
+  value: string | number,
+  contract_addr?: string | number
+) =>
   new BigNumber(value)
-    .times(new BigNumber(10).pow(dp(contract_addr)))
+    .times(
+      new BigNumber(10).pow(
+        typeof contract_addr === "number" ? contract_addr : dp(contract_addr)
+      )
+    )
     .isInteger()
 
 export const decimal = (value = "0", dp = 6) =>
