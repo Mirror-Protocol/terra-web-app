@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import Result from "./Result"
 import TabView from "components/TabView"
 import { useLocation } from "react-router-dom"
-import { LP, UST, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
+import { UST, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
 import {
   useNetwork,
   useContractsAddress,
@@ -221,7 +221,14 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     type
   )
 
-  const { pair, lpContract, poolSymbol1, poolSymbol2 } = useMemo(() => {
+  const {
+    pair,
+    lpContract,
+    poolSymbol1,
+    poolSymbol2,
+    poolContract1,
+    poolContract2,
+  } = useMemo(() => {
     const info1 =
       type === Type.WITHDRAW
         ? lpTokenInfos.get(formData[Key.token1])?.[0]
@@ -247,6 +254,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       lpContract,
       poolSymbol1: lpTokenInfo?.[0]?.symbol,
       poolSymbol2: lpTokenInfo?.[1]?.symbol,
+      poolContract1: lpTokenInfo?.[0]?.contract_addr,
+      poolContract2: lpTokenInfo?.[1]?.contract_addr,
     }
   }, [formData, pairs, tokenInfo1, tokenInfo2, type])
 
@@ -279,7 +288,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
     const minimumReceived = profitableQuery
       ? calc.minimumReceived({
-          offer_amount: toAmount(formData[Key.value1]),
+          offer_amount: toAmount(formData[Key.value1], formData[Key.token1]),
           belief_price: decimal(profitableQuery?.price, 18),
           max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
@@ -331,11 +340,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         title: (
           <TooltipIcon content={Tooltip.Pool.LPfromTx}>LP from Tx</TooltipIcon>
         ),
-        content: `${lookup(poolResult?.LP, LP)} LP`,
+        content: `${lookup(poolResult?.LP, lpContract)} LP`,
       }),
       ...insertIf(type === Type.WITHDRAW, {
         title: "LP after Tx",
-        content: `${lookup(poolResult?.LP, LP)} LP`,
+        content: `${lookup(poolResult?.LP, lpContract)} LP`,
       }),
       ...insertIf(type !== Type.SWAP, {
         title: (
@@ -376,7 +385,15 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         ),
       }),
     ]
-  }, [find, formData, poolResult, profitableQuery, slippageTolerance, type])
+  }, [
+    find,
+    formData,
+    poolResult,
+    profitableQuery,
+    slippageTolerance,
+    type,
+    lpContract,
+  ])
 
   const getMsgs = useCallback(
     (
@@ -415,7 +432,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           10
         ).toString()
         msg.execute_msg.execute_swap_operations.offer_amount = toAmount(
-          `${amount}`
+          `${amount}`,
+          symbol
         )
 
         if (isNativeToken(symbol || "")) {
@@ -600,10 +618,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         ) {
           setValue(
             Key.value2,
-            lookup(
-              `${profitableQuery?.simulatedAmount}`,
-              tokenInfos.get(data.token2)?.symbol
-            )
+            lookup(`${profitableQuery?.simulatedAmount}`, data.token2)
           )
           trigger(Key.value2)
         }
@@ -612,7 +627,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             Key.value1,
             lookup(
               div(
-                toAmount(`${data[Key.value2]}`),
+                toAmount(`${data[Key.value2]}`, data[Key.token2]),
                 `${profitableQuery?.simulatedAmount}`
               )
             )
@@ -642,7 +657,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         break
       case Type.PROVIDE:
         if (poolResult && !poolLoading) {
-          setValue(Key.value2, lookup(poolResult.estimated, tokenInfo2?.symbol))
+          setValue(
+            Key.value2,
+            lookup(poolResult.estimated, tokenInfo2?.contract_addr)
+          )
           setTimeout(() => {
             trigger(Key.value1)
             trigger(Key.value2)
@@ -660,10 +678,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           const amounts = poolResult.estimated.split("-")
           setValue(
             Key.value2,
-            lookup(amounts[0], poolSymbol1) +
+            lookup(amounts[0], poolContract1) +
               poolSymbol1 +
               " - " +
-              lookup(amounts[1], poolSymbol2) +
+              lookup(amounts[1], poolContract2) +
               poolSymbol2
           )
           setTimeout(() => {
@@ -682,6 +700,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     poolResult,
     poolSymbol1,
     poolSymbol2,
+    poolContract1,
+    poolContract2,
     trigger,
     profitableQuery,
   ])
@@ -735,7 +755,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             amount: `${value1}`,
             minimumReceived: profitableQuery
               ? calc.minimumReceived({
-                  offer_amount: toAmount(formData[Key.value1]),
+                  offer_amount: toAmount(formData[Key.value1], token1),
                   belief_price: decimal(profitableQuery?.price, 18),
                   max_spread: String(slippageTolerance),
                   commission: find(infoKey, formData[Key.symbol2]),
@@ -939,7 +959,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                       if (type === Type.WITHDRAW) {
                         setValue(
                           Key.value1,
-                          lookup(formData[Key.max1], formData[Key.symbol1])
+                          lookup(formData[Key.max1], formData[Key.token1])
                         )
                         trigger(Key.value1)
                         return
@@ -950,7 +970,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                           symbol1: formData[Key.symbol1],
                           value1: lookup(
                             formData[Key.max1],
-                            formData[Key.symbol1]
+                            formData[Key.token1]
                           ),
                           max1: formData[Key.max1],
                         })
@@ -976,9 +996,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                         }
                       }
 
-                      maxBalance = lookup(maxBalance, formData[Key.symbol1], {
-                        dp: 6,
-                      })
+                      maxBalance = lookup(maxBalance, formData[Key.token1])
                       setValue(Key.value1, maxBalance)
                       trigger(Key.value1)
                     }

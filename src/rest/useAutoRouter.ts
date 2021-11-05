@@ -4,6 +4,7 @@ import { toAmount } from "libs/parse"
 import { Type } from "pages/Swap"
 import { useEffect, useMemo, useState } from "react"
 import useAPI from "./useAPI"
+import { tokenInfos } from "./usePairs"
 
 type Params = {
   from: string
@@ -75,16 +76,19 @@ const useAutoRouter = (params: Params) => {
           }
         })
       }
+
+      const tokenInfo = tokenInfos.get(from)
+      const e = Math.pow(10, tokenInfo ? tokenInfo.decimals : 6)
       return {
         msg,
         index,
         simulatedAmount,
         tokenRoutes,
-        price: div(times(amount, 1e6), simulatedAmount),
+        price: div(times(amount, e), simulatedAmount),
       }
     }
     return undefined
-  }, [amount, msgs, simulatedAmounts])
+  }, [from, amount, msgs, simulatedAmounts])
 
   useEffect(() => {
     let isCanceled = false
@@ -150,7 +154,7 @@ const useAutoRouter = (params: Params) => {
             contract,
             msg: {
               simulate_swap_operations: {
-                offer_amount: toAmount(`${amount}`),
+                offer_amount: toAmount(`${amount}`, from),
                 operations,
               },
             },
@@ -158,7 +162,7 @@ const useAutoRouter = (params: Params) => {
         }
         if (execute_msg?.swap) {
           const offer_asset = execute_msg?.swap?.offer_asset || {
-            amount: toAmount(`${amount}`),
+            amount: toAmount(`${amount}`, from),
             info: {
               token: {
                 contract_addr: from,
