@@ -1,9 +1,18 @@
 import React from "react"
-import { CHROME, EXTENSION } from "constants/constants"
+import {
+  CHROME,
+  TERRA_STATION_EXTENSION,
+  XDEFI_EXTENSION,
+} from "constants/constants"
 import Modal from "components/Modal"
 import Card from "components/Card"
 import ExtLinkButton from "components/ExtLinkButton"
 import styles from "./SupportModal.module.scss"
+import styled from "styled-components"
+
+const DownloadExtButton = styled(ExtLinkButton)`
+  margin: 10px 0px !important;
+`
 
 const SupportModal = (modal: Modal) => {
   const handleInstalled = () => {
@@ -32,9 +41,16 @@ const SupportModal = (modal: Modal) => {
                 {"Download Terra Station Extension\nto connect your wallet"}
               </p>
 
-              <ExtLinkButton href={EXTENSION} size="lg" block>
+              <DownloadExtButton href={TERRA_STATION_EXTENSION} size="lg" block>
                 Download Terra Station Extension
-              </ExtLinkButton>
+              </DownloadExtButton>
+
+              {!window.xfi?.terra && (
+                <DownloadExtButton href={XDEFI_EXTENSION} size="lg" block>
+                  Download XDeFi Wallet Extension
+                </DownloadExtButton>
+              )}
+
               <button className={styles.installed} onClick={handleInstalled}>
                 I installed it.
               </button>
