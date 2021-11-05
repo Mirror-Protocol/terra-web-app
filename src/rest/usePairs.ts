@@ -208,10 +208,10 @@ export default () => {
               }
 
               if (
-                tokenInfo1?.symbol?.toUpperCase() === "BLUNA" ||
-                tokenInfo2?.symbol?.toUpperCase() === "BLUNA" ||
-                tokenInfo1?.symbol?.toUpperCase() === "ANC" ||
-                tokenInfo2?.symbol?.toUpperCase() === "ANC"
+                tokenInfo1?.symbol === "bLuna" ||
+                tokenInfo2?.symbol === "bLuna" ||
+                tokenInfo1?.symbol === "ANC" ||
+                tokenInfo2?.symbol === "ANC"
               ) {
                 if (
                   !(
@@ -223,20 +223,6 @@ export default () => {
                 ) {
                   return
                 }
-
-                if (tokenInfo1?.symbol === "BLUNA") {
-                  tokenInfo1.symbol = "bLUNA"
-                }
-                if (tokenInfo2?.symbol === "BLUNA") {
-                  tokenInfo2.symbol = "bLUNA"
-                }
-              }
-
-              if (tokenInfo1?.symbol === "BETH") {
-                tokenInfo1.symbol = "bETH"
-              }
-              if (tokenInfo2?.symbol === "BETH") {
-                tokenInfo2.symbol = "bETH"
               }
 
               if (

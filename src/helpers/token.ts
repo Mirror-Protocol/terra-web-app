@@ -193,7 +193,7 @@ export const GetTokenSvg = (symbol: string) => {
         case "mGS":
         case "mETH":
         case "ANC":
-        case "bLUNA":
+        case "bLuna":
         case "mCOIN":
         case "mGLXY":
         case "MINE":
