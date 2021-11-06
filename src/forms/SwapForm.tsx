@@ -285,12 +285,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     ) {
       return []
     }
-    console.log("profitableQuery?.price")
-    console.log(profitableQuery?.price)
-    console.log("decimal(profitableQuery?.price, 6)")
-    console.log(decimal(profitableQuery?.price, 6))
-    console.log("tokenInfo2?.decimals")
-    console.log(tokenInfo2?.decimals)
     const minimumReceived = profitableQuery
       ? calc.minimumReceived({
           expectedAmount: `${profitableQuery?.simulatedAmount}`,
@@ -299,9 +293,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           decimals: tokenInfo1?.decimals,
         })
       : "0"
-
-    console.log("minimumReceived")
-    console.log(minimumReceived)
 
     return [
       ...insertIf(type === Type.SWAP, {
@@ -402,7 +393,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     type,
     lpContract,
     tokenInfo1,
-    tokenInfo2,
   ])
 
   const getMsgs = useCallback(
@@ -842,7 +832,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           return
         }
       } catch (error) {
-        console.log(error)
         setResult(error)
       }
     },

@@ -54,10 +54,6 @@ export const lookup: Formatter = (amount = "0", contract_addr, config) => {
   }
 
   const e = Math.pow(10, decimals)
-  console.log("contract_addr")
-  console.log(contract_addr)
-  console.log("e")
-  console.log(e)
 
   const value = contract_addr
     ? new BigNumber(amount).div(e).dp(decimals, rm)
@@ -77,10 +73,6 @@ export const lookupSymbol = (symbol?: string) =>
 
 export const format: Formatter = (amount, contract_addr, config) => {
   const value = new BigNumber(lookup(amount, contract_addr, config))
-  console.log("placeholder(value.decimalPlaces())")
-  console.log(placeholder(value.decimalPlaces()))
-  console.log("value.decimalPlaces()")
-  console.log(value.decimalPlaces())
   return value.gte(1e6)
     ? numeral(value.div(1e4).integerValue(rm).times(1e4)).format("0,0.[00]a")
     : numeral(value).format(

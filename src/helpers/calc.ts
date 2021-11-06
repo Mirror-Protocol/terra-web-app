@@ -23,16 +23,6 @@ export default {
         : new BigNumber(params.offer_amount).div(params.belief_price)
     const rate1 = new BigNumber(1).minus(max_spread)
     const rate2 = new BigNumber(1).minus(commission)
-    console.log("decimals")
-    console.log(decimals)
-    console.log("expectedAmount")
-    console.log(expectedAmount)
-    console.log("rate1")
-    console.log(rate1)
-    console.log("rate2")
-    console.log(rate2)
-    console.log("expectedAmount.times(rate1).times(rate2).toFixed(decimals)")
-    console.log(expectedAmount.times(rate1).times(rate2).toFixed(decimals))
     return expectedAmount.times(rate1).times(rate2).toFixed(decimals)
   },
 
