@@ -760,7 +760,16 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             from: `${token1}`,
             to: `${token2}`,
             max_spread: slippageTolerance,
-            belief_price: `${decimal(div(value1, value2), 18)}`,
+            belief_price: `${decimal(
+              times(
+                div(value1, value2),
+                Math.pow(
+                  10,
+                  (tokenInfo1?.decimals || 0) - (tokenInfo2?.decimals || 0)
+                ) || 1
+              ),
+              18
+            )}`,
           })
 
           msgs = getMsgs(res[profitableQuery?.index || 0], {
@@ -833,6 +842,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           return
         }
       } catch (error) {
+        console.log(error)
         setResult(error)
       }
     },
@@ -852,6 +862,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       find,
       lpContract,
       tokenInfo1,
+      tokenInfo2,
     ]
   )
 
