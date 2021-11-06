@@ -11,12 +11,29 @@ export default {
     belief_price: string
     max_spread: string
     commission: string
+    decimals?: number
   }) => {
-    const { offer_amount, belief_price, max_spread, commission } = params
+    const {
+      offer_amount,
+      belief_price,
+      max_spread,
+      commission,
+      decimals = 6,
+    } = params
     const expectedAmount = new BigNumber(offer_amount).div(belief_price)
     const rate1 = new BigNumber(1).minus(max_spread)
     const rate2 = new BigNumber(1).minus(commission)
-    return expectedAmount.times(rate1).times(rate2).toString()
+    console.log("decimals")
+    console.log(decimals)
+    console.log("expectedAmount")
+    console.log(expectedAmount)
+    console.log("rate1")
+    console.log(rate1)
+    console.log("rate2")
+    console.log(rate2)
+    console.log("expectedAmount.times(rate1).times(rate2).toFixed(decimals)")
+    console.log(expectedAmount.times(rate1).times(rate2).toFixed(decimals))
+    return expectedAmount.times(rate1).times(rate2).toFixed(decimals)
   },
 
   /** Mint */

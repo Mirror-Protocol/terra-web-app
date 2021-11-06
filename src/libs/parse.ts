@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js"
 import numeral from "numeral"
 import { UST, UUSD } from "constants/constants"
 import { tokenInfos } from "rest/usePairs"
+import { placeholder } from "forms/formHelpers"
 
 type Formatter = (
   amount?: string,
@@ -12,7 +13,7 @@ type Formatter = (
 const rm = BigNumber.ROUND_DOWN
 export const dp = (contract_addr?: string) => {
   if (contract_addr) {
-    const tokenInfo = tokenInfos.get(contract_addr)
+    const tokenInfo = findTokenInfoBySymbolOrContractAddr(contract_addr)
     return tokenInfo?.decimals || 6
   }
   return 6
@@ -32,16 +33,31 @@ export const validateDp = (
 export const decimal = (value = "0", dp = 6) =>
   new BigNumber(value).decimalPlaces(dp, rm).toString()
 
+export const findTokenInfoBySymbolOrContractAddr = (contract_addr?: string) => {
+  return tokenInfos.get(
+    Array.from(tokenInfos.entries(), ([key, value]) => ({
+      key,
+      value,
+    })).find(({ key, value }) => {
+      return value?.symbol === contract_addr || key === contract_addr
+    })?.key || ""
+  )
+}
+
 export const lookup: Formatter = (amount = "0", contract_addr, config) => {
   let decimals = 6
   if (contract_addr) {
-    const tokenInfo = tokenInfos.get(contract_addr)
+    const tokenInfo = findTokenInfoBySymbolOrContractAddr(contract_addr)
     if (tokenInfo) {
       decimals = tokenInfo.decimals
     }
   }
 
   const e = Math.pow(10, decimals)
+  console.log("contract_addr")
+  console.log(contract_addr)
+  console.log("e")
+  console.log(e)
 
   const value = contract_addr
     ? new BigNumber(amount).div(e).dp(decimals, rm)
@@ -61,9 +77,17 @@ export const lookupSymbol = (symbol?: string) =>
 
 export const format: Formatter = (amount, contract_addr, config) => {
   const value = new BigNumber(lookup(amount, contract_addr, config))
+  console.log("placeholder(value.decimalPlaces())")
+  console.log(placeholder(value.decimalPlaces()))
+  console.log("value.decimalPlaces()")
+  console.log(value.decimalPlaces())
   return value.gte(1e6)
     ? numeral(value.div(1e4).integerValue(rm).times(1e4)).format("0,0.[00]a")
-    : numeral(value).format(config?.integer ? "0,0" : "0,0.[000000]")
+    : numeral(value).format(
+        config?.integer
+          ? "0,0"
+          : `0,0.[${placeholder(value.decimalPlaces())?.replace("0.", "")}]`
+      )
 }
 
 export const formatAsset: Formatter = (amount, symbol, config) =>

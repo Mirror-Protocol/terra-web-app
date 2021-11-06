@@ -285,14 +285,19 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     ) {
       return []
     }
-    console.log("decimal(profitableQuery?.price, 18)")
-    console.log(decimal(profitableQuery?.price, 18))
+    console.log("profitableQuery?.price")
+    console.log(profitableQuery?.price)
+    console.log("decimal(profitableQuery?.price, 6)")
+    console.log(decimal(profitableQuery?.price, 6))
+    console.log("tokenInfo2?.decimals")
+    console.log(tokenInfo2?.decimals)
     const minimumReceived = profitableQuery
       ? calc.minimumReceived({
           offer_amount: toAmount(formData[Key.value1], formData[Key.token1]),
-          belief_price: decimal(profitableQuery?.price, 18),
+          belief_price: profitableQuery?.price,
           max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
+          decimals: tokenInfo2?.decimals,
         })
       : "0"
 
@@ -395,6 +400,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     type,
     lpContract,
     tokenInfo1,
+    tokenInfo2,
   ])
 
   const getMsgs = useCallback(
@@ -760,9 +766,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             minimumReceived: profitableQuery
               ? calc.minimumReceived({
                   offer_amount: toAmount(formData[Key.value1], token1),
-                  belief_price: decimal(profitableQuery?.price, 18),
+                  belief_price: profitableQuery?.price,
                   max_spread: String(slippageTolerance),
                   commission: find(infoKey, formData[Key.symbol2]),
+                  decimals: tokenInfo2?.decimals,
                 })
               : "0",
             symbol: token1,
@@ -843,6 +850,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       formData,
       find,
       lpContract,
+      tokenInfo2,
     ]
   )
 
