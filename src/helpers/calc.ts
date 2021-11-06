@@ -6,21 +6,21 @@ interface Value {
 }
 
 export default {
-  minimumReceived: (params: {
-    offer_amount: string
-    belief_price: string
-    max_spread: string
-    commission: string
-    decimals?: number
-  }) => {
-    const {
-      offer_amount,
-      belief_price,
-      max_spread,
-      commission,
-      decimals = 6,
-    } = params
-    const expectedAmount = new BigNumber(offer_amount).div(belief_price)
+  minimumReceived: (
+    params: (
+      | { offer_amount: string; belief_price: string }
+      | { expectedAmount: string }
+    ) & {
+      max_spread: string
+      commission: string
+      decimals?: number
+    }
+  ) => {
+    const { max_spread, commission, decimals = 6 } = params
+    const expectedAmount =
+      "expectedAmount" in params
+        ? new BigNumber(params.expectedAmount)
+        : new BigNumber(params.offer_amount).div(params.belief_price)
     const rate1 = new BigNumber(1).minus(max_spread)
     const rate2 = new BigNumber(1).minus(commission)
     console.log("decimals")

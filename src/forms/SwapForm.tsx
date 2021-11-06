@@ -293,13 +293,15 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     console.log(tokenInfo2?.decimals)
     const minimumReceived = profitableQuery
       ? calc.minimumReceived({
-          offer_amount: toAmount(formData[Key.value1], formData[Key.token1]),
-          belief_price: profitableQuery?.price,
+          expectedAmount: `${profitableQuery?.simulatedAmount}`,
           max_spread: String(slippageTolerance),
           commission: find(infoKey, formData[Key.symbol2]),
-          decimals: tokenInfo2?.decimals,
+          decimals: tokenInfo1?.decimals,
         })
       : "0"
+
+    console.log("minimumReceived")
+    console.log(minimumReceived)
 
     return [
       ...insertIf(type === Type.SWAP, {
@@ -765,11 +767,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             amount: `${value1}`,
             minimumReceived: profitableQuery
               ? calc.minimumReceived({
-                  offer_amount: toAmount(formData[Key.value1], token1),
-                  belief_price: profitableQuery?.price,
+                  expectedAmount: `${profitableQuery?.simulatedAmount}`,
                   max_spread: String(slippageTolerance),
                   commission: find(infoKey, formData[Key.symbol2]),
-                  decimals: tokenInfo2?.decimals,
+                  decimals: tokenInfo1?.decimals,
                 })
               : "0",
             symbol: token1,
@@ -850,7 +851,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       formData,
       find,
       lpContract,
-      tokenInfo2,
+      tokenInfo1,
     ]
   )
 

@@ -77,8 +77,8 @@ const useAutoRouter = (params: Params) => {
         })
       }
 
-      const tokenInfo = tokenInfos.get(from)
-      const e = Math.pow(10, tokenInfo ? tokenInfo.decimals : 6)
+      const tokenInfo = tokenInfos.get(to)
+      const e = Math.pow(10, tokenInfo?.decimals || 6)
       return {
         msg,
         index,
@@ -88,7 +88,7 @@ const useAutoRouter = (params: Params) => {
       }
     }
     return undefined
-  }, [from, amount, msgs, simulatedAmounts])
+  }, [to, amount, msgs, simulatedAmounts])
 
   useEffect(() => {
     let isCanceled = false

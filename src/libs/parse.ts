@@ -96,7 +96,7 @@ export const formatAsset: Formatter = (amount, symbol, config) =>
 export const toAmount = (value: string, contract_addr?: string) => {
   let decimals = 6
   if (contract_addr) {
-    const tokenInfo = tokenInfos.get(contract_addr)
+    const tokenInfo = findTokenInfoBySymbolOrContractAddr(contract_addr)
     if (tokenInfo) {
       decimals = tokenInfo.decimals
     }
