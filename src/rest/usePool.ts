@@ -42,20 +42,46 @@ export default (
       loadPool(contract)
         .then((res: Pool) => {
           let fromValue = "0"
+          let fromDecimal = 6
           let toValue = "0"
+          let toDecimal = 6
+          let asset0Decimal = 6
+          let asset1Decimal = 6
           if (
             !(contract === undefined || contract === "" || res === undefined)
           ) {
+            if (isAssetInfo(res.assets[0].info)) {
+              const tokenInfo = tokenInfos.get(
+                res.assets[0].info.token.contract_addr
+              )
+              if (tokenInfo) {
+                asset0Decimal = tokenInfo.decimals
+              }
+            }
+
+            if (isAssetInfo(res.assets[1].info)) {
+              const tokenInfo = tokenInfos.get(
+                res.assets[1].info.token.contract_addr
+              )
+              if (tokenInfo) {
+                asset1Decimal = tokenInfo.decimals
+              }
+            }
+
             if (isAssetInfo(res.assets[1].info)) {
               if (
                 tokenInfos.get(res.assets[1].info.token.contract_addr)
                   ?.symbol === symbol
               ) {
                 fromValue = res.assets[1].amount
+                fromDecimal = asset1Decimal
                 toValue = res.assets[0].amount
+                toDecimal = asset0Decimal
               } else {
                 fromValue = res.assets[0].amount
+                fromDecimal = asset0Decimal
                 toValue = res.assets[1].amount
+                toDecimal = asset1Decimal
               }
             } else {
               if (
@@ -63,18 +89,27 @@ export default (
                   ?.symbol === symbol
               ) {
                 fromValue = res.assets[1].amount
+                fromDecimal = asset1Decimal
                 toValue = res.assets[0].amount
+                toDecimal = asset0Decimal
               } else {
                 fromValue = res.assets[0].amount
+                fromDecimal = asset0Decimal
                 toValue = res.assets[1].amount
+                toDecimal = asset1Decimal
               }
             }
           }
 
-          const calculatedAmount = toAmount(amount)
+          const calculatedAmount = toAmount(amount, contract)
 
-          const rate1 = res ? div(fromValue, res.total_share) : "0"
-          const rate2 = res ? div(toValue, res.total_share) : "0"
+          const fromDp = Math.pow(10, 6 - fromDecimal)
+          const toDp = Math.pow(10, 6 - toDecimal)
+
+          const rate1 = res
+            ? div(times(fromValue, fromDp), res.total_share)
+            : "0"
+          const rate2 = res ? div(times(toValue, toDp), res.total_share) : "0"
 
           let price1 = "0"
           let price2 = "0"

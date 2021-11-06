@@ -52,6 +52,7 @@ interface TokenInfo {
   symbol: string
   name: string
   contract_addr: string
+  decimals: number
 }
 
 interface PairsResponse {
@@ -78,38 +79,38 @@ interface TokenResult {
 }
 
 export let tokenInfos: Map<string, TokenInfo> = new Map<string, TokenInfo>([
-  [LUNA, { contract_addr: ULUNA, symbol: LUNA, name: ULUNA }],
-  [KRT, { contract_addr: UKRW, symbol: KRT, name: UKRW }],
-  [MNT, { contract_addr: UMNT, symbol: MNT, name: UMNT }],
-  [SDT, { contract_addr: USDR, symbol: SDT, name: USDR }],
-  [UST, { contract_addr: UUSD, symbol: UST, name: UUSD }],
-  [AUT, { contract_addr: UAUD, symbol: AUT, name: UAUD }],
-  [CAT, { contract_addr: UCAD, symbol: CAT, name: UCAD }],
-  [CHT, { contract_addr: UCHF, symbol: CHT, name: UCHF }],
-  [CNT, { contract_addr: UCNY, symbol: CNT, name: UCNY }],
-  [EUT, { contract_addr: UEUR, symbol: EUT, name: UEUR }],
-  [GBT, { contract_addr: UGBP, symbol: GBT, name: UGBP }],
-  [HKT, { contract_addr: UHKD, symbol: HKT, name: UHKD }],
-  [INT, { contract_addr: UINR, symbol: INT, name: UINR }],
-  [JPT, { contract_addr: UJPY, symbol: JPT, name: UJPY }],
-  [SGT, { contract_addr: USGD, symbol: SGT, name: USGD }],
-  [THT, { contract_addr: UTHB, symbol: THT, name: UTHB }],
-  [ULUNA, { contract_addr: ULUNA, symbol: LUNA, name: ULUNA }],
-  [UKRW, { contract_addr: UKRW, symbol: KRT, name: UKRW }],
-  [UMNT, { contract_addr: UMNT, symbol: MNT, name: UMNT }],
-  [USDR, { contract_addr: USDR, symbol: SDT, name: USDR }],
-  [UUSD, { contract_addr: UUSD, symbol: UST, name: UUSD }],
-  [UAUD, { contract_addr: UAUD, symbol: AUT, name: UAUD }],
-  [UCAD, { contract_addr: UCAD, symbol: CAT, name: UCAD }],
-  [UCHF, { contract_addr: UCHF, symbol: CHT, name: UCHF }],
-  [UCNY, { contract_addr: UCNY, symbol: CNT, name: UCNY }],
-  [UEUR, { contract_addr: UEUR, symbol: EUT, name: UEUR }],
-  [UGBP, { contract_addr: UGBP, symbol: GBT, name: UGBP }],
-  [UHKD, { contract_addr: UHKD, symbol: HKT, name: UHKD }],
-  [UINR, { contract_addr: UINR, symbol: INT, name: UINR }],
-  [UJPY, { contract_addr: UJPY, symbol: JPT, name: UJPY }],
-  [USGD, { contract_addr: USGD, symbol: SGT, name: USGD }],
-  [UTHB, { contract_addr: UTHB, symbol: THT, name: UTHB }],
+  [LUNA, { contract_addr: ULUNA, symbol: LUNA, name: ULUNA, decimals: 6 }],
+  [KRT, { contract_addr: UKRW, symbol: KRT, name: UKRW, decimals: 6 }],
+  [MNT, { contract_addr: UMNT, symbol: MNT, name: UMNT, decimals: 6 }],
+  [SDT, { contract_addr: USDR, symbol: SDT, name: USDR, decimals: 6 }],
+  [UST, { contract_addr: UUSD, symbol: UST, name: UUSD, decimals: 6 }],
+  [AUT, { contract_addr: UAUD, symbol: AUT, name: UAUD, decimals: 6 }],
+  [CAT, { contract_addr: UCAD, symbol: CAT, name: UCAD, decimals: 6 }],
+  [CHT, { contract_addr: UCHF, symbol: CHT, name: UCHF, decimals: 6 }],
+  [CNT, { contract_addr: UCNY, symbol: CNT, name: UCNY, decimals: 6 }],
+  [EUT, { contract_addr: UEUR, symbol: EUT, name: UEUR, decimals: 6 }],
+  [GBT, { contract_addr: UGBP, symbol: GBT, name: UGBP, decimals: 6 }],
+  [HKT, { contract_addr: UHKD, symbol: HKT, name: UHKD, decimals: 6 }],
+  [INT, { contract_addr: UINR, symbol: INT, name: UINR, decimals: 6 }],
+  [JPT, { contract_addr: UJPY, symbol: JPT, name: UJPY, decimals: 6 }],
+  [SGT, { contract_addr: USGD, symbol: SGT, name: USGD, decimals: 6 }],
+  [THT, { contract_addr: UTHB, symbol: THT, name: UTHB, decimals: 6 }],
+  [ULUNA, { contract_addr: ULUNA, symbol: LUNA, name: ULUNA, decimals: 6 }],
+  [UKRW, { contract_addr: UKRW, symbol: KRT, name: UKRW, decimals: 6 }],
+  [UMNT, { contract_addr: UMNT, symbol: MNT, name: UMNT, decimals: 6 }],
+  [USDR, { contract_addr: USDR, symbol: SDT, name: USDR, decimals: 6 }],
+  [UUSD, { contract_addr: UUSD, symbol: UST, name: UUSD, decimals: 6 }],
+  [UAUD, { contract_addr: UAUD, symbol: AUT, name: UAUD, decimals: 6 }],
+  [UCAD, { contract_addr: UCAD, symbol: CAT, name: UCAD, decimals: 6 }],
+  [UCHF, { contract_addr: UCHF, symbol: CHT, name: UCHF, decimals: 6 }],
+  [UCNY, { contract_addr: UCNY, symbol: CNT, name: UCNY, decimals: 6 }],
+  [UEUR, { contract_addr: UEUR, symbol: EUT, name: UEUR, decimals: 6 }],
+  [UGBP, { contract_addr: UGBP, symbol: GBT, name: UGBP, decimals: 6 }],
+  [UHKD, { contract_addr: UHKD, symbol: HKT, name: UHKD, decimals: 6 }],
+  [UINR, { contract_addr: UINR, symbol: INT, name: UINR, decimals: 6 }],
+  [UJPY, { contract_addr: UJPY, symbol: JPT, name: UJPY, decimals: 6 }],
+  [USGD, { contract_addr: USGD, symbol: SGT, name: USGD, decimals: 6 }],
+  [UTHB, { contract_addr: UTHB, symbol: THT, name: UTHB, decimals: 6 }],
 ])
 
 export let lpTokenInfos: Map<string, TokenInfo[]> = new Map<
@@ -139,12 +140,14 @@ export default () => {
             symbol: "",
             name: "",
             contract_addr: info.token.contract_addr,
+            decimals: 6,
           }
           if (tokenResult) {
             tokenInfo = {
               symbol: tokenResult.symbol,
               name: tokenResult.name,
               contract_addr: info.token.contract_addr,
+              decimals: tokenResult.decimals,
             }
           }
           tokenInfos.set(info.token.contract_addr, tokenInfo)
@@ -190,6 +193,7 @@ export default () => {
                 contract_addr: token.contract_addr,
                 symbol: token.symbol,
                 name: token.name,
+                decimals: token.decimals ? token.decimals : 6,
               })
             }
           }
@@ -355,6 +359,7 @@ export default () => {
                   contract_addr: pairResult.liquidity_token,
                   name: lpTokenInfo.name,
                   symbol: lpTokenInfo.symbol,
+                  decimals: lpTokenInfo.decimals,
                 })
 
               let pair: Pair = {
