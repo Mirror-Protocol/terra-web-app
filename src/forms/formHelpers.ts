@@ -92,7 +92,7 @@ export const validate = {
       type,
       decimals,
     } = range
-    const amount = symbol ? toAmount(value) : value
+    const amount = symbol ? toAmount(value, symbol) : value
     let tax = "0"
 
     if (symbol && taxRate && taxCap && hasTaxToken(getSymbol(symbol))) {
