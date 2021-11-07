@@ -135,7 +135,10 @@ export default (
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
                 ? div(times(rate2, LP), LP)
                 : "0"
-            LP = times(minus(balance, calculatedAmount), rateDiffDecimal)
+            LP = times(
+              minus(div(balance, rateDiffDecimal), calculatedAmount),
+              rateDiffDecimal
+            )
             afterPool =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
                 ? div(LP, plus(res.total_share, LP))
