@@ -43,6 +43,7 @@ export default (
           let fromValue = "0"
           let fromDecimal = 6
           let toValue = "0"
+          let toDecimal = 6
           let asset0Decimal = 6
           let asset1Decimal = 6
           if (
@@ -74,10 +75,12 @@ export default (
                 fromValue = res.assets[1].amount
                 fromDecimal = asset1Decimal
                 toValue = res.assets[0].amount
+                toDecimal = asset0Decimal
               } else {
                 fromValue = res.assets[0].amount
                 fromDecimal = asset0Decimal
                 toValue = res.assets[1].amount
+                toDecimal = asset1Decimal
               }
             } else {
               if (
@@ -87,23 +90,27 @@ export default (
                 fromValue = res.assets[1].amount
                 fromDecimal = asset1Decimal
                 toValue = res.assets[0].amount
+                toDecimal = asset0Decimal
               } else {
                 fromValue = res.assets[0].amount
                 fromDecimal = asset0Decimal
                 toValue = res.assets[1].amount
+                toDecimal = asset1Decimal
               }
             }
           }
 
           const calculatedAmount = times(amount, Math.pow(10, fromDecimal))
 
-          const rateDecimal = Math.pow(10, fromDecimal - 6)
+          const rateFromDecimal = Math.pow(10, fromDecimal - 6)
+          const rateToDecimal = Math.pow(10, toDecimal - 6)
+          const rateDiffDecimal = Math.pow(10, toDecimal - fromDecimal)
 
           const rate1 = res
-            ? div(div(fromValue, res.total_share), rateDecimal)
+            ? div(div(fromValue, res.total_share), rateFromDecimal)
             : "0"
           const rate2 = res
-            ? div(div(toValue, res.total_share), rateDecimal)
+            ? div(div(toValue, res.total_share), rateToDecimal)
             : "0"
 
           let price1 = "0"
@@ -113,10 +120,12 @@ export default (
           let afterPool = "0"
           if (type === Type.WITHDRAW) {
             // withdraw
-            LP = calculatedAmount
+            LP = times(calculatedAmount, rateDiffDecimal)
             estimated =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
-                ? ceil(times(rate1, LP)) + "-" + ceil(times(rate2, LP))
+                ? ceil(times(times(rate1, LP), rateFromDecimal)) +
+                  "-" +
+                  ceil(times(times(rate2, LP), rateToDecimal))
                 : "0"
             price1 =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
@@ -126,7 +135,7 @@ export default (
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
                 ? div(times(rate2, LP), LP)
                 : "0"
-            LP = minus(balance, calculatedAmount)
+            LP = times(minus(balance, calculatedAmount), rateDiffDecimal)
             afterPool =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
                 ? div(LP, plus(res.total_share, LP))
@@ -135,19 +144,19 @@ export default (
             // provide
             LP =
               res && gt(calculatedAmount, 0)
-                ? div(calculatedAmount, rate1)
+                ? div(div(calculatedAmount, rate1), rateFromDecimal)
                 : "0"
             estimated =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
-                ? ceil(times(LP, rate2))
+                ? ceil(times(times(LP, rate2), rateToDecimal))
                 : "0"
             price1 =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
-                ? div(calculatedAmount, LP)
+                ? div(div(calculatedAmount, LP), rateFromDecimal)
                 : "0"
             price2 =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
-                ? div(estimated, LP)
+                ? div(div(estimated, LP), rateToDecimal)
                 : "0"
             afterPool =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
