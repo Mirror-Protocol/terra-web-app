@@ -97,8 +97,14 @@ export default (
 
           const calculatedAmount = times(amount, Math.pow(10, fromDecimal))
 
-          const rate1 = res ? div(fromValue, res.total_share) : "0"
-          const rate2 = res ? div(toValue, res.total_share) : "0"
+          const rateDecimal = Math.pow(10, fromDecimal - 6)
+
+          const rate1 = res
+            ? div(div(fromValue, res.total_share), rateDecimal)
+            : "0"
+          const rate2 = res
+            ? div(div(toValue, res.total_share), rateDecimal)
+            : "0"
 
           let price1 = "0"
           let price2 = "0"
