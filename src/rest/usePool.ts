@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { isAssetInfo, tokenInfos } from "./usePairs"
 import { div, gt, times, ceil, plus, minus } from "../libs/math"
-import { toAmount } from "../libs/parse"
 import { Type } from "../pages/Swap"
 import useAPI from "./useAPI"
 
@@ -44,7 +43,6 @@ export default (
           let fromValue = "0"
           let fromDecimal = 6
           let toValue = "0"
-          let toDecimal = 6
           let asset0Decimal = 6
           let asset1Decimal = 6
           if (
@@ -76,12 +74,10 @@ export default (
                 fromValue = res.assets[1].amount
                 fromDecimal = asset1Decimal
                 toValue = res.assets[0].amount
-                toDecimal = asset0Decimal
               } else {
                 fromValue = res.assets[0].amount
                 fromDecimal = asset0Decimal
                 toValue = res.assets[1].amount
-                toDecimal = asset1Decimal
               }
             } else {
               if (
@@ -91,25 +87,18 @@ export default (
                 fromValue = res.assets[1].amount
                 fromDecimal = asset1Decimal
                 toValue = res.assets[0].amount
-                toDecimal = asset0Decimal
               } else {
                 fromValue = res.assets[0].amount
                 fromDecimal = asset0Decimal
                 toValue = res.assets[1].amount
-                toDecimal = asset1Decimal
               }
             }
           }
 
-          const calculatedAmount = toAmount(amount, contract)
+          const calculatedAmount = times(amount, Math.pow(10, fromDecimal))
 
-          const fromDp = Math.pow(10, 6 - fromDecimal)
-          const toDp = Math.pow(10, 6 - toDecimal)
-
-          const rate1 = res
-            ? div(times(fromValue, fromDp), res.total_share)
-            : "0"
-          const rate2 = res ? div(times(toValue, toDp), res.total_share) : "0"
+          const rate1 = res ? div(fromValue, res.total_share) : "0"
+          const rate2 = res ? div(toValue, res.total_share) : "0"
 
           let price1 = "0"
           let price2 = "0"
