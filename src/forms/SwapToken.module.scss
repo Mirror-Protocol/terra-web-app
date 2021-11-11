@@ -13,6 +13,7 @@ $name: 12px;
 .header {
   text-align: left;
   width: 100%;
+  margin-left: 1rem;
 }
 
 .symbol {
@@ -36,8 +37,9 @@ $name: 12px;
   justify-content: space-between;
 }
 
-.logo {
-  margin-left: 1rem;
+.token_address {
+  display: flex;
+  margin-left: 2.5rem;
 }
 
 .name {

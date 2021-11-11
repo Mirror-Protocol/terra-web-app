@@ -30,7 +30,6 @@ const SwapToken = ({
             />
             <div className={styles.name}>
               <p>{formatTokenName?.(symbols[0]) ?? lookupSymbol(symbols[0])}</p>
-              <p className={styles.address}>{contract_addr}</p>
             </div>
             {symbols.length > 1 ? (
               <div className={styles.divide}>
@@ -38,21 +37,25 @@ const SwapToken = ({
               </div>
             ) : undefined}
             {symbols.length > 1 ? (
-              <div className={styles.logo}>
-                <img
-                  src={GetTokenSvg(symbols[1])}
-                  width={25}
-                  height={25}
-                  alt=""
-                />
-              </div>
+              <img
+                className={styles.logo}
+                src={GetTokenSvg(symbols[1])}
+                width={25}
+                height={25}
+                alt=""
+              />
             ) : undefined}
             {symbols.length > 1 ? (
               <div className={styles.name}>
-                {formatTokenName?.(symbols[1]) ?? lookupSymbol(symbols[1])}
+                <p>
+                  {formatTokenName?.(symbols[1]) ?? lookupSymbol(symbols[1])}
+                </p>
               </div>
             ) : undefined}
           </div>
+        </div>
+        <div className={styles.token_address}>
+          <p className={styles.address}>{contract_addr}</p>
         </div>
       </header>
 
