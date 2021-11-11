@@ -34,7 +34,3 @@ export const TRADING_HOURS = {
 
 export const INSURANCE_COVERAGE =
   "https://app.insurace.io/Insurance/Cart?id=63&referrer=1403699302269502414217348026580880651844264120067"
-
-/* sentry */
-export const DSN =
-  "https://b1532961e54e491fbb57e67805cb36a4@o247107.ingest.sentry.io/5540998"

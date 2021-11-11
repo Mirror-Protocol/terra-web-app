@@ -7,8 +7,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@material-ui/core": "^4.12.3",
-    "@sentry/react": "^6.13.3",
-    "@sentry/tracing": "^6.13.3",
     "@terra-money/terra.js": "^2.1.17",
     "@terra-money/wallet-provider": "^2.2.0",
     "@testing-library/jest-dom": "^5.14.1",
