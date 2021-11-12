@@ -1,9 +1,0 @@
-@import "mixins";
-
-.wrapper {
-  @include flex(flex-start);
-}
-
-.loading {
-  margin-left: 10px;
-}

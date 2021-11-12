@@ -1,9 +1,0 @@
-@import "variables";
-
-.item {
-  padding: 20px 30px;
-
-  &:not(:first-child) {
-    border-top: $border;
-  }
-}

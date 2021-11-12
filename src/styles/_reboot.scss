@@ -5,7 +5,7 @@
 }
 
 html {
-  font-family: $font-family, sans-serif;
+  font-family: "Gotham", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -18,18 +18,6 @@ body {
 
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
-}
-
-hr {
-  box-sizing: content-box;
-  height: 0;
-  overflow: visible;
-
-  border: 0;
-  border-bottom: 1px solid $hr;
-
-  margin-top: 16px;
-  margin-bottom: 16px;
 }
 
 h1,
@@ -73,61 +61,10 @@ a {
 }
 
 [target="_blank"] {
-  @include link($blue, $blue);
+  @include link($link, $link);
   &:hover {
-    text-decoration: underline;
+    text-decoration: none;
   }
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-caption,
-th {
-  text-align: left;
-}
-
-button,
-input,
-select,
-textarea {
-  border: 0;
-  padding: 0;
-  outline: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-}
-
-button,
-select {
-  cursor: pointer;
-  user-select: none;
-
-  &:disabled {
-    cursor: unset;
-  }
-}
-
-input:disabled,
-textarea:disabled,
-select:disabled {
-  opacity: 0.5;
-}
-
-textarea {
-  resize: none;
-}
-
-svg {
-  fill: white;
-}
-
-[type="number"]::-webkit-inner-spin-button,
-[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
 }
 
 ::-webkit-scrollbar {

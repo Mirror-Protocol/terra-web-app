@@ -1,0 +1,26 @@
+@import "mixins";
+
+.main {
+  max-width: $max-width;
+}
+
+.header {
+  margin-bottom: 40px;
+  text-align: center;
+
+  svg {
+    margin-bottom: 30px;
+  }
+}
+
+.title {
+  margin-bottom: 15px;
+
+  @include mobile {
+    font-size: 20px;
+  }
+
+  @include desktop {
+    font-size: 26px;
+  }
+}

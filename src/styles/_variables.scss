@@ -1,45 +1,9 @@
-/* Palette */
-$blue: #66adff;
-$blue-38: #4a5460;
-$blue-62: #55779d;
-$red: #f15e7e;
-$orange: #eda34d;
-
-$gray-08: #141414;
-$gray-11: #1c1c1c;
-$gray-14: #242424;
-$gray-18: #2d2d2e;
-$gray-22: #373738;
-$gray-24: #3d3d3d;
-$gray-34: #555557;
-
-$white-44: #707070;
-$white-52: #858585;
-$white-64: #a4a4a4;
-$white-80: #cccccc;
-$white-92: #ebebeb;
-
-$gray: $white-64;
-$muted: $white-44;
-
-/* Colors */
-$bg: $gray-11 !default;
-$sidebar: $gray-14 !default;
-$card: $gray-18 !default;
-$text: $white-92 !default;
-$button: white !default;
-
-$colors: (
-  "bg": $bg,
-  "blue": $blue,
-  "red": $red,
-  "orange": $orange,
-  "gray": $gray,
-);
-
-$hr: $gray-24;
-$border: 1px solid fade-out($gray-34, 0.8);
-$border-radius: 6px;
+$bg: #1c1c1c;
+$text: #ebebeb;
+$muted: #a4a4a4;
+$link: #66adff;
+$line: #373738;
+$hover: #242424;
 
 /* Fonts */
 $font-size-mobile: 14px;
@@ -47,41 +11,8 @@ $font-size-desktop: 16px;
 $font-family: "Gotham";
 
 /* Sizes */
-$max-width: 1080px !default;
+$max-width: 640px;
 $breakpoint: 992px;
-$container-gutter-horizontal-mobile: 16px;
-$container-gutter-horizontal-desktop: 32px;
-
-$gutter-horizontal-mobile: 20px;
-$gutter-horizontal-desktop: 20px;
-$gutter-vertical-mobile: 12px;
-$gutter-vertical-desktop: 20px;
-
-$header-height-mobile: 60px;
-$header-height-desktop: 60px;
-$navigate-height-mobile: 64px;
-
-$card-padding-horizontal-mobile: 20px;
-$card-padding-vertical-mobile: 28px;
-$card-padding-header-mobile: $card-padding-vertical-mobile
-  $card-padding-horizontal-mobile 0px;
-$card-padding-main-mobile: 8px $gutter-horizontal-mobile
-  $card-padding-vertical-mobile;
-
-$card-padding-horizontal-desktop: 32px;
-$card-padding-vertical-desktop: 40px;
-$card-padding-header-desktop: $card-padding-vertical-desktop
-  $card-padding-horizontal-desktop 0px;
-$card-padding-main-desktop: 8px $card-padding-horizontal-desktop
-  $card-padding-vertical-desktop;
-
-$modal-width: 650px;
 
 /* Transitions */
 $transition-duration: 0.2s;
-
-/* Z-indexes */
-$zindex-sticky: 1020;
-$zindex-modal: 1050;
-
-@import "../customize";

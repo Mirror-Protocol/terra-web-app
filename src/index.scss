@@ -1,6 +1,9 @@
-@import "fonts";
 @import "mixins";
 @import "variables";
 @import "reboot";
-@import "colors";
 @import "utils";
+
+#mirror {
+  @include app;
+  padding: 20px;
+}
