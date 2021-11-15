@@ -7,8 +7,10 @@ const App = () => {
     <main className={styles.main}>
       <header className={styles.header}>
         <Logo />
-        <h1 className={styles.title}>Mirror Protocol is decentralized now</h1>
-        <p className="muted">Choose any link below to access the dApp</p>
+        <h1 className={styles.title}>Mirror Protocol</h1>
+        <p className="muted">
+          Choose any link below to access the decentralized web app
+        </p>
       </header>
 
       <section>
