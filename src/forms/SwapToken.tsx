@@ -6,6 +6,7 @@ import { GetTokenSvg } from "../helpers/token"
 
 interface Props extends AssetItem {
   contract_addr?: string
+  icon: string[]
   formatTokenName?: (symbol: string) => string
 }
 
@@ -13,9 +14,11 @@ const SwapToken = ({
   symbol,
   balance,
   contract_addr,
+  icon,
   formatTokenName,
 }: Props) => {
   const symbols = symbol.split("-")
+
   return (
     <article className={styles.asset}>
       <header className={styles.header}>
@@ -23,7 +26,7 @@ const SwapToken = ({
           <div className={styles.symbol}>
             <img
               className={styles.logo}
-              src={GetTokenSvg(symbols[0])}
+              src={GetTokenSvg(icon[0], symbols[0])}
               width={25}
               height={25}
               alt=""
@@ -39,7 +42,7 @@ const SwapToken = ({
             {symbols.length > 1 ? (
               <img
                 className={styles.logo}
-                src={GetTokenSvg(symbols[1])}
+                src={GetTokenSvg(icon[1], symbols[1])}
                 width={25}
                 height={25}
                 alt=""

@@ -25,6 +25,7 @@ const SwapSelectToken: FC<Props> = ({
   const { formatTokenName } = props
 
   let symbol = ""
+  let icon = ""
   if (asset !== undefined) {
     if (type === Type.WITHDRAW) {
       const tokenInfoList = lpTokenInfos.get(asset)
@@ -34,13 +35,15 @@ const SwapSelectToken: FC<Props> = ({
     } else {
       const tokenInfo = tokenInfos.get(asset)
       symbol = tokenInfo ? tokenInfo.symbol : ""
+      icon = tokenInfo ? tokenInfo.icon : ""
     }
   }
+
   return (
     <button type="button" className={styles.button} onClick={onClick}>
       {asset && (
         <div className={styles.logo}>
-          <img src={GetTokenSvg(symbol)} width={20} height={20} alt="" />
+          <img src={GetTokenSvg(icon, symbol)} width={20} height={20} alt="" />
         </div>
       )}
       <div className={styles.name}>
