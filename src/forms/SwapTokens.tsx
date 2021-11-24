@@ -158,6 +158,7 @@ const SwapTokens = ({
                 symbol: "",
                 name: "",
                 contract_addr: "",
+                icon: [""],
               }
 
               if (type === Type.WITHDRAW) {
@@ -168,6 +169,9 @@ const SwapTokens = ({
                     : "",
                   name: "",
                   contract_addr: item,
+                  icon: tokenInfoList
+                    ? [tokenInfoList[0].icon, tokenInfoList[1].icon]
+                    : ["", ""],
                 }
               } else {
                 const tokenInfo = tokenInfos.get(item)
@@ -176,6 +180,7 @@ const SwapTokens = ({
                   symbol: tokenInfo?.symbol || "",
                   name: tokenInfo?.name || "",
                   contract_addr: isNativeToken(item) ? "" : item,
+                  icon: [tokenInfo ? tokenInfo.icon : ""],
                 }
               }
 

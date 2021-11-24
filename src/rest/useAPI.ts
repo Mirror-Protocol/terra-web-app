@@ -99,6 +99,7 @@ interface TokenResult {
   decimals: number
   total_supply: string
   contract_addr: string
+  icon: string
 }
 
 interface PoolResponse {

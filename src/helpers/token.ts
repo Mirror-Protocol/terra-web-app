@@ -113,7 +113,11 @@ export const hasTaxToken = (symbol: string) => {
   }
 }
 
-export const GetTokenSvg = (symbol: string) => {
+export const GetTokenSvg = (icon: string, symbol: string) => {
+  if (icon && icon !== "") {
+    return icon
+  }
+
   let res = Token
   switch (symbol) {
     case LUNA:
