@@ -169,66 +169,6 @@ export const GetTokenSvg = (icon: string, symbol: string) => {
       res = PngTHT
       break
     default:
-      // Load dynamically
-      // TODO: it will move backend
-      switch (symbol) {
-        case "MIR":
-        case "mAAPL":
-        case "mAMC":
-        case "mAMZN":
-        case "mBABA":
-        case "mGME":
-        case "mGOOGL":
-        case "mIAU":
-        case "mMSFT":
-        case "mNFLX":
-        case "mQQQ":
-        case "mSLV":
-        case "mTSLA":
-        case "mTWTR":
-        case "mUSO":
-        case "mVIXY":
-        case "mSPY":
-          res = "/images/CW20/" + symbol + ".svg"
-          break
-        case "mBTC":
-        case "mABNB":
-        case "mFB":
-        case "mGS":
-        case "mETH":
-        case "ANC":
-        case "bLuna":
-        case "mCOIN":
-        case "mGLXY":
-        case "MINE":
-        case "LOTA":
-        case "SPEC":
-        case "mARKK":
-        case "mDOT":
-        case "mSQ":
-        case "mAMD":
-        case "bETH":
-        case "ALTE":
-        case "mHOOD":
-        case "DPH":
-        case "tSHIBA":
-        case "LOOP":
-        case "LOOPR":
-        case "STT":
-        case "AGB":
-        case "TWD":
-        case "MIAW":
-        case "VKR":
-        case "Psi":
-        case "JUTA":
-        case "DKWON":
-        case "ORION":
-        case "MAGA":
-          res = "/images/CW20/" + symbol + ".png"
-          break
-        default:
-          break
-      }
       break
   }
 
