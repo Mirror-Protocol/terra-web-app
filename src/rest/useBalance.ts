@@ -42,11 +42,12 @@ export default (contract_addr: string, symbol: string) => {
         localContractAddr === undefined ||
         !localContractAddr.startsWith("terra")
       ) {
+        console.log(localContractAddr)
         loadDenomBalance().then((denomInfos) => {
           let hasDenom: boolean = false
           if (denomInfos !== undefined) {
             denomInfos.forEach((denomInfo) => {
-              if (denomInfo.denom === getSymbol(localSymbol)) {
+              if (denomInfo.denom === localContractAddr) {
                 setBalance(denomInfo.amount)
                 hasDenom = true
               }
