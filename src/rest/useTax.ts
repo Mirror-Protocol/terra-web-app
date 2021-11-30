@@ -7,31 +7,30 @@ interface TaxResponse {
   result: string
 }
 
-export default (symbol: string) => {
+export default (contract_addr: string) => {
   const [taxCap, setTaxCap] = useState<string>()
   const [taxRate, setTaxRate] = useState<string>()
 
-  const symbolName = getSymbol(symbol)
   const { loadTaxInfo, loadTaxRate } = useAPI()
 
   useEffect(() => {
     try {
-      if (!hasTaxToken(symbolName)) {
+      if (!hasTaxToken(contract_addr)) {
         setTaxCap("0")
         return
       }
 
-      loadTaxInfo(symbolName).then((val) => {
+      loadTaxInfo(contract_addr).then((val) => {
         setTaxCap(val)
       })
     } catch (error) {
-      setTaxCap("0")
+      setTaxCap("")
     }
-  }, [loadTaxInfo, symbolName])
+  }, [loadTaxInfo, contract_addr])
 
   useEffect(() => {
     try {
-      if (!hasTaxToken(symbolName)) {
+      if (!hasTaxToken(contract_addr)) {
         setTaxRate("0")
         return
       }
@@ -41,7 +40,7 @@ export default (symbol: string) => {
     } catch (error) {
       setTaxRate("0")
     }
-  }, [loadTaxRate, symbolName])
+  }, [loadTaxRate, contract_addr])
 
   return { taxCap, taxRate }
 }

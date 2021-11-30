@@ -33,7 +33,7 @@ import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import { Coin, Coins, StdFee, CreateTxOptions } from "@terra-money/terra.js"
+import { Coins, StdFee, CreateTxOptions } from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import { insertIf } from "libs/utils"
@@ -445,40 +445,42 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     [isNativeToken]
   )
 
+  const [tax, setTax] = useState<Coins>(new Coins())
   const { gasPrice } = useGasPrice(formData[Key.feeSymbol])
   const getTax = useCallback(
-    async ({ symbol1, symbol2, value1, value2, max1, max2 }) => {
-      let newTax = "0"
+    async ({ value1, value2, max1, max2, token1, token2 }) => {
+      let newTax = tax
 
-      const taxCap1 = await loadTaxInfo(symbol1)
-      const taxCap2 = await loadTaxInfo(symbol2)
+      const taxCap1 = await loadTaxInfo(token1)
+      const taxCap2 = await loadTaxInfo(token2)
       const taxRate = await loadTaxRate()
-      if (hasTaxToken(getSymbol(symbol1)) && taxCap1 && taxRate && max1) {
+      if (
+        token1 &&
+        hasTaxToken(token1) &&
+        (taxCap1 || taxCap1 === "") &&
+        taxRate &&
+        max1
+      ) {
         const tax1 = calcTax(toAmount(value1), taxCap1, taxRate)
-        newTax =
-          newTax === "0"
-            ? tax1 + getSymbol(symbol1)
-            : newTax + "," + tax1 + getSymbol(symbol1)
+
+        newTax.set(token1, tax1)
       }
       if (
         type === Type.PROVIDE &&
-        hasTaxToken(getSymbol(symbol2)) &&
-        taxCap2 &&
+        token2 &&
+        hasTaxToken(token2) &&
+        (taxCap2 || taxCap2 === "") &&
         taxRate &&
         max2
       ) {
         const tax2 = calcTax(toAmount(value2), taxCap2, taxRate)
-        newTax =
-          newTax === "0"
-            ? tax2 + getSymbol(symbol2)
-            : newTax + "," + tax2 + getSymbol(symbol2)
+        newTax.set(token2, tax2)
       }
       return newTax
     },
-    [getSymbol, loadTaxInfo, loadTaxRate, type]
+    [type, tax, loadTaxInfo, loadTaxRate]
   )
 
-  const [tax, setTax] = useState("")
   const isTaxCalculating = useRef<boolean>(false)
   useEffect(() => {
     if (isTaxCalculating?.current) {
@@ -486,23 +488,23 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     }
     isTaxCalculating.current = true
     getTax({
-      symbol1: formData[Key.symbol1],
-      symbol2: formData[Key.symbol2],
       value1: formData[Key.value1],
       value2: formData[Key.value2],
       max1: formData[Key.max1],
       max2: formData[Key.max2],
+      token1: formData[Key.token1],
+      token2: formData[Key.token2],
     })
       .then((value) => {
         setTax(value)
       })
       .catch(() => {
-        setTax("")
+        setTax(tax)
       })
       .finally(() => {
         isTaxCalculating.current = false
       })
-  }, [formData, getTax])
+  }, [formData, getTax, tax])
 
   const validateForm = async (
     key:
@@ -525,10 +527,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       feeValue,
       feeSymbol,
       maxFee,
+      token1,
+      token2,
     } = { ...formData, ...(newValues || {}) }
 
     if (key === Key.value1) {
-      const taxCap = await loadTaxInfo(symbol1)
+      const taxCap = await loadTaxInfo(token1)
       const taxRate = await loadTaxRate()
       return (
         v.amount(value1, {
@@ -544,6 +548,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           taxRate,
           type,
           decimals: tokenInfo1?.decimals,
+          token: token1,
         }) || true
       )
     }
@@ -565,6 +570,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             maxFee: "0",
             type,
             decimals: tokenInfo2?.decimals,
+            token: token2,
           }) || true
         )
       }
@@ -803,11 +809,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         const amount = feeValue
         const feeCoins = new Coins({})
         feeCoins.set(symbol, ceil(amount))
-        tax.split(",").every((item) => {
-          if (item === "0") {
-            return false
-          }
-          const taxCoin = Coin.fromString(item)
+        tax.map((taxCoin) => {
           const feeCoin = feeCoins.get(taxCoin.denom)
           if (feeCoin === undefined) {
             feeCoins.set(taxCoin.denom, taxCoin.amount)
@@ -978,27 +980,22 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                         return
                       }
                       let taxVal = "0"
-                      const taxs = (
-                        await getTax({
-                          symbol1: formData[Key.symbol1],
-                          value1: lookup(
-                            formData[Key.max1],
-                            formData[Key.token1]
-                          ),
-                          max1: formData[Key.max1],
-                        })
-                      ).split(",")
-                      for (let i = 0; i < taxs.length; i++) {
-                        if (taxs[i] === "0") {
-                          break
-                        }
-                        const coin = Coin.fromString(taxs[i])
-                        if (coin.denom === getSymbol(formData[Key.symbol1])) {
-                          taxVal = coin.toData().amount
-                          break
-                        }
-                      }
+                      const taxs = await getTax({
+                        token1: formData[Key.token1],
+                        value1: lookup(
+                          formData[Key.max1],
+                          formData[Key.token1]
+                        ),
+                        max1: formData[Key.max1],
+                      })
 
+                      taxs.map((tax) => {
+                        if (tax.denom === formData[Key.token1]) {
+                          taxVal = tax.toData().amount
+                          return false
+                        }
+                        return true
+                      })
                       let maxBalance = minus(formData[Key.max1], taxVal)
                       // fee
                       if (formData[Key.symbol1] === formData[Key.feeSymbol]) {
