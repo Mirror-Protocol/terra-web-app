@@ -75,27 +75,12 @@ export const getSymbol = (key: string) => {
   }
 }
 
-export const hasTaxToken = (symbol: string) => {
-  switch (symbol) {
-    case UKRW:
-    case USDR:
-    case UMNT:
-    case UUSD:
-    case UAUD:
-    case UCAD:
-    case UCHF:
-    case UCNY:
-    case UEUR:
-    case UGBP:
-    case UHKD:
-    case UINR:
-    case UJPY:
-    case USGD:
-    case UTHB:
-      return true
-    default:
-      return false
+export const hasTaxToken = (contract_addr: string) => {
+  if (contract_addr === ULUNA || contract_addr.startsWith("terra")) {
+    return false
   }
+
+  return true
 }
 
 export const GetTokenSvg = (icon: string, symbol: string) => {
