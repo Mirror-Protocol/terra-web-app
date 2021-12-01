@@ -33,7 +33,7 @@ import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import { Coins, StdFee, CreateTxOptions } from "@terra-money/terra.js"
+import { Coins, CreateTxOptions } from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import { insertIf } from "libs/utils"
@@ -51,6 +51,7 @@ import { useModal } from "components/Modal"
 import Settings, { SettingValues } from "components/Settings"
 import useLocalStorage from "libs/useLocalStorage"
 import useAutoRouter from "rest/useAutoRouter"
+import { useLCDClient } from "layouts/WalletConnectProvider"
 
 enum Key {
   token1 = "token1",
@@ -90,6 +91,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const { find } = useContract()
   const walletAddress = useAddress()
   const { post: terraExtensionPost } = useWallet()
+  const { terra } = useLCDClient()
   const settingsModal = useModal()
   const [slippageSettings, setSlippageSettings] = useLocalStorage<
     SettingValues
@@ -735,15 +737,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
   const handleSubmit = useCallback(
     async (values) => {
-      const {
-        token1,
-        token2,
-        value1,
-        value2,
-        feeValue,
-        feeSymbol,
-        gasPrice,
-      } = values
+      const { token1, token2, value1, value2, feeSymbol, gasPrice } = values
       try {
         settingsModal.close()
 
@@ -804,31 +798,18 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             return Array.isArray(msg) ? msg[0] : msg
           })
         }
-        const symbol = getSymbol(feeSymbol)
-        const gas = fee.gas
-        const amount = feeValue
-        const feeCoins = new Coins({})
-        feeCoins.set(symbol, ceil(amount))
-        tax.map((taxCoin) => {
-          const feeCoin = feeCoins.get(taxCoin.denom)
-          if (feeCoin === undefined) {
-            feeCoins.set(taxCoin.denom, taxCoin.amount)
-          } else {
-            feeCoins.set(taxCoin.denom, feeCoin.amount.add(taxCoin.amount))
-          }
-          return true
-        })
 
-        const txOptions: CreateTxOptions = {
+        let txOptions: CreateTxOptions = {
           msgs,
           memo: undefined,
           gasPrices: `${gasPrice}${getSymbol(feeSymbol)}`,
-          fee: new StdFee(parseInt(gas), feeCoins),
         }
+
+        const signMsg = await terra.tx.create(walletAddress, txOptions)
+        txOptions.fee = signMsg.fee
 
         const extensionResult = await terraExtensionPost(txOptions)
 
-        // const extensionResult = await postTerraExtension(options, txFee);
         if (extensionResult) {
           setResult(extensionResult)
           return
@@ -841,8 +822,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       settingsModal,
       type,
       getSymbol,
-      fee.gas,
-      tax,
       terraExtensionPost,
       generateContractMessages,
       walletAddress,
@@ -854,6 +833,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       lpContract,
       tokenInfo1,
       tokenInfo2,
+      terra.tx,
     ]
   )
 
