@@ -1,153 +1,179 @@
-import React, { ReactNode } from "react"
-import classNames from "classnames/bind"
-import { path } from "ramda"
-import styles from "./Table.module.scss"
+import React, { useEffect } from "react"
+import styled from "styled-components"
+import {
+  useTable,
+  useGlobalFilter,
+  useSortBy,
+  Column,
+  Row,
+  usePagination,
+} from "react-table"
 
-const cx = classNames.bind(styles)
+import iconNext from "images/icon-next.svg"
+import iconPrev from "images/icon-prev.svg"
+// import iconUp from "images/icon-arrow-head-up.svg";
+// import iconDown from "images/icon-arrow-head-down.svg";
 
-interface Table<T> {
-  rows?: (record: T) => Row
+type TableProps<T extends object> = {
+  data?: T[]
   columns: Column<T>[]
-  dataSource: T[]
+  searchKeyword?: string
+  onRowClick?(row: Row<T>): void
+  isLoading?: boolean
 }
 
-interface Row {
-  background?: string
-}
+const Wrapper = styled.div`
+  width: 100%;
+  height: auto;
+  position: relative;
+  overflow-x: auto;
+`
 
-interface Column<T> {
-  key: string
-  title?: ReactNode
-  dataIndex?: string
-  render?: (value: any, record: T, index: number) => ReactNode
-  children?: Column<T>[]
+const TableWrapper = styled.table`
+  border-top: 1px solid #e8e8e8;
+  margin-bottom: 14px;
+  position: relative;
+  width: 100%;
+  height: auto;
+  table-layout: auto;
+`
 
-  colSpan?: number
-  className?: string
-  align?: "left" | "right" | "center"
-  fixed?: "left" | "right"
-  narrow?: string[]
-  border?: BorderPosition[]
-  bold?: boolean
-  width?: string | number
-}
+const TableRow = styled.tr`
+  width: 100%;
+  height: auto;
+  border-bottom: 1px solid #e8e8e8;
 
-enum BorderPosition {
-  LEFT = "left",
-  RIGHT = "right",
-}
+  transition: all 0.125s ease-in-out;
+  &:hover {
+    background-color: #0222ba11;
+  }
+`
 
-const SEP = "."
+const Cell = styled.td`
+  width: 1px;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: left;
+  white-space: nowrap;
+`
 
-type DefaultRecordType = Record<string, any>
-function Table<T extends DefaultRecordType>(props: Table<T>) {
-  const { rows, columns, dataSource } = props
+const HeaderCell = styled(Cell)`
+  font-weight: 700;
+`
 
-  const normalized = columns.reduce<Column<T>[]>(
-    (acc, { children, ...column }) => {
-      // Normalize nested columns below `children`
-      // The first child draws the left border
-      // The last child draws the right border.
-      const renderChild = (child: Column<T>, index: number) => ({
-        ...child,
-        key: [column.key, child.key].join(SEP),
-        border: !index
-          ? [BorderPosition.LEFT]
-          : index === children!.length - 1
-          ? [BorderPosition.RIGHT]
-          : undefined,
-      })
+const Pagination = styled.div`
+  width: 100%;
+  height: auto;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  user-select: none;
+`
 
-      return !children
-        ? [...acc, column]
-        : [...acc, ...children.map(renderChild)]
-    },
-    []
+const Table = <T extends object>({
+  columns,
+  data = [],
+  searchKeyword,
+  onRowClick,
+  isLoading,
+}: TableProps<T>) => {
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    page,
+    prepareRow,
+    setGlobalFilter,
+    canNextPage,
+    canPreviousPage,
+    previousPage,
+    nextPage,
+    pageCount,
+    state,
+  } = useTable<T>(
+    { columns, data, initialState: { pageSize: 10 } },
+    useGlobalFilter,
+    useSortBy,
+    usePagination
   )
 
-  const getClassName = ({ align, fixed, narrow, border }: Column<T>) => {
-    const alignClassName = `text-${align}`
-    const fixedClassName = `fixed-${fixed}`
-    const borderClassName = cx(border?.map((position) => `border-${position}`))
-    const narrowClassName = cx(narrow?.map((position) => `narrow-${position}`))
-
-    return cx(
-      styles.cell,
-      alignClassName,
-      fixedClassName,
-      borderClassName,
-      narrowClassName
-    )
-  }
-
-  const renderColSpan = (column: Column<T>) => {
-    // children: colspan attribute, border props
-    // No children: empty the title
-    const { children } = column
-    const colSpan = children?.length
-    const next = Object.assign(
-      { ...column, colSpan, children: undefined },
-      children
-        ? { border: [BorderPosition.LEFT, BorderPosition.RIGHT] }
-        : { title: "" }
-    )
-
-    return renderTh(next)
-  }
-
-  const renderTh = (column: Column<T>): ReactNode => {
-    const { key, title, colSpan, width } = column
-    return (
-      <th
-        className={classNames(getClassName(column), styles.th)}
-        colSpan={colSpan}
-        style={{ width }}
-        key={key}
-      >
-        {title ?? key}
-      </th>
-    )
-  }
-
-  const colspan = columns.some(({ children }) => children)
+  useEffect(() => {
+    setGlobalFilter(searchKeyword)
+  }, [searchKeyword, setGlobalFilter])
   return (
-    <div className={styles.wrapper}>
-      <table className={cx({ margin: colspan })}>
-        <thead>
-          {colspan && (
-            <tr className={cx({ colspan })}>{columns.map(renderColSpan)}</tr>
-          )}
-
-          <tr>{normalized.map(renderTh)}</tr>
-        </thead>
-
-        <tbody>
-          {dataSource.map((record, index) => {
-            const renderTd = (column: Column<T>): ReactNode => {
-              const { key, dataIndex, render } = column
-              const { className, bold, width } = column
-              const value = path<any>((dataIndex ?? key).split(SEP), record)
-              const tdClassName = cx({ bold }, styles.td, className)
-
+    <div>
+      <Wrapper>
+        <TableWrapper {...getTableProps()}>
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <TableRow {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => {
+                  return (
+                    <HeaderCell
+                      {...column.getHeaderProps()}
+                      colSpan={undefined}
+                    >
+                      {column.render("Header")}
+                    </HeaderCell>
+                  )
+                })}
+              </TableRow>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {page.map((row) => {
+              prepareRow(row)
               return (
-                <td
-                  className={classNames(getClassName(column), tdClassName)}
-                  style={{ width }}
-                  key={key}
+                <TableRow
+                  {...row.getRowProps()}
+                  onClick={() => onRowClick && onRowClick(row)}
+                  style={{ cursor: onRowClick ? "pointer" : "unset" }}
                 >
-                  {render?.(value, record, index) ?? value}
-                </td>
+                  {row.cells.map((cell) => (
+                    <Cell {...cell.getCellProps()}>{cell.render("Cell")}</Cell>
+                  ))}
+                </TableRow>
               )
-            }
-
-            return (
-              <tr className={cx(rows?.(record).background)} key={index}>
-                {normalized.map(renderTd)}
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+            })}
+          </tbody>
+        </TableWrapper>
+        {isLoading && (
+          <div style={{ padding: "120px 0", textAlign: "center" }}>
+            Loading...
+          </div>
+        )}
+        {!isLoading && data.length <= 0 && (
+          <div style={{ padding: "120px 0", textAlign: "center" }}>
+            No data found
+          </div>
+        )}
+      </Wrapper>
+      <Pagination>
+        <button
+          disabled={!canPreviousPage}
+          onClick={() => previousPage()}
+          style={{ fontSize: 0 }}
+        >
+          <img src={iconPrev} alt="Previous" style={{ height: 20 }} />
+        </button>
+        <span>
+          Page {state?.pageIndex + 1} of {pageCount}
+        </span>
+        <button
+          disabled={!canNextPage}
+          onClick={() => nextPage()}
+          style={{ fontSize: 0 }}
+        >
+          <img src={iconNext} alt="Next" style={{ height: 20 }} />
+        </button>
+      </Pagination>
     </div>
   )
 }

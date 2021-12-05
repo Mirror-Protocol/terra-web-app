@@ -32,5 +32,9 @@
 
   @include mobile {
     padding-bottom: $footer-height-mobile;
+
+    .desktop-only {
+      display: none !important;
+    }
   }
 }

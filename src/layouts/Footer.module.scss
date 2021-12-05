@@ -20,6 +20,7 @@
 .container {
   @include desktop {
     @include flex(space-between);
+    height: $footer-height;
   }
 }
 
@@ -83,8 +84,6 @@
 /* author */
 .community {
   @include flex;
-  margin: -10px;
-  margin-bottom: 10px;
 
   @include mobile {
     margin-top: 40px;

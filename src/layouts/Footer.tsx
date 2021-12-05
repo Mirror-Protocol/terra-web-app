@@ -1,6 +1,6 @@
 import React from "react"
 import Container from "../components/Container"
-import styles from "./SwapFooter.module.scss"
+import styles from "./Footer.module.scss"
 import { ReactComponent as Logo } from "../images/DelightLogo.svg"
 
 const Footer = () => {

@@ -1,8 +1,6 @@
-import React, { Fragment, memo } from "react"
+import React, { memo } from "react"
 import SwapPage from "../components/SwapPage"
 import SwapForm from "../forms/SwapForm"
-import SwapHeader from "../layouts/SwapHeader"
-import SwapFooter from "../layouts/SwapFooter"
 import Container from "../components/Container"
 import useHash from "./useHash"
 
@@ -30,15 +28,9 @@ const Swap = () => {
   }
 
   return (
-    <Fragment>
-      <div id="terra">
-        <SwapHeader />
-        <Container>
-          <SwapPage>{type && <SwapForm type={type} tabs={tabs} />}</SwapPage>
-        </Container>
-        <SwapFooter />
-      </div>
-    </Fragment>
+    <Container>
+      <SwapPage>{type && <SwapForm type={type} tabs={tabs} />}</SwapPage>
+    </Container>
   )
 }
 

@@ -97,3 +97,14 @@ export const toAmount = (value: string, contract_addr?: string) => {
   const e = Math.pow(10, decimals)
   return value ? new BigNumber(value).times(e).integerValue().toString() : "0"
 }
+
+export const formatMoney = (num: number) => {
+  const units = ["M", "B", "T", "Q"]
+  const unit = Math.floor((num / 1.0e1).toFixed(0).toString().length)
+  const r = unit % 3
+  const x =
+    Math.abs(Number(num)) / Number(Number("1.0e+" + (unit - r)).toFixed(2))
+  return units[Math.floor(unit / 3) - 2]
+    ? x.toFixed(2) + units[Math.floor(unit / 3) - 2]
+    : `${num}`
+}

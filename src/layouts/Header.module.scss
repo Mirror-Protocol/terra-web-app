@@ -1,0 +1,63 @@
+@import "mixins";
+@import "variables";
+
+.header {
+  width: 100%;
+  height: auto;
+  position: sticky;
+  left: 0;
+  top: 0;
+  padding: 46px 0;
+  background-color: $realblue;
+  z-index: 5000;
+  transition: padding 0.125s ease-in-out;
+  overflow: hidden;
+
+  & .container {
+    position: relative;
+    left: 0;
+    top: 0;
+  }
+
+  &.scrolled {
+    padding: 14px 0;
+  }
+
+  & .wrapper,
+  & section {
+    @include flex;
+  }
+}
+
+@include mobile {
+  .header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    padding: 16px 0;
+    & .support {
+      transition: opacity 0.2s ease-in-out, max-height 0.2s ease-in-out;
+      overflow: hidden;
+      max-height: 100px;
+    }
+
+    &.scrolled {
+      padding: 14px 0;
+      & .support {
+        opacity: 0;
+        max-height: 0;
+        pointer-events: none;
+      }
+    }
+  }
+
+  & .wrapper {
+    margin-bottom: 16px;
+  }
+}
+
+.container {
+  @include desktop {
+    @include flex(space-between);
+  }
+}
