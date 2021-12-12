@@ -70,7 +70,7 @@ export interface Transaction {
   timestamp: Date
   txHash: string
   pairAddress: string
-  action: string
+  action: "swap" | "provide_liquidity" | "withdraw_liquidity"
   token0Amount: string
   token1Amount: string
 }
@@ -117,6 +117,15 @@ const useDashboardAPI = () => {
             `${dashboardBaseUrl}/pairs/${address}`
           )
           if (res?.data) {
+            return res.data
+          }
+          throw Error("no data")
+        },
+        async getRecent(address: string) {
+          const res = await axios.get<{ daily: Recent; weekly: Recent }>(
+            `${dashboardBaseUrl}/pairs/${address}/recent`
+          )
+          if (res.data?.daily) {
             return res.data
           }
           throw Error("no data")

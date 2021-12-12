@@ -16,7 +16,7 @@ const Wrapper = styled.div<{ isOpen: boolean }>`
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
     width: 100vw;
     height: 100vh;
-    top: -100vh;
+    top: -200vh;
     left: 0;
     position: fixed;
     max-width: unset;

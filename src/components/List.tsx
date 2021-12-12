@@ -36,7 +36,7 @@ const List: React.FC<ListProps> = ({ data, type = "ordered" }) => {
   return (
     <Wrapper>
       {data?.map((item, index) => (
-        <Item key={item?.toString()}>
+        <Item key={index}>
           {type === "ordered" ? <span>{index + 1}.</span> : <span>●</span>}
           {item}
         </Item>

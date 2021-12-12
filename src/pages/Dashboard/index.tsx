@@ -1,7 +1,7 @@
 import Chart from "components/Chart"
 import Card from "components/Card"
 import List from "components/List"
-import React, { useEffect, useState, useMemo } from "react"
+import React, { useState, useMemo } from "react"
 import styled from "styled-components"
 import { useQuery } from "react-query"
 
@@ -82,10 +82,6 @@ const Dashboard = () => {
       ?.sort((a, b) => Number(b.volumeUst) - Number(a.volumeUst))
       .slice(0, 5)
   }, [pairs])
-
-  useEffect(() => {
-    console.log(topLiquidity)
-  }, [topLiquidity])
 
   return (
     <Wrapper>
@@ -273,7 +269,7 @@ const Dashboard = () => {
                 columns={[
                   {
                     accessor: "pairAlias",
-                    Header: "Pair",
+                    Header: "Pairs",
                     Cell: (data: any) => {
                       const { original } = data?.row
                       if (!original) {
@@ -310,7 +306,7 @@ const Dashboard = () => {
                   },
                   {
                     accessor: "volumeUst",
-                    Header: "Volume",
+                    Header: "Volume(24h)",
                     Cell: ({ cell: { value } }: any) => (
                       <span>
                         {formatMoney(Number(lookup(`${value}`, UST)))} UST

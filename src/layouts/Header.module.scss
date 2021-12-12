@@ -36,23 +36,21 @@
     left: 0;
     padding: 16px 0;
     & .support {
-      transition: opacity 0.2s ease-in-out, max-height 0.2s ease-in-out;
-      overflow: hidden;
-      max-height: 100px;
+      transition: opacity 0.2s ease-in-out;
+      position: fixed;
+      right: 30px;
+      bottom: 30px;
+      width: auto;
+      height: auto;
     }
 
     &.scrolled {
       padding: 14px 0;
       & .support {
         opacity: 0;
-        max-height: 0;
         pointer-events: none;
       }
     }
-  }
-
-  & .wrapper {
-    margin-bottom: 16px;
   }
 }
 

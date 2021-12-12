@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" id="Icon_Stroke_Circle-Check_blue" width="24" height="24" viewBox="0 0 24 24">
+    <defs>
+        <style>
+            .cls-1,.cls-2{fill:none}.cls-2{stroke:#ffffff;stroke-miterlimit:10}
+        </style>
+    </defs>
+    <path id="Rectangle5" d="M0 0H24V24H0z" class="cls-1"/>
+    <g id="Oval" class="cls-2" transform="translate(2 2)">
+        <circle cx="10" cy="10" r="10"/>
+        <circle cx="10" cy="10" r="9.5" class="cls-1"/>
+    </g>
+    <path id="Path" d="M0 2l4 4 6-6" class="cls-2" transform="translate(7 8.996)"/>
+</svg>

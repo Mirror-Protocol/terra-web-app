@@ -7,6 +7,9 @@ import {
   Column,
   Row,
   usePagination,
+  TableOptions,
+  TableState,
+  useAsyncDebounce,
 } from "react-table"
 
 import iconNext from "images/icon-next.svg"
@@ -20,7 +23,11 @@ type TableProps<T extends object> = {
   searchKeyword?: string
   onRowClick?(row: Row<T>): void
   isLoading?: boolean
-}
+  wrapperStyle?: React.CSSProperties
+  rowStyle?: React.CSSProperties
+  cellStyle?: React.CSSProperties
+  onFetchData?(state: TableState<T>): void
+} & TableOptions<T>
 
 const Wrapper = styled.div`
   width: 100%;
@@ -29,13 +36,14 @@ const Wrapper = styled.div`
   overflow-x: auto;
 `
 
-const TableWrapper = styled.table`
+const TableWrapper = styled.table<{ isLoading?: boolean }>`
   border-top: 1px solid #e8e8e8;
   margin-bottom: 14px;
   position: relative;
   width: 100%;
   height: auto;
   table-layout: auto;
+  opacity: ${({ isLoading }) => (isLoading ? 0.5 : 1)};
 `
 
 const TableRow = styled.tr`
@@ -83,6 +91,11 @@ const Table = <T extends object>({
   searchKeyword,
   onRowClick,
   isLoading,
+  wrapperStyle = {},
+  rowStyle = {},
+  cellStyle = {},
+  onFetchData,
+  ...rest
 }: TableProps<T>) => {
   const {
     getTableProps,
@@ -98,22 +111,42 @@ const Table = <T extends object>({
     pageCount,
     state,
   } = useTable<T>(
-    { columns, data, initialState: { pageSize: 10 } },
+    {
+      columns,
+      data,
+      initialState: { pageSize: 10 },
+      ...rest,
+    },
     useGlobalFilter,
     useSortBy,
     usePagination
   )
 
+  const onFetchDataDebounced = useAsyncDebounce(
+    onFetchData ? onFetchData : () => {},
+    200
+  )
+
   useEffect(() => {
     setGlobalFilter(searchKeyword)
   }, [searchKeyword, setGlobalFilter])
+
+  useEffect(() => {
+    if (onFetchData) {
+      onFetchDataDebounced(state)
+    }
+  }, [onFetchData, onFetchDataDebounced, state])
   return (
     <div>
       <Wrapper>
-        <TableWrapper {...getTableProps()}>
+        <TableWrapper
+          {...getTableProps()}
+          style={wrapperStyle}
+          isLoading={isLoading}
+        >
           <thead>
             {headerGroups.map((headerGroup) => (
-              <TableRow {...headerGroup.getHeaderGroupProps()}>
+              <TableRow {...headerGroup.getHeaderGroupProps()} style={rowStyle}>
                 {headerGroup.headers.map((column) => {
                   return (
                     <HeaderCell
@@ -134,10 +167,15 @@ const Table = <T extends object>({
                 <TableRow
                   {...row.getRowProps()}
                   onClick={() => onRowClick && onRowClick(row)}
-                  style={{ cursor: onRowClick ? "pointer" : "unset" }}
+                  style={{
+                    ...rowStyle,
+                    cursor: onRowClick ? "pointer" : "unset",
+                  }}
                 >
                   {row.cells.map((cell) => (
-                    <Cell {...cell.getCellProps()}>{cell.render("Cell")}</Cell>
+                    <Cell {...cell.getCellProps()} style={cellStyle}>
+                      {cell.render("Cell")}
+                    </Cell>
                   ))}
                 </TableRow>
               )

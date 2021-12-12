@@ -65,7 +65,7 @@ const Summary: React.FC<SummaryProps> = ({ data }) => {
   return (
     <Wrapper>
       {data.map((item) => (
-        <SummaryItem {...item}>
+        <SummaryItem {...item} key={item.label}>
           <label>{item.label}:</label>
           <span>
             ${formatMoney(Number(item.value)) || Number(item.value).toFixed(2)}

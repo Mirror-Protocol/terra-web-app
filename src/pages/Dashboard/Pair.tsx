@@ -1,22 +1,22 @@
 import Chart from "components/Chart"
 import Card from "components/Card"
-import React, { useState } from "react"
+import React, { useState, useMemo } from "react"
 import styled from "styled-components"
 import { Link, useParams } from "react-router-dom"
 
 import Summary from "./Summary"
-import useDashboardAPI from "rest/useDashboardAPI"
-import { decimal, formatMoney, lookup } from "libs/parse"
+import useDashboardAPI, { Transaction } from "rest/useDashboardAPI"
+import { formatMoney, lookup } from "libs/parse"
 import { UST } from "constants/constants"
 import Table from "components/Table"
 import { useQuery } from "react-query"
 
 import { ReactComponent as IconGoBack } from "images/icon-go-back.svg"
 import AssetIcon from "components/AssetIcon"
-import { tokenInfos } from "rest/usePairs"
 import moment from "moment"
 import { useNetwork } from "hooks"
 import { Container, Row } from "pages/Dashboard"
+import Copy from "components/Copy"
 
 const Wrapper = styled.div`
   width: 100%;
@@ -37,20 +37,28 @@ const PairPage = () => {
   const { api } = useDashboardAPI()
   const { finder } = useNetwork()
 
-  const { data: recent } = useQuery("recent", async () => {
-    const res = await api.terraswap.getRecent()
+  const { data: recent } = useQuery(`recent-${address}`, async () => {
+    const res = await api.pairs.getRecent(address)
     return res?.daily
   })
   const { data: pair } = useQuery(`pair-${address}`, () =>
     api.pairs.findOne(address)
   )
-  const { data: transactions, isLoading: isTransactionsLoading } = useQuery(
-    "transactions",
-    async () => {
-      const res = await api.txs.list({ pairAddress: address, page: 1 })
-      return res?.txs || []
-    }
+  const [currentTransactionPage, setCurrentTransactionPage] = useState(1)
+  const {
+    data: transactionData,
+    isLoading: isTransactionsLoading,
+    isFetching: isTransactionFetching,
+  } = useQuery(
+    ["transactions", currentTransactionPage],
+    () => api.txs.list({ pairAddress: address, page: currentTransactionPage }),
+    { keepPreviousData: true }
   )
+
+  const { txs: transactions, totalCount: transactionCount } = useMemo(() => {
+    return transactionData || { txs: [], totalCount: 0 }
+  }, [transactionData])
+
   const [searchKeyword, setSearchKeyword] = useState("")
 
   return (
@@ -90,6 +98,7 @@ const PairPage = () => {
               {pair?.token0?.symbol}-{pair?.token1?.symbol}
             </div>
             <div className="desktop-only">{pair?.pairAddress}</div>
+            <Copy value={pair?.pairAddress} />
           </div>
         </div>
         <Summary
@@ -141,7 +150,7 @@ const PairPage = () => {
               </div>
               <div style={{ flex: 1 }}>
                 <div>
-                  <Row>
+                  <Row style={{ display: "flex", alignItems: "center" }}>
                     <div>
                       <span style={{ fontSize: 18, fontWeight: 700 }}>
                         {pair?.token0?.symbol}
@@ -178,7 +187,7 @@ const PairPage = () => {
               </div>
               <div style={{ flex: 1 }}>
                 <div>
-                  <Row>
+                  <Row style={{ display: "flex" }}>
                     <div>
                       <span style={{ fontSize: 18, fontWeight: 700 }}>
                         {pair?.token1?.symbol}
@@ -247,7 +256,9 @@ const PairPage = () => {
             </Row>
             <Row>
               <Table
-                isLoading={isTransactionsLoading}
+                isLoading={isTransactionsLoading || isTransactionFetching}
+                rowStyle={{ height: 80 }}
+                cellStyle={{ minHeight: 80 }}
                 columns={[
                   {
                     accessor: "action",
@@ -274,8 +285,6 @@ const PairPage = () => {
                           provide_liquidity: "Provide",
                           withdraw_liquidity: "Withdraw",
                         } as any)[value as string] || value}
-                        &nbsp;
-                        {pair?.token1?.symbol} for {pair?.token0?.symbol}
                       </span>
                     ),
                   },
@@ -286,44 +295,150 @@ const PairPage = () => {
                   {
                     accessor: "token0Amount",
                     Header: "Amount(from)",
-                    Cell: ({ cell: { value } }: any) => (
-                      <span>
-                        {formatMoney(
-                          Number(
-                            decimal(
-                              `${value}`,
-                              tokenInfos.get(pair?.token0?.tokenAddress || "")
-                                ?.decimals
+                    Cell: ({ row }: any) => {
+                      const tx: Transaction = row?.original
+                      if (tx.action === "provide_liquidity") {
+                        return (
+                          <>
+                            <span>
+                              {formatMoney(
+                                Number(
+                                  lookup(
+                                    `${Math.abs(Number(tx.token1Amount))}`,
+                                    pair?.token1?.tokenAddress
+                                  )
+                                )
+                              )}
+                              &nbsp;
+                              {pair?.token1?.symbol}
+                            </span>
+                            <br />
+                            <span>
+                              +&nbsp;
+                              {formatMoney(
+                                Number(
+                                  lookup(
+                                    `${Math.abs(Number(tx.token0Amount))}`,
+                                    pair?.token0?.tokenAddress
+                                  )
+                                )
+                              )}
+                              &nbsp;
+                              {pair?.token0?.symbol}
+                            </span>
+                          </>
+                        )
+                      }
+                      if (tx.action === "withdraw_liquidity") {
+                        return <span>-</span>
+                      }
+                      if (Number(tx.token0Amount) < 0) {
+                        return (
+                          <span>
+                            {formatMoney(
+                              Number(
+                                lookup(
+                                  `${Math.abs(Number(tx.token1Amount))}`,
+                                  pair?.token1?.tokenAddress
+                                )
+                              )
+                            )}
+                            &nbsp;
+                            {pair?.token1?.symbol}
+                          </span>
+                        )
+                      }
+                      return (
+                        <span>
+                          {formatMoney(
+                            Number(
+                              lookup(
+                                `${Math.abs(Number(tx.token0Amount))}`,
+                                pair?.token0?.tokenAddress
+                              )
                             )
-                          )
-                        )}
-                        &nbsp;
-                        {pair?.token0?.symbol}
-                      </span>
-                    ),
+                          )}
+                          &nbsp;
+                          {pair?.token0?.symbol}
+                        </span>
+                      )
+                    },
                   },
                   {
                     accessor: "token1Amount",
                     Header: "Amount(to)",
-                    Cell: ({ cell: { value } }: any) => (
-                      <span>
-                        {formatMoney(
-                          Number(
-                            decimal(
-                              `${value}`,
-                              tokenInfos.get(pair?.token1?.tokenAddress || "")
-                                ?.decimals
+                    Cell: ({ row }: any) => {
+                      const tx: Transaction = row?.original
+                      if (tx.action === "withdraw_liquidity") {
+                        return (
+                          <>
+                            <span>
+                              {formatMoney(
+                                Number(
+                                  lookup(
+                                    `${Math.abs(Number(tx.token1Amount))}`,
+                                    pair?.token1?.tokenAddress
+                                  )
+                                )
+                              )}
+                              &nbsp;
+                              {pair?.token1?.symbol}
+                            </span>
+                            <br />
+                            <span>
+                              +&nbsp;
+                              {formatMoney(
+                                Number(
+                                  lookup(
+                                    `${Math.abs(Number(tx.token0Amount))}`,
+                                    pair?.token0?.tokenAddress
+                                  )
+                                )
+                              )}
+                              &nbsp;
+                              {pair?.token0?.symbol}
+                            </span>
+                          </>
+                        )
+                      }
+                      if (tx.action === "provide_liquidity") {
+                        return <span>-</span>
+                      }
+                      if (Number(tx.token0Amount) < 0) {
+                        return (
+                          <span>
+                            {formatMoney(
+                              Number(
+                                lookup(
+                                  `${Math.abs(Number(tx.token0Amount))}`,
+                                  pair?.token0?.tokenAddress
+                                )
+                              )
+                            )}
+                            &nbsp;
+                            {pair?.token0?.symbol}
+                          </span>
+                        )
+                      }
+                      return (
+                        <span>
+                          {formatMoney(
+                            Number(
+                              lookup(
+                                `${Math.abs(Number(tx.token1Amount))}`,
+                                pair?.token1?.tokenAddress
+                              )
                             )
-                          )
-                        )}
-                        &nbsp;
-                        {pair?.token1?.symbol}
-                      </span>
-                    ),
+                          )}
+                          &nbsp;
+                          {pair?.token1?.symbol}
+                        </span>
+                      )
+                    },
                   },
                   {
                     accessor: "txHash",
-                    Header: "txHash",
+                    Header: "Transaction Hash",
                     Cell: ({ cell: { value } }: any) => (
                       <span>
                         {`${value}`.substr(0, 5)}...{`${value}`.substr(-5)}
@@ -332,7 +447,7 @@ const PairPage = () => {
                   },
                   {
                     accessor: "timestamp",
-                    Header: "timestamp",
+                    Header: "Time",
                     Cell: ({ cell: { value } }: any) => (
                       <span>{moment(value).fromNow()}</span>
                     ),
@@ -345,6 +460,15 @@ const PairPage = () => {
                   }
                 }}
                 searchKeyword={searchKeyword}
+                initialState={{
+                  pageSize: 50,
+                  pageIndex: currentTransactionPage - 1,
+                }}
+                pageCount={Math.floor(transactionCount / 50) + 1}
+                onFetchData={(state) => {
+                  setCurrentTransactionPage(state.pageIndex + 1)
+                }}
+                manualPagination
               />
             </Row>
           </Card>
