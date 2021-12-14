@@ -113,7 +113,7 @@ const PairPage = () => {
               ),
             },
             {
-              label: "Liquidity 24H",
+              label: "TVL",
               value: recent?.liquidity
                 ? `${lookup(recent?.liquidity, UST)}`
                 : "",
@@ -314,7 +314,6 @@ const PairPage = () => {
                             </span>
                             <br />
                             <span>
-                              +&nbsp;
                               {formatMoney(
                                 Number(
                                   lookup(

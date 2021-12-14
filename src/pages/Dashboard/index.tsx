@@ -98,7 +98,7 @@ const Dashboard = () => {
               ),
             },
             {
-              label: "Liquidity 24H",
+              label: "TVL",
               value: recent?.liquidity
                 ? `${lookup(recent?.liquidity, UST)}`
                 : "",
