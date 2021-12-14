@@ -12,7 +12,6 @@ import { UST } from "constants/constants"
 import Table from "components/Table"
 import { Link, useHistory } from "react-router-dom"
 import AssetIcon from "components/AssetIcon"
-import { div } from "libs/math"
 
 const Wrapper = styled.div`
   width: 100%;
@@ -40,11 +39,20 @@ export const Row = styled.div`
   position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
 
   & > div {
     flex: 1;
+  }
+
+  .left {
+    width: 50%;
+    float: left;
+    margin-right: 10px;
+  }
+  .right {
+    width: 50%;
+    float: right;
+    margin-left: 10px;
   }
 
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
@@ -69,6 +77,18 @@ const Dashboard = () => {
     "pairs",
     api.pairs.list
   )
+  const {data: chart } = useQuery("terraswap", async () => {
+    const now = Date.now()
+    const fromDate = new Date(now - (90 * 24 * 60 * 60 * 1000))
+
+    const res = await api.terraswap.getChartData({
+      unit: "day",
+      from: fromDate.toISOString().split('T')[0],
+      to: new Date(now).toISOString().split('T')[0]
+    })
+
+    return res
+  })
   const [searchKeyword, setSearchKeyword] = useState("")
 
   const topLiquidity = useMemo(() => {
@@ -118,7 +138,100 @@ const Dashboard = () => {
           ]}
         />
         <Row>
-          <Card>
+          <Card className="left">
+            <div style={{ marginBottom: 10 }}>
+              <b>Transaction Volume</b>
+            </div>
+            <Chart
+              type="line"
+              data={chart?.map((volume) => {
+                return {
+                  t: new Date(volume.timestamp),
+                  y: Number(lookup(volume.volumeUst, UST)),
+                }
+              })}
+            />
+          </Card>
+          <Card className="right">
+            <div style={{ marginBottom: 10 }}>
+              <b>Top Trading</b>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                gap: 16,
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <div
+                className="desktop-only"
+                style={{ display: "inline-block", width: 160, height: 160 }}
+              >
+                <Chart
+                  type="pie"
+                  labels={topTrading?.map((item) => item.pairAlias)}
+                  data={topTrading?.map((item) => Number(item.volumeUst))}
+                />
+              </div>
+              <div>
+                <List
+                  data={(topTrading || [])?.map((item) => {
+                    const {
+                      token0,
+                      token0Symbol,
+                      token1,
+                      token1Symbol,
+                      volumeUst,
+                      pairAddress,
+                    } = item
+                    return (
+                      <Link
+                        to={`/pairs/${pairAddress}`}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-start",
+                          flexWrap: "nowrap",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <div>
+                          <AssetIcon address={token0} alt={token0Symbol} />
+                          <AssetIcon
+                            address={token1}
+                            alt={token1Symbol}
+                            style={{ left: -8 }}
+                          />
+                        </div>
+                        <div>
+                          {token0Symbol}-{token1Symbol} /&nbsp;
+                          {formatMoney(Number(lookup(volumeUst, UST)))} UST
+                        </div>
+                      </Link>
+                    )
+                  })}
+                />
+              </div>
+            </div>
+          </Card>
+        </Row>
+        <Row>
+          <Card className="left">
+            <div style={{ marginBottom: 10 }}>
+              <b>Total Liquidity</b>
+            </div>
+            <Chart
+              type="line"
+              data={chart?.map((liquidity) => {
+                return {
+                  t: new Date(liquidity.timestamp),
+                  y: Number(lookup(liquidity.liquidityUst, UST)),
+                }
+              })}
+            />
+          </Card>
+          <Card className="right">
             <div style={{ marginBottom: 10 }}>
               <b>Top Liquidity</b>
             </div>
@@ -182,69 +295,7 @@ const Dashboard = () => {
               </div>
             </div>
           </Card>
-          <Card>
-            <div style={{ marginBottom: 10 }}>
-              <b>Top Trading</b>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                gap: 16,
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <div
-                className="desktop-only"
-                style={{ display: "inline-block", width: 160, height: 160 }}
-              >
-                <Chart
-                  type="pie"
-                  labels={topTrading?.map((item) => item.pairAlias)}
-                  data={topTrading?.map((item) => Number(item.volumeUst))}
-                />
-              </div>
-              <div>
-                <List
-                  data={(topTrading || [])?.map((item) => {
-                    const {
-                      token0,
-                      token0Symbol,
-                      token1,
-                      token1Symbol,
-                      volumeUst,
-                      pairAddress,
-                    } = item
-                    return (
-                      <Link
-                        to={`/pairs/${pairAddress}`}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "flex-start",
-                          flexWrap: "nowrap",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        <div>
-                          <AssetIcon address={token0} alt={token0Symbol} />
-                          <AssetIcon
-                            address={token1}
-                            alt={token1Symbol}
-                            style={{ left: -8 }}
-                          />
-                        </div>
-                        <div>
-                          {token0Symbol}-{token1Symbol} /&nbsp;
-                          {formatMoney(Number(lookup(volumeUst, UST)))} UST
-                        </div>
-                      </Link>
-                    )
-                  })}
-                />
-              </div>
-            </div>
-          </Card>
+          
         </Row>
         <Row>
           <Card>
