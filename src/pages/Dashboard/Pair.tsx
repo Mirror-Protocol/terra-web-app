@@ -133,7 +133,7 @@ const PairPage = () => {
           ]}
         />
         <Row>
-          <Card>
+          <Card className="left">
             <div
               style={{
                 display: "flex",
@@ -170,7 +170,7 @@ const PairPage = () => {
             </div>
           </Card>
 
-          <Card>
+          <Card className="right">
             <div
               style={{
                 display: "flex",
@@ -208,7 +208,7 @@ const PairPage = () => {
           </Card>
         </Row>
         <Row>
-          <Card>
+          <Card className="left">
             <div style={{ marginBottom: 10 }}>
               <b>Transaction Volume</b>
             </div>
@@ -222,7 +222,7 @@ const PairPage = () => {
               })}
             />
           </Card>
-          <Card>
+          <Card className="right">
             <div style={{ marginBottom: 10 }}>
               <b>Total Liquidity</b>
             </div>
