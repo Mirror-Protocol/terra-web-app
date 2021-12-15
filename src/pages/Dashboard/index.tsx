@@ -45,12 +45,12 @@ export const Row = styled.div`
   }
 
   .left {
-    width: 50%;
+    width: 1vw;
     float: left;
     margin-right: 10px;
   }
   .right {
-    width: 50%;
+    width: 1vw;
     float: right;
     margin-left: 10px;
   }
@@ -61,7 +61,20 @@ export const Row = styled.div`
 
     & > div {
       flex: unset;
-      margin-bottom: 10px;
+      margin-bottom: unset;
+    }
+
+    .left {
+      width: 100%;
+      float: left;
+      magin: unset;
+    }
+
+    .right {
+      width: 100%;
+      float: left;
+      margin-left: 0px;
+      margin-top: 20px;
     }
   }
 `
