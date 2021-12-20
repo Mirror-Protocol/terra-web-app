@@ -5,13 +5,19 @@ import { ThemeProvider } from "styled-components"
 import variables from "styles/_variables.scss"
 import { useAddress } from "hooks"
 import Header from "./Header"
-import Footer from "./Footer"
-import Sidebar from "./Sidebar"
 import Container from "components/Container"
 import { QueryClient, QueryClientProvider } from "react-query"
 import styled from "styled-components"
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 const Wrapper = styled.div`
   display: flex;
@@ -33,16 +39,13 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={variables}>
         <ContractProvider value={contract}>
-          <div id="terra">
-            <Header />
-            <Container>
-              <Wrapper>
-                <Sidebar />
-                <div style={{ flex: 1 }}>{routes()}</div>
-              </Wrapper>
-            </Container>
-            <Footer />
-          </div>
+          <Header />
+          <Container>
+            <Wrapper>
+              <div style={{ flex: 1, maxWidth: 150 }}>&nbsp;</div>
+              <div style={{ flex: 1 }}>{routes()}</div>
+            </Wrapper>
+          </Container>
         </ContractProvider>
       </ThemeProvider>
     </QueryClientProvider>

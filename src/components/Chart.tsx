@@ -138,14 +138,16 @@ const getOptions = (
       ],
     },
     pie: {
-      backgroundColor: config.pieBackgroundColors || [
-        "#4c62cd",
-        "#5969B9",
-        "#8090DC",
-        "#99A6E3",
-        "#B2BCEA",
-        "#CCD2F1",
-      ],
+      backgroundColor:
+        config.pieBackgroundColors ||
+        [
+          "#4c62cd",
+          "#5969B9",
+          "#8090DC",
+          "#99A6E3",
+          "#B2BCEA",
+          "#CCD2F1",
+        ].reverse(),
     },
     line: {
       borderColor: BLUE,

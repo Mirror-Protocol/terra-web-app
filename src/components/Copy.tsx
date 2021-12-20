@@ -22,7 +22,7 @@ const Wrapper = styled.button<CopyProps & { isCopied?: boolean }>`
   background-color: transparent;
   cursor: pointer;
   vertical-align: middle;
-  overflow: hidden;
+  overflow: visible;
 
   &::before,
   &::after {
@@ -34,17 +34,22 @@ const Wrapper = styled.button<CopyProps & { isCopied?: boolean }>`
     background-size: contain;
     background-position: 50% 50%;
     background-repeat: no-repeat;
-    transition: transform 0.2s ease-in-out;
-    transform: translateY(${({ isCopied }) => (isCopied ? "-100%" : "0")});
+    transition: transform 0.125s ease-in-out, opacity 0.125s ease-in-out;
+    /* transform: translateY(${({ isCopied }) =>
+      isCopied ? "-100%" : "0"}); */
   }
 
   &::before {
     background-image: url(${iconCopy});
     top: 0;
+    transform: scale(${({ isCopied }) => (isCopied ? 0 : 1)});
+    opacity: ${({ isCopied }) => (isCopied ? 0 : 1)};
   }
   &::after {
     background-image: url(${iconOk});
-    top: 100%;
+    top: 0;
+    transform: scale(${({ isCopied }) => (isCopied ? 1 : 2)});
+    opacity: ${({ isCopied }) => (isCopied ? 1 : 0)};
   }
 
   & > textarea {

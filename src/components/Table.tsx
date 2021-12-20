@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import {
   useTable,
   useGlobalFilter,
@@ -14,8 +14,8 @@ import {
 
 import iconNext from "images/icon-next.svg"
 import iconPrev from "images/icon-prev.svg"
-// import iconUp from "images/icon-arrow-head-up.svg";
-// import iconDown from "images/icon-arrow-head-down.svg";
+import iconUp from "images/icon-arrow-head-up.svg"
+import iconDown from "images/icon-arrow-head-down.svg"
 
 type TableProps<T extends object> = {
   data?: T[]
@@ -25,6 +25,7 @@ type TableProps<T extends object> = {
   isLoading?: boolean
   wrapperStyle?: React.CSSProperties
   rowStyle?: React.CSSProperties
+  headerRowStyle?: React.CSSProperties
   cellStyle?: React.CSSProperties
   onFetchData?(state: TableState<T>): void
 } & TableOptions<T>
@@ -42,8 +43,12 @@ const TableWrapper = styled.table<{ isLoading?: boolean }>`
   position: relative;
   width: 100%;
   height: auto;
-  table-layout: auto;
+  table-layout: fixed;
   opacity: ${({ isLoading }) => (isLoading ? 0.5 : 1)};
+
+  @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
+    table-layout: auto;
+  }
 `
 
 const TableRow = styled.tr`
@@ -74,6 +79,50 @@ const HeaderCell = styled(Cell)`
   font-weight: 700;
 `
 
+type SortIconProps = {
+  sortDirection: "desc" | "asc" | undefined | false
+}
+
+const SortIcon = styled.div<SortIconProps>`
+  width: 6px;
+  height: 14px;
+  position: relative;
+  vertical-align: middle;
+  display: inline-block;
+
+  &::before,
+  &::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    position: absolute;
+    left: 0;
+    background-size: contain;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+  }
+
+  &::before {
+    top: 0;
+    background-image: url(${iconUp});
+    ${({ sortDirection }) =>
+      sortDirection === "asc" &&
+      css`
+        opacity: 1;
+      `}
+  }
+  &::after {
+    bottom: 0;
+    background-image: url(${iconDown});
+    ${({ sortDirection }) =>
+      sortDirection === "desc" &&
+      css`
+        opacity: 1;
+      `}
+  }
+`
+
 const Pagination = styled.div`
   width: 100%;
   height: auto;
@@ -85,18 +134,21 @@ const Pagination = styled.div`
   user-select: none;
 `
 
-const Table = <T extends object>({
-  columns,
-  data = [],
-  searchKeyword,
-  onRowClick,
-  isLoading,
-  wrapperStyle = {},
-  rowStyle = {},
-  cellStyle = {},
-  onFetchData,
-  ...rest
-}: TableProps<T>) => {
+const Table = <T extends object>(props: TableProps<T>) => {
+  const {
+    columns,
+    data = [],
+    searchKeyword,
+    onRowClick,
+    isLoading,
+    wrapperStyle = {},
+    rowStyle = {},
+    cellStyle = {},
+    headerRowStyle,
+    headerCellStyle,
+    onFetchData,
+    ...rest
+  } = props
   const {
     getTableProps,
     getTableBodyProps,
@@ -146,14 +198,36 @@ const Table = <T extends object>({
         >
           <thead>
             {headerGroups.map((headerGroup) => (
-              <TableRow {...headerGroup.getHeaderGroupProps()} style={rowStyle}>
+              <TableRow
+                {...headerGroup.getHeaderGroupProps()}
+                style={headerRowStyle || rowStyle}
+              >
                 {headerGroup.headers.map((column) => {
                   return (
                     <HeaderCell
-                      {...column.getHeaderProps()}
+                      {...column.getHeaderProps(
+                        !props.manualPagination
+                          ? column.getSortByToggleProps()
+                          : undefined
+                      )}
                       colSpan={undefined}
+                      style={headerCellStyle || cellStyle}
                     >
                       {column.render("Header")}
+                      {!props?.manualPagination && (
+                        <>
+                          &nbsp;
+                          <SortIcon
+                            sortDirection={
+                              column.isSorted
+                                ? column.isSortedDesc
+                                  ? "desc"
+                                  : "asc"
+                                : false
+                            }
+                          />
+                        </>
+                      )}
                     </HeaderCell>
                   )
                 })}

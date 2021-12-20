@@ -5,6 +5,7 @@ import Connect from "./Connect"
 import styles from "./Header.module.scss"
 import { Link } from "react-router-dom"
 import classNames from "classnames"
+import Sidebar from "./Sidebar"
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -17,7 +18,8 @@ const Header = () => {
       setIsScrolled(e?.touches?.[0]?.pageY < startY)
     }
     const handleWheel = (e: WheelEvent) => {
-      setIsScrolled(e.deltaY > 0)
+      const element = document.body
+      setIsScrolled(element.scrollHeight > element.clientHeight && e.deltaY > 0)
     }
 
     window.addEventListener("wheel", handleWheel)
@@ -29,24 +31,49 @@ const Header = () => {
       window.removeEventListener("touchmove", handleTouchMove)
     }
   }, [])
-  return (
-    <header
-      className={classNames(styles.header, isScrolled && styles.scrolled)}
-    >
-      <Container className={styles.container}>
-        <section className={styles.wrapper}>
-          <Link to="/dashboard">
-            <Logo height={38} className={styles.logo} />
-          </Link>
-        </section>
 
-        <section className={styles.support}>
-          <div className={styles.connect}>
-            <Connect />
+  useEffect(() => {
+    if (isScrolled) {
+      document.body.classList.add("scrolled")
+      return
+    }
+    document.body.classList.remove("scrolled")
+  }, [isScrolled])
+  return (
+    <>
+      <header
+        className={classNames(styles.header, isScrolled && styles.scrolled)}
+      >
+        <Container className={styles.container}>
+          <section className={styles.wrapper}>
+            <Link to="/dashboard">
+              <Logo height={38} className={styles.logo} />
+            </Link>
+          </section>
+
+          <section className={styles.support}>
+            <div className={styles.connect}>
+              <Connect />
+            </div>
+          </section>
+        </Container>
+      </header>
+
+      <Container className={styles.container}>
+        <div style={{ position: "relative", zIndex: 5550 }}>
+          <div
+            style={{
+              width: "100%",
+              height: "auto",
+              maxWidth: 150,
+              position: "fixed",
+            }}
+          >
+            <Sidebar />
           </div>
-        </section>
+        </div>
       </Container>
-    </header>
+    </>
   )
 }
 

@@ -11,7 +11,25 @@
   background-color: $realblue;
   z-index: 5000;
   transition: padding 0.125s ease-in-out;
-  overflow: hidden;
+  overflow: visible;
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    left: 0;
+    bottom: 24px;
+    background-color: #ffffff;
+    opacity: 0.15;
+
+    @include mobile {
+      bottom: 0;
+    }
+    .scrolled & {
+      bottom: 0;
+    }
+  }
 
   & .container {
     position: relative;

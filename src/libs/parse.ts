@@ -106,5 +106,5 @@ export const formatMoney = (num: number) => {
     Math.abs(Number(num)) / Number(Number("1.0e+" + (unit - r)).toFixed(2))
   return units[Math.floor(unit / 3) - 2]
     ? x.toFixed(2) + units[Math.floor(unit / 3) - 2]
-    : `${num}`
+    : `${(num / 1e6).toFixed(2)}M`
 }

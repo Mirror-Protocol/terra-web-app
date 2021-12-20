@@ -82,22 +82,19 @@ export const Row = styled.div`
 const Dashboard = () => {
   const history = useHistory()
   const { api } = useDashboardAPI()
-  const { data: recent } = useQuery("recent", async () => {
-    const res = await api.terraswap.getRecent()
-    return res?.daily
-  })
+  const { data: recent } = useQuery("recent", api.terraswap.getRecent)
   const { data: pairs, isLoading: isPairsLoading } = useQuery(
     "pairs",
     api.pairs.list
   )
-  const {data: chart } = useQuery("terraswap", async () => {
+  const { data: chart } = useQuery("terraswap", async () => {
     const now = Date.now()
-    const fromDate = new Date(now - (90 * 24 * 60 * 60 * 1000))
+    const fromDate = new Date(now - 90 * 24 * 60 * 60 * 1000)
 
     const res = await api.terraswap.getChartData({
       unit: "day",
-      from: fromDate.toISOString().split('T')[0],
-      to: new Date(now).toISOString().split('T')[0]
+      from: fromDate.toISOString().split("T")[0],
+      to: new Date(now).toISOString().split("T")[0],
     })
 
     return res
@@ -123,29 +120,46 @@ const Dashboard = () => {
           data={[
             {
               label: "Volume 24H",
-              value: recent?.volume ? `${lookup(recent?.volume, UST)}` : "",
-              variation: parseFloat(
-                (parseFloat(recent?.volumeIncreasedRate || "0") * 100).toFixed(
-                  2
-                )
-              ),
-            },
-            {
-              label: "TVL",
-              value: recent?.liquidity
-                ? `${lookup(recent?.liquidity, UST)}`
+              value: recent?.daily?.volume
+                ? `${lookup(recent?.daily?.volume, UST)}`
                 : "",
               variation: parseFloat(
                 (
-                  parseFloat(recent?.liquidityIncreasedRate || "0") * 100
+                  parseFloat(recent?.daily?.volumeIncreasedRate || "0") * 100
+                ).toFixed(2)
+              ),
+            },
+            {
+              label: "Volume 7D",
+              value: recent?.weekly?.volume
+                ? `${lookup(recent?.weekly?.volume, UST)}`
+                : "",
+              variation: parseFloat(
+                (
+                  parseFloat(recent?.weekly?.volumeIncreasedRate || "0") * 100
                 ).toFixed(2)
               ),
             },
             {
               label: "Fee 24H",
-              value: recent?.fee ? `${lookup(recent?.fee, UST)}` : "",
+              value: recent?.daily?.fee
+                ? `${lookup(recent?.daily?.fee, UST)}`
+                : "",
               variation: parseFloat(
-                (parseFloat(recent?.feeIncreasedRate || "0") * 100).toFixed(2)
+                (
+                  parseFloat(recent?.daily?.feeIncreasedRate || "0") * 100
+                ).toFixed(2)
+              ),
+            },
+            {
+              label: "TVL",
+              value: recent?.daily?.liquidity
+                ? `${lookup(recent?.daily?.liquidity, UST)}`
+                : "",
+              variation: parseFloat(
+                (
+                  parseFloat(recent?.daily?.liquidityIncreasedRate || "0") * 100
+                ).toFixed(2)
               ),
             },
           ]}
@@ -155,8 +169,10 @@ const Dashboard = () => {
             <div style={{ marginBottom: 10 }}>
               <b>Transaction Volume</b>
             </div>
+            <br />
             <Chart
               type="line"
+              height={167}
               data={chart?.map((volume) => {
                 return {
                   t: new Date(volume.timestamp),
@@ -179,7 +195,13 @@ const Dashboard = () => {
             >
               <div
                 className="desktop-only"
-                style={{ display: "inline-block", width: 160, height: 160 }}
+                style={{
+                  display: "inline-block",
+                  maxWidth: 208,
+                  maxHeight: 208,
+                  padding: 16,
+                  flex: 1,
+                }}
               >
                 <Chart
                   type="pie"
@@ -187,7 +209,7 @@ const Dashboard = () => {
                   data={topTrading?.map((item) => Number(item.volumeUst))}
                 />
               </div>
-              <div>
+              <div style={{ flex: 2 }}>
                 <List
                   data={(topTrading || [])?.map((item) => {
                     const {
@@ -234,8 +256,10 @@ const Dashboard = () => {
             <div style={{ marginBottom: 10 }}>
               <b>Total Liquidity</b>
             </div>
+            <br />
             <Chart
               type="line"
+              height={167}
               data={chart?.map((liquidity) => {
                 return {
                   t: new Date(liquidity.timestamp),
@@ -258,7 +282,13 @@ const Dashboard = () => {
             >
               <div
                 className="desktop-only"
-                style={{ display: "inline-block", width: 160, height: 160 }}
+                style={{
+                  display: "inline-block",
+                  maxWidth: 208,
+                  maxHeight: 208,
+                  padding: 16,
+                  flex: 1,
+                }}
               >
                 <Chart
                   type="pie"
@@ -266,7 +296,7 @@ const Dashboard = () => {
                   data={topLiquidity?.map((item) => Number(item.liquidityUst))}
                 />
               </div>
-              <div>
+              <div style={{ flex: 2 }}>
                 <List
                   data={(topLiquidity || [])?.map((item) => {
                     const {
@@ -308,7 +338,6 @@ const Dashboard = () => {
               </div>
             </div>
           </Card>
-          
         </Row>
         <Row>
           <Card>
@@ -389,6 +418,8 @@ const Dashboard = () => {
                 onRowClick={(row) =>
                   history.push(`/pairs/${row.original.pairAddress}`)
                 }
+                wrapperStyle={{ tableLayout: "fixed" }}
+                cellStyle={{ width: 160 }}
                 searchKeyword={searchKeyword}
               />
             </Row>

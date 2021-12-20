@@ -10,8 +10,12 @@ const Wrapper = styled.div<{ isOpen: boolean }>`
   width: 100%;
   height: auto;
   position: relative;
-  max-width: 150px;
   flex: 1;
+  max-width: 150px;
+
+  & > div {
+    max-width: 150px;
+  }
 
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
     width: 100vw;

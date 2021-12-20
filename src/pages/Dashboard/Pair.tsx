@@ -37,10 +37,9 @@ const PairPage = () => {
   const { api } = useDashboardAPI()
   const { finder } = useNetwork()
 
-  const { data: recent } = useQuery(`recent-${address}`, async () => {
-    const res = await api.pairs.getRecent(address)
-    return res?.daily
-  })
+  const { data: recent } = useQuery(`recent-${address}`, () =>
+    api.pairs.getRecent(address)
+  )
   const { data: pair } = useQuery(`pair-${address}`, () =>
     api.pairs.findOne(address)
   )
@@ -58,8 +57,6 @@ const PairPage = () => {
   const { txs: transactions, totalCount: transactionCount } = useMemo(() => {
     return transactionData || { txs: [], totalCount: 0 }
   }, [transactionData])
-
-  const [searchKeyword, setSearchKeyword] = useState("")
 
   return (
     <Wrapper>
@@ -105,29 +102,46 @@ const PairPage = () => {
           data={[
             {
               label: "Volume 24H",
-              value: recent?.volume ? `${lookup(recent?.volume, UST)}` : "",
-              variation: parseFloat(
-                (parseFloat(recent?.volumeIncreasedRate || "0") * 100).toFixed(
-                  2
-                )
-              ),
-            },
-            {
-              label: "TVL",
-              value: recent?.liquidity
-                ? `${lookup(recent?.liquidity, UST)}`
+              value: recent?.daily?.volume
+                ? `${lookup(recent?.daily?.volume, UST)}`
                 : "",
               variation: parseFloat(
                 (
-                  parseFloat(recent?.liquidityIncreasedRate || "0") * 100
+                  parseFloat(recent?.daily?.volumeIncreasedRate || "0") * 100
+                ).toFixed(2)
+              ),
+            },
+            {
+              label: "Volume 7D",
+              value: recent?.weekly?.volume
+                ? `${lookup(recent?.weekly?.volume, UST)}`
+                : "",
+              variation: parseFloat(
+                (
+                  parseFloat(recent?.weekly?.volumeIncreasedRate || "0") * 100
                 ).toFixed(2)
               ),
             },
             {
               label: "Fee 24H",
-              value: recent?.fee ? `${lookup(recent?.fee, UST)}` : "",
+              value: recent?.daily?.fee
+                ? `${lookup(recent?.daily?.fee, UST)}`
+                : "",
               variation: parseFloat(
-                (parseFloat(recent?.feeIncreasedRate || "0") * 100).toFixed(2)
+                (
+                  parseFloat(recent?.daily?.feeIncreasedRate || "0") * 100
+                ).toFixed(2)
+              ),
+            },
+            {
+              label: "TVL",
+              value: recent?.daily?.liquidity
+                ? `${lookup(recent?.daily?.liquidity, UST)}`
+                : "",
+              variation: parseFloat(
+                (
+                  parseFloat(recent?.daily?.liquidityIncreasedRate || "0") * 100
+                ).toFixed(2)
               ),
             },
           ]}
@@ -165,7 +179,19 @@ const PairPage = () => {
                     </div>
                   </Row>
                 </div>
-                <div>{pair?.token0?.tokenAddress}</div>
+                <div
+                  style={{
+                    width: "100%",
+                    height: 1,
+                    position: "relative",
+                    backgroundColor: "#e8e8e8",
+                    marginTop: 10,
+                    marginBottom: 8,
+                  }}
+                />
+                <div style={{ whiteSpace: "normal", wordBreak: "break-all" }}>
+                  {pair?.token0?.tokenAddress}
+                </div>
               </div>
             </div>
           </Card>
@@ -202,7 +228,19 @@ const PairPage = () => {
                     </div>
                   </Row>
                 </div>
-                <div>{pair?.token1?.tokenAddress}</div>
+                <div
+                  style={{
+                    width: "100%",
+                    height: 1,
+                    position: "relative",
+                    backgroundColor: "#e8e8e8",
+                    marginTop: 10,
+                    marginBottom: 8,
+                  }}
+                />
+                <div style={{ whiteSpace: "normal", wordBreak: "break-all" }}>
+                  {pair?.token1?.tokenAddress}
+                </div>
               </div>
             </div>
           </Card>
@@ -212,6 +250,7 @@ const PairPage = () => {
             <div style={{ marginBottom: 10 }}>
               <b>Transaction Volume</b>
             </div>
+            <br />
             <Chart
               type="line"
               data={pair?.volumes?.map((volume) => {
@@ -226,6 +265,7 @@ const PairPage = () => {
             <div style={{ marginBottom: 10 }}>
               <b>Total Liquidity</b>
             </div>
+            <br />
             <Chart
               type="line"
               data={pair?.liquidities?.map((volume) => {
@@ -243,22 +283,14 @@ const PairPage = () => {
               <div>
                 <b>Recent transactions</b>
               </div>
-              <div style={{ textAlign: "right" }}>
-                <input
-                  type="search"
-                  inputMode="search"
-                  placeholder="Search"
-                  onChange={(e) => {
-                    setSearchKeyword(e?.target?.value || "")
-                  }}
-                />
-              </div>
             </Row>
             <Row>
               <Table
                 isLoading={isTransactionsLoading || isTransactionFetching}
                 rowStyle={{ height: 80 }}
+                headerRowStyle={{ height: "auto" }}
                 cellStyle={{ minHeight: 80 }}
+                wrapperStyle={{ tableLayout: "fixed" }}
                 columns={[
                   {
                     accessor: "action",
@@ -280,6 +312,7 @@ const PairPage = () => {
                             }}
                           />
                         </div>
+                        &nbsp;
                         {({
                           swap: "Swap",
                           provide_liquidity: "Provide",
@@ -439,9 +472,13 @@ const PairPage = () => {
                     accessor: "txHash",
                     Header: "Transaction Hash",
                     Cell: ({ cell: { value } }: any) => (
-                      <span>
-                        {`${value}`.substr(0, 5)}...{`${value}`.substr(-5)}
-                      </span>
+                      <a
+                        href={finder(value, "tx")}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {`${value}`.substr(0, 6)}...{`${value}`.substr(-6)}
+                      </a>
                     ),
                   },
                   {
@@ -453,12 +490,6 @@ const PairPage = () => {
                   },
                 ]}
                 data={transactions || []}
-                onRowClick={(row) => {
-                  if (row?.original?.txHash) {
-                    window.open(finder(row?.original?.txHash, "tx"))
-                  }
-                }}
-                searchKeyword={searchKeyword}
                 initialState={{
                   pageSize: 50,
                   pageIndex: currentTransactionPage - 1,

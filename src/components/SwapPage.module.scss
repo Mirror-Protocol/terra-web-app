@@ -2,7 +2,6 @@
 @import "variables";
 
 .article {
-  padding: 30px 0;
   position: relative;
   @include mobile {
     padding: 0;

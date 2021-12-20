@@ -78,7 +78,6 @@ const Wrapper = styled.div`
   width: 100%;
   height: auto;
   position: relative;
-  margin-top: 60px;
 `
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {

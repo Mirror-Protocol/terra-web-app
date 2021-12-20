@@ -30,7 +30,11 @@ const SummaryItem = styled.div.attrs<SummaryItemProps>({})<SummaryItemProps>`
   width: auto;
   height: auto;
   display: inline-block;
-  flex: 1;
+
+  @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
+    display: block;
+    margin-bottom: 8px;
+  }
 
   & label {
     font-size: 16px;
