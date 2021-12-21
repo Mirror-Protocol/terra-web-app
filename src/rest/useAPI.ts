@@ -355,10 +355,10 @@ export default () => {
       const { type, ...params } = query
       const url = `${service}/tx/${type}`.toLowerCase()
       const res = (await axios.get(url, { params })).data
-      return res.map((data: Msg.Data | Msg.Data[]) => {
-        return (Array.isArray(data) ? data : [data]).map((item: Msg.Data) =>
-          Msg.fromData(item)
-        )
+      return res.map((data: Msg.Amino | Msg.Amino[]) => {
+        return (Array.isArray(data) ? data : [data]).map((item: Msg.Amino) => {
+          return Msg.fromAmino(item)
+        })
       })
     },
     [service]

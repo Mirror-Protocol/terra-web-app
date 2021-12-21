@@ -805,8 +805,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           gasPrices: `${gasPrice}${getSymbol(feeSymbol)}`,
         }
 
-        const signMsg = await terra.tx.create(walletAddress, txOptions)
-        txOptions.fee = signMsg.fee
+        const signMsg = await terra.tx.create(
+          [{ address: walletAddress }],
+          txOptions
+        )
+        txOptions.fee = signMsg.auth_info.fee
 
         const extensionResult = await terraExtensionPost(txOptions)
 
