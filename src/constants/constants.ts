@@ -1,6 +1,7 @@
 /* terra:network */
 export const FINDER = "https://finder.terra.money"
-export const TERRA_STATION_EXTENSION = "https://terra.money/extension"
+export const TERRA_STATION_EXTENSION =
+  "https://chrome.google.com/webstore/detail/terra-station/aiifbnbfobpmeekipheeijimdpnlpgpp"
 export const XDEFI_EXTENSION =
   "https://chrome.google.com/webstore/detail/xdefi-wallet/hmeobnfnfcmdkdcmlblgagmfpfboieaf"
 export const CHROME = "https://google.com/chrome"
