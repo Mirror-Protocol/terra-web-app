@@ -8,6 +8,7 @@ import networks from "constants/networks"
 import { useModal } from "components/Modal"
 import ConnectListModal from "./ConnectListModal"
 import { ConnectModalProvider } from "hooks/useConnectModal"
+import { LCDClient } from "@terra-money/terra.js"
 
 const walletConnectChainIds: Record<number, NetworkInfo> = {
   0: networks.testnet,
@@ -38,4 +39,16 @@ export const useLCD = () => {
   const { network } = useWallet()
   const networkInfo = networks[network.name]
   return networkInfo?.lcd
+}
+
+export const useLCDClient = () => {
+  const { network } = useWallet()
+  const networkInfo = networks[network.name]
+  const terra = new LCDClient({
+    URL: networkInfo?.lcd,
+    chainID: network.chainID,
+    gasAdjustment: 1.5,
+  })
+
+  return { terra }
 }

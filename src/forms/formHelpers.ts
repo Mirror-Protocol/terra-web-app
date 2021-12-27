@@ -3,7 +3,7 @@ import MESSAGE from "lang/MESSAGE.json"
 import { ceil, gt, gte, lte, min, times, minus, plus } from "libs/math"
 import { getLength, omitEmpty } from "libs/utils"
 import { lookup, format, toAmount, formatAsset, validateDp } from "libs/parse"
-import { getSymbol, hasTaxToken } from "helpers/token"
+import { hasTaxToken } from "helpers/token"
 import { Type } from "pages/Swap"
 
 /* forms */
@@ -48,6 +48,7 @@ interface AmountRange {
   maxFee?: string
   type?: string
   decimals?: number
+  token?: string
 }
 
 export const validate = {
@@ -91,11 +92,12 @@ export const validate = {
       maxFee,
       type,
       decimals,
+      token,
     } = range
     const amount = symbol ? toAmount(value, symbol) : value
     let tax = "0"
 
-    if (symbol && taxRate && taxCap && hasTaxToken(getSymbol(symbol))) {
+    if (symbol && taxRate && taxCap && token && hasTaxToken(token)) {
       tax = calcTax(amount, taxCap, taxRate)
     }
 
@@ -164,6 +166,10 @@ export const validate = {
 }
 
 export const calcTax = (amount: string, taxCap: string, taxRate: string) => {
+  if (taxCap === "") {
+    return ceil(times(amount, taxRate))
+  }
+
   return ceil(min([times(amount, taxRate), taxCap]))
 }
 

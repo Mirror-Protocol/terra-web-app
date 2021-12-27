@@ -79,6 +79,10 @@
     {
       "contract_addr": "terra15hp9pr8y4qsvqvxf3m4xeptlk7l8h60634gqec",
       "comment": "delisted mIAU"
+    },
+    {
+      "contract_addr": "terra14f7u8z4eqpxcrp4xr6knhgfp5n4h68nwy3yzg5",
+      "comment": "delisted DKWON"
     }
   ]
 }

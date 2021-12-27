@@ -1,20 +1,5 @@
 import Token from "images/Token/Token.svg"
-import SvgLuna from "images/Token/Luna.svg"
-import SvgKST from "images/Token/KST.svg"
-import SvgMNT from "images/Token/MNT.svg"
-import SvgSDT from "images/Token/SDT.svg"
-import SvgUST from "images/Token/UST.svg"
-import PngAUT from "images/Token/AUT.png"
-import PngCAT from "images/Token/CAT.png"
-import PngCHT from "images/Token/CHT.png"
-import PngCNT from "images/Token/CNT.png"
-import PngEUT from "images/Token/EUT.png"
-import PngGBT from "images/Token/GBT.png"
-import PngHKT from "images/Token/HKT.png"
-import PngINT from "images/Token/INT.png"
-import PngJPT from "images/Token/JPT.png"
-import PngSGT from "images/Token/SGT.png"
-import PngTHT from "images/Token/THT.png"
+import { tokenInfos } from "rest/usePairs"
 
 import {
   AUT,
@@ -90,27 +75,12 @@ export const getSymbol = (key: string) => {
   }
 }
 
-export const hasTaxToken = (symbol: string) => {
-  switch (symbol) {
-    case UKRW:
-    case USDR:
-    case UMNT:
-    case UUSD:
-    case UAUD:
-    case UCAD:
-    case UCHF:
-    case UCNY:
-    case UEUR:
-    case UGBP:
-    case UHKD:
-    case UINR:
-    case UJPY:
-    case USGD:
-    case UTHB:
-      return true
-    default:
-      return false
+export const hasTaxToken = (contract_addr: string) => {
+  if (contract_addr === ULUNA || contract_addr.startsWith("terra")) {
+    return false
   }
+
+  return true
 }
 
 export const GetTokenSvg = (icon: string, symbol: string) => {
@@ -118,59 +88,11 @@ export const GetTokenSvg = (icon: string, symbol: string) => {
     return icon
   }
 
-  let res = Token
-  switch (symbol) {
-    case LUNA:
-      res = SvgLuna
-      break
-    case KRT:
-      res = SvgKST
-      break
-    case MNT:
-      res = SvgMNT
-      break
-    case SDT:
-      res = SvgSDT
-      break
-    case UST:
-      res = SvgUST
-      break
-    case AUT:
-      res = PngAUT
-      break
-    case CAT:
-      res = PngCAT
-      break
-    case CHT:
-      res = PngCHT
-      break
-    case CNT:
-      res = PngCNT
-      break
-    case EUT:
-      res = PngEUT
-      break
-    case GBT:
-      res = PngGBT
-      break
-    case HKT:
-      res = PngHKT
-      break
-    case INT:
-      res = PngINT
-      break
-    case JPT:
-      res = PngJPT
-      break
-    case SGT:
-      res = PngSGT
-      break
-    case THT:
-      res = PngTHT
-      break
-    default:
-      break
+  const denom = getSymbol(symbol)
+  const tokenInfo = tokenInfos.get(denom)
+  if (tokenInfo && tokenInfo.icon !== "") {
+    return tokenInfo.icon
   }
 
-  return res
+  return Token
 }

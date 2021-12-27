@@ -46,12 +46,12 @@ const ConnectList = () => {
     })
   }
 
-  if (availableConnectTypes.includes(ConnectType.WEBEXTENSION)) {
+  if (availableConnectTypes.includes(ConnectType.WEB_CONNECT)) {
     buttons.push({
       label: "Terra Station (extension)",
       image: <TerraLogo {...size} />,
       onClick: () => {
-        connect(ConnectType.WEBEXTENSION)
+        connect(ConnectType.WEB_CONNECT)
         connectModal.close()
       },
     })

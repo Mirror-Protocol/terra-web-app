@@ -355,10 +355,10 @@ export default () => {
       const { type, ...params } = query
       const url = `${service}/tx/${type}`.toLowerCase()
       const res = (await axios.get(url, { params })).data
-      return res.map((data: Msg.Data | Msg.Data[]) => {
-        return (Array.isArray(data) ? data : [data]).map((item: Msg.Data) =>
-          Msg.fromData(item)
-        )
+      return res.map((data: Msg.Amino | Msg.Amino[]) => {
+        return (Array.isArray(data) ? data : [data]).map((item: Msg.Amino) => {
+          return Msg.fromAmino(item)
+        })
       })
     },
     [service]
@@ -366,16 +366,23 @@ export default () => {
 
   // useTax
   const loadTaxInfo = useCallback(
-    async (symbol: string) => {
-      if (!symbol) {
+    async (contract_addr: string) => {
+      if (!contract_addr) {
         return ""
       }
-      const symbolName = getSymbol(symbol) || symbol
-      const url = `${fcd}/treasury/tax_cap/${symbolName}`
-      const res: TaxResponse = (await axios.get(url)).data
-      return res.result
+
+      let taxCap = ""
+      try {
+        const url = `${fcd}/treasury/tax_cap/${contract_addr}`
+        const res: TaxResponse = (await axios.get(url)).data
+        taxCap = res.result
+      } catch (error) {
+        console.log(error)
+      }
+
+      return taxCap
     },
-    [fcd, getSymbol]
+    [fcd]
   )
 
   const loadTaxRate = useCallback(async () => {
