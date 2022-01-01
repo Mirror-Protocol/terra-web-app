@@ -2,7 +2,7 @@
 @import "variables";
 
 $symbol: 16px;
-$name: 12px;
+$name: 14px;
 
 .asset {
   @include flex(space-between);
@@ -54,7 +54,7 @@ $name: 12px;
 
 .address {
   color: $brown;
-  font-size: 11px;
+  font-size: 12px;
 
   @include mobile {
     font-size: 9px;
@@ -74,7 +74,7 @@ $name: 12px;
   width: 54px;
   height: 18px;
   margin-left: 10px;
-  padding: 5px 7px 2px 7px;
+  padding: 8px 7px 0px 7px;
   border-radius: 9px;
   background-color: #0222ba;
   text-align: center;
@@ -84,10 +84,10 @@ $name: 12px;
 
 .verified {
   width: 40px;
-  height: 14px;
+  height: 18px;
   font-family: OpenSans;
   font-size: 10px;
-  font-weight: bold;
+  font-weight: 600;
   font-stretch: normal;
   font-style: normal;
   line-height: normal;
