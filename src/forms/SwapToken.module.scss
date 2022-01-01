@@ -69,3 +69,29 @@ $name: 12px;
   color: $blue;
   font-size: 12px;
 }
+
+.verified_box {
+  width: 54px;
+  height: 18px;
+  margin-left: 10px;
+  padding: 5px 7px 2px 7px;
+  border-radius: 9px;
+  background-color: #0222ba;
+  text-align: center;
+  display: flex;
+  align-items: center;
+}
+
+.verified {
+  width: 40px;
+  height: 14px;
+  font-family: OpenSans;
+  font-size: 10px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  color: #ffffff;
+}

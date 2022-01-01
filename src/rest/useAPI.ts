@@ -100,6 +100,7 @@ interface TokenResult {
   total_supply: string
   contract_addr: string
   icon: string
+  verified: boolean
 }
 
 interface PoolResponse {

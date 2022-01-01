@@ -7,6 +7,7 @@ import { GetTokenSvg } from "../helpers/token"
 interface Props extends AssetItem {
   contract_addr?: string
   icon: string[]
+  verified: boolean
   formatTokenName?: (symbol: string) => string
 }
 
@@ -15,6 +16,7 @@ const SwapToken = ({
   balance,
   contract_addr,
   icon,
+  verified,
   formatTokenName,
 }: Props) => {
   const symbols = symbol.split("-")
@@ -34,6 +36,12 @@ const SwapToken = ({
             <div className={styles.name}>
               <p>{formatTokenName?.(symbols[0]) ?? lookupSymbol(symbols[0])}</p>
             </div>
+            {verified ? (
+              <div className={styles.verified_box}>
+                <p className={styles.verified}>verified</p>
+              </div>
+            ) : undefined}
+
             {symbols.length > 1 ? (
               <div className={styles.divide}>
                 <span>-</span>
@@ -53,6 +61,11 @@ const SwapToken = ({
                 <p>
                   {formatTokenName?.(symbols[1]) ?? lookupSymbol(symbols[1])}
                 </p>
+              </div>
+            ) : undefined}
+            {symbols.length > 1 && verified ? (
+              <div className={styles.verified_box}>
+                <p className={styles.verified}>verified</p>
               </div>
             ) : undefined}
           </div>

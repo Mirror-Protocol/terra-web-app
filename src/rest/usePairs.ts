@@ -54,6 +54,7 @@ interface TokenInfo {
   contract_addr: string
   decimals: number
   icon: string
+  verified: boolean
 }
 
 interface PairsResponse {
@@ -78,72 +79,185 @@ interface TokenResult {
   total_supply: string
   contract_addr: string
   icon: string
+  verified: boolean
 }
 
 export let tokenInfos: Map<string, TokenInfo> = new Map<string, TokenInfo>([
   [
     LUNA,
-    { contract_addr: ULUNA, symbol: LUNA, name: ULUNA, decimals: 6, icon: "" },
+    {
+      contract_addr: ULUNA,
+      symbol: LUNA,
+      name: ULUNA,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     KRT,
-    { contract_addr: UKRW, symbol: KRT, name: UKRW, decimals: 6, icon: "" },
+    {
+      contract_addr: UKRW,
+      symbol: KRT,
+      name: UKRW,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     MNT,
-    { contract_addr: UMNT, symbol: MNT, name: UMNT, decimals: 6, icon: "" },
+    {
+      contract_addr: UMNT,
+      symbol: MNT,
+      name: UMNT,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     SDT,
-    { contract_addr: USDR, symbol: SDT, name: USDR, decimals: 6, icon: "" },
+    {
+      contract_addr: USDR,
+      symbol: SDT,
+      name: USDR,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     UST,
-    { contract_addr: UUSD, symbol: UST, name: UUSD, decimals: 6, icon: "" },
+    {
+      contract_addr: UUSD,
+      symbol: UST,
+      name: UUSD,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     AUT,
-    { contract_addr: UAUD, symbol: AUT, name: UAUD, decimals: 6, icon: "" },
+    {
+      contract_addr: UAUD,
+      symbol: AUT,
+      name: UAUD,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     CAT,
-    { contract_addr: UCAD, symbol: CAT, name: UCAD, decimals: 6, icon: "" },
+    {
+      contract_addr: UCAD,
+      symbol: CAT,
+      name: UCAD,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     CHT,
-    { contract_addr: UCHF, symbol: CHT, name: UCHF, decimals: 6, icon: "" },
+    {
+      contract_addr: UCHF,
+      symbol: CHT,
+      name: UCHF,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     CNT,
-    { contract_addr: UCNY, symbol: CNT, name: UCNY, decimals: 6, icon: "" },
+    {
+      contract_addr: UCNY,
+      symbol: CNT,
+      name: UCNY,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     EUT,
-    { contract_addr: UEUR, symbol: EUT, name: UEUR, decimals: 6, icon: "" },
+    {
+      contract_addr: UEUR,
+      symbol: EUT,
+      name: UEUR,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     GBT,
-    { contract_addr: UGBP, symbol: GBT, name: UGBP, decimals: 6, icon: "" },
+    {
+      contract_addr: UGBP,
+      symbol: GBT,
+      name: UGBP,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     HKT,
-    { contract_addr: UHKD, symbol: HKT, name: UHKD, decimals: 6, icon: "" },
+    {
+      contract_addr: UHKD,
+      symbol: HKT,
+      name: UHKD,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     INT,
-    { contract_addr: UINR, symbol: INT, name: UINR, decimals: 6, icon: "" },
+    {
+      contract_addr: UINR,
+      symbol: INT,
+      name: UINR,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     JPT,
-    { contract_addr: UJPY, symbol: JPT, name: UJPY, decimals: 6, icon: "" },
+    {
+      contract_addr: UJPY,
+      symbol: JPT,
+      name: UJPY,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     SGT,
-    { contract_addr: USGD, symbol: SGT, name: USGD, decimals: 6, icon: "" },
+    {
+      contract_addr: USGD,
+      symbol: SGT,
+      name: USGD,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
   [
     THT,
-    { contract_addr: UTHB, symbol: THT, name: UTHB, decimals: 6, icon: "" },
+    {
+      contract_addr: UTHB,
+      symbol: THT,
+      name: UTHB,
+      decimals: 6,
+      icon: "",
+      verified: true,
+    },
   ],
 ])
 
@@ -176,6 +290,7 @@ export default () => {
             contract_addr: info.token.contract_addr,
             decimals: 6,
             icon: "",
+            verified: false,
           }
           if (tokenResult) {
             tokenInfo = {
@@ -184,6 +299,7 @@ export default () => {
               contract_addr: info.token.contract_addr,
               decimals: tokenResult.decimals,
               icon: tokenResult.icon,
+              verified: tokenResult.verified,
             }
           }
           tokenInfos.set(info.token.contract_addr, tokenInfo)
@@ -218,7 +334,7 @@ export default () => {
           console.log(error)
         }
 
-        ; (networkName === "testnet" ? testnetTokens : mainnetTokens).forEach(
+        ;(networkName === "testnet" ? testnetTokens : mainnetTokens).forEach(
           (token) => {
             if (
               token !== undefined &&
@@ -231,6 +347,7 @@ export default () => {
                 name: token.name,
                 decimals: token.decimals ? token.decimals : 6,
                 icon: "",
+                verified: false,
               })
             }
           }
@@ -270,6 +387,7 @@ export default () => {
                   symbol: lpTokenInfo.symbol,
                   decimals: lpTokenInfo.decimals,
                   icon: "",
+                  verified: false,
                 })
 
               let pair: Pair = {
