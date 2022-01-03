@@ -82,6 +82,11 @@ const Wrapper = styled.div`
   margin-top: 60px;
 `
 
+const Warning = {
+  color: "red",
+  FontWeight: "bold",
+}
+
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
   const { getSymbol, isNativeToken } = useContractsAddress()
@@ -276,6 +281,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     balance1
   )
 
+  const [tax, setTax] = useState<Coins>(new Coins())
+
   const simulationContents = useMemo(() => {
     if (
       !(
@@ -295,6 +302,19 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           decimals: tokenInfo1?.decimals,
         })
       : "0"
+
+    const spread =
+      tokenInfo2 && poolResult?.estimated
+        ? div(
+            minus(
+              poolResult?.estimated,
+              toAmount(formData[Key.value2], formData[Key.token2])
+            ),
+            poolResult?.estimated
+          )
+        : ""
+
+    const taxs = tax.filter((coin) => !coin.amount.equals(0))
 
     return [
       ...insertIf(type === Type.SWAP, {
@@ -367,6 +387,29 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           </Count>
         ),
       },
+      ...insertIf(taxs.toArray().length > 0, {
+        title: `Tax`,
+        content: taxs.toArray().map((coin, index) => {
+          return index === 0 ? (
+            <Count symbol={coin.denom}>{lookup(coin.amount.toString())}</Count>
+          ) : (
+            <div>
+              <span>, </span>
+              <Count symbol={coin.denom}>
+                {lookup(coin.amount.toString())}
+              </Count>
+            </div>
+          )
+        }),
+      }),
+      ...insertIf(type === Type.SWAP && spread !== "", {
+        title: <TooltipIcon content={Tooltip.Swap.Spread}>Spread</TooltipIcon>,
+        content: (
+          <div style={gte(spread, "0.01") ? Warning : undefined}>
+            <Count format={(value) => `${percent(value)}`}>{spread}</Count>
+          </div>
+        ),
+      }),
       ...insertIf(type === Type.SWAP && profitableQuery?.tokenRoutes?.length, {
         title: (
           <TooltipIcon content="Optimized route for your optimal gain">
@@ -395,6 +438,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     type,
     lpContract,
     tokenInfo1,
+    tokenInfo2,
+    tax,
   ])
 
   const getMsgs = useCallback(
@@ -447,11 +492,23 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     [isNativeToken]
   )
 
-  const [tax, setTax] = useState<Coins>(new Coins())
   const { gasPrice } = useGasPrice(formData[Key.feeSymbol])
   const getTax = useCallback(
-    async ({ value1, value2, max1, max2, token1, token2 }) => {
+    async ({ value1, value2, token1, token2 }) => {
       let newTax = tax
+
+      newTax.map((coin) => {
+        if (
+          !(
+            coin.denom === token1 ||
+            (type === Type.PROVIDE && coin.denom === token2)
+          )
+        ) {
+          newTax.set(coin.denom, 0)
+        }
+
+        return true
+      })
 
       const taxCap1 = await loadTaxInfo(token1)
       const taxCap2 = await loadTaxInfo(token2)
@@ -460,11 +517,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         token1 &&
         hasTaxToken(token1) &&
         (taxCap1 || taxCap1 === "") &&
-        taxRate &&
-        max1
+        taxRate
       ) {
         const tax1 = calcTax(toAmount(value1), taxCap1, taxRate)
-
         newTax.set(token1, tax1)
       }
       if (
@@ -472,15 +527,14 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         token2 &&
         hasTaxToken(token2) &&
         (taxCap2 || taxCap2 === "") &&
-        taxRate &&
-        max2
+        taxRate
       ) {
         const tax2 = calcTax(toAmount(value2), taxCap2, taxRate)
         newTax.set(token2, tax2)
       }
       return newTax
     },
-    [type, tax, loadTaxInfo, loadTaxRate]
+    [type, loadTaxInfo, loadTaxRate, tax]
   )
 
   const isTaxCalculating = useRef<boolean>(false)
@@ -506,7 +560,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       .finally(() => {
         isTaxCalculating.current = false
       })
-  }, [formData, getTax, tax])
+  }, [formData, tax, getTax])
 
   const validateForm = async (
     key:

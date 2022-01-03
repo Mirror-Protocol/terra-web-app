@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react"
 import classNames from "classnames/bind"
-import { gt } from "../libs/math"
-import { useContract, useCombineKeys, useContractsAddress } from "../hooks"
+import { useCombineKeys, useContractsAddress } from "../hooks"
 import { Config } from "./useSelectAsset"
 import SwapToken from "./SwapToken"
 import styles from "./SwapTokens.module.scss"
@@ -35,7 +34,6 @@ const SwapTokens = ({
 }: Props) => {
   const { priceKey, balanceKey, formatTokenName } = props
 
-  const { find } = useContract()
   const { loading } = useCombineKeys([priceKey, balanceKey])
   const { loadSwappableTokenAddresses } = useAPI()
 
@@ -147,9 +145,10 @@ const SwapTokens = ({
               )
             })
             .sort((a, b) => {
-              const hasA = balanceKey && gt(find(balanceKey, a), 0) ? 1 : 0
-              const hasB = balanceKey && gt(find(balanceKey, b), 0) ? 1 : 0
-              return hasB - hasA
+              const vA = tokenInfos.get(a)?.verified
+              const vB = tokenInfos.get(b)?.verified
+
+              return vA && vB ? 0 : vB === true ? 1 : vA === true ? -1 : 0
             })
             .map((item) => {
               const isSelected = item === selected
