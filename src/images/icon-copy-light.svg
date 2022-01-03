@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22">
+    <defs>
+        <style>
+            .cls-2{fill:none}
+        </style>
+    </defs>
+    <g id="icon-copy-default2" transform="translate(-888 -133)">
+        <g id="Ellipse_12" data-name="Ellipse 12" transform="translate(888 133)" style="stroke:#0222ba;fill:none">
+            <circle cx="11" cy="11" r="11" style="stroke:none"/>
+            <circle class="cls-2" cx="11" cy="11" r="10.5"/>
+        </g>
+        <g id="content_copy_black_24dp" transform="translate(892.833 137.833)">
+            <path id="Path_211" data-name="Path 211" class="cls-2" d="M0 0h12.334v12.334H0z"/>
+            <path id="Path_212" data-name="Path 212" d="M9.1 1H3.014A1.022 1.022 0 0 0 2 2.023v7.162h1.014V2.023H9.1zm1.521 2.046H5.043a1.022 1.022 0 0 0-1.014 1.023v7.162a1.022 1.022 0 0 0 1.014 1.023h5.579a1.022 1.022 0 0 0 1.014-1.023V4.069a1.022 1.022 0 0 0-1.014-1.023zm0 8.185H5.043V4.069h5.579z" transform="translate(-.921 -.46)" style="fill:#0222ba"/>
+        </g>
+    </g>
+</svg>

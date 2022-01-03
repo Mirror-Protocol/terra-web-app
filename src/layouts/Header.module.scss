@@ -4,14 +4,15 @@
 .header {
   width: 100%;
   height: auto;
-  position: sticky;
+  position: fixed;
   left: 0;
   top: 0;
-  padding: 46px 0;
+  padding: 16px 0;
   background-color: $realblue;
   z-index: 5000;
   transition: padding 0.125s ease-in-out;
   overflow: visible;
+  margin-bottom: 50px;
 
   &::after {
     content: "";
@@ -19,7 +20,7 @@
     width: 100%;
     height: 1px;
     left: 0;
-    bottom: 24px;
+    bottom: 0;
     background-color: #ffffff;
     opacity: 0.15;
 
@@ -49,7 +50,7 @@
 
 @include mobile {
   .header {
-    position: sticky;
+    position: fixed;
     top: 0;
     left: 0;
     padding: 16px 0;

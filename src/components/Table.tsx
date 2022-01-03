@@ -51,15 +51,19 @@ const TableWrapper = styled.table<{ isLoading?: boolean }>`
   }
 `
 
-const TableRow = styled.tr`
+const TableRow = styled.tr<{ hoverEffect?: boolean }>`
   width: 100%;
   height: auto;
   border-bottom: 1px solid #e8e8e8;
 
   transition: all 0.125s ease-in-out;
-  &:hover {
-    background-color: #0222ba11;
-  }
+  ${({ hoverEffect }) =>
+    hoverEffect &&
+    css`
+      &:hover {
+        background-color: #0222ba11;
+      }
+    `}
 `
 
 const Cell = styled.td`
@@ -73,6 +77,10 @@ const Cell = styled.td`
   letter-spacing: normal;
   text-align: left;
   white-space: nowrap;
+
+  & a {
+    color: #4460e6;
+  }
 `
 
 const HeaderCell = styled(Cell)`
@@ -240,6 +248,7 @@ const Table = <T extends object>(props: TableProps<T>) => {
               return (
                 <TableRow
                   {...row.getRowProps()}
+                  hoverEffect={!!onRowClick}
                   onClick={() => onRowClick && onRowClick(row)}
                   style={{
                     ...rowStyle,

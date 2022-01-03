@@ -67,7 +67,7 @@ export const Row = styled.div`
     .left {
       width: 100%;
       float: left;
-      magin: unset;
+      margin: unset;
     }
 
     .right {
@@ -77,6 +77,25 @@ export const Row = styled.div`
       margin-top: 20px;
     }
   }
+`
+
+const Select = styled.select`
+  width: auto;
+  height: auto;
+  padding: 5px;
+  margin: 0;
+  border: solid 1px #0222ba;
+  border-radius: 8px;
+
+  font-family: OpenSans;
+  font-size: 12px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  color: #0222ba;
 `
 
 const Dashboard = () => {
@@ -89,7 +108,7 @@ const Dashboard = () => {
   )
   const { data: chart } = useQuery("terraswap", async () => {
     const now = Date.now()
-    const fromDate = new Date(now - 90 * 24 * 60 * 60 * 1000)
+    const fromDate = new Date(now - 30 * 24 * 60 * 60 * 1000)
 
     const res = await api.terraswap.getChartData({
       unit: "day",
@@ -100,6 +119,16 @@ const Dashboard = () => {
     return res
   })
   const [searchKeyword, setSearchKeyword] = useState("")
+  const [selectedVolumeLength, setSelectedVolumeLength] = useState(30)
+  const [selectedLiquidityLength, setSelectedLiquidityLength] = useState(30)
+
+  const selectedVolumeChart = useMemo(() => {
+    return (chart || []).slice(0, selectedVolumeLength)
+  }, [chart, selectedVolumeLength])
+
+  const selectedLiquidityChart = useMemo(() => {
+    return (chart || []).slice(0, selectedLiquidityLength)
+  }, [chart, selectedLiquidityLength])
 
   const topLiquidity = useMemo(() => {
     return pairs
@@ -166,14 +195,42 @@ const Dashboard = () => {
         />
         <Row>
           <Card className="left">
-            <div style={{ marginBottom: 10 }}>
-              <b>Transaction Volume</b>
+            <Row style={{ marginBottom: 10 }}>
+              <div style={{ flex: "unset" }}>
+                <b>Transaction Volume</b>
+              </div>
+              <div style={{ flex: "unset" }}>
+                <Select
+                  value={selectedVolumeLength}
+                  onChange={(e) =>
+                    setSelectedVolumeLength(parseInt(e?.target?.value, 10))
+                  }
+                >
+                  {[30, 15, 7].map((value) => (
+                    <option key={value} value={value}>
+                      {value} days
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            </Row>
+            <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 14 }}>
+              {formatMoney(
+                Number(
+                  lookup(
+                    selectedVolumeChart.reduce((prev, current) => {
+                      return prev + parseInt(current.volumeUst, 10)
+                    }, 0),
+                    UST
+                  )
+                )
+              )}
+              UST
             </div>
-            <br />
             <Chart
               type="line"
-              height={167}
-              data={chart?.map((volume) => {
+              height={178}
+              data={selectedVolumeChart?.map((volume) => {
                 return {
                   t: new Date(volume.timestamp),
                   y: Number(lookup(volume.volumeUst, UST)),
@@ -253,14 +310,32 @@ const Dashboard = () => {
         </Row>
         <Row>
           <Card className="left">
-            <div style={{ marginBottom: 10 }}>
-              <b>Total Liquidity</b>
+            <Row style={{ marginBottom: 10 }}>
+              <div style={{ flex: "unset" }}>
+                <b>Total Liquidity</b>
+              </div>
+              <div style={{ flex: "unset" }}>
+                <Select
+                  value={selectedLiquidityLength}
+                  onChange={(e) =>
+                    setSelectedLiquidityLength(parseInt(e?.target?.value, 10))
+                  }
+                >
+                  {[30, 15, 7].map((value) => (
+                    <option key={value} value={value}>
+                      {value} days
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            </Row>
+            <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 14 }}>
+              &nbsp;
             </div>
-            <br />
             <Chart
               type="line"
-              height={167}
-              data={chart?.map((liquidity) => {
+              height={178}
+              data={selectedLiquidityChart?.map((liquidity) => {
                 return {
                   t: new Date(liquidity.timestamp),
                   y: Number(lookup(liquidity.liquidityUst, UST)),
@@ -341,7 +416,13 @@ const Dashboard = () => {
         </Row>
         <Row>
           <Card>
-            <Row style={{ marginBottom: 10 }}>
+            <Row
+              style={{
+                marginBottom: 10,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               <div>
                 <b>Pairs</b>
               </div>
@@ -405,6 +486,25 @@ const Dashboard = () => {
                         {formatMoney(Number(lookup(`${value}`, UST)))} UST
                       </span>
                     ),
+                  },
+                  {
+                    accessor: "token0Volume",
+                    Header: "Fees(24h)",
+                    Cell: (data: any) => {
+                      const { original } = data?.row
+                      if (!original) {
+                        return ""
+                      }
+                      const { volumeUst } = original
+                      return (
+                        <span>
+                          {formatMoney(
+                            Number(lookup(`${volumeUst * 0.003}`, UST))
+                          )}{" "}
+                          UST
+                        </span>
+                      )
+                    },
                   },
                   {
                     accessor: "apr",

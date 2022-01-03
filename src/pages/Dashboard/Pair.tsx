@@ -1,6 +1,6 @@
 import Chart from "components/Chart"
 import Card from "components/Card"
-import React, { useState, useMemo } from "react"
+import React, { useMemo } from "react"
 import styled from "styled-components"
 import { Link, useParams } from "react-router-dom"
 
@@ -43,18 +43,17 @@ const PairPage = () => {
   const { data: pair } = useQuery(`pair-${address}`, () =>
     api.pairs.findOne(address)
   )
-  const [currentTransactionPage, setCurrentTransactionPage] = useState(1)
   const {
     data: transactionData,
     isLoading: isTransactionsLoading,
     isFetching: isTransactionFetching,
   } = useQuery(
-    ["transactions", currentTransactionPage],
-    () => api.txs.list({ pairAddress: address, page: currentTransactionPage }),
+    "transactions",
+    () => api.txs.list({ pairAddress: address, page: 1 }),
     { keepPreviousData: true }
   )
 
-  const { txs: transactions, totalCount: transactionCount } = useMemo(() => {
+  const { txs: transactions } = useMemo(() => {
     return transactionData || { txs: [], totalCount: 0 }
   }, [transactionData])
 
@@ -190,7 +189,8 @@ const PairPage = () => {
                   }}
                 />
                 <div style={{ whiteSpace: "normal", wordBreak: "break-all" }}>
-                  {pair?.token0?.tokenAddress}
+                  {pair?.token0?.tokenAddress}&nbsp;
+                  <Copy light size={22} value={pair?.token0?.tokenAddress} />
                 </div>
               </div>
             </div>
@@ -239,7 +239,8 @@ const PairPage = () => {
                   }}
                 />
                 <div style={{ whiteSpace: "normal", wordBreak: "break-all" }}>
-                  {pair?.token1?.tokenAddress}
+                  {pair?.token1?.tokenAddress}&nbsp;
+                  <Copy light size={22} value={pair?.token1?.tokenAddress} />
                 </div>
               </div>
             </div>
@@ -281,7 +282,7 @@ const PairPage = () => {
           <Card>
             <Row style={{ marginBottom: 10 }}>
               <div>
-                <b>Recent transactions</b>
+                <b>Recent Transactions</b>
               </div>
             </Row>
             <Row>
@@ -290,7 +291,7 @@ const PairPage = () => {
                 rowStyle={{ height: 80 }}
                 headerRowStyle={{ height: "auto" }}
                 cellStyle={{ minHeight: 80 }}
-                wrapperStyle={{ tableLayout: "fixed" }}
+                // wrapperStyle={{ tableLayout: "fixed" }}
                 columns={[
                   {
                     accessor: "action",
@@ -477,7 +478,7 @@ const PairPage = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {`${value}`.substr(0, 6)}...{`${value}`.substr(-6)}
+                        {`${value}`.substr(0, 10)}...{`${value}`.substr(-10)}
                       </a>
                     ),
                   },
@@ -491,14 +492,13 @@ const PairPage = () => {
                 ]}
                 data={transactions || []}
                 initialState={{
-                  pageSize: 50,
-                  pageIndex: currentTransactionPage - 1,
+                  pageSize: 10,
                 }}
-                pageCount={Math.floor(transactionCount / 50) + 1}
-                onFetchData={(state) => {
-                  setCurrentTransactionPage(state.pageIndex + 1)
-                }}
-                manualPagination
+                // pageCount={Math.floor(transactionCount / 50) + 1}
+                // onFetchData={(state) => {
+                //   setCurrentTransactionPage(state.pageIndex + 1);
+                // }}
+                // manualPagination
               />
             </Row>
           </Card>

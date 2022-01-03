@@ -1,8 +1,12 @@
 import React, { useRef, useEffect, useState } from "react"
 import { path } from "ramda"
 import { debounce, merge as mergeDeep } from "lodash"
-import ChartJS, { ChartOptions, ChartXAxe, ChartYAxe } from "chart.js"
-import { div } from "libs/math"
+import ChartJS, {
+  ChartOptions,
+  ChartXAxe,
+  ChartYAxe,
+  ChartTooltipOptions,
+} from "chart.js"
 import { formatMoney } from "libs/parse"
 
 type ChartType = "doughnut" | "line" | "pie"
@@ -113,7 +117,7 @@ const Chart = (props: Props) => {
 export default Chart
 
 /* Chart.js */
-const BLUE = "#2043b5"
+const BLUE = "#0222ba"
 const getOptions = (
   type: ChartType,
   config: {
@@ -148,6 +152,7 @@ const getOptions = (
           "#B2BCEA",
           "#CCD2F1",
         ].reverse(),
+      borderWidth: 0,
     },
     line: {
       borderColor: BLUE,
@@ -166,8 +171,12 @@ const getOptions = (
     legend: { display: false },
   }
 
-  const tooltips = {
-    backgroundColor: BLUE,
+  const tooltips: ChartTooltipOptions = {
+    backgroundColor: "#ffffff",
+    titleFontColor: BLUE,
+    bodyFontColor: BLUE,
+    borderColor: BLUE,
+    borderWidth: 1,
     titleFontFamily: "Gotham",
     titleFontSize: 13,
     titleFontStyle: "700",
@@ -201,9 +210,9 @@ const getOptions = (
     },
     line: {
       tooltips: {
+        ...tooltips,
         intersect: false,
         mode: "index" as const,
-        backgroundColor: BLUE,
         titleFontFamily: "Gotham",
         titleFontSize: 16,
         titleFontStyle: "500",
@@ -227,9 +236,21 @@ const getOptions = (
             type: "time",
             ticks: {
               source: "data" as const,
-              autoSkip: true,
+              // autoSkip: true,
               fontColor: "#7282c9",
               fontSize: 11,
+              minRotation: 0,
+              maxRotation: 0,
+              callback: (
+                tickValue: string | number,
+                index: number,
+                ticks: any[]
+              ) =>
+                index === ticks.length - 1 ||
+                index === 0 ||
+                index === Math.floor(ticks.length / 2)
+                  ? tickValue
+                  : undefined,
             },
             gridLines: { color: "#f0f0f0" },
           },
@@ -240,7 +261,7 @@ const getOptions = (
               fontColor: "#7282c9",
               fontSize: 11,
               callback(value: any) {
-                return formatMoney(Number(value))
+                return formatMoney(Number(value), 0)
               },
             },
             gridLines: { color: "#f0f0f0" },

@@ -1,18 +1,23 @@
 import React, { useState, useCallback, useRef } from "react"
 import styled, { css } from "styled-components"
 
-import iconCopy from "images/icon-copy.svg"
-import iconOk from "images/icon-ok.svg"
+import iconCopy from "images/icon-copy-outline.svg"
+import iconCopyHover from "images/icon-copy-hover.svg"
+import iconCopied from "images/icon-copied.svg"
+import iconCopyLight from "images/icon-copy-light.svg"
+import iconCopyHoverLight from "images/icon-copy-hover-light.svg"
+import iconCopiedLight from "images/icon-copied-light.svg"
 
 type CopyProps = {
   size?: number
   value?: string
+  light?: boolean
 }
 
 const Wrapper = styled.button<CopyProps & { isCopied?: boolean }>`
   ${({ size }) => css`
-    width: ${size || 20}px;
-    height: ${size || 20}px;
+    width: ${size || 22}px;
+    height: ${size || 22}px;
   `}
   position: relative;
   border: none;
@@ -40,15 +45,20 @@ const Wrapper = styled.button<CopyProps & { isCopied?: boolean }>`
   }
 
   &::before {
-    background-image: url(${iconCopy});
+    background-image: url(${({ light }) => (light ? iconCopyLight : iconCopy)});
     top: 0;
-    transform: scale(${({ isCopied }) => (isCopied ? 0 : 1)});
+    /* transform: scale(${({ isCopied }) => (isCopied ? 0 : 1)}); */
     opacity: ${({ isCopied }) => (isCopied ? 0 : 1)};
   }
+  &:hover::before {
+    background-image: url(${({ light }) =>
+      light ? iconCopyHoverLight : iconCopyHover});
+  }
   &::after {
-    background-image: url(${iconOk});
+    background-image: url(${({ light }) =>
+      light ? iconCopiedLight : iconCopied});
     top: 0;
-    transform: scale(${({ isCopied }) => (isCopied ? 1 : 2)});
+    /* transform: scale(${({ isCopied }) => (isCopied ? 1 : 2)}); */
     opacity: ${({ isCopied }) => (isCopied ? 1 : 0)};
   }
 
