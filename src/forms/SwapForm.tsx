@@ -82,6 +82,11 @@ const Wrapper = styled.div`
   margin-top: 60px;
 `
 
+const Warning = {
+  color: "red",
+  FontWeight: "bold",
+}
+
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
   const { getSymbol, isNativeToken } = useContractsAddress()
@@ -298,6 +303,17 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         })
       : "0"
 
+    const spread =
+      tokenInfo2 && poolResult?.estimated
+        ? div(
+            minus(
+              poolResult?.estimated,
+              toAmount(formData[Key.value2], formData[Key.token2])
+            ),
+            poolResult?.estimated
+          )
+        : ""
+
     const taxs = tax.filter((coin) => !coin.amount.equals(0))
 
     return [
@@ -386,6 +402,14 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           )
         }),
       }),
+      ...insertIf(type === Type.SWAP && spread !== "", {
+        title: <TooltipIcon content={Tooltip.Swap.Spread}>Spread</TooltipIcon>,
+        content: (
+          <div style={gte(spread, "0.01") ? Warning : undefined}>
+            <Count format={(value) => `${percent(value)}`}>{spread}</Count>
+          </div>
+        ),
+      }),
       ...insertIf(type === Type.SWAP && profitableQuery?.tokenRoutes?.length, {
         title: (
           <TooltipIcon content="Optimized route for your optimal gain">
@@ -414,6 +438,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     type,
     lpContract,
     tokenInfo1,
+    tokenInfo2,
     tax,
   ])
 

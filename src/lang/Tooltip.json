@@ -103,6 +103,7 @@
     "Rate": "Swap price is calculated based on the pool price and spread",
     "MinimumReceived": "Expected minimum quantity to be received based on the current price, maximum spread, and trading fee",
     "TradingFee": "0.3% of asset received by the user is paid to Terraswap pool",
-    "TxFee": "Fee paid to execute this transaction"
+    "TxFee": "Fee paid to execute this transaction",
+    "Spread": "Fee paid due to the difference between market price and estimated price"
   }
 }
