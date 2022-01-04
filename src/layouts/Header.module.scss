@@ -54,6 +54,8 @@
     top: 0;
     left: 0;
     padding: 16px 0;
+    z-index: 4850;
+
     & .support {
       transition: opacity 0.2s ease-in-out;
       position: fixed;

@@ -195,7 +195,13 @@ const Dashboard = () => {
         />
         <Row>
           <Card className="left">
-            <Row style={{ marginBottom: 10 }}>
+            <Row
+              style={{
+                marginBottom: 10,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               <div style={{ flex: "unset" }}>
                 <b>Transaction Volume</b>
               </div>
@@ -225,7 +231,7 @@ const Dashboard = () => {
                   )
                 )
               )}
-              UST
+              &nbsp;UST
             </div>
             <Chart
               type="line"
@@ -310,7 +316,13 @@ const Dashboard = () => {
         </Row>
         <Row>
           <Card className="left">
-            <Row style={{ marginBottom: 10 }}>
+            <Row
+              style={{
+                marginBottom: 10,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               <div style={{ flex: "unset" }}>
                 <b>Total Liquidity</b>
               </div>
@@ -480,7 +492,7 @@ const Dashboard = () => {
                   },
                   {
                     accessor: "volumeUst",
-                    Header: "Volume(24h)",
+                    Header: "Volume (24H)",
                     Cell: ({ cell: { value } }: any) => (
                       <span>
                         {formatMoney(Number(lookup(`${value}`, UST)))} UST
@@ -489,7 +501,7 @@ const Dashboard = () => {
                   },
                   {
                     accessor: "token0Volume",
-                    Header: "Fees(24h)",
+                    Header: "Fees (24H)",
                     Cell: (data: any) => {
                       const { original } = data?.row
                       if (!original) {
@@ -508,7 +520,7 @@ const Dashboard = () => {
                   },
                   {
                     accessor: "apr",
-                    Header: "Commission",
+                    Header: "Commission APY (7D avg)",
                     Cell: ({ cell: { value } }: any) => (
                       <span>{(Number(value) * 100).toFixed(2)}%</span>
                     ),

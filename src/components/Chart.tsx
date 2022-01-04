@@ -261,7 +261,7 @@ const getOptions = (
               fontColor: "#7282c9",
               fontSize: 11,
               callback(value: any) {
-                return formatMoney(Number(value), 0)
+                return formatMoney(Number(value), 1)
               },
             },
             gridLines: { color: "#f0f0f0" },

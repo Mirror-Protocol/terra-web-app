@@ -48,7 +48,7 @@ const PairPage = () => {
     isLoading: isTransactionsLoading,
     isFetching: isTransactionFetching,
   } = useQuery(
-    "transactions",
+    `transactions-${address}`,
     () => api.txs.list({ pairAddress: address, page: 1 }),
     { keepPreviousData: true }
   )

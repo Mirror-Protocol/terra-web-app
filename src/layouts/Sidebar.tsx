@@ -1,10 +1,46 @@
 import React from "react"
 import styled, { css } from "styled-components"
 import { NavLink as navLink } from "react-router-dom"
+import { useModal } from "components/Modal"
 
 import iconMenu from "images/icon-menu.svg"
 import iconClose from "images/icon-close-primary.svg"
-import { useModal } from "components/Modal"
+import iconGitHub from "images/icon-github.svg"
+import iconTwitter from "images/icon-twitter.svg"
+import iconDiscord from "images/icon-discord.svg"
+import iconDocuments from "images/icon-docs.svg"
+
+import iconGitHubLight from "images/icon-github-primary.svg"
+import iconTwitterLight from "images/icon-twitter-primary.svg"
+import iconDiscordLight from "images/icon-discord-primary.svg"
+import iconDocumentsLight from "images/icon-docs-primary.svg"
+
+const socialMediaList = [
+  {
+    icon: iconGitHub,
+    iconLight: iconGitHubLight,
+    href: "https://github.com/terraswap",
+    title: "GitHub",
+  },
+  {
+    icon: iconTwitter,
+    iconLight: iconTwitterLight,
+    href: "https://twitter.com/terraswap_io",
+    title: "Twitter",
+  },
+  {
+    icon: iconDiscord,
+    iconLight: iconDiscordLight,
+    href: "https://discord.gg/hAKrQ88Ggp",
+    title: "Discord",
+  },
+  {
+    icon: iconDocuments,
+    iconLight: iconDocumentsLight,
+    href: "https://docs.terraswap.io/",
+    title: "Documents",
+  },
+]
 
 const Wrapper = styled.div<{ isOpen: boolean }>`
   width: 100%;
@@ -94,7 +130,7 @@ const NavLink = styled(navLink)`
   }
 `
 
-const MobileButton = styled.button<{ isOpen: boolean }>`
+const MobileButton = styled.button<{ isOpen?: boolean }>`
   display: none;
   width: 32px;
   height: 32px;
@@ -108,6 +144,66 @@ const MobileButton = styled.button<{ isOpen: boolean }>`
   background-repeat: no-repeat;
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
     display: block;
+  }
+`
+
+const SocialMediaList = styled.div<{ isOpen?: boolean }>`
+  width: 100%;
+  height: auto;
+  position: fixed;
+  bottom: 50px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  & > div {
+    max-width: 150px;
+  }
+
+  @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
+    gap: 24px;
+    z-index: -1;
+    bottom: -48px;
+    justify-content: center;
+    opacity: 0;
+    transition-delay: 0s;
+
+    & > a {
+      opacity: 0;
+      transition: opacity 0.125s ease-in-out, transform 0.125s ease-in-out;
+      transform: translateY(72px);
+    }
+
+    ${({ isOpen }) =>
+      isOpen &&
+      css`
+        z-index: 5560;
+        opacity: 1;
+        transition-delay: 0.25s;
+        bottom: 48px;
+
+        & > a {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      `}
+  }
+`
+
+const SocialMediaAnchor = styled.a`
+  width: auto;
+  height: auto;
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  color: #ffffff;
+  cursor: pointer;
+
+  & > img {
+    width: 24px;
+    height: 24px;
   }
 `
 
@@ -140,6 +236,24 @@ const Sidebar = () => {
           </NavLink>
         </div>
       </Wrapper>
+      <SocialMediaList isOpen={isOpen}>
+        {socialMediaList.map((item, index) => (
+          <SocialMediaAnchor
+            href={item.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={item.title}
+            style={{ transitionDelay: `${index * 0.06 + 0.125}s` }}
+          >
+            <img className="desktop-only" src={item.icon} alt={item.title} />
+            <img
+              className="mobile-only"
+              src={item.iconLight}
+              alt={item.title}
+            />
+          </SocialMediaAnchor>
+        ))}
+      </SocialMediaList>
     </>
   )
 }

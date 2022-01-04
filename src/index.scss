@@ -25,6 +25,12 @@ body,
       display: none !important;
     }
   }
+
+  @include desktop {
+    .mobile-only {
+      display: none !important;
+    }
+  }
 }
 
 #basement {

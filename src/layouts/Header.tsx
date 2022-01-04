@@ -5,6 +5,21 @@ import Connect from "./Connect"
 import styles from "./Header.module.scss"
 import { Link } from "react-router-dom"
 import Sidebar from "./Sidebar"
+import styled from "styled-components"
+
+const SidebarWrapper = styled(Container)`
+  position: relative;
+  z-index: 4900;
+
+  width: 100%;
+  height: auto;
+  position: fixed;
+  padding-top: 50px;
+
+  @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
+    padding: 0;
+  }
+`
 
 const Header = () => {
   return (
@@ -25,21 +40,9 @@ const Header = () => {
         </Container>
       </header>
 
-      <Container className={styles.container}>
-        <div style={{ position: "relative", zIndex: 4900 }}>
-          <div
-            style={{
-              width: "100%",
-              height: "auto",
-              maxWidth: 150,
-              position: "fixed",
-              paddingTop: 76 + 50,
-            }}
-          >
-            <Sidebar />
-          </div>
-        </div>
-      </Container>
+      <SidebarWrapper className={styles.container}>
+        <Sidebar />
+      </SidebarWrapper>
     </>
   )
 }

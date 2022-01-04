@@ -27,10 +27,14 @@ const Wrapper = styled.div`
   max-width: 100%;
   gap: 64px;
   overflow: hidden;
+  margin-top: 76px;
+  padding-top: 50px;
 
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
     display: block;
     gap: unset;
+    margin-top: 64px;
+    padding-top: 24px;
   }
 `
 
@@ -54,7 +58,7 @@ const App = () => {
         <ContractProvider value={contract}>
           <Header />
           {!isLoading && (
-            <div style={{ marginTop: 76, paddingTop: 50 }}>
+            <div>
               <Container>
                 <Wrapper>
                   <div style={{ flex: 1, maxWidth: 150 }}>&nbsp;</div>
