@@ -7,9 +7,8 @@ import { Link } from "react-router-dom"
 import Sidebar from "./Sidebar"
 import styled from "styled-components"
 
-const SidebarWrapper = styled(Container)`
+const SidebarWrapper = styled.div`
   position: relative;
-  z-index: 4900;
 
   width: 100%;
   height: auto;
@@ -17,6 +16,7 @@ const SidebarWrapper = styled(Container)`
   padding-top: 50px;
 
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
+    z-index: 4900;
     padding: 0;
   }
 `
@@ -40,8 +40,10 @@ const Header = () => {
         </Container>
       </header>
 
-      <SidebarWrapper className={styles.container}>
-        <Sidebar />
+      <SidebarWrapper>
+        <Container className={styles.container}>
+          <Sidebar />
+        </Container>
       </SidebarWrapper>
     </>
   )
