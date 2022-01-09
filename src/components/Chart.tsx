@@ -133,8 +133,8 @@ const getOptions = (
   const props = {
     doughnut: {
       backgroundColor: [
-        "#4c62cd",
-        "#5969B9",
+        "#4D63CE",
+        "#6679D4",
         "#8090DC",
         "#99A6E3",
         "#B2BCEA",
@@ -142,16 +142,14 @@ const getOptions = (
       ],
     },
     pie: {
-      backgroundColor:
-        config.pieBackgroundColors ||
-        [
-          "#4c62cd",
-          "#5969B9",
-          "#8090DC",
-          "#99A6E3",
-          "#B2BCEA",
-          "#CCD2F1",
-        ].reverse(),
+      backgroundColor: config.pieBackgroundColors || [
+        "#4D63CE",
+        "#6679D4",
+        "#8090DC",
+        "#99A6E3",
+        "#B2BCEA",
+        "#CCD2F1",
+      ],
       borderWidth: 0,
     },
     line: {

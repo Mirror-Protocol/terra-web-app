@@ -1,30 +1,27 @@
-import Chart from "components/Chart"
-import Card from "components/Card"
-import List from "components/List"
 import React, { useState, useMemo } from "react"
 import styled from "styled-components"
 import { useQuery } from "react-query"
+import { Link, useHistory } from "react-router-dom"
 
-import Summary from "./Summary"
 import useDashboardAPI from "rest/useDashboardAPI"
 import { formatMoney, lookup } from "libs/parse"
 import { UST } from "constants/constants"
+
+import Chart from "components/Chart"
+import Card from "components/Card"
+import List from "components/List"
+import Input from "components/Input"
 import Table from "components/Table"
-import { Link, useHistory } from "react-router-dom"
 import AssetIcon from "components/AssetIcon"
+import Select from "components/Select"
+
+import Summary from "./Summary"
 
 const Wrapper = styled.div`
   width: 100%;
   height: auto;
   position: relative;
   color: ${({ theme }) => theme.primary};
-
-  & input {
-    text-align: center;
-    padding: 6px 16px 5px;
-    border-radius: 8px;
-    border: solid 1px ${({ theme }) => theme.primary};
-  }
 `
 
 export const Container = styled.div`
@@ -79,25 +76,6 @@ export const Row = styled.div`
   }
 `
 
-const Select = styled.select`
-  width: auto;
-  height: auto;
-  padding: 5px;
-  margin: 0;
-  border: solid 1px #0222ba;
-  border-radius: 8px;
-
-  font-family: OpenSans;
-  font-size: 12px;
-  font-weight: bold;
-  font-stretch: normal;
-  font-style: normal;
-  line-height: normal;
-  letter-spacing: normal;
-  text-align: center;
-  color: #0222ba;
-`
-
 const Dashboard = () => {
   const history = useHistory()
   const { api } = useDashboardAPI()
@@ -140,6 +118,28 @@ const Dashboard = () => {
     return pairs
       ?.sort((a, b) => Number(b.volumeUst) - Number(a.volumeUst))
       .slice(0, 5)
+  }, [pairs])
+
+  const restLiquidityUst = useMemo(() => {
+    return (
+      pairs
+        ?.sort((a, b) => Number(b.liquidityUst) - Number(a.liquidityUst))
+        .slice(6)
+        .reduce((prev, current) => {
+          return prev + Number(current.liquidityUst)
+        }, 0) || 0
+    )
+  }, [pairs])
+
+  const restTradingUst = useMemo(() => {
+    return (
+      pairs
+        ?.sort((a, b) => Number(b.volumeUst) - Number(a.volumeUst))
+        .slice(6)
+        .reduce((prev, current) => {
+          return prev + Number(current.volumeUst)
+        }, 0) || 0
+    )
   }, [pairs])
 
   return (
@@ -268,8 +268,16 @@ const Dashboard = () => {
               >
                 <Chart
                   type="pie"
-                  labels={topTrading?.map((item) => item.pairAlias)}
-                  data={topTrading?.map((item) => Number(item.volumeUst))}
+                  labels={[
+                    ...(topTrading || [])?.map((item) => item.pairAlias),
+                    "Rest of pairs",
+                  ]}
+                  data={[
+                    ...(topTrading || [])?.map((item) =>
+                      Number(item.volumeUst)
+                    ),
+                    restTradingUst,
+                  ]}
                 />
               </div>
               <div style={{ flex: 2 }}>
@@ -379,8 +387,16 @@ const Dashboard = () => {
               >
                 <Chart
                   type="pie"
-                  labels={topLiquidity?.map((item) => item.pairAlias)}
-                  data={topLiquidity?.map((item) => Number(item.liquidityUst))}
+                  labels={[
+                    ...(topLiquidity || [])?.map((item) => item.pairAlias),
+                    "Rest of pairs",
+                  ]}
+                  data={[
+                    ...(topLiquidity || [])?.map((item) =>
+                      Number(item.liquidityUst)
+                    ),
+                    restLiquidityUst,
+                  ]}
                 />
               </div>
               <div style={{ flex: 2 }}>
@@ -439,9 +455,7 @@ const Dashboard = () => {
                 <b>Pairs</b>
               </div>
               <div style={{ textAlign: "right" }}>
-                <input
-                  type="search"
-                  inputMode="search"
+                <Input
                   placeholder="Search"
                   onChange={(e) => {
                     setSearchKeyword(e?.target?.value || "")

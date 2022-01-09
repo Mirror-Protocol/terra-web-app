@@ -81,23 +81,30 @@ const Copy: React.FC<CopyProps> = ({ value, ...props }) => {
   const timer = useRef<ReturnType<typeof setTimeout>>()
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  const handleClick = useCallback(() => {
-    if (timer?.current) {
-      clearTimeout(timer.current)
-    }
-    setIsCopied(true)
-    if (navigator?.clipboard?.writeText) {
-      navigator?.clipboard?.writeText(inputRef?.current?.innerHTML || "")
-    } else {
-      inputRef?.current?.focus()
-      inputRef?.current?.select()
-      document.execCommand("copy")
-    }
+  const handleClick = useCallback<React.MouseEventHandler<HTMLButtonElement>>(
+    (event) => {
+      if (timer?.current) {
+        clearTimeout(timer.current)
+      }
+      setIsCopied(true)
+      if (navigator?.clipboard?.writeText) {
+        navigator?.clipboard?.writeText(inputRef?.current?.innerHTML || "")
+      } else {
+        inputRef?.current?.focus()
+        inputRef?.current?.select()
+        document.execCommand("copy")
+      }
 
-    timer.current = setTimeout(() => {
-      setIsCopied(false)
-    }, 1200)
-  }, [])
+      if (event.currentTarget) {
+        event.currentTarget.blur()
+      }
+
+      timer.current = setTimeout(() => {
+        setIsCopied(false)
+      }, 1200)
+    },
+    []
+  )
   return (
     <Wrapper {...props} isCopied={isCopied} onClick={handleClick}>
       <textarea ref={inputRef} value={value} readOnly />

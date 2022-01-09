@@ -1,5 +1,5 @@
+import React, { useEffect, useState } from "react"
 import { formatMoney } from "libs/parse"
-import React from "react"
 import styled from "styled-components"
 
 type SummaryItemProps = {
@@ -15,14 +15,30 @@ const Wrapper = styled.div`
   height: auto;
   position: relative;
   background-color: #ffffff24;
+  border-radius: 15px;
+  overflow: hidden;
+  @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
+    display: block;
+    height: 48px;
+    padding: 0;
+  }
+`
+
+const SummaryList = styled.div`
+  position: relative;
+  display: block;
+
   padding: 13px 30px;
   display: flex;
   justify-content: space-between;
-  border-radius: 15px;
   align-items: center;
+
+  transition: top 0.2s ease-in-out;
 
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
     display: block;
+    height: 48px;
+    padding: 0;
   }
 `
 
@@ -30,10 +46,11 @@ const SummaryItem = styled.div.attrs<SummaryItemProps>({})<SummaryItemProps>`
   width: auto;
   height: auto;
   display: inline-block;
+  position: relative;
 
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
     display: block;
-    margin-bottom: 8px;
+    padding: 13px 30px;
   }
 
   & label {
@@ -66,27 +83,49 @@ const SummaryItem = styled.div.attrs<SummaryItemProps>({})<SummaryItemProps>`
 `
 
 const Summary: React.FC<SummaryProps> = ({ data }) => {
+  const [currentShownIndex, setCurrentShownIndex] = useState(0)
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const count = data.length
+
+      setCurrentShownIndex((current) => {
+        current += 1
+        return current >= count ? 0 : current
+      })
+    }, 3000)
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+    }
+  }, [data])
+
   return (
     <Wrapper>
-      {data.map((item) => (
-        <SummaryItem {...item} key={item.label}>
-          <label>{item.label}:</label>
-          <span>
-            ${formatMoney(Number(item.value)) || Number(item.value).toFixed(2)}
-          </span>
-          {typeof item.variation === "number" && (
+      <SummaryList style={{ top: `-${currentShownIndex * 100}%` }}>
+        {data.map((item) => (
+          <SummaryItem {...item} key={item.label}>
+            <label>{item.label}:</label>
             <span>
-              &nbsp;(
-              <span className="variation">
-                {item.variation > 0 && "↑"}
-                {item.variation < 0 && "↓"}
-                {Math.abs(item.variation)}%
-              </span>
-              )
+              $
+              {formatMoney(Number(item.value)) || Number(item.value).toFixed(2)}
             </span>
-          )}
-        </SummaryItem>
-      ))}
+            {typeof item.variation === "number" && (
+              <span>
+                &nbsp;(
+                <span className="variation">
+                  {item.variation > 0 && "↑"}
+                  {item.variation < 0 && "↓"}
+                  {Math.abs(item.variation)}%
+                </span>
+                )
+              </span>
+            )}
+          </SummaryItem>
+        ))}
+      </SummaryList>
     </Wrapper>
   )
 }
