@@ -63,6 +63,8 @@ export interface Recent {
   liquidityIncreasedRate: string
   fee: string
   feeIncreasedRate: string
+  timestamp: Date
+  height: number
 }
 
 export interface Transaction {

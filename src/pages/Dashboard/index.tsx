@@ -16,6 +16,7 @@ import AssetIcon from "components/AssetIcon"
 import Select from "components/Select"
 
 import Summary from "./Summary"
+import LatestBlock from "components/LatestBlock"
 
 const Wrapper = styled.div`
   width: 100%;
@@ -551,6 +552,12 @@ const Dashboard = () => {
             </Row>
           </Card>
         </Row>
+        <div>
+          <LatestBlock
+            currentHeight={recent?.daily?.height || 0}
+            isLoading={!recent?.daily?.height}
+          />
+        </div>
       </Container>
     </Wrapper>
   )
