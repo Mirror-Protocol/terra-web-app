@@ -2,7 +2,7 @@ import Axios from "axios"
 import { setupCache } from "axios-cache-adapter"
 
 const cache = setupCache({
-  maxAge: 30000,
+  maxAge: 2500,
   clearOnStale: false,
   clearOnError: false,
   readHeaders: false,

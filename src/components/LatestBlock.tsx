@@ -81,7 +81,9 @@ const LatestBlock: React.FC<LatestBlockProps> = ({
     >
       <Indicator
         status={
-          latestBlockHeight && currentHeight < latestBlockHeight
+          !isLoading &&
+          latestBlockHeight &&
+          currentHeight < latestBlockHeight - 5
             ? "error"
             : "success"
         }

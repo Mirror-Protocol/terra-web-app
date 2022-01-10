@@ -33,6 +33,7 @@ const Wrapper = styled.div`
     background-position: 50% 50%;
     background-size: contain;
     background-repeat: no-repeat;
+    pointer-events: none;
   }
   /* &:focus-within::after {
     transform: rotate(180deg);
