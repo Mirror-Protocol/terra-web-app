@@ -1,3 +1,4 @@
+import { useNetwork } from "hooks"
 import React from "react"
 import { useQuery } from "react-query"
 import useDashboardAPI from "rest/useDashboardAPI"
@@ -51,6 +52,7 @@ const LatestBlock: React.FC<LatestBlockProps> = ({
   isLoading,
 }) => {
   const { api } = useDashboardAPI()
+  const { name } = useNetwork()
 
   const { data: latestBlockHeight } = useQuery(
     "latestBlockHeight",
@@ -73,7 +75,7 @@ const LatestBlock: React.FC<LatestBlockProps> = ({
     <Wrapper
       href={
         latestBlockHeight
-          ? `https://finder.terra.money/mainnet/blocks/${latestBlockHeight}`
+          ? `https://finder.terra.money/${name}/blocks/${latestBlockHeight}`
           : "#"
       }
       target="_blank"

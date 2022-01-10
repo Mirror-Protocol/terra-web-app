@@ -39,7 +39,7 @@ const networks: Record<string, MirrorNetworkInfo> = {
     service:
       process.env.REACT_APP_TESTNET_SERVICE_URL ||
       "https://api-bombay.terraswap.io/",
-    dashboard: process.env.REACT_APP_MAINNET_DASHBOARD_URL,
+    dashboard: process.env.REACT_APP_TESTNET_DASHBOARD_URL,
     router: "terra14z80rwpd0alzj4xdtgqdmcqt9wd9xj5ffd60wp",
   },
 }
