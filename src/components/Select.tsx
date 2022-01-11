@@ -22,7 +22,7 @@ const Wrapper = styled.div`
 
     position: absolute;
 
-    right: 0;
+    right: 4px;
     top: 0;
 
     transform: rotate(360deg);
