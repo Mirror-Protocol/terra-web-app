@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+    <g data-name="previous button" style="opacity:.499">
+        <path data-name="Rectangle 138" style="fill:none" d="M0 0h20v20H0z" transform="rotate(180 10 10)"/>
+        <path data-name="Path 201" d="M10.4 0 9.272 1.007l3.664 3.279H0v1.428h12.936L9.264 8.993 10.4 10 16 5z" transform="rotate(180 9 7.5)" style="fill:#0222ba"/>
+    </g>
+</svg>

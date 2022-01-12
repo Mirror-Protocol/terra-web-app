@@ -427,7 +427,7 @@ export default () => {
     result,
   ])
 
-  return { ...result, isLoading }
+  return { ...result, isLoading, getTokenInfo }
 }
 
 export function isAssetInfo(object: any): object is AssetInfo {

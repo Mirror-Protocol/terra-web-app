@@ -39,7 +39,7 @@ $font-family: "Poppins";
 $font-family-swap: "Open Sans", arial, sans-serif;
 
 /* Sizes */
-$breakpoint: 992px;
+$breakpoint: 1120px;
 $gutter: 16px;
 $line-height: 1.5;
 $nav-height: 70px;
@@ -57,3 +57,10 @@ $transition-duration: 0.2s;
 
 /* Z-indexes */
 $zindex-sticky: 1020;
+
+:export {
+  primary: $blue;
+  white: #ffffff;
+  breakpoint: $breakpoint;
+  gutter: $gutter;
+}

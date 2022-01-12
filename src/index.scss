@@ -4,31 +4,37 @@
 @import "colors";
 @import "utils";
 
+html,
+body,
 #terraswap {
+  width: 100%;
+  height: 100%;
   font-size: $font-size;
-
   position: relative;
-  min-height: 100vh;
-}
-
-#basement {
-  min-height: 100vh;
-  padding-bottom: $footer-height;
-
-  @include mobile {
-    padding-bottom: $footer-height-mobile;
-  }
-}
-
-#terra {
-  min-height: 100vh;
   background-color: $realblue;
-  background-image: url(images/BackgroundPattern.svg);
   background-repeat: no-repeat;
   background-position: 50% calc(100% + 180px);
   font-family: $font-family-swap;
   padding-bottom: $footer-height;
   background-attachment: fixed;
+
+  @include mobile {
+    padding-bottom: $footer-height-mobile;
+
+    .desktop-only {
+      display: none !important;
+    }
+  }
+
+  @include desktop {
+    .mobile-only {
+      display: none !important;
+    }
+  }
+}
+
+#basement {
+  padding-bottom: $footer-height;
 
   @include mobile {
     padding-bottom: $footer-height-mobile;

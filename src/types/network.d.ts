@@ -24,6 +24,7 @@ interface NetworkConfig {
   fee: { gasPrice: string; amount: string; gas: string }
   factory: string
   service: string
+  dashboard: string
 }
 
 interface ExtNetworkConfig {
