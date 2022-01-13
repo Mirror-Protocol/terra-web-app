@@ -535,7 +535,7 @@ const Dashboard = () => {
                   },
                   {
                     accessor: "apr",
-                    Header: "Commission APY (7D avg)",
+                    Header: "APR (7D avg)",
                     Cell: ({ cell: { value } }: any) => (
                       <span>{(Number(value) * 100).toFixed(2)}%</span>
                     ),

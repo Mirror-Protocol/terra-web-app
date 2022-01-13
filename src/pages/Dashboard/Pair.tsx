@@ -69,7 +69,7 @@ const PairPage = () => {
             gap: 10,
           }}
         >
-          <Link to="/dashboard" style={{ lineHeight: "1", fontSize: 0 }}>
+          <Link to="/" style={{ lineHeight: "1", fontSize: 0 }}>
             <IconGoBack height={30} />
           </Link>
           <div>
@@ -419,7 +419,6 @@ const PairPage = () => {
                             </span>
                             <br />
                             <span>
-                              +&nbsp;
                               {formatMoney(
                                 Number(
                                   lookup(

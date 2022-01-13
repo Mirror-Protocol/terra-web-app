@@ -22,6 +22,11 @@ const Wrapper = styled.div`
     height: 48px;
     padding: 0;
   }
+
+  &,
+  & * {
+    box-sizing: border-box;
+  }
 `
 
 const SummaryList = styled.div`
@@ -34,6 +39,7 @@ const SummaryList = styled.div`
   align-items: center;
 
   transition: top 0.2s ease-in-out;
+  font-size: 0;
 
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
     display: block;
@@ -50,7 +56,7 @@ const SummaryItem = styled.div.attrs<SummaryItemProps>({})<SummaryItemProps>`
 
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
     display: block;
-    padding: 13px 30px;
+    padding: 13px 13px;
   }
 
   & label {
@@ -93,7 +99,7 @@ const Summary: React.FC<SummaryProps> = ({ data }) => {
         current += 1
         return current >= count ? 0 : current
       })
-    }, 3000)
+    }, 2000)
 
     return () => {
       if (intervalId) {

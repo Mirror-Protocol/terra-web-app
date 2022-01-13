@@ -7,8 +7,8 @@ import PairPage from "./pages/Dashboard/Pair"
 
 export default () => (
   <Switch>
-    <Route exact path="/" component={Swap} />
-    <Route exact path="/dashboard" component={Dashboard} />
+    <Route exact path="/" component={Dashboard} />
+    <Route exact path="/swap" component={Swap} />
     <Route exact path="/pairs/:address" component={PairPage} />
     <Redirect to="/" />
   </Switch>
