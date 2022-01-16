@@ -231,7 +231,7 @@ const Sidebar = () => {
           >
             Dashboard
           </NavLink>
-          <NavLink to="/swap" exact onClick={() => close()}>
+          <NavLink to="/swap" onClick={() => close()}>
             Swap
           </NavLink>
         </div>

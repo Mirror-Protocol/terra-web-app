@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import classNames from "classnames/bind"
-import { useCombineKeys, useContractsAddress } from "../hooks"
+import { useCombineKeys } from "../hooks"
 import { Config } from "./useSelectAsset"
 import SwapToken from "./SwapToken"
 import styles from "./SwapTokens.module.scss"
@@ -9,6 +9,7 @@ import { Type } from "../pages/Swap"
 import { tokenInfos } from "../rest/usePairs"
 import Loading from "components/Loading"
 import useAPI from "rest/useAPI"
+import { useContractsAddress } from "hooks/useContractsAddress"
 
 const cx = classNames.bind(styles)
 

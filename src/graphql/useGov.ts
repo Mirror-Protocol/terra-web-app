@@ -2,11 +2,11 @@ import { useEffect } from "react"
 import { Dictionary } from "ramda"
 import { QueryResult } from "@apollo/client"
 import { number } from "../libs/math"
-import { useContractsAddress } from "../hooks"
 import createContext from "../hooks/createContext"
 import { fromBase64 } from "../forms/formHelpers"
 import { WASMQUERY } from "./gqldocs"
 import useContractQuery from "./useContractQuery"
+import { useContractsAddress } from "hooks/useContractsAddress"
 
 export enum GovKey {
   /** Config: Call it once for the first time */

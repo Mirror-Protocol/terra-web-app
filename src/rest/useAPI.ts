@@ -1,6 +1,6 @@
-import { useAddress, useContractsAddress, useNetwork } from "hooks"
+import { useAddress, useNetwork } from "hooks"
 import {
-  UAUD,
+  UAUD as VAUD,
   UCAD,
   UCHF,
   UCNY,
@@ -24,6 +24,7 @@ import axios from "./request"
 import { Type } from "pages/Swap"
 import { Msg } from "@terra-money/terra.js"
 import { AxiosError } from "axios"
+import { useContractsAddress } from "hooks/useContractsAddress"
 interface DenomBalanceResponse {
   height: string
   result: DenomInfo[]
@@ -158,7 +159,7 @@ export function isNativeInfo(object: any): object is NativeInfo {
   return "native_token" in object
 }
 
-export default () => {
+const useAPI = () => {
   const { fcd, factory, service } = useNetwork()
   const address = useAddress()
   const { getSymbol } = useContractsAddress()
@@ -196,7 +197,7 @@ export default () => {
           UMNT,
           ULUNA,
           USDR,
-          UAUD,
+          VAUD,
           UCAD,
           UCHF,
           UCNY,
@@ -318,7 +319,7 @@ export default () => {
         const res: SimulatedResponse = (await axios.get(url)).data
         return res
       } catch (error) {
-        const { response }: AxiosError = error
+        const { response }: AxiosError = error as any
         return response?.data
       }
     },
@@ -407,3 +408,5 @@ export default () => {
     loadTaxRate,
   }
 }
+
+export default useAPI

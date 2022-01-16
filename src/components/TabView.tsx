@@ -5,6 +5,7 @@ import Card from "./Card"
 import { TooltipIcon } from "./Tooltip"
 import styles from "./TabView.module.scss"
 import Modal from "./Modal"
+import qs from "querystring"
 
 const TabView: FC<TabViewProps> = ({
   tabs,
@@ -14,7 +15,7 @@ const TabView: FC<TabViewProps> = ({
   children,
   side,
 }) => {
-  const { search, state } = useLocation()
+  const location = useLocation()
 
   return !selectedTabName ? null : (
     <div className={styles.wrapper}>
@@ -22,7 +23,9 @@ const TabView: FC<TabViewProps> = ({
         <div className={styles.header}>
           <div className={styles.tabs}>
             {tabs.map((tab) => {
-              const to = { hash: tab.name, search, state }
+              const parsed = qs.parse(location.search.replace("?", ""))
+              parsed.type = tab.name
+              const to = { ...location, search: qs.stringify(parsed) }
               const tooltip = tab.tooltip
               const label = tooltip ? (
                 <TooltipIcon content={tooltip}>

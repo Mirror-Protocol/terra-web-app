@@ -1,6 +1,8 @@
 import React, { FC } from "react"
-import { useContractsAddressState } from "../hooks/useContractsAddress"
-import { ContractsAddressProvider } from "../hooks/useContractsAddress"
+import {
+  ContractsAddressProvider,
+  useContractsAddressState,
+} from "../hooks/useContractsAddress"
 import { useContractsAddressTokenState } from "../hooks/useContractsAddressToken"
 import { ContractsAddressTokenProvider } from "../hooks/useContractsAddressToken"
 
