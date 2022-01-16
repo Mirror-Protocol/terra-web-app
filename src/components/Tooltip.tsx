@@ -23,14 +23,22 @@ const TooltipTippyProps: TippyProps = {
 
 interface Props extends Omit<TippyProps, "children"> {
   onClick?: () => void
+  style?: React.CSSProperties
 }
 
-const Tooltip: FC<Props> = ({ className, onClick, children, ...props }) => {
+const Tooltip: FC<Props> = ({
+  className,
+  onClick,
+  children,
+  style,
+  ...props
+}) => {
   const button = (
     <button
       type="button"
       className={classNames(styles.button, className)}
       onClick={onClick}
+      style={style}
     >
       {children}
     </button>
