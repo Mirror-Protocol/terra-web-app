@@ -58,6 +58,8 @@ export default (config: Config, pairs: Pair[], type: string) => {
         open={() => setIsOpen(true)}
         close={() => setIsOpen(false)}
         isCloseBtn={true}
+        url={""}
+        name={""}
       >
         <SwapCard logoTitle={MESSAGE.Form.Button.SelectToken}>
           <SwapTokens
