@@ -11,6 +11,8 @@ const Modal: FC<Modal> = ({
   close,
   children,
   isCloseBtn = false,
+  url,
+  name,
 }) => (
   <ReactModal
     className={`${styles.modal} ${className || ""}`}
@@ -34,5 +36,17 @@ export default Modal
 /* modal */
 export const useModal = () => {
   const [isOpen, setIsOpen] = useState(false)
-  return { isOpen, open: () => setIsOpen(true), close: () => setIsOpen(false) }
+  const [url, setURL] = useState("")
+  const [name, setName] = useState("")
+  return {
+    isOpen,
+    open: () => setIsOpen(true),
+    close: () => setIsOpen(false),
+    setInfo: (url: string, name: string) => {
+      setURL(url)
+      setName(name)
+    },
+    url,
+    name,
+  }
 }

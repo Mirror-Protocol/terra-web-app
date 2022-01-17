@@ -99,6 +99,8 @@ const TabView: FC<TabViewProps> = ({
                   isCloseBtn={false}
                   open={() => item.onOpen && item.onOpen()}
                   close={() => item.onClose && item.onClose()}
+                  url={""}
+                  name={""}
                 >
                   <Card shadow={shadow}>{item.visible && item.component}</Card>
                 </Modal>

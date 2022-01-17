@@ -77,6 +77,8 @@ interface Modal {
   open: () => void
   close: () => void
   isCloseBtn?: boolean
+  url: string
+  name: string
 }
 
 /* Modules */
