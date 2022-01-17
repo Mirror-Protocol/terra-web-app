@@ -18,6 +18,22 @@ body,
   padding-bottom: $footer-height;
   background-attachment: fixed;
 
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  *::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: lightgray;
+  }
+  *::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+  }
+
   @include mobile {
     padding-bottom: $footer-height-mobile;
 

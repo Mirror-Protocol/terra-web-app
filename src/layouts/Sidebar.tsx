@@ -219,11 +219,11 @@ const Sidebar = () => {
       <Wrapper isOpen={isOpen}>
         <div>
           <NavLink
-            to="/dashboard"
+            to="/"
             exact
             isActive={(match, location) => {
               return location.pathname?.includes("/pairs") ||
-                location.pathname?.includes("/dashboard")
+                location.pathname === "/"
                 ? true
                 : false
             }}
@@ -231,7 +231,7 @@ const Sidebar = () => {
           >
             Dashboard
           </NavLink>
-          <NavLink to="/" exact onClick={() => close()}>
+          <NavLink to="/swap" exact onClick={() => close()}>
             Swap
           </NavLink>
         </div>

@@ -27,9 +27,6 @@
     @include mobile {
       bottom: 0;
     }
-    .scrolled & {
-      bottom: 0;
-    }
   }
 
   & .container {
@@ -38,13 +35,9 @@
     top: 0;
   }
 
-  &.scrolled {
-    padding: 14px 0;
-  }
-
   & .wrapper,
   & section {
-    @include flex;
+    @include flex(flex-start);
   }
 }
 
@@ -57,18 +50,17 @@
     z-index: 4850;
 
     & .support {
-      transition: opacity 0.2s ease-in-out;
+      transition: right 0.2s ease-in-out, opacity 0.2s ease-in-out;
       position: fixed;
       right: 30px;
       bottom: 30px;
       width: auto;
       height: auto;
-    }
 
-    &.scrolled {
-      padding: 14px 0;
-      & .support {
+      .scrolled & {
         opacity: 0;
+        right: -48px;
+
         pointer-events: none;
       }
     }

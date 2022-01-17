@@ -50,7 +50,7 @@ const SelectElement = styled.select`
   border: solid 1px #0222ba;
   border-radius: 8px;
 
-  font-family: OpenSans;
+  font-family: "Open Sans", arial, sans-serif;
   font-size: 12px;
   font-weight: bold;
   font-stretch: normal;

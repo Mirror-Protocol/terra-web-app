@@ -85,15 +85,15 @@ const LatestBlock: React.FC<LatestBlockProps> = ({
         status={
           !isLoading &&
           latestBlockHeight &&
-          currentHeight < latestBlockHeight - 5
+          currentHeight < latestBlockHeight - 10
             ? "error"
             : "success"
         }
       />
       <Label>
-        {isLoading || !latestBlockHeight
+        {isLoading || !currentHeight
           ? "Loading..."
-          : `Latest Block - ${latestBlockHeight}`}
+          : `Latest Block - ${currentHeight}`}
       </Label>
     </Wrapper>
   )

@@ -17,6 +17,7 @@ import Select from "components/Select"
 
 import Summary from "./Summary"
 import LatestBlock from "components/LatestBlock"
+import Tooltip from "components/Tooltip"
 
 const Wrapper = styled.div`
   width: 100%;
@@ -535,7 +536,14 @@ const Dashboard = () => {
                   },
                   {
                     accessor: "apr",
-                    Header: "Commission APY (7D avg)",
+                    Header: (
+                      <Tooltip
+                        content="Commission APR (7D avg)"
+                        style={{ display: "inline-flex" }}
+                      >
+                        APR (7D avg)
+                      </Tooltip>
+                    ),
                     Cell: ({ cell: { value } }: any) => (
                       <span>{(Number(value) * 100).toFixed(2)}%</span>
                     ),

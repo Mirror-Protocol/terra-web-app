@@ -85,6 +85,7 @@ const Cell = styled.td`
 
 const HeaderCell = styled(Cell)`
   font-weight: 700;
+  cursor: pointer;
 `
 
 type SortIconProps = {
