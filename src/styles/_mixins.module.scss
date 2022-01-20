@@ -1,4 +1,4 @@
-@import "variables";
+@import "src/styles/variables.module";
 
 @mixin desktop {
   @media (min-width: ($breakpoint)) {

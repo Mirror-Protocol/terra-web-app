@@ -1,8 +1,8 @@
-@import "mixins";
-@import "variables";
-@import "reboot";
-@import "colors";
-@import "utils";
+@import "src/styles/mixins.module";
+@import "src/styles/variables.module";
+@import "src/styles/reboot.module";
+@import "src/styles/colors.module";
+@import "src/styles/utils.module";
 
 html,
 body,

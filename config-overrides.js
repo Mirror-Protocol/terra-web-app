@@ -8,6 +8,12 @@ module.exports = function override(config, env) {
   //   buffer: require.resolve("buffer"),
   // };
 
+  config.resolve = {
+    ...config.resolve,
+    modules: ["node_modules", "src"],
+    extensions: [".js", ".json", ".jsx", ".css", ".sass", ".ts", ".tsx"],
+  };
+
   config.plugins.push(
     new NodePolyfillPlugin({
       excludeAliases: [

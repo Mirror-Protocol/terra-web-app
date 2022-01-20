@@ -1,4 +1,4 @@
-@import "mixins";
+@import "src/styles/mixins.module";
 
 .body {
   @include flex;

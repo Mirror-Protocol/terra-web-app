@@ -1,5 +1,5 @@
-@import "mixins";
-@import "variables";
+@import "src/styles/mixins.module";
+@import "src/styles/variables.module";
 
 .tooltip {
   font-size: 12px;

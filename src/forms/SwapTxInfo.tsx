@@ -35,8 +35,9 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
       {logs?.map((log, index) => {
         const event = log.events
 
-        const fromContract = event.find(({ type }) => type === "from_contract")
-          ?.attributes
+        const fromContract = event.find(
+          ({ type }) => type === "from_contract"
+        )?.attributes
 
         const executeContract = event.find(
           ({ type }) => type === "execute_contract"
@@ -60,14 +61,14 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
           {
             // pre-checking
             const action = fromContract.find(({ key }) => key === "action")
-            if (!action) return
+            if (!action) return undefined
           }
 
           if (parserKey === "Swap") {
             const action = fromContract.find(
               ({ key, value }) => key === "action" && value === "swap"
             )
-            if (!action) return
+            if (!action) return undefined
 
             const sender = fromContract.find(({ key }) => key === "sender")
 
@@ -138,7 +139,7 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
               ({ key, value }) =>
                 key === "action" && value === "provide_liquidity"
             )
-            if (!action) return
+            if (!action) return undefined
 
             const assets = fromContract.find(({ key }) => key === "assets")
             const share = fromContract.find(({ key }) => key === "share")
@@ -159,7 +160,7 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
               ({ key, value }) =>
                 key === "action" && value === "withdraw_liquidity"
             )
-            if (!action) return
+            if (!action) return undefined
 
             const refundAssets = fromContract.find(
               ({ key }) => key === "refund_assets"

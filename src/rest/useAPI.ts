@@ -63,6 +63,7 @@ interface GasPriceResponse {
   uthb: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Pairs {
   pairs: Pair[]
 }
@@ -114,6 +115,7 @@ interface Pool {
   total_share: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface PoolResult {
   estimated: string
   price1: string
