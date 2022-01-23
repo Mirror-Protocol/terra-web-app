@@ -16,7 +16,7 @@ const Modal: FC<Modal> = ({
 }) => (
   <ReactModal
     className={`${styles.modal} ${className || ""}`}
-    overlayClassName={`${styles.overlay} ${className || ""}`}
+    overlayClassName={`${styles.overlay}`}
     isOpen={isOpen}
     onRequestClose={close}
   >

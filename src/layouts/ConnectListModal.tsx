@@ -6,9 +6,9 @@ import styles from "./ConnectList.module.scss"
 
 const ConnectListModal = (modal: Modal) => {
   return (
-    <Modal {...modal}>
-      <Card className={styles.wrapper}>
-        <h1 className={styles.title}>Connect to a wallet</h1>
+    <Modal {...modal} className={styles.wrapper}>
+      <Card>
+        <h1 className={styles.title}>Connect the wallet</h1>
         <ConnectList />
       </Card>
     </Modal>

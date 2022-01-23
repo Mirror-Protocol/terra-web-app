@@ -5,42 +5,8 @@ import { useModal } from "components/Modal"
 
 import iconMenu from "images/icon-menu.svg"
 import iconClose from "images/icon-close-primary.svg"
-import iconGitHub from "images/icon-github.svg"
-import iconTwitter from "images/icon-twitter.svg"
-import iconDiscord from "images/icon-discord.svg"
-import iconDocuments from "images/icon-docs.svg"
-
-import iconGitHubLight from "images/icon-github-primary.svg"
-import iconTwitterLight from "images/icon-twitter-primary.svg"
-import iconDiscordLight from "images/icon-discord-primary.svg"
-import iconDocumentsLight from "images/icon-docs-primary.svg"
-
-const socialMediaList = [
-  {
-    icon: iconGitHub,
-    iconLight: iconGitHubLight,
-    href: "https://github.com/terraswap",
-    title: "GitHub",
-  },
-  {
-    icon: iconTwitter,
-    iconLight: iconTwitterLight,
-    href: "https://twitter.com/terraswap_io",
-    title: "Twitter",
-  },
-  {
-    icon: iconDiscord,
-    iconLight: iconDiscordLight,
-    href: "https://discord.gg/hAKrQ88Ggp",
-    title: "Discord",
-  },
-  {
-    icon: iconDocuments,
-    iconLight: iconDocumentsLight,
-    href: "https://docs.terraswap.io/",
-    title: "Documents",
-  },
-]
+import { socialMediaList } from "constants/constants"
+import SocialMediaAnchor from "components/SocialMediaAnchor"
 
 const Wrapper = styled.div<{ isOpen: boolean }>`
   width: 100%;
@@ -163,6 +129,7 @@ const SocialMediaList = styled.div<{ isOpen?: boolean }>`
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
     gap: 24px;
     z-index: -1;
+    left: 0;
     bottom: -48px;
     justify-content: center;
     opacity: 0;
@@ -187,23 +154,6 @@ const SocialMediaList = styled.div<{ isOpen?: boolean }>`
           transform: translateY(0);
         }
       `}
-  }
-`
-
-const SocialMediaAnchor = styled.a`
-  width: auto;
-  height: auto;
-  position: relative;
-  display: inline-block;
-  padding: 0;
-  margin: 0;
-  text-decoration: none;
-  color: #ffffff;
-  cursor: pointer;
-
-  & > img {
-    width: 24px;
-    height: 24px;
   }
 `
 
@@ -238,20 +188,26 @@ const Sidebar = () => {
       </Wrapper>
       <SocialMediaList isOpen={isOpen}>
         {socialMediaList.map((item, index) => (
-          <SocialMediaAnchor
-            href={item.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={item.title}
-            style={{ transitionDelay: `${index * 0.06 + 0.125}s` }}
-          >
-            <img className="desktop-only" src={item.icon} alt={item.title} />
-            <img
-              className="mobile-only"
-              src={item.iconLight}
-              alt={item.title}
+          <>
+            <SocialMediaAnchor
+              className="desktop-only"
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={item.title}
+              style={{ transitionDelay: `${index * 0.06 + 0.125}s` }}
+              iconSrc={item.icon}
             />
-          </SocialMediaAnchor>
+            <SocialMediaAnchor
+              className="mobile-only"
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={item.title}
+              style={{ transitionDelay: `${index * 0.06 + 0.125}s` }}
+              iconSrc={item.iconLight}
+            />
+          </>
         ))}
       </SocialMediaList>
     </>
