@@ -5,6 +5,7 @@ import { getLength, omitEmpty } from "libs/utils"
 import { lookup, format, toAmount, formatAsset, validateDp } from "libs/parse"
 import { hasTaxToken } from "helpers/token"
 import { Type } from "pages/Swap"
+import { Buffer } from "buffer"
 
 /* forms */
 export const step = (decimals = 6) => {
