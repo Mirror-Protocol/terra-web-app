@@ -1,13 +1,13 @@
-import React, { memo } from "react"
+import React, { memo, useEffect } from "react"
 import SwapPage from "../components/SwapPage"
 import SwapForm from "../forms/SwapForm"
 import Container from "../components/Container"
-import useHash from "./useHash"
+import useQueryString from "hooks/useQueryString"
 
 export enum Type {
-  "SWAP" = "Swap",
-  "PROVIDE" = "Provide",
-  "WITHDRAW" = "Withdraw",
+  "SWAP" = "swap",
+  "PROVIDE" = "provide",
+  "WITHDRAW" = "withdraw",
 }
 
 // const tabs = [
@@ -17,15 +17,38 @@ export enum Type {
 // ];
 
 const Swap = () => {
-  const { hash: type } = useHash<Type>(Type.SWAP)
+  const [type, setType] = useQueryString<Type>("type", Type.SWAP)
   const tabs = {
     tabs: [
-      { name: Type.SWAP },
-      { name: Type.PROVIDE },
-      { name: Type.WITHDRAW },
+      { name: Type.SWAP, title: "Swap" },
+      { name: Type.PROVIDE, title: "Provide" },
+      { name: Type.WITHDRAW, title: "Withdraw" },
     ],
     selectedTabName: type,
   }
+
+  useEffect(() => {
+    console.log(
+      `Object.keys(Type).map((key) => Type[key as keyof typeof Type])`
+    )
+    console.log(Object.keys(Type).map((key) => Type[key as keyof typeof Type]))
+    console.log(type)
+    console.log(
+      type &&
+        Object.keys(Type)
+          .map((key) => Type[key as keyof typeof Type])
+          .includes(type)
+    )
+    if (
+      !type ||
+      !Object.keys(Type)
+        .map((key) => Type[key as keyof typeof Type])
+        .includes(type)
+    ) {
+      setType(Type.SWAP)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type])
 
   return (
     <Container>

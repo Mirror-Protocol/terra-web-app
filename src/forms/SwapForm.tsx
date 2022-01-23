@@ -6,13 +6,7 @@ import Result from "./Result"
 import TabView from "components/TabView"
 import { useLocation } from "react-router-dom"
 import { UST, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
-import {
-  useNetwork,
-  useContractsAddress,
-  useContract,
-  useAddress,
-  useConnectModal,
-} from "hooks"
+import { useNetwork, useContract, useAddress, useConnectModal } from "hooks"
 import { lookup, decimal, toAmount } from "libs/parse"
 import calc from "helpers/calc"
 import { PriceKey, BalanceKey, AssetInfoKey } from "hooks/contractKeys"
@@ -52,6 +46,8 @@ import Settings, { SettingValues } from "components/Settings"
 import useLocalStorage from "libs/useLocalStorage"
 import useAutoRouter from "rest/useAutoRouter"
 import { useLCDClient } from "layouts/WalletConnectProvider"
+import useQueryString from "hooks/useQueryString"
+import { useContractsAddress } from "hooks/useContractsAddress"
 
 enum Key {
   token1 = "token1",
@@ -88,21 +84,25 @@ const Warning = {
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
+  const { state } = useLocation<{ symbol: string }>()
+  const [from, setFrom] = useQueryString<string>(
+    "from",
+    type !== Type.WITHDRAW ? state?.symbol ?? ULUNA : InitLP
+  )
+  const [to, setTo] = useQueryString<string>("to", state?.symbol ?? "")
   const { getSymbol, isNativeToken } = useContractsAddress()
   const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI()
-  const { state } = useLocation<{ symbol: string }>()
   const { fee } = useNetwork()
   const { find } = useContract()
   const walletAddress = useAddress()
   const { post: terraExtensionPost } = useWallet()
   const { terra } = useLCDClient()
   const settingsModal = useModal()
-  const [slippageSettings, setSlippageSettings] = useLocalStorage<
-    SettingValues
-  >("slippage", {
-    slippage: `${DEFAULT_MAX_SPREAD}`,
-    custom: "",
-  })
+  const [slippageSettings, setSlippageSettings] =
+    useLocalStorage<SettingValues>("slippage", {
+      slippage: `${DEFAULT_MAX_SPREAD}`,
+      custom: "",
+    })
   const slippageTolerance = useMemo(() => {
     // 1% = 0.01
     return `${(
@@ -125,8 +125,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     defaultValues: {
       [Key.value1]: "",
       [Key.value2]: "",
-      [Key.token1]: type !== Type.WITHDRAW ? state?.symbol ?? ULUNA : InitLP,
-      [Key.token2]: state?.symbol ?? "",
+      [Key.token1]: from || "",
+      [Key.token2]: to || "",
       [Key.feeValue]: "",
       [Key.feeSymbol]: UST,
       [Key.load]: "",
@@ -144,6 +144,14 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const { register, watch, setValue, setFocus, formState, trigger } = form
   const [isReversed, setIsReversed] = useState(false)
   const formData = watch()
+
+  useEffect(() => {
+    console.log("setFrom", formData[Key.token1])
+    setFrom(formData[Key.token1])
+    console.log("setTo", formData[Key.token2])
+    setTo(formData[Key.token2])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData])
 
   const handleToken1Select = (token: string) => {
     setValue(Key.token1, token)
@@ -456,10 +464,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     ) => {
       const msg = Array.isArray(_msg) ? _msg[0] : _msg
       if (msg?.execute_msg?.send?.msg?.execute_swap_operations) {
-        msg.execute_msg.send.msg.execute_swap_operations.minimum_receive = parseInt(
-          `${minimumReceived}`,
-          10
-        ).toString()
+        msg.execute_msg.send.msg.execute_swap_operations.minimum_receive =
+          parseInt(`${minimumReceived}`, 10).toString()
         if (isNativeToken(symbol || "")) {
           msg.coins = Coins.fromString(toAmount(`${amount}`) + symbol)
         }
@@ -637,16 +643,26 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   }
 
   useEffect(() => {
-    setValue(
-      Key.token1,
-      type !== Type.WITHDRAW ? state?.symbol ?? ULUNA : InitLP
-    )
+    if (type === Type.SWAP || type === Type.PROVIDE) {
+      if (!from || !tokenInfos.get(from)) {
+        setValue(Key.token1, ULUNA)
+        setValue(Key.value1, "")
+      }
+      if (!to || !tokenInfos.get(to)) {
+        setValue(Key.token2, "")
+        setValue(Key.value2, "")
+      }
+    }
 
     if (type === Type.WITHDRAW) {
+      if (!from || !lpTokenInfos.get(from)) {
+        setValue(Key.token1, InitLP)
+        setValue(Key.value1, "")
+      }
       setValue(Key.token2, "")
       setValue(Key.value2, "")
     }
-  }, [type, setValue, state])
+  }, [type, setValue, state, from, to])
 
   useEffect(() => {
     setValue(Key.symbol1, tokenInfo1?.symbol || "")
@@ -871,7 +887,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           return
         }
       } catch (error) {
-        setResult(error)
+        setResult(error as any)
       }
     },
     [

@@ -1,0 +1,8 @@
+@import "src/styles/variables.module";
+
+:export {
+  primary: $blue;
+  white: #ffffff;
+  breakpoint: $breakpoint;
+  gutter: $gutter;
+}

@@ -57,11 +57,6 @@ interface TokenInfo {
   verified: boolean
 }
 
-interface PairsResponse {
-  height: string
-  result: PairsResult
-}
-
 interface PairsResult {
   pairs: PairResult[]
 }

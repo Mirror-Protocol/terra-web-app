@@ -1,4 +1,4 @@
-@import "mixins";
+@import "src/styles/mixins.module";
 
 .link {
   @include link(inherit, inherit);

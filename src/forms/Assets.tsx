@@ -3,11 +3,12 @@ import classNames from "classnames/bind"
 import { UST, UUSD } from "constants/constants"
 import { gt } from "libs/math"
 import { insertIf } from "libs/utils"
-import { useContractsAddress, useContract, useCombineKeys } from "hooks"
+import { useContract, useCombineKeys } from "hooks"
 import Icon from "components/Icon"
 import { Config } from "./useSelectAsset"
 import Asset from "./Asset"
 import styles from "./Assets.module.scss"
+import { useContractsAddress } from "hooks/useContractsAddress"
 
 const cx = classNames.bind(styles)
 

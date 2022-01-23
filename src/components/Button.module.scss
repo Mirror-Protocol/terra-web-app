@@ -1,5 +1,5 @@
-@import "mixins";
-@import "variables";
+@import "src/styles/mixins.module";
+@import "src/styles/variables.module";
 
 .button {
   @include flex;
@@ -116,7 +116,7 @@
   background-color: $realblue;
   font-weight: 600;
   border-radius: 10px;
-  text-transform: none;
+  text-transform: capitalize;
   max-width: 240px;
   @include mobile {
     width: 80%;

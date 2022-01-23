@@ -1,8 +1,8 @@
 import { Dictionary } from "ramda"
 import { useQuery, useLazyQuery } from "@apollo/client"
-import { useContractsAddress } from "../hooks"
 import alias from "./alias"
 import { parseResults } from "./response"
+import { useContractsAddress } from "hooks/useContractsAddress"
 
 type GenerateVariables = (item: ListedItem) => ContractVariables | undefined
 

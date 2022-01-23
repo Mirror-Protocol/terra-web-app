@@ -1,4 +1,4 @@
-@import "mixins";
+@import "src/styles/mixins.module";
 
 .wrapper {
   @include flex(flex-start);

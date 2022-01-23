@@ -36,7 +36,7 @@ const Settings = ({ values, onChange }: SettingsProps) => {
           return (current as any)?.[key] !== (data as any)?.[key]
         }).length > 0
       ) {
-        return data
+        return data as SettingValues
       }
       return current
     })

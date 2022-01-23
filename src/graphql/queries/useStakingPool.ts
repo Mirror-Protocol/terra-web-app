@@ -1,4 +1,4 @@
-import { useContractsAddress } from "../../hooks"
+import { useContractsAddress } from "hooks/useContractsAddress"
 import { useLazyContractQueries } from "../useContractQueries"
 
 export default () => {

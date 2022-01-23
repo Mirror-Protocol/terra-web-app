@@ -1,5 +1,5 @@
-@import "mixins";
-@import "variables";
+@import "src/styles/mixins.module";
+@import "src/styles/variables.module";
 
 .item {
   border-top: 1px solid #b5b5b5;

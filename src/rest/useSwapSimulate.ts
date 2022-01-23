@@ -1,6 +1,6 @@
+import { useContractsAddress } from "hooks/useContractsAddress"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { div, gt } from "../libs/math"
-import { useContractsAddress } from "../hooks"
 import useAPI from "./useAPI"
 interface Params {
   amount: string
@@ -25,7 +25,7 @@ interface Simulated {
   commission: string
   price: string
 }
-export default ({ amount, token, pair, reverse }: Params) => {
+const useSwapSimulate = ({ amount, token, pair, reverse }: Params) => {
   const [simulated, setSimulated] = useState<Simulated>()
   /* context */
   const { toToken } = useContractsAddress()
@@ -74,7 +74,7 @@ export default ({ amount, token, pair, reverse }: Params) => {
       setError(undefined)
     } catch (error) {
       setResult(defaultValues)
-      setError(error)
+      setError(error as any)
     } finally {
       setIsLoading(false)
     }
@@ -107,3 +107,4 @@ export default ({ amount, token, pair, reverse }: Params) => {
   }, [simulatedAmount, spread, commission, price, error, isError])
   return { ...result, simulating: isLoading, simulated, error }
 }
+export default useSwapSimulate

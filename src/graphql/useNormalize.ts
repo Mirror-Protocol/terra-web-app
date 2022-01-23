@@ -2,9 +2,9 @@ import { Dictionary } from "ramda"
 import { MIR, UUSD } from "constants/constants"
 import { plus, div, floor, gt } from "libs/math"
 import calc from "helpers/calc"
-import { useContractsAddress } from "hooks"
 import { PriceKey, AssetInfoKey } from "hooks/contractKeys"
 import { BalanceKey, AccountInfoKey } from "hooks/contractKeys"
+import { useContractsAddress } from "hooks/useContractsAddress"
 
 export default () => {
   const { getListedItem, listed } = useContractsAddress()

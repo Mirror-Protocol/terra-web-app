@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import routes from "routes"
 import { ContractProvider, useContractState } from "hooks/useContract"
 import { ThemeProvider } from "styled-components"
-import variables from "styles/_variables.scss"
+import variables from "styles/_export.module.scss"
 import { useAddress } from "hooks"
 import Header from "./Header"
 import Footer from "./Footer"
@@ -55,6 +55,7 @@ const App = () => {
       }
     }, 100)
   }, [isPairsLoading])
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={variables}>
