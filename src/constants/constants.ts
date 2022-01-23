@@ -1,3 +1,13 @@
+import iconGitHub from "images/icon-github.svg"
+import iconTwitter from "images/icon-twitter.svg"
+import iconDiscord from "images/icon-discord.svg"
+import iconDocuments from "images/icon-docs.svg"
+
+import iconGitHubLight from "images/icon-github-primary.svg"
+import iconTwitterLight from "images/icon-twitter-primary.svg"
+import iconDiscordLight from "images/icon-discord-primary.svg"
+import iconDocumentsLight from "images/icon-docs-primary.svg"
+
 /* terra:network */
 export const FINDER = "https://finder.terra.money"
 export const TERRA_STATION_EXTENSION =
@@ -84,3 +94,30 @@ export const DISCORD = ""
 export const TELEGRAM = ""
 export const WECHAT = ""
 export const GITHUB = "https://github.com/DELIGHT-LABS/terraswap-web-app"
+
+export const socialMediaList = [
+  {
+    icon: iconGitHub,
+    iconLight: iconGitHubLight,
+    href: "https://github.com/terraswap",
+    title: "GitHub",
+  },
+  {
+    icon: iconTwitter,
+    iconLight: iconTwitterLight,
+    href: "https://twitter.com/terraswap_io",
+    title: "Twitter",
+  },
+  {
+    icon: iconDiscord,
+    iconLight: iconDiscordLight,
+    href: "https://discord.gg/hAKrQ88Ggp",
+    title: "Discord",
+  },
+  {
+    icon: iconDocuments,
+    iconLight: iconDocumentsLight,
+    href: "https://docs.terraswap.io/",
+    title: "Documents",
+  },
+]

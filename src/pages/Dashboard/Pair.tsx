@@ -9,6 +9,8 @@ import useDashboardAPI, { Transaction } from "rest/useDashboardAPI"
 import { formatMoney, lookup } from "libs/parse"
 import { UST } from "constants/constants"
 import Table from "components/Table"
+import container from "components/Container"
+
 import { useQuery } from "react-query"
 
 import { ReactComponent as IconGoBack } from "images/icon-go-back.svg"
@@ -18,7 +20,7 @@ import { useNetwork } from "hooks"
 import { Container, Row } from "pages/Dashboard"
 import Copy from "components/Copy"
 
-const Wrapper = styled.div`
+const Wrapper = styled(container)`
   width: 100%;
   height: auto;
   position: relative;
@@ -79,7 +81,7 @@ const PairPage = () => {
             />
             <AssetIcon
               address={pair?.token1?.tokenAddress || ""}
-              style={{ width: 30, height: 30, left: -16, marginRight: -16 }}
+              style={{ width: 30, height: 30, left: -10, marginRight: -10 }}
             />
           </div>
           <div
@@ -308,8 +310,8 @@ const PairPage = () => {
                             style={{
                               width: 20,
                               height: 20,
-                              left: -10,
-                              marginRight: -10,
+                              left: -8,
+                              marginRight: -8,
                             }}
                           />
                         </div>
@@ -484,6 +486,7 @@ const PairPage = () => {
                   {
                     accessor: "timestamp",
                     Header: "Time",
+                    width: 105,
                     Cell: ({ cell: { value } }: any) => (
                       <span>{moment(value).fromNow()}</span>
                     ),

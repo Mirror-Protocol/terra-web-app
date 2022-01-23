@@ -6,7 +6,7 @@ import variables from "styles/_variables.scss"
 import { useAddress } from "hooks"
 import Header from "./Header"
 import Footer from "./Footer"
-import Container from "components/Container"
+import container from "components/Container"
 import { QueryClient, QueryClientProvider } from "react-query"
 import styled from "styled-components"
 import usePairs from "rest/usePairs"
@@ -35,6 +35,10 @@ const Wrapper = styled.div`
     margin-top: 64px;
     padding-top: 24px;
   }
+`
+
+const Container = styled(container)`
+  padding: 0;
 `
 
 const App = () => {

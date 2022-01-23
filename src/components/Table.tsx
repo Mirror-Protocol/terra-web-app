@@ -220,7 +220,10 @@ const Table = <T extends object>(props: TableProps<T>) => {
                           : undefined
                       )}
                       colSpan={undefined}
-                      style={headerCellStyle || cellStyle}
+                      style={{
+                        ...(headerCellStyle || cellStyle),
+                        ...(column.width ? { width: column.width } : {}),
+                      }}
                     >
                       {column.render("Header")}
                       {!props?.manualPagination && (

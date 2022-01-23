@@ -1,8 +1,9 @@
 @import "mixins";
 
 .wrapper {
-  width: 100vw;
-  max-width: $modal-width;
+  width: 90vw;
+  max-width: 432px;
+  margin: 0 auto;
 }
 
 .component {
@@ -22,11 +23,20 @@
   background-color: white;
   border: 1px solid $blue;
   border-radius: 10px;
-  color: $deepgray;
+  color: $blue;
   font-size: 18px;
   font-weight: 700;
   padding: 24px 24px;
   width: 100%;
+
+  &:hover {
+    background-color: #dee4ff;
+  }
+
+  &--installed {
+    background-color: #dee4ff;
+    border-color: transparent !important;
+  }
 
   & + & {
     margin-top: 20px;

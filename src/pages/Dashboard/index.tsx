@@ -14,12 +14,13 @@ import Input from "components/Input"
 import Table from "components/Table"
 import AssetIcon from "components/AssetIcon"
 import Select from "components/Select"
+import container from "components/Container"
 
 import Summary from "./Summary"
 import LatestBlock from "components/LatestBlock"
 import Tooltip from "components/Tooltip"
 
-const Wrapper = styled.div`
+const Wrapper = styled(container)`
   width: 100%;
   height: auto;
   position: relative;
@@ -472,6 +473,7 @@ const Dashboard = () => {
                   {
                     accessor: "pairAlias",
                     Header: "Pairs",
+                    width: 220,
                     Cell: (data: any) => {
                       const { original } = data?.row
                       if (!original) {
@@ -492,7 +494,14 @@ const Dashboard = () => {
                             alt={token1Symbol}
                             style={{ left: -8 }}
                           />
-                          <span>{pairAlias}</span>
+                          <span
+                            style={{
+                              display: "inline-block",
+                              verticalAlign: "middle",
+                            }}
+                          >
+                            {pairAlias}
+                          </span>
                         </>
                       )
                     },
@@ -500,6 +509,7 @@ const Dashboard = () => {
                   {
                     accessor: "liquidityUst",
                     Header: "Liquidity",
+                    width: 230,
                     Cell: ({ cell: { value } }: any) => (
                       <span>
                         {formatMoney(Number(lookup(`${value}`, UST)))} UST
@@ -509,6 +519,7 @@ const Dashboard = () => {
                   {
                     accessor: "volumeUst",
                     Header: "Volume (24H)",
+                    width: 230,
                     Cell: ({ cell: { value } }: any) => (
                       <span>
                         {formatMoney(Number(lookup(`${value}`, UST)))} UST
@@ -518,6 +529,7 @@ const Dashboard = () => {
                   {
                     accessor: "token0Volume",
                     Header: "Fees (24H)",
+                    width: 180,
                     Cell: (data: any) => {
                       const { original } = data?.row
                       if (!original) {
@@ -544,6 +556,7 @@ const Dashboard = () => {
                         APR (7D avg)
                       </Tooltip>
                     ),
+                    width: 103,
                     Cell: ({ cell: { value } }: any) => (
                       <span>{(Number(value) * 100).toFixed(2)}%</span>
                     ),
@@ -554,7 +567,6 @@ const Dashboard = () => {
                   history.push(`/pairs/${row.original.pairAddress}`)
                 }
                 wrapperStyle={{ tableLayout: "fixed" }}
-                cellStyle={{ width: 160 }}
                 searchKeyword={searchKeyword}
               />
             </Row>

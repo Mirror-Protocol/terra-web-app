@@ -48,6 +48,7 @@ const SelectElement = styled.select`
   padding-right: 29px;
   margin: 0;
   border: solid 1px #0222ba;
+  background-color: #ffffff;
   border-radius: 8px;
 
   font-family: "Open Sans", arial, sans-serif;

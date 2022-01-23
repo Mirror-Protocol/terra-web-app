@@ -6,10 +6,11 @@ import Icon from "./Icon"
 
 import "tippy.js/dist/tippy.css"
 import "tippy.js/themes/light-border.css"
+import "styles/tooltip.css"
 import styles from "./Tooltip.module.scss"
 
 export const DefaultTippyProps: TippyProps = {
-  animation: false,
+  animation: "fade",
   interactive: true,
   appendTo: document.body,
 }
