@@ -29,6 +29,7 @@
     "axios": "^0.21.1",
     "axios-cache-adapter": "^2.7.3",
     "bignumber.js": "^9.0.1",
+    "buffer": "^6.0.3",
     "chart.js": "^2.9.4",
     "classnames": "^2.2.6",
     "graphql": "^15.3.0",
@@ -52,6 +53,7 @@
     "react-scripts": "^5",
     "react-table": "^7.7.0",
     "source-map-explorer": "^2.5.0",
+    "stream-browserify": "^3.0.0",
     "styled-components": "^5.2.3",
     "typescript": "^4.2.4"
   },
@@ -87,8 +89,9 @@
     "@types/styled-components": "^5.1.9",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
-    "buffer": "^6.0.3",
-    "react-app-rewired": "^2.1.11",
-    "stream-browserify": "^3.0.0"
+    "react-app-rewired": "^2.1.11"
+  },
+  "engines": {
+    "node": ">=16.8.0"
   }
 }
