@@ -4,11 +4,6 @@ import { div, gt, times, ceil, plus, minus } from "../libs/math"
 import { Type } from "../pages/Swap"
 import useAPI from "./useAPI"
 
-interface PoolResponse {
-  height: string
-  result: Pool
-}
-
 interface Pool {
   assets: Token[]
   total_share: string
