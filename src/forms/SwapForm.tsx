@@ -141,14 +141,13 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     mode: "all",
     reValidateMode: "onChange",
   })
-  const { register, watch, setValue, setFocus, formState, trigger } = form
+  const { register, watch, setValue, setFocus, formState, trigger, reset } =
+    form
   const [isReversed, setIsReversed] = useState(false)
   const formData = watch()
 
   useEffect(() => {
-    console.log("setFrom", formData[Key.token1])
     setFrom(formData[Key.token1])
-    console.log("setTo", formData[Key.token2])
     setTo(formData[Key.token2])
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData])
@@ -954,7 +953,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             {
               iconUrl: iconReload,
               onClick: () => {
-                window.location.reload()
+                reset()
+                setValue(Key.token1, "")
+                setValue(Key.token2, "")
               },
               disabled: formState.isSubmitting,
             },
