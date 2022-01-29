@@ -73,6 +73,7 @@ interface TabViewProps {
 /* Modal */
 interface Modal {
   className?: string
+  overlayClassName?: string
   isOpen: boolean
   open: () => void
   close: () => void

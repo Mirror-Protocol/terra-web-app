@@ -98,6 +98,7 @@ const TabView: FC<TabViewProps> = ({
               {item.isModalOnMobile && (
                 <Modal
                   className={styles["side__view--hide-on-desktop"]}
+                  overlayClassName={styles["side__view--hide-on-desktop"]}
                   isOpen={item.visible}
                   isCloseBtn={false}
                   open={() => item.onOpen && item.onOpen()}
