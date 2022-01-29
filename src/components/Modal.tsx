@@ -7,6 +7,7 @@ ReactModal.setAppElement("#terraswap")
 
 const Modal: FC<Modal> = ({
   className,
+  overlayClassName,
   isOpen,
   close,
   children,
@@ -16,7 +17,7 @@ const Modal: FC<Modal> = ({
 }) => (
   <ReactModal
     className={`${styles.modal} ${className || ""}`}
-    overlayClassName={`${styles.overlay}`}
+    overlayClassName={`${styles.overlay} ${overlayClassName || ""}`}
     isOpen={isOpen}
     onRequestClose={close}
   >
