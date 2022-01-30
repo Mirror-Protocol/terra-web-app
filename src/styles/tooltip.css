@@ -1,14 +1,19 @@
+.tippy-box[data-theme~="light-border"] .tippy-content {
+  padding: 10px 15px;
+  line-height: 1;
+}
+
 .tippy-box[data-theme~="light-border"][data-placement^="top"]
   > .tippy-arrow::after {
   border-top-color: #0222ba;
   border-width: 8px 8px 0;
-  top: 17px;
+  top: 16px;
   left: 0px;
 }
 .tippy-box[data-theme~="light-border"][data-placement^="bottom"]
   > .tippy-arrow::after {
   border-bottom-color: #0222ba;
   border-width: 0 8px 8px;
-  bottom: 17px;
+  bottom: 16px;
   left: 0px;
 }

@@ -25,6 +25,8 @@ const Wrapper = styled(container)`
   height: auto;
   position: relative;
   color: ${({ theme }) => theme.primary};
+  background-color: ${({ theme }) => theme.primary};
+  z-index: 1;
 `
 
 export const Container = styled.div`
@@ -76,6 +78,18 @@ export const Row = styled.div`
       margin-left: 0px;
       margin-top: 20px;
     }
+  }
+`
+
+const LatestBlockWrapper = styled.div`
+  width: 100%;
+  height: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
+    justify-content: center;
   }
 `
 
@@ -556,7 +570,7 @@ const Dashboard = () => {
                         APR (7D avg)
                       </Tooltip>
                     ),
-                    width: 103,
+                    width: 140,
                     Cell: ({ cell: { value } }: any) => (
                       <span>{(Number(value) * 100).toFixed(2)}%</span>
                     ),
@@ -572,12 +586,12 @@ const Dashboard = () => {
             </Row>
           </Card>
         </Row>
-        <div>
+        <LatestBlockWrapper>
           <LatestBlock
             currentHeight={recent?.daily?.height || 0}
             isLoading={!recent?.daily?.height}
           />
-        </div>
+        </LatestBlockWrapper>
       </Container>
     </Wrapper>
   )
