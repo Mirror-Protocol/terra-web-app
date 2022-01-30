@@ -23,5 +23,7 @@ export default (queries: Query[]) => gql`
   }
 `
 
-export const stringify = (msg: object) =>
-  JSON.stringify(msg).replaceAll('"', '\\"')
+export const stringify = (msg: object) => {
+  const stringify = JSON.stringify(msg)
+  return stringify.replace(/"/g, '\\"')
+}
