@@ -74,8 +74,8 @@ const LatestBlock: React.FC<LatestBlockProps> = ({
   return (
     <Wrapper
       href={
-        latestBlockHeight
-          ? `https://finder.terra.money/${name}/blocks/${latestBlockHeight}`
+        currentHeight
+          ? `https://finder.terra.money/${name}/blocks/${currentHeight}`
           : "#"
       }
       target="_blank"
