@@ -41,7 +41,7 @@ const SwapTokens = ({
   const { isNativeToken } = useContractsAddress()
 
   /* search */
-  const [value, setValue] = useState("")
+  const [searchKeyword, setSearchKeyword] = useState("")
 
   const [addressList, setAddressList] = useState<string[]>([])
 
@@ -119,7 +119,7 @@ const SwapTokens = ({
         <input
           id="search"
           name="search"
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => setSearchKeyword(e.target.value)}
           autoComplete="off"
           autoFocus
           placeholder="Search name or address"
@@ -141,8 +141,12 @@ const SwapTokens = ({
                 symbol = tokenInfo ? tokenInfo.symbol : ""
               }
 
-              return [symbol].some(
-                (text) => !!text?.toLowerCase().includes(value?.toLowerCase())
+              return (
+                symbol.toLowerCase().indexOf(searchKeyword.toLowerCase()) >=
+                  0 ||
+                contractAddr
+                  .toLowerCase()
+                  .indexOf(searchKeyword.toLowerCase()) >= 0
               )
             })
             .sort((a, b) => {
@@ -201,6 +205,7 @@ const SwapTokens = ({
                     <SwapToken
                       {...swapToken}
                       formatTokenName={formatTokenName}
+                      highlightString={searchKeyword}
                     />
                   </button>
                 </li>

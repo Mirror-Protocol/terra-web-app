@@ -9,6 +9,27 @@ interface Props extends AssetItem {
   icon: string[]
   verified: boolean
   formatTokenName?: (symbol: string) => string
+  highlightString?: string
+}
+
+const highlightedText = (text: string, query: string) => {
+  if (query) {
+    const parts = text.split(new RegExp(`(${query})`, "gi"))
+
+    return (
+      <>
+        {parts.map((part, index) =>
+          part.toLowerCase() === query.toLowerCase() ? (
+            <mark key={index}>{part}</mark>
+          ) : (
+            part
+          )
+        )}
+      </>
+    )
+  }
+
+  return text
 }
 
 const SwapToken = ({
@@ -18,6 +39,7 @@ const SwapToken = ({
   icon,
   verified,
   formatTokenName,
+  highlightString = "",
 }: Props) => {
   const symbols = symbol.split("-")
 
@@ -34,7 +56,13 @@ const SwapToken = ({
               alt=""
             />
             <div className={styles.name}>
-              <p>{formatTokenName?.(symbols[0]) ?? lookupSymbol(symbols[0])}</p>
+              <p>
+                {highlightedText(
+                  (formatTokenName?.(symbols[0]) ?? lookupSymbol(symbols[0])) ||
+                    "",
+                  highlightString
+                )}
+              </p>
             </div>
             {verified ? (
               <div className={styles.verified_box}>
@@ -71,7 +99,9 @@ const SwapToken = ({
           </div>
         </div>
         <div className={styles.token_address}>
-          <p className={styles.address}>{contract_addr}</p>
+          <p className={styles.address}>
+            {highlightedText(contract_addr || "", highlightString)}
+          </p>
         </div>
       </header>
 
