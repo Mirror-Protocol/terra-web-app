@@ -34,6 +34,22 @@ const Wrapper = styled(container)`
   }
 `
 
+const ProvideButton = styled(Link)`
+  display: inline-block;
+  font-size: 16px;
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #ffffff;
+  padding: 7px 16px 7px 16px;
+  border-radius: 50px;
+  border: solid 1px #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+`
+
 const PairPage = () => {
   const { address } = useParams<{ address: string }>()
   const { api } = useDashboardAPI()
@@ -97,6 +113,13 @@ const PairPage = () => {
             </div>
             <div className="desktop-only">{pair?.pairAddress}</div>
             <Copy value={pair?.pairAddress} />
+          </div>
+          <div style={{ marginLeft: "auto" }}>
+            <ProvideButton
+              to={`/swap?from=${pair?.token0?.tokenAddress}&to=${pair?.token1?.tokenAddress}&type=provide`}
+            >
+              Provide Liquidity
+            </ProvideButton>
           </div>
         </div>
         <Summary
@@ -316,11 +339,13 @@ const PairPage = () => {
                           />
                         </div>
                         &nbsp;
-                        {({
-                          swap: "Swap",
-                          provide_liquidity: "Provide",
-                          withdraw_liquidity: "Withdraw",
-                        } as any)[value as string] || value}
+                        {(
+                          {
+                            swap: "Swap",
+                            provide_liquidity: "Provide",
+                            withdraw_liquidity: "Withdraw",
+                          } as any
+                        )[value as string] || value}
                       </span>
                     ),
                   },
