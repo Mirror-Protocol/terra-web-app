@@ -106,21 +106,37 @@ const PairPage = () => {
               justifyContent: "flex-start",
               alignItems: "flex-end",
               gap: 10,
+              flex: 1,
             }}
           >
             <div style={{ fontSize: 26, fontWeight: 700, lineHeight: "1" }}>
               {pair?.token0?.symbol}-{pair?.token1?.symbol}
             </div>
             <div className="desktop-only">{pair?.pairAddress}</div>
-            <Copy value={pair?.pairAddress} />
+            <div className="desktop-only">
+              <Copy value={pair?.pairAddress} />
+            </div>
+            <div className="mobile-only" style={{ marginLeft: "auto" }}>
+              <Copy value={pair?.pairAddress} />
+            </div>
           </div>
-          <div style={{ marginLeft: "auto" }}>
+          <div className="desktop-only" style={{ marginLeft: "auto" }}>
             <ProvideButton
               to={`/swap?from=${pair?.token0?.tokenAddress}&to=${pair?.token1?.tokenAddress}&type=provide`}
             >
               Provide Liquidity
             </ProvideButton>
           </div>
+        </div>
+        <div
+          className="mobile-only"
+          style={{ textAlign: "center", margin: "10px 0" }}
+        >
+          <ProvideButton
+            to={`/swap?from=${pair?.token0?.tokenAddress}&to=${pair?.token1?.tokenAddress}&type=provide`}
+          >
+            Provide Liquidity
+          </ProvideButton>
         </div>
         <Summary
           data={[
