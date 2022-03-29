@@ -8,6 +8,8 @@ $name: 14px;
   @include flex(space-between);
   // Because only one line of data can exist, fix the height.
   height: (($symbol + $name) * $line-height);
+  width: 100%;
+  position: relative;
 }
 
 .header {
@@ -53,8 +55,10 @@ $name: 14px;
 }
 
 .address {
+  display: inline-block;
   color: $brown;
   font-size: 12px;
+  word-break: break-all;
 
   @include mobile {
     font-size: 9px;
@@ -74,7 +78,7 @@ $name: 14px;
   width: 54px;
   height: 18px;
   margin-left: 10px;
-  padding: 8px 7px 0px 7px;
+  padding: 0 7px;
   border-radius: 9px;
   background-color: #0222ba;
   text-align: center;
@@ -84,13 +88,13 @@ $name: 14px;
 
 .verified {
   width: 40px;
-  height: 18px;
+  height: auto;
   font-family: OpenSans;
   font-size: 10px;
   font-weight: 600;
   font-stretch: normal;
   font-style: normal;
-  line-height: normal;
+  line-height: 18px;
   letter-spacing: normal;
   text-align: center;
   color: #ffffff;

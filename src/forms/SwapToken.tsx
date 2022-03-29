@@ -45,7 +45,7 @@ const SwapToken = ({
 
   return (
     <article className={styles.asset}>
-      <header className={styles.header}>
+      <div className={styles.header}>
         <div className={styles.symbol_name}>
           <div className={styles.symbol}>
             <img
@@ -99,11 +99,11 @@ const SwapToken = ({
           </div>
         </div>
         <div className={styles.token_address}>
-          <p className={styles.address}>
+          <span className={styles.address}>
             {highlightedText(contract_addr || "", highlightString)}
-          </p>
+          </span>
         </div>
-      </header>
+      </div>
 
       <footer className={styles.footer}>
         {balance && gt(balance, 0) && (
