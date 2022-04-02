@@ -199,8 +199,27 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     formData[Key.token2],
     formData[Key.symbol2]
   )
+
+  const [feeAddress, setFeeAddress] = useState("")
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setFeeAddress(
+        tokenInfos.get(formData[Key.feeSymbol])?.contract_addr || ""
+      )
+    }, 3000)
+
+    setFeeAddress(tokenInfos.get(formData[Key.feeSymbol])?.contract_addr || "")
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+    }
+  }, [formData])
+
   const { balance: maxFeeBalance } = useBalance(
-    tokenInfos.get(formData[Key.feeSymbol])?.contract_addr || "",
+    feeAddress,
     formData[Key.feeSymbol]
   )
 
