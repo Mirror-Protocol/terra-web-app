@@ -223,10 +223,14 @@ const Table = <T extends object>(props: TableProps<T>) => {
                       style={{
                         ...(headerCellStyle || cellStyle),
                         ...(column.width ? { width: column.width } : {}),
+                        cursor:
+                          props?.manualPagination || props.disableSortBy
+                            ? "default"
+                            : "pointer",
                       }}
                     >
                       {column.render("Header")}
-                      {!props?.manualPagination && (
+                      {!props?.manualPagination && !props.disableSortBy && (
                         <>
                           &nbsp;
                           <SortIcon

@@ -332,6 +332,7 @@ const PairPage = () => {
                 rowStyle={{ height: 80 }}
                 headerRowStyle={{ height: "auto" }}
                 cellStyle={{ minHeight: 80 }}
+                disableSortBy
                 // wrapperStyle={{ tableLayout: "fixed" }}
                 columns={[
                   {
