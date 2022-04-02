@@ -523,6 +523,12 @@ const Dashboard = () => {
                   {
                     accessor: "liquidityUst",
                     Header: "Liquidity",
+                    sortDescFirst: true,
+                    sortType: (a, b) =>
+                      Number(a.original.liquidityUst) >
+                      Number(b.original.liquidityUst)
+                        ? 1
+                        : -1,
                     width: 230,
                     Cell: ({ cell: { value } }: any) => (
                       <span>
@@ -533,6 +539,12 @@ const Dashboard = () => {
                   {
                     accessor: "volumeUst",
                     Header: "Volume (24H)",
+                    sortDescFirst: true,
+                    sortType: (a, b) =>
+                      Number(a.original.volumeUst) >
+                      Number(b.original.volumeUst)
+                        ? 1
+                        : -1,
                     width: 230,
                     Cell: ({ cell: { value } }: any) => (
                       <span>
@@ -543,6 +555,12 @@ const Dashboard = () => {
                   {
                     accessor: "token0Volume",
                     Header: "Fees (24H)",
+                    sortDescFirst: true,
+                    sortType: (a, b) =>
+                      Number(a.original.volumeUst) >
+                      Number(b.original.volumeUst)
+                        ? 1
+                        : -1,
                     width: 180,
                     Cell: (data: any) => {
                       const { original } = data?.row
@@ -570,6 +588,9 @@ const Dashboard = () => {
                         APR (7D avg)
                       </Tooltip>
                     ),
+                    sortDescFirst: true,
+                    sortType: (a, b) =>
+                      Number(a.original.apr) > Number(b.original.apr) ? 1 : -1,
                     width: 140,
                     Cell: ({ cell: { value } }: any) => (
                       <span>{(Number(value) * 100).toFixed(2)}%</span>
