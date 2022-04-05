@@ -141,8 +141,15 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     mode: "all",
     reValidateMode: "onChange",
   })
-  const { register, watch, setValue, setFocus, formState, trigger, reset } =
-    form
+  const {
+    register,
+    watch,
+    setValue,
+    setFocus,
+    formState,
+    trigger,
+    resetField,
+  } = form
   const [isReversed, setIsReversed] = useState(false)
   const formData = watch()
 
@@ -201,22 +208,30 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   )
 
   const [feeAddress, setFeeAddress] = useState("")
+  const fetchFeeAddress = useCallback(() => {
+    return setFeeAddress(
+      tokenInfos.get(formData[Key.feeSymbol])?.contract_addr || ""
+    )
+  }, [formData])
+
+  useEffect(() => {
+    if (!feeAddress) {
+      fetchFeeAddress()
+    }
+  }, [feeAddress, fetchFeeAddress])
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setFeeAddress(
-        tokenInfos.get(formData[Key.feeSymbol])?.contract_addr || ""
-      )
+      fetchFeeAddress()
     }, 3000)
 
-    setFeeAddress(tokenInfos.get(formData[Key.feeSymbol])?.contract_addr || "")
-
+    fetchFeeAddress()
     return () => {
       if (intervalId) {
         clearInterval(intervalId)
       }
     }
-  }, [formData])
+  }, [formData, fetchFeeAddress])
 
   const { balance: maxFeeBalance } = useBalance(
     feeAddress,
@@ -972,9 +987,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             {
               iconUrl: iconReload,
               onClick: () => {
-                reset()
                 setValue(Key.token1, "")
                 setValue(Key.token2, "")
+                resetField(Key.value1)
+                resetField(Key.value2)
+                resetField(Key.feeSymbol)
+                setFeeAddress("")
               },
               disabled: formState.isSubmitting,
             },

@@ -26,6 +26,10 @@ const FeeCombobox: FC<Props> = ({ selected, onSelect }) => {
   }
 
   useEffect(() => {
+    setSelectedOption(selected)
+  }, [selected])
+
+  useEffect(() => {
     const handleWindowClick = () => {
       setIsOpen(false)
     }

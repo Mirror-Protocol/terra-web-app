@@ -14,6 +14,7 @@ export default (contract_addr: string, symbol: string) => {
 
   const [balance, setBalance] = useState<string>()
   useEffect(() => {
+    let isAborted = false
     try {
       if (address === "" || address === undefined) {
         setBalance("")
@@ -29,22 +30,32 @@ export default (contract_addr: string, symbol: string) => {
           if (denomInfos !== undefined) {
             denomInfos.forEach((denomInfo) => {
               if (denomInfo.denom === localContractAddr) {
-                setBalance(denomInfo.amount)
+                if (!isAborted) {
+                  setBalance(denomInfo.amount)
+                }
                 hasDenom = true
               }
             })
           }
           if (hasDenom === false) {
-            setBalance("")
+            if (!isAborted) {
+              setBalance("")
+            }
           }
         })
       } else {
         loadContractBalance(localContractAddr).then((tokenBalance) => {
-          tokenBalance ? setBalance(tokenBalance.balance) : setBalance("")
+          if (!isAborted) {
+            tokenBalance ? setBalance(tokenBalance.balance) : setBalance("")
+          }
         })
       }
     } catch (error) {
       setBalance("")
+    }
+
+    return () => {
+      isAborted = true
     }
   }, [
     address,
