@@ -48,6 +48,7 @@ import useAutoRouter from "rest/useAutoRouter"
 import { useLCDClient } from "layouts/WalletConnectProvider"
 import useQueryString from "hooks/useQueryString"
 import { useContractsAddress } from "hooks/useContractsAddress"
+import WarningModal from "components/Warning"
 
 enum Key {
   token1 = "token1",
@@ -78,12 +79,15 @@ const Wrapper = styled.div`
 `
 
 const Warning = {
-  color: "red",
-  FontWeight: "bold",
+  color: "#e64c57",
+  fontWeight: "bold",
+  fontSize: "14px",
 }
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
+  const [open, setOpen] = useState(false)
+  const warningModal = useModal()
   const { state } = useLocation<{ symbol: string }>()
   const [from, setFrom] = useQueryString<string>(
     "from",
@@ -344,7 +348,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       : "0"
 
     const spread =
-      tokenInfo2 && poolResult?.estimated
+      tokenInfo2 && !isAutoRouterLoading && poolResult?.estimated
         ? div(
             minus(
               poolResult?.estimated,
@@ -353,6 +357,14 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             poolResult?.estimated
           )
         : ""
+
+    if (gte(spread, "0.01")) {
+      if (!open) {
+        warningModal.setInfo("", percent(spread))
+        warningModal.open()
+        setOpen(true)
+      }
+    }
 
     const taxs = tax.filter((coin) => !coin.amount.equals(0))
 
@@ -446,7 +458,15 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         title: <TooltipIcon content={Tooltip.Swap.Spread}>Spread</TooltipIcon>,
         content: (
           <div style={gte(spread, "0.01") ? Warning : undefined}>
-            <Count format={(value) => `${percent(value)}`}>{spread}</Count>
+            <Count
+              format={(value) =>
+                `${
+                  (gte(spread, "0.01") ? "Low liquidity " : "") + percent(value)
+                }`
+              }
+            >
+              {spread}
+            </Count>
           </div>
         ),
       }),
@@ -733,6 +753,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             lookup(`${profitableQuery?.simulatedAmount}`, data.token2)
           )
           trigger(Key.value2)
+          setOpen(false)
         }
         if (watchName === Key.value2) {
           setValue(
@@ -970,6 +991,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         onSubmit={form.handleSubmit(handleSubmit, handleFailure)}
         style={{ display: formState.isSubmitted ? "none" : "block" }}
       >
+        <div>{open && <WarningModal {...warningModal} />}</div>
         <TabView
           {...tabs}
           extra={[

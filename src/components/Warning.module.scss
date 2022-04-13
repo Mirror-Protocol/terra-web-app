@@ -1,0 +1,92 @@
+@import "src/styles/mixins.module";
+@import "src/styles/variables.module";
+
+.component {
+  @include flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 490px;
+  border-radius: 20px;
+  font-family: $font-family-swap;
+  background-color: white;
+}
+
+.title {
+  margin-top: 30px;
+  font-family: OpenSans;
+  font-size: 20px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  color: #e64c57;
+}
+
+.spread {
+  margin-top: 30px;
+  margin-bottom: 10px;
+  font-family: OpenSans;
+  font-size: 18px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.33;
+  letter-spacing: normal;
+  text-align: center;
+  color: #e64c57;
+}
+
+.message {
+  margin-bottom: 30px;
+  font-family: OpenSans;
+  font-size: 18px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.33;
+  letter-spacing: normal;
+  text-align: center;
+  color: #5c5c5c;
+}
+
+.button {
+  width: 172px;
+  height: 50px;
+  margin-bottom: 30px;
+  padding: 14px 65px;
+  border-radius: 10px;
+  font-family: OpenSans;
+  font-size: 16px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  color: #fff;
+
+  &:not(.disabled):hover {
+    background-color: #0222ba;
+  }
+
+  &.disabled {
+    opacity: 0.3;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: lightgray;
+}
+::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+}
