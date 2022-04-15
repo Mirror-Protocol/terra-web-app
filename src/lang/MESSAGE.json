@@ -32,7 +32,7 @@
     },
     "Warning": {
       "Vote": "Vote cannot be changed after submission.",
-      "SpreadInfo": "Your spreard: ",
+      "SpreadInfo": "Your spread: ",
       "Spread": "Low liquidity may cause unexpected swap results."
     }
   },
