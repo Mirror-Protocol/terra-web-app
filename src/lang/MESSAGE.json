@@ -16,7 +16,8 @@
       "ConnectWallet": "Connect Wallet",
       "ConnectTheWallet": "Connect the Wallet",
       "SelectAsset": "Select an asset",
-      "SelectToken": "Token"
+      "SelectToken": "Token",
+      "Okay": "Okay"
     },
     "Migrate": {
       "Desc": "Balance of the asset(s) below will be changed due to a passed governance poll regarding a corporate event",
@@ -26,10 +27,13 @@
   },
   "Confirm": {
     "Title": {
-      "Confirm": "Confirm Transaction"
+      "Confirm": "Confirm Transaction",
+      "Warning": "Warning"
     },
     "Warning": {
-      "Vote": "Vote cannot be changed after submission."
+      "Vote": "Vote cannot be changed after submission.",
+      "SpreadInfo": "Your spreard: ",
+      "Spread": "Low liquidity may cause unexpected swap results."
     }
   },
   "Result": {
