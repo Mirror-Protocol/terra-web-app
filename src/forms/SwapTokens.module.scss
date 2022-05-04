@@ -52,6 +52,11 @@
 .button {
   padding: 8px 0;
   width: 100%;
+  position: relative;
+  box-sizing: border-box;
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
 
   &:not(.disabled):hover {
     background-color: $semiblue;
@@ -59,6 +64,19 @@
 
   &.disabled {
     opacity: 0.3;
+  }
+
+  &.selected {
+    background-color: $semiblue;
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0%;
+      width: 4px;
+      height: 100%;
+      background-color: $realblue;
+    }
   }
 }
 

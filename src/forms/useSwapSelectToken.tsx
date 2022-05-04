@@ -12,7 +12,7 @@ export interface Config {
   value: string
   symbol: string
   /** Function to call when a value is selected */
-  onSelect: (asset: string) => void
+  onSelect: (asset: string, isUnable?: boolean) => void
   /** Key of price to show from data */
   priceKey?: PriceKey
   /** Key of balance to show from data */
@@ -42,8 +42,8 @@ export default (config: Config, pairs: Pair[], type: string) => {
   const toggle = () => (isOpen ? handleSelect(value) : setIsOpen(!isOpen))
 
   /* select asset */
-  const handleSelect = (asset: string) => {
-    onSelect(asset)
+  const handleSelect = (asset: string, isUnable?: boolean) => {
+    onSelect(asset, isUnable)
     setIsOpen(false)
   }
 

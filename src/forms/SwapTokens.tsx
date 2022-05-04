@@ -16,17 +16,23 @@ const cx = classNames.bind(styles)
 interface Props extends Config {
   isFrom: boolean
   selected?: string
-  onSelect: (asset: string) => void
+  onSelect: (asset: string, isUnable?: boolean) => void
   oppositeValue?: string
   onSelectOpposite: (symbol: string) => void
   pairs: Pair[]
   type: string
 }
 
+const removeDuplicatesFilter = (
+  value: string,
+  index: number,
+  array: string[]
+) => array.indexOf(value) === index
+
 const SwapTokens = ({
   isFrom,
   selected,
-  onSelect,
+  onSelect: handleSelect,
   oppositeValue,
   onSelectOpposite,
   pairs,
@@ -44,21 +50,48 @@ const SwapTokens = ({
   const [searchKeyword, setSearchKeyword] = useState("")
 
   const [addressList, setAddressList] = useState<string[]>([])
+  const [availableAddressList, setAvailableAddressList] = useState<string[]>()
 
   useEffect(() => {
-    let isCancelled = false
-    const fetchAddressList = async () => {
-      if (oppositeValue) {
-        if (type === Type.SWAP) {
-          const res = await loadSwappableTokenAddresses(oppositeValue)
-          if (Array.isArray(res)) {
-            if (!isCancelled) {
-              setAddressList(res)
-            }
-          }
-          return
-        }
+    if (type === Type.SWAP || type === Type.PROVIDE) {
+      setAddressList(
+        pairs
+          .flatMap((pair) => pair.pair)
+          .map((tokenInfo) => tokenInfo.contract_addr)
+          .filter(removeDuplicatesFilter)
+      )
+    } else {
+      setAddressList(
+        (
+          pairs
+            .map((pair) => tokenInfos.get(pair.liquidity_token)?.contract_addr)
+            .filter((item) => !!item) as string[]
+        ).filter(removeDuplicatesFilter)
+      )
+    }
+  }, [pairs, type])
 
+  useEffect(() => {
+    let isAborted = false
+    setAvailableAddressList([])
+
+    const fetchAvailableAddressList = async () => {
+      if (!oppositeValue) {
+        setAvailableAddressList(addressList)
+        return
+      }
+
+      if (type === Type.SWAP) {
+        const res = await loadSwappableTokenAddresses(oppositeValue)
+        if (Array.isArray(res)) {
+          if (!isAborted) {
+            setAvailableAddressList(res)
+          }
+        }
+        return
+      }
+
+      if (type === Type.PROVIDE) {
         const assetItemMap: Set<string> = new Set<string>()
         pairs.forEach((pair) => {
           if (
@@ -76,42 +109,20 @@ const SwapTokens = ({
           }
         })
 
-        if (!isCancelled) {
-          setAddressList(Array.from(assetItemMap.values()))
+        if (!isAborted) {
+          setAvailableAddressList(Array.from(assetItemMap.values()))
         }
-      } else {
-        const assetItemMap: Set<string> = new Set<string>()
-        pairs.forEach((pair) => {
-          if (type === Type.WITHDRAW) {
-            const tokeninfo = tokenInfos.get(pair.liquidity_token)
-            if (tokeninfo !== undefined) {
-              assetItemMap.add(tokeninfo.contract_addr)
-            }
-          } else {
-            pair.pair.forEach((tokenInfo) => {
-              if (!assetItemMap.has(tokenInfo.symbol)) {
-                assetItemMap.add(tokenInfo.contract_addr)
-              }
-            })
-          }
-        })
-
-        if (!isCancelled) {
-          setAddressList(Array.from(assetItemMap.values()))
-        }
+        return
       }
+      setAvailableAddressList(addressList)
     }
 
-    fetchAddressList()
+    fetchAvailableAddressList()
 
     return () => {
-      isCancelled = true
+      isAborted = true
     }
-  }, [loadSwappableTokenAddresses, oppositeValue, pairs, type])
-
-  const handleSelect = (contractAddr: string) => {
-    onSelect(contractAddr)
-  }
+  }, [addressList, loadSwappableTokenAddresses, oppositeValue, pairs, type])
 
   return (
     <div className={styles.component}>
@@ -127,8 +138,12 @@ const SwapTokens = ({
       </section>
 
       <ul className={classNames(styles.list, { loading })}>
-        {addressList && addressList.length > 0 ? (
-          addressList
+        {addressList &&
+        addressList.length > 0 &&
+        availableAddressList &&
+        availableAddressList?.length > 0 ? (
+          [...availableAddressList, ...addressList]
+            .filter(removeDuplicatesFilter)
             .filter((contractAddr) => {
               let symbol = ""
               if (type === Type.WITHDRAW) {
@@ -166,6 +181,8 @@ const SwapTokens = ({
                 verified: false,
               }
 
+              const isUnable = !availableAddressList?.includes(item)
+
               if (type === Type.WITHDRAW) {
                 const tokenInfoList = lpTokenInfos.get(item)
                 swapToken = {
@@ -199,8 +216,11 @@ const SwapTokens = ({
                 <li key={item}>
                   <button
                     type="button"
-                    className={cx(styles.button, { disabled: isSelected })}
-                    onClick={() => handleSelect(item)}
+                    className={cx(styles.button, {
+                      disabled: isUnable,
+                      selected: isSelected,
+                    })}
+                    onClick={() => handleSelect(item, isUnable)}
                   >
                     <SwapToken
                       {...swapToken}

@@ -159,18 +159,24 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     setValue(Key.token2, to || "")
   }, [setValue, to])
 
-  const handleToken1Select = (token: string) => {
+  const handleToken1Select = (token: string, isUnable?: boolean) => {
     searchParams.set("from", token)
     setSearchParams(searchParams)
     if (!formData[Key.value1]) {
       setFocus(Key.value1)
     }
+    if (isUnable) {
+      setValue(Key.token2, "")
+    }
   }
-  const handleToken2Select = (token: string) => {
+  const handleToken2Select = (token: string, isUnable?: boolean) => {
     searchParams.set("to", token)
     setSearchParams(searchParams)
     if (!formData[Key.value2]) {
       setFocus(Key.value2)
+    }
+    if (isUnable) {
+      setValue(Key.token1, "")
     }
   }
   const handleSwitchToken = () => {
