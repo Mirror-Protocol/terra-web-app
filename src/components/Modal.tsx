@@ -1,11 +1,9 @@
 import { FC, useState } from "react"
-import reactModal from "react-modal"
+import ReactModal from "react-modal"
 import styles from "./Modal.module.scss"
 import Icon from "./Icon"
 
-const ReactModal = reactModal as unknown as FC<ReactModal.Props>
-
-reactModal.setAppElement("#terraswap")
+ReactModal.setAppElement("#terraswap")
 
 const Modal: FC<Modal> = ({
   className,

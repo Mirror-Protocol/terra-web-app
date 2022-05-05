@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react"
+import { FC, useEffect, useMemo, useRef, useState } from "react"
 import classNames from "classnames/bind"
 import { useCombineKeys } from "../hooks"
 import { Config } from "./useSelectAsset"
 import SwapToken from "./SwapToken"
 import styles from "./SwapTokens.module.scss"
-import { lpTokenInfos, Pair } from "../rest/usePairs"
+import { lpTokenInfos } from "../rest/usePairs"
 import { Type } from "../pages/Swap"
 import { tokenInfos } from "../rest/usePairs"
 import Loading from "components/Loading"
-import useAPI from "rest/useAPI"
+import { SwapTokenAsset } from "./useSwapSelectToken"
+import { VariableSizeList, ListChildComponentProps } from "react-window"
 import { useContractsAddress } from "hooks/useContractsAddress"
 
 const cx = classNames.bind(styles)
@@ -17,112 +18,95 @@ interface Props extends Config {
   isFrom: boolean
   selected?: string
   onSelect: (asset: string, isUnable?: boolean) => void
-  oppositeValue?: string
-  onSelectOpposite: (symbol: string) => void
-  pairs: Pair[]
   type: string
+  assetList?: SwapTokenAsset[]
 }
 
-const removeDuplicatesFilter = (
-  value: string,
-  index: number,
-  array: string[]
-) => array.indexOf(value) === index
-
 const SwapTokens = ({
-  isFrom,
   selected,
   onSelect: handleSelect,
-  oppositeValue,
-  onSelectOpposite,
-  pairs,
   type,
-  ...props
+  assetList,
+  priceKey,
+  balanceKey,
+  formatTokenName,
 }: Props) => {
-  const { priceKey, balanceKey, formatTokenName } = props
-
+  const listRef = useRef<HTMLUListElement>(null)
   const { loading } = useCombineKeys([priceKey, balanceKey])
-  const { loadSwappableTokenAddresses } = useAPI()
-
   const { isNativeToken } = useContractsAddress()
 
   /* search */
   const [searchKeyword, setSearchKeyword] = useState("")
+  const [listHeight, setListHeight] = useState(250)
 
-  const [addressList, setAddressList] = useState<string[]>([])
-  const [availableAddressList, setAvailableAddressList] = useState<string[]>()
+  const filteredAssetList = useMemo(
+    () =>
+      assetList?.filter(({ contract_addr: contractAddr }) => {
+        let symbol = ""
+        if (type === Type.WITHDRAW) {
+          const tokenInfoList = lpTokenInfos.get(contractAddr)
+          symbol = tokenInfoList
+            ? tokenInfoList[0].symbol + "-" + tokenInfoList[1].symbol
+            : ""
+        } else {
+          const tokenInfo = tokenInfos.get(contractAddr)
+          symbol = tokenInfo ? tokenInfo.symbol : ""
+        }
+
+        return (
+          symbol.toLowerCase().indexOf(searchKeyword.toLowerCase()) >= 0 ||
+          contractAddr.toLowerCase().indexOf(searchKeyword.toLowerCase()) >= 0
+        )
+      }),
+    [assetList, searchKeyword, type]
+  )
+  const assetElements = useMemo(() => {
+    return filteredAssetList?.map((asset) => {
+      const { contract_addr, isUnable } = asset
+      const isSelected = selected === contract_addr || selected === asset.symbol
+      return (
+        <li key={`${contract_addr}-${asset.name}-${asset.symbol}`}>
+          <button
+            type="button"
+            className={cx(styles.button, {
+              disabled: isUnable,
+              selected: isSelected,
+            })}
+            onClick={() => handleSelect(contract_addr, isUnable)}
+          >
+            <SwapToken
+              {...asset}
+              formatTokenName={formatTokenName}
+              highlightString={searchKeyword}
+            />
+          </button>
+        </li>
+      )
+    })
+  }, [
+    filteredAssetList,
+    formatTokenName,
+    handleSelect,
+    searchKeyword,
+    selected,
+  ])
+
+  const Row: FC<ListChildComponentProps> = ({ index, style }) => (
+    <div style={style}>{assetElements?.[index]}</div>
+  )
 
   useEffect(() => {
-    if (type === Type.SWAP || type === Type.PROVIDE) {
-      setAddressList(
-        pairs
-          .flatMap((pair) => pair.pair)
-          .map((tokenInfo) => tokenInfo.contract_addr)
-          .filter(removeDuplicatesFilter)
-      )
-    } else {
-      setAddressList(
-        (
-          pairs
-            .map((pair) => tokenInfos.get(pair.liquidity_token)?.contract_addr)
-            .filter((item) => !!item) as string[]
-        ).filter(removeDuplicatesFilter)
-      )
-    }
-  }, [pairs, type])
-
-  useEffect(() => {
-    let isAborted = false
-    setAvailableAddressList([])
-
-    const fetchAvailableAddressList = async () => {
-      if (!oppositeValue) {
-        setAvailableAddressList(addressList)
-        return
-      }
-
-      if (type === Type.SWAP) {
-        const res = await loadSwappableTokenAddresses(oppositeValue)
-        if (Array.isArray(res)) {
-          if (!isAborted) {
-            setAvailableAddressList(res)
-          }
-        }
-        return
-      }
-
-      if (type === Type.PROVIDE) {
-        const assetItemMap: Set<string> = new Set<string>()
-        pairs.forEach((pair) => {
-          if (
-            oppositeValue === pair.pair[0].contract_addr &&
-            !assetItemMap.has(pair.pair[1].contract_addr)
-          ) {
-            assetItemMap.add(pair.pair[1].contract_addr)
-          }
-
-          if (
-            oppositeValue === pair.pair[1].contract_addr &&
-            !assetItemMap.has(pair.pair[0].contract_addr)
-          ) {
-            assetItemMap.add(pair.pair[0].contract_addr)
-          }
-        })
-
-        if (!isAborted) {
-          setAvailableAddressList(Array.from(assetItemMap.values()))
-        }
-        return
-      }
-      setAvailableAddressList(addressList)
+    const handleWindowResize = () => {
+      setListHeight(listRef.current?.clientHeight || 250)
     }
 
-    fetchAvailableAddressList()
+    window.addEventListener("resize", handleWindowResize)
+    handleWindowResize()
 
     return () => {
-      isAborted = true
+      window.removeEventListener("resize", handleWindowResize)
     }
-  }, [addressList, loadSwappableTokenAddresses, oppositeValue, pairs, type])
+  }, [])
 
   return (
     <div className={styles.component}>
@@ -137,100 +121,20 @@ const SwapTokens = ({
         />
       </section>
 
-      <ul className={classNames(styles.list, { loading })}>
-        {addressList &&
-        addressList.length > 0 &&
-        availableAddressList &&
-        availableAddressList?.length > 0 ? (
-          [...availableAddressList, ...addressList]
-            .filter(removeDuplicatesFilter)
-            .filter((contractAddr) => {
-              let symbol = ""
-              if (type === Type.WITHDRAW) {
-                const tokenInfoList = lpTokenInfos.get(contractAddr)
-                symbol = tokenInfoList
-                  ? tokenInfoList[0].symbol + "-" + tokenInfoList[1].symbol
-                  : ""
-              } else {
-                const tokenInfo = tokenInfos.get(contractAddr)
-                symbol = tokenInfo ? tokenInfo.symbol : ""
-              }
-
-              return (
-                symbol.toLowerCase().indexOf(searchKeyword.toLowerCase()) >=
-                  0 ||
-                contractAddr
-                  .toLowerCase()
-                  .indexOf(searchKeyword.toLowerCase()) >= 0
-              )
-            })
-            .sort((a, b) => {
-              const vA = tokenInfos.get(a)?.verified
-              const vB = tokenInfos.get(b)?.verified
-
-              return vA && vB ? 0 : vB === true ? 1 : vA === true ? -1 : 0
-            })
-            .map((item) => {
-              const isSelected = item === selected
-
-              let swapToken = {
-                symbol: "",
-                name: "",
-                contract_addr: "",
-                icon: [""],
-                verified: false,
-              }
-
-              const isUnable = !availableAddressList?.includes(item)
-
-              if (type === Type.WITHDRAW) {
-                const tokenInfoList = lpTokenInfos.get(item)
-                swapToken = {
-                  symbol: tokenInfoList
-                    ? tokenInfoList[0].symbol + "-" + tokenInfoList[1].symbol
-                    : "",
-                  name: "",
-                  contract_addr: item,
-                  icon: tokenInfoList
-                    ? [tokenInfoList[0].icon, tokenInfoList[1].icon]
-                    : ["", ""],
-                  verified: false,
-                }
-              } else {
-                const tokenInfo = tokenInfos.get(item)
-
-                swapToken = {
-                  symbol: tokenInfo?.symbol || "",
-                  name: tokenInfo?.name || "",
-                  contract_addr: isNativeToken(item) ? "" : item,
-                  icon: [tokenInfo ? tokenInfo.icon : ""],
-                  verified: tokenInfo?.verified || false,
-                }
-              }
-
-              if (!swapToken.symbol) {
-                return undefined
-              }
-
-              return (
-                <li key={item}>
-                  <button
-                    type="button"
-                    className={cx(styles.button, {
-                      disabled: isUnable,
-                      selected: isSelected,
-                    })}
-                    onClick={() => handleSelect(item, isUnable)}
-                  >
-                    <SwapToken
-                      {...swapToken}
-                      formatTokenName={formatTokenName}
-                      highlightString={searchKeyword}
-                    />
-                  </button>
-                </li>
-              )
-            })
+      <ul ref={listRef} className={classNames(styles.list, { loading })}>
+        {assetElements ? (
+          <VariableSizeList
+            height={listHeight}
+            width="100%"
+            itemSize={(index) =>
+              isNativeToken(filteredAssetList?.[index].contract_addr || "")
+                ? 75
+                : 75
+            }
+            itemCount={assetElements.length}
+          >
+            {Row}
+          </VariableSizeList>
         ) : (
           <div
             style={{

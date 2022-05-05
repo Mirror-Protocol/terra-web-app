@@ -1,3 +1,4 @@
+import React from "react"
 import styled, { css } from "styled-components"
 import { NavLink as navLink, useLocation } from "react-router-dom"
 import { useModal } from "components/Modal"
@@ -182,7 +183,7 @@ const Sidebar = () => {
       </Wrapper>
       <SocialMediaList isOpen={isOpen}>
         {socialMediaList.map((item, index) => (
-          <>
+          <React.Fragment key={item.href}>
             <SocialMediaAnchor
               className="desktop-only"
               href={item.href}
@@ -201,7 +202,7 @@ const Sidebar = () => {
               style={{ transitionDelay: `${index * 0.06 + 0.125}s` }}
               iconSrc={item.iconLight}
             />
-          </>
+          </React.Fragment>
         ))}
       </SocialMediaList>
     </>
