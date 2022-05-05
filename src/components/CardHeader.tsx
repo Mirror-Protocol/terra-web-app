@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC, PropsWithChildren } from "react"
 import classNames from "classnames/bind"
 import Icon from "./Icon"
 import LoadingTitle from "./LoadingTitle"
@@ -14,7 +14,11 @@ enum HeaderType {
   ICON,
 }
 
-const CardHeader: FC<Props> = ({ header, title, ...props }) => {
+const CardHeader: FC<PropsWithChildren<Props>> = ({
+  header,
+  title,
+  ...props
+}) => {
   const { icon, description, goBack, action, loading } = props
 
   const headerType = icon

@@ -1,6 +1,6 @@
 import Chart from "components/Chart"
 import Card from "components/Card"
-import React, { useMemo } from "react"
+import { useMemo } from "react"
 import styled from "styled-components"
 import { Link, useParams } from "react-router-dom"
 
@@ -51,7 +51,7 @@ const ProvideButton = styled(Link)`
 `
 
 const PairPage = () => {
-  const { address } = useParams<{ address: string }>()
+  const { address = "" } = useParams<{ address: string }>()
   const { api } = useDashboardAPI()
   const { finder } = useNetwork()
 

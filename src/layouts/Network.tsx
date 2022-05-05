@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { PropsWithChildren } from "react"
 import { useWallet, WalletStatus } from "@terra-money/wallet-provider"
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client"
 import { DefaultOptions } from "@apollo/client"
@@ -10,7 +10,7 @@ export const DefaultApolloClientOptions: DefaultOptions = {
   query: { errorPolicy: "all" },
 }
 
-const Network: FC = ({ children }) => {
+const Network: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const { status } = useWallet()
   const network = useNetwork()
   const client = new ApolloClient({

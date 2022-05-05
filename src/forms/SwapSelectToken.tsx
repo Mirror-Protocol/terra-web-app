@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC, PropsWithChildren } from "react"
 import MESSAGE from "../lang/MESSAGE.json"
 import { lookupSymbol } from "../libs/parse"
 import Icon from "../components/Icon"
@@ -15,7 +15,7 @@ interface Props extends Config {
   onClick: () => void
 }
 
-const SwapSelectToken: FC<Props> = ({
+const SwapSelectToken: FC<PropsWithChildren<Props>> = ({
   isOpen,
   asset,
   type,

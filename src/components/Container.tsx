@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC, PropsWithChildren } from "react"
 import classNames from "classnames/bind"
 import styles from "./Container.module.scss"
 
@@ -9,8 +9,10 @@ interface Props {
   sm?: boolean
 }
 
-const Container: FC<Props> = ({ children, className, sm }) => (
-  <div className={cx(!sm ? "container" : "sm", className)}>{children}</div>
-)
+const Container: FC<PropsWithChildren<Props>> = ({
+  children,
+  className,
+  sm,
+}) => <div className={cx(!sm ? "container" : "sm", className)}>{children}</div>
 
 export default Container

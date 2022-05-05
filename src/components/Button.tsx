@@ -1,11 +1,11 @@
-import React from "react"
+import React, { PropsWithChildren } from "react"
 import classNames from "classnames/bind"
 import Loading from "./Loading"
 import styles from "./Button.module.scss"
 
 const cx = classNames.bind(styles)
 
-const Button = (props: Button) => {
+const Button: React.FC<PropsWithChildren<Button>> = (props) => {
   const { loading, children } = props
   return (
     <div className={styles.middle}>

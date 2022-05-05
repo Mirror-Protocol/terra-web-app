@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "styled-components"
 import Container from "components/Container"
-import { useForm } from "react-hook-form"
+import { SubmitHandler, useForm, WatchObserver } from "react-hook-form"
 import Result from "./Result"
 import TabView from "components/TabView"
-import { useLocation } from "react-router-dom"
+import { useSearchParams } from "react-router-dom"
 import { UST, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
 import { useNetwork, useContract, useAddress, useConnectModal } from "hooks"
 import { lookup, decimal, toAmount } from "libs/parse"
@@ -46,9 +46,7 @@ import Settings, { SettingValues } from "components/Settings"
 import useLocalStorage from "libs/useLocalStorage"
 import useAutoRouter from "rest/useAutoRouter"
 import { useLCDClient } from "layouts/WalletConnectProvider"
-import useQueryString from "hooks/useQueryString"
 import { useContractsAddress } from "hooks/useContractsAddress"
-import WarningModal from "components/Warning"
 
 enum Key {
   token1 = "token1",
@@ -79,21 +77,17 @@ const Wrapper = styled.div`
 `
 
 const Warning = {
-  color: "#e64c57",
-  fontWeight: "bold",
-  fontSize: "14px",
+  color: "red",
+  FontWeight: "bold",
 }
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
-  const [open, setOpen] = useState(false)
-  const warningModal = useModal()
-  const { state } = useLocation<{ symbol: string }>()
-  const [from, setFrom] = useQueryString<string>(
-    "from",
-    type !== Type.WITHDRAW ? state?.symbol ?? ULUNA : InitLP
-  )
-  const [to, setTo] = useQueryString<string>("to", state?.symbol ?? "")
+  const [searchParams, setSearchParams] = useSearchParams()
+  const from =
+    searchParams.get("from") || (type === Type.WITHDRAW ? InitLP : ULUNA)
+  const to = searchParams.get("to")
+
   const { getSymbol, isNativeToken } = useContractsAddress()
   const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI()
   const { fee } = useNetwork()
@@ -129,8 +123,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     defaultValues: {
       [Key.value1]: "",
       [Key.value2]: "",
-      [Key.token1]: from || "",
-      [Key.token2]: to || "",
+      [Key.token1]: "",
+      [Key.token2]: "",
       [Key.feeValue]: "",
       [Key.feeSymbol]: UST,
       [Key.load]: "",
@@ -158,19 +152,23 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const formData = watch()
 
   useEffect(() => {
-    setFrom(formData[Key.token1])
-    setTo(formData[Key.token2])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData])
+    setValue(Key.token1, from || "")
+  }, [setValue, from])
+
+  useEffect(() => {
+    setValue(Key.token2, to || "")
+  }, [setValue, to])
 
   const handleToken1Select = (token: string) => {
-    setValue(Key.token1, token)
+    searchParams.set("from", token)
+    setSearchParams(searchParams)
     if (!formData[Key.value1]) {
       setFocus(Key.value1)
     }
   }
   const handleToken2Select = (token: string) => {
-    setValue(Key.token2, token)
+    searchParams.set("to", token)
+    setSearchParams(searchParams)
     if (!formData[Key.value2]) {
       setFocus(Key.value2)
     }
@@ -348,7 +346,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       : "0"
 
     const spread =
-      tokenInfo2 && !isAutoRouterLoading && poolResult?.estimated
+      tokenInfo2 && poolResult?.estimated
         ? div(
             minus(
               poolResult?.estimated,
@@ -357,14 +355,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             poolResult?.estimated
           )
         : ""
-
-    if (gte(spread, "0.01")) {
-      if (!open) {
-        warningModal.setInfo("", percent(spread))
-        warningModal.open()
-        setOpen(true)
-      }
-    }
 
     const taxs = tax.filter((coin) => !coin.amount.equals(0))
 
@@ -458,15 +448,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         title: <TooltipIcon content={Tooltip.Swap.Spread}>Spread</TooltipIcon>,
         content: (
           <div style={gte(spread, "0.01") ? Warning : undefined}>
-            <Count
-              format={(value) =>
-                `${
-                  (gte(spread, "0.01") ? "Low liquidity " : "") + percent(value)
-                }`
-              }
-            >
-              {spread}
-            </Count>
+            <Count format={(value) => `${percent(value)}`}>{spread}</Count>
           </div>
         ),
       }),
@@ -552,7 +534,17 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
   const { gasPrice } = useGasPrice(formData[Key.feeSymbol])
   const getTax = useCallback(
-    async ({ value1, value2, token1, token2 }) => {
+    async ({
+      value1,
+      value2,
+      token1,
+      token2,
+    }: {
+      value1?: string
+      value2?: string
+      token1?: string
+      token2?: string
+    }) => {
       let newTax = tax
 
       newTax.map((coin) => {
@@ -568,27 +560,26 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         return true
       })
 
-      const taxCap1 = await loadTaxInfo(token1)
-      const taxCap2 = await loadTaxInfo(token2)
       const taxRate = await loadTaxRate()
-      if (
-        token1 &&
-        hasTaxToken(token1) &&
-        (taxCap1 || taxCap1 === "") &&
-        taxRate
-      ) {
-        const tax1 = calcTax(toAmount(value1), taxCap1, taxRate)
-        newTax.set(token1, tax1)
+      if (token1 && hasTaxToken(token1) && taxRate && value1) {
+        const taxCap1 = await loadTaxInfo(token1)
+        if (taxCap1) {
+          const tax1 = calcTax(toAmount(value1), taxCap1, taxRate)
+          newTax.set(token1, tax1)
+        }
       }
       if (
         type === Type.PROVIDE &&
         token2 &&
         hasTaxToken(token2) &&
-        (taxCap2 || taxCap2 === "") &&
-        taxRate
+        taxRate &&
+        value2
       ) {
-        const tax2 = calcTax(toAmount(value2), taxCap2, taxRate)
-        newTax.set(token2, tax2)
+        const taxCap2 = await loadTaxInfo(token2)
+        if (taxCap2) {
+          const tax2 = calcTax(toAmount(value2), taxCap2, taxRate)
+          newTax.set(token2, tax2)
+        }
       }
       return newTax
     },
@@ -604,8 +595,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     getTax({
       value1: formData[Key.value1],
       value2: formData[Key.value2],
-      max1: formData[Key.max1],
-      max2: formData[Key.max2],
       token1: formData[Key.token1],
       token2: formData[Key.token2],
     })
@@ -695,27 +684,27 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     return true
   }
 
-  useEffect(() => {
-    if (type === Type.SWAP || type === Type.PROVIDE) {
-      if (!from || !tokenInfos.get(from)) {
-        setValue(Key.token1, ULUNA)
-        setValue(Key.value1, "")
-      }
-      if (!to || !tokenInfos.get(to)) {
-        setValue(Key.token2, "")
-        setValue(Key.value2, "")
-      }
-    }
+  // useEffect(() => {
+  //   if (type === Type.SWAP || type === Type.PROVIDE) {
+  //     if (!from || !tokenInfos.get(from)) {
+  //       setValue(Key.token1, ULUNA);
+  //       setValue(Key.value1, "");
+  //     }
+  //     if (!to || !tokenInfos.get(to)) {
+  //       setValue(Key.token2, "");
+  //       setValue(Key.value2, "");
+  //     }
+  //   }
 
-    if (type === Type.WITHDRAW) {
-      if (!from || !lpTokenInfos.get(from)) {
-        setValue(Key.token1, InitLP)
-        setValue(Key.value1, "")
-      }
-      setValue(Key.token2, "")
-      setValue(Key.value2, "")
-    }
-  }, [type, setValue, state, from, to])
+  //   if (type === Type.WITHDRAW) {
+  //     if (!from || !lpTokenInfos.get(from)) {
+  //       setValue(Key.token1, InitLP);
+  //       setValue(Key.value1, "");
+  //     }
+  //     setValue(Key.token2, "");
+  //     setValue(Key.value2, "");
+  //   }
+  // }, [type, setValue, from, to]);
 
   useEffect(() => {
     setValue(Key.symbol1, tokenInfo1?.symbol || "")
@@ -737,7 +726,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     setValue(Key.maxFee, maxFeeBalance || "")
   }, [maxFeeBalance, setValue])
 
-  const watchCallback = useCallback(
+  const watchCallback = useCallback<WatchObserver<Record<Key, string>>>(
     (data, { name: watchName, value: watchValue, type: eventType }) => {
       if (!eventType && [Key.value1, Key.value2].includes(watchName as Key)) {
         return
@@ -753,7 +742,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             lookup(`${profitableQuery?.simulatedAmount}`, data.token2)
           )
           trigger(Key.value2)
-          setOpen(false)
         }
         if (watchName === Key.value2) {
           setValue(
@@ -780,6 +768,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   }, [profitableQuery, watchCallback])
 
   useEffect(() => {
+    watch()
     const subscription = watch(watchCallback)
     return () => subscription.unsubscribe()
   }, [watch, watchCallback, profitableQuery])
@@ -858,7 +847,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     window.location.reload()
   }, [form])
 
-  const handleSubmit = useCallback(
+  const handleSubmit = useCallback<SubmitHandler<Partial<Record<Key, string>>>>(
     async (values) => {
       const { token1, token2, value1, value2, feeSymbol, gasPrice } = values
       try {
@@ -925,7 +914,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         let txOptions: CreateTxOptions = {
           msgs,
           memo: undefined,
-          gasPrices: `${gasPrice}${getSymbol(feeSymbol)}`,
+          gasPrices: `${gasPrice}${getSymbol(feeSymbol || "")}`,
         }
 
         const signMsg = await terra.tx.create(
@@ -991,7 +980,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         onSubmit={form.handleSubmit(handleSubmit, handleFailure)}
         style={{ display: formState.isSubmitted ? "none" : "block" }}
       >
-        <div>{open && <WarningModal {...warningModal} />}</div>
         <TabView
           {...tabs}
           extra={[
@@ -1009,8 +997,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             {
               iconUrl: iconReload,
               onClick: () => {
-                setValue(Key.token1, "")
-                setValue(Key.token2, "")
+                searchParams.set("to", "")
+                searchParams.set("from", "")
+                setSearchParams(searchParams)
                 resetField(Key.value1)
                 resetField(Key.value2)
                 resetField(Key.feeSymbol)
@@ -1098,7 +1087,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                           formData[Key.max1],
                           formData[Key.token1]
                         ),
-                        max1: formData[Key.max1],
                       })
 
                       taxs.map((tax) => {

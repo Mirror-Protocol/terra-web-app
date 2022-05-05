@@ -71,10 +71,7 @@ interface TabViewProps {
 }
 
 /* Modal */
-interface Modal {
-  className?: string
-  overlayClassName?: string
-  isOpen: boolean
+interface Modal extends ReactModal.Props {
   open: () => void
   close: () => void
   isCloseBtn?: boolean
