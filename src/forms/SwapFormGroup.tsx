@@ -91,7 +91,7 @@ const SwapFormGroup = ({
         <section className={cx(type === 2 && border)}>
           <section className={styles.wrapper}>
             <section className={styles.field}>
-              {isLoading && <Loading />}
+              {isLoading && <Loading color="#a0a0a0" />}
               {input ? (
                 <input
                   {...input}
