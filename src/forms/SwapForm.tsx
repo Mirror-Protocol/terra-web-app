@@ -47,10 +47,9 @@ import useLocalStorage from "libs/useLocalStorage"
 import useAutoRouter from "rest/useAutoRouter"
 import { useLCDClient } from "layouts/WalletConnectProvider"
 import { useContractsAddress } from "hooks/useContractsAddress"
+import WarningModal from "components/Warning"
 
 enum Key {
-  token1 = "token1",
-  token2 = "token2",
   value1 = "value1",
   value2 = "value2",
   feeValue = "feeValue",
@@ -83,10 +82,12 @@ const Warning = {
 
 const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
+  const [isWarningModalConfirmed, setIsWarningModalConfirmed] = useState(false)
+  const warningModal = useModal()
+
   const [searchParams, setSearchParams] = useSearchParams()
-  const from =
-    searchParams.get("from") || (type === Type.WITHDRAW ? InitLP : ULUNA)
-  const to = searchParams.get("to")
+  const from = searchParams.get("from") || ""
+  const to = searchParams.get("to") || ""
 
   const { getSymbol, isNativeToken } = useContractsAddress()
   const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI()
@@ -112,7 +113,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     ).toFixed(3)}`
   }, [slippageSettings])
 
-  const { pairs } = usePairs()
+  const { pairs, isLoading: isPairsLoading } = usePairs()
   const balanceKey = {
     [Type.SWAP]: BalanceKey.TOKEN,
     [Type.PROVIDE]: BalanceKey.TOKEN,
@@ -123,8 +124,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     defaultValues: {
       [Key.value1]: "",
       [Key.value2]: "",
-      [Key.token1]: "",
-      [Key.token2]: "",
       [Key.feeValue]: "",
       [Key.feeSymbol]: UST,
       [Key.load]: "",
@@ -151,69 +150,68 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const [isReversed, setIsReversed] = useState(false)
   const formData = watch()
 
-  useEffect(() => {
-    setValue(Key.token1, from || "")
-  }, [setValue, from])
+  // useEffect(() => {
+  //   setValue(Key.token1, from || "");
+  // }, [setValue, from]);
+
+  // useEffect(() => {
+  //   setValue(Key.token2, to || "");
+  // }, [setValue, to]);
 
   useEffect(() => {
-    setValue(Key.token2, to || "")
-  }, [setValue, to])
+    if (!from && !to) {
+      setTimeout(() => {
+        searchParams.set("from", type === Type.WITHDRAW ? InitLP : ULUNA)
+        setSearchParams(searchParams)
+      }, 100)
+    }
+  }, [from, searchParams, setSearchParams, to, type])
 
   const handleToken1Select = (token: string, isUnable?: boolean) => {
     searchParams.set("from", token)
-    setSearchParams(searchParams)
     if (!formData[Key.value1]) {
       setFocus(Key.value1)
     }
     if (isUnable) {
-      setValue(Key.token2, "")
+      searchParams.set("to", "")
     }
+    setSearchParams(searchParams)
   }
   const handleToken2Select = (token: string, isUnable?: boolean) => {
     searchParams.set("to", token)
-    setSearchParams(searchParams)
     if (!formData[Key.value2]) {
       setFocus(Key.value2)
     }
     if (isUnable) {
-      setValue(Key.token1, "")
+      searchParams.set("from", "")
     }
+    setSearchParams(searchParams)
   }
   const handleSwitchToken = () => {
     if (!pairSwitchable) {
       return
     }
-    const token1 = formData[Key.token1]
-    const token2 = formData[Key.token2]
-    const key = isReversed ? Key.value1 : Key.value2
-    const value = isReversed ? formData[Key.value2] : formData[Key.value1]
-    handleToken1Select(token2)
-    handleToken2Select(token1)
+    const value = formData[Key.value2]
+    handleToken1Select(to)
+    handleToken2Select(from)
     setIsReversed(!isReversed)
-    setValue(key, value)
+    setTimeout(() => {
+      setValue(Key.value1, value)
+    }, 250)
   }
 
   const tokenInfo1 = useMemo(() => {
-    return tokenInfos.get(formData[Key.token1])
-  }, [formData])
+    return tokenInfos.get(from)
+  }, [from])
 
   const tokenInfo2 = useMemo(() => {
-    return tokenInfos.get(formData[Key.token2])
-  }, [formData])
+    return tokenInfos.get(to)
+  }, [to])
 
-  const pairSwitchable = useMemo(
-    () => formData[Key.token1] !== "" && formData[Key.token2] !== "",
-    [formData]
-  )
+  const pairSwitchable = useMemo(() => from !== "" && to !== "", [from, to])
 
-  const { balance: balance1 } = useBalance(
-    formData[Key.token1],
-    formData[Key.symbol1]
-  )
-  const { balance: balance2 } = useBalance(
-    formData[Key.token2],
-    formData[Key.symbol2]
-  )
+  const { balance: balance1 } = useBalance(from, formData[Key.symbol1])
+  const { balance: balance2 } = useBalance(to, formData[Key.symbol2])
 
   const [feeAddress, setFeeAddress] = useState("")
   const fetchFeeAddress = useCallback(() => {
@@ -248,13 +246,13 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
   const selectToken1 = useSwapSelectToken(
     {
-      value: formData[Key.token1],
+      value: from,
       symbol: formData[Key.symbol1],
       onSelect: handleToken1Select,
       priceKey,
       balanceKey,
       isFrom: true,
-      oppositeValue: formData[Key.token2],
+      oppositeValue: to,
       onSelectOpposite: handleToken2Select,
     },
     pairs,
@@ -263,13 +261,13 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
   const selectToken2 = useSwapSelectToken(
     {
-      value: formData[Key.token2],
+      value: to,
       symbol: formData[Key.symbol2],
       onSelect: handleToken2Select,
       priceKey,
       balanceKey,
       isFrom: false,
-      oppositeValue: formData[Key.token1],
+      oppositeValue: from,
       onSelectOpposite: handleToken1Select,
     },
     pairs,
@@ -277,22 +275,20 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   )
 
   const {
-    pair,
+    pairAddress: selectedPairAddress,
     lpContract,
     poolSymbol1,
     poolSymbol2,
     poolContract1,
     poolContract2,
   } = useMemo(() => {
+    if (isPairsLoading) {
+      return {}
+    }
     const info1 =
-      type === Type.WITHDRAW
-        ? lpTokenInfos.get(formData[Key.token1])?.[0]
-        : tokenInfo1
+      type === Type.WITHDRAW ? lpTokenInfos.get(from)?.[0] : tokenInfo1
     const info2 =
-      type === Type.WITHDRAW
-        ? lpTokenInfos.get(formData[Key.token1])?.[1]
-        : tokenInfo2
-
+      type === Type.WITHDRAW ? lpTokenInfos.get(from)?.[1] : tokenInfo2
     const selected = pairs.find((item) => {
       return (
         item.pair.find((s) => s.contract_addr === info1?.contract_addr) &&
@@ -305,24 +301,24 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     const lpTokenInfo = lpTokenInfos.get(lpContract)
 
     return {
-      pair: contract,
+      pairAddress: contract,
       lpContract,
       poolSymbol1: lpTokenInfo?.[0]?.symbol,
       poolSymbol2: lpTokenInfo?.[1]?.symbol,
       poolContract1: lpTokenInfo?.[0]?.contract_addr,
       poolContract2: lpTokenInfo?.[1]?.contract_addr,
     }
-  }, [formData, pairs, tokenInfo1, tokenInfo2, type])
+  }, [from, pairs, tokenInfo1, tokenInfo2, type, isPairsLoading])
 
   const { isLoading: isAutoRouterLoading, profitableQuery } = useAutoRouter({
-    from: formData[Key.token1],
-    to: formData[Key.token2],
+    from: from,
+    to: to,
     amount: formData[Key.value1],
     type: formState.isSubmitted ? undefined : type,
   })
 
   const { result: poolResult, poolLoading } = usePool(
-    pair,
+    selectedPairAddress,
     formData[Key.symbol1],
     formData[Key.value1],
     type,
@@ -330,6 +326,33 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   )
 
   const [tax, setTax] = useState<Coins>(new Coins())
+
+  const spread = useMemo(() => {
+    return tokenInfo2 && !isAutoRouterLoading && poolResult?.estimated
+      ? div(
+          minus(poolResult?.estimated, toAmount(formData[Key.value2], to)),
+          poolResult?.estimated
+        )
+      : ""
+  }, [formData, isAutoRouterLoading, poolResult?.estimated, to, tokenInfo2])
+
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      if (
+        gte(spread, "0.01") &&
+        !warningModal.isOpen &&
+        !isWarningModalConfirmed
+      ) {
+        warningModal.setInfo("", percent(spread))
+        warningModal.open()
+        setIsWarningModalConfirmed(true)
+      }
+    }, 500)
+
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [isWarningModalConfirmed, spread, warningModal])
 
   const simulationContents = useMemo(() => {
     if (
@@ -350,17 +373,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           decimals: tokenInfo1?.decimals,
         })
       : "0"
-
-    const spread =
-      tokenInfo2 && poolResult?.estimated
-        ? div(
-            minus(
-              poolResult?.estimated,
-              toAmount(formData[Key.value2], formData[Key.token2])
-            ),
-            poolResult?.estimated
-          )
-        : ""
 
     const taxs = tax.filter((coin) => !coin.amount.equals(0))
 
@@ -454,7 +466,15 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         title: <TooltipIcon content={Tooltip.Swap.Spread}>Spread</TooltipIcon>,
         content: (
           <div style={gte(spread, "0.01") ? Warning : undefined}>
-            <Count format={(value) => `${percent(value)}`}>{spread}</Count>
+            <Count
+              format={(value) =>
+                `${
+                  (gte(spread, "0.01") ? "Low liquidity " : "") + percent(value)
+                }`
+              }
+            >
+              {spread}
+            </Count>
           </div>
         ),
       }),
@@ -478,16 +498,16 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       }),
     ]
   }, [
-    find,
     formData,
-    poolResult,
+    type,
     profitableQuery,
     slippageTolerance,
-    type,
-    lpContract,
-    tokenInfo1,
-    tokenInfo2,
+    find,
+    tokenInfo1?.decimals,
     tax,
+    poolResult,
+    lpContract,
+    spread,
   ])
 
   const getMsgs = useCallback(
@@ -601,8 +621,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     getTax({
       value1: formData[Key.value1],
       value2: formData[Key.value2],
-      token1: formData[Key.token1],
-      token2: formData[Key.token2],
+      token1: from,
+      token2: to,
     })
       .then((value) => {
         setTax(value)
@@ -613,17 +633,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       .finally(() => {
         isTaxCalculating.current = false
       })
-  }, [formData, tax, getTax])
+  }, [formData, tax, getTax, from, to])
 
   const validateForm = async (
-    key:
-      | Key.value1
-      | Key.value2
-      | Key.token1
-      | Key.token2
-      | Key.feeValue
-      | Key.feeSymbol
-      | Key.load,
+    key: Key.value1 | Key.value2 | Key.feeValue | Key.feeSymbol | Key.load,
     newValues?: Partial<typeof formData>
   ) => {
     const {
@@ -636,12 +649,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       feeValue,
       feeSymbol,
       maxFee,
-      token1,
-      token2,
     } = { ...formData, ...(newValues || {}) }
 
     if (key === Key.value1) {
-      const taxCap = await loadTaxInfo(token1)
+      const taxCap = await loadTaxInfo(from)
       const taxRate = await loadTaxRate()
       return (
         v.amount(value1, {
@@ -657,7 +668,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           taxRate,
           type,
           decimals: tokenInfo1?.decimals,
-          token: token1,
+          token: from,
         }) || true
       )
     }
@@ -679,7 +690,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             maxFee: "0",
             type,
             decimals: tokenInfo2?.decimals,
-            token: token2,
+            token: to,
           }) || true
         )
       }
@@ -751,23 +762,20 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         return
       }
       if (type === Type.SWAP) {
-        if (
-          [Key.value1, Key.token1, Key.token2, Key.feeSymbol].includes(
-            watchName as Key
-          )
-        ) {
+        if ([Key.value1, Key.feeSymbol].includes(watchName as Key)) {
           setValue(
             Key.value2,
-            lookup(`${profitableQuery?.simulatedAmount}`, data.token2)
+            lookup(`${profitableQuery?.simulatedAmount}`, to)
           )
           trigger(Key.value2)
+          setIsWarningModalConfirmed(false)
         }
         if (watchName === Key.value2) {
           setValue(
             Key.value1,
             lookup(
               div(
-                toAmount(`${data[Key.value2]}`, data[Key.token2]),
+                toAmount(`${data[Key.value2]}`, to),
                 `${profitableQuery?.simulatedAmount}`
               )
             )
@@ -776,15 +784,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         }
       }
     },
-    [profitableQuery, setValue, trigger, type]
+    [profitableQuery, setValue, to, trigger, type]
   )
 
   useEffect(() => {
-    if (profitableQuery) {
-      watchCallback(form.getValues(), { name: Key.token2 })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profitableQuery, watchCallback])
+    watchCallback(form.getValues(), { name: Key.value1, type: "blur" })
+  }, [form, profitableQuery, watchCallback])
 
   useEffect(() => {
     watch()
@@ -797,10 +802,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       case Type.SWAP:
         break
       case Type.PROVIDE:
-        if (poolResult && !poolLoading) {
+        if (poolResult && !poolLoading && tokenInfo2?.contract_addr) {
           setValue(
             Key.value2,
-            lookup(poolResult.estimated, tokenInfo2?.contract_addr)
+            lookup(poolResult.estimated, tokenInfo2.contract_addr)
           )
           setTimeout(() => {
             trigger(Key.value1)
@@ -868,7 +873,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
   const handleSubmit = useCallback<SubmitHandler<Partial<Record<Key, string>>>>(
     async (values) => {
-      const { token1, token2, value1, value2, feeSymbol, gasPrice } = values
+      const { value1, value2, feeSymbol, gasPrice } = values
       try {
         settingsModal.close()
 
@@ -878,8 +883,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
             type: Type.SWAP,
             sender: `${walletAddress}`,
             amount: `${value1}`,
-            from: `${token1}`,
-            to: `${token2}`,
+            from,
+            to,
             max_spread: slippageTolerance,
             belief_price: `${decimal(
               times(
@@ -903,7 +908,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                   decimals: tokenInfo1?.decimals,
                 })
               : "0",
-            symbol: token1,
+            symbol: from,
           })
         } else {
           msgs = await generateContractMessages(
@@ -913,8 +918,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                 sender: `${walletAddress}`,
                 fromAmount: `${value1}`,
                 toAmount: `${value2}`,
-                from: `${token1}`,
-                to: `${token2}`,
+                from: `${from}`,
+                to: `${to}`,
                 slippage: slippageTolerance,
               },
               [Type.WITHDRAW]: {
@@ -956,18 +961,20 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       settingsModal,
       type,
       getSymbol,
+      terra,
+      walletAddress,
       terraExtensionPost,
       generateContractMessages,
-      walletAddress,
+      from,
+      to,
       slippageTolerance,
-      profitableQuery,
-      getMsgs,
-      formData,
-      find,
-      lpContract,
       tokenInfo1,
       tokenInfo2,
-      terra.tx,
+      getMsgs,
+      profitableQuery,
+      find,
+      formData,
+      lpContract,
     ]
   )
 
@@ -1092,24 +1099,18 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                 formData[Key.symbol1]
                   ? async () => {
                       if (type === Type.WITHDRAW) {
-                        setValue(
-                          Key.value1,
-                          lookup(formData[Key.max1], formData[Key.token1])
-                        )
+                        setValue(Key.value1, lookup(formData[Key.max1], from))
                         trigger(Key.value1)
                         return
                       }
                       let taxVal = "0"
                       const taxs = await getTax({
-                        token1: formData[Key.token1],
-                        value1: lookup(
-                          formData[Key.max1],
-                          formData[Key.token1]
-                        ),
+                        token1: from,
+                        value1: lookup(formData[Key.max1], from),
                       })
 
                       taxs.map((tax) => {
-                        if (tax.denom === formData[Key.token1]) {
+                        if (tax.denom === from) {
                           taxVal = tax.toData().amount
                           return false
                         }
@@ -1125,7 +1126,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                         }
                       }
 
-                      maxBalance = lookup(maxBalance, formData[Key.token1])
+                      maxBalance = lookup(maxBalance, from)
                       setValue(Key.value1, maxBalance)
                       trigger(Key.value1)
                     }
@@ -1205,8 +1206,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               isLoading={
                 type === Type.SWAP &&
                 !!formData[Key.value1] &&
-                !!formData[Key.token1] &&
-                !!formData[Key.token2] &&
+                !!from &&
+                !!to &&
                 isAutoRouterLoading
               }
             />
@@ -1247,6 +1248,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           </Container>
         </TabView>
       </form>
+      <WarningModal {...warningModal} />
     </Wrapper>
   )
 }

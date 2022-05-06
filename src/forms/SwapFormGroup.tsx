@@ -116,7 +116,7 @@ const SwapFormGroup = ({
 
             <section className={styles.unit}>{unit}</section>
           </section>
-          {assets && <section className={styles.assets}>{assets}</section>}
+          {assets && <section>{assets}</section>}
         </section>
       </div>
       <div className={styles.bottom}>

@@ -114,7 +114,7 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
     ),
     [STATUS.LOADING]: (
       <div>
-        <Loading className={styles.progress} size={48} />
+        <Loading className={styles.progress} color="#0222ba" size={48} />
         <br />
         <br />
         <p className={styles.hash}>

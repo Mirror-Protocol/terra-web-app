@@ -20,10 +20,10 @@ interface PoolResult {
 }
 
 export default (
-  contract: string,
-  symbol: string,
-  amount: string,
-  type: string,
+  contract?: string,
+  symbol?: string,
+  amount?: string,
+  type?: string,
   balance?: string
 ) => {
   const [poolLoading, setLoading] = useState(true)
@@ -32,6 +32,7 @@ export default (
   const [result, setResult] = useState<PoolResult>()
   useEffect(() => {
     if (contract) {
+      setResult(undefined)
       setLoading(true)
       loadPool(contract)
         .then((res: Pool) => {

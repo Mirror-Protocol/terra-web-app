@@ -109,11 +109,6 @@ $padding: 10px 10px;
   font-size: 12px;
 }
 
-/* assets */
-.assets {
-  margin-top: 10px;
-}
-
 .bottom {
   @include flex;
   align-items: unset;

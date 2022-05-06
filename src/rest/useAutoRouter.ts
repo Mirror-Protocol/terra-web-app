@@ -28,6 +28,9 @@ const useAutoRouter = (params: Params) => {
   const [simulatedAmounts, setSimulatedAmounts] = useState<number[]>([])
   const [autoRefreshTicker, setAutoRefreshTicker] = useState(false)
   const profitableQuery = useMemo(() => {
+    if (!to || !amount) {
+      return undefined
+    }
     if (simulatedAmounts?.length > 0) {
       const index = simulatedAmounts.indexOf(
         Math.max(...simulatedAmounts.map((item) => (!item ? -1 : item)))
@@ -140,9 +143,9 @@ const useAutoRouter = (params: Params) => {
     let isCanceled = false
     const request = async () => {
       const simulateQueries = msgs.map((msg) => {
-        let { contract, execute_msg } = (Array.isArray(msg)
-          ? msg[0]
-          : msg) as any
+        let { contract, execute_msg } = (
+          Array.isArray(msg) ? msg[0] : msg
+        ) as any
 
         if (execute_msg?.send) {
           contract = execute_msg?.send?.contract
@@ -231,10 +234,17 @@ const useAutoRouter = (params: Params) => {
     }
   }, [amount, from, msgs, querySimulate])
 
-  return {
-    isLoading,
-    profitableQuery,
-  }
+  const result = useMemo(() => {
+    if (!from || !to || !type || !amount) {
+      return { profitableQuery: undefined, isLoading: false }
+    }
+    return {
+      isLoading,
+      profitableQuery,
+    }
+  }, [amount, from, isLoading, profitableQuery, to, type])
+
+  return result
 }
 
 export default useAutoRouter
