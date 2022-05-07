@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import {
   KRT,
   LUNA,
@@ -263,7 +263,7 @@ export let lpTokenInfos: Map<string, TokenInfo[]> = new Map<
 
 export let InitLP = ""
 
-export default () => {
+const usePairs = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<Pairs>({ pairs: [] })
   const { loadPairs, loadTokenInfo, loadTokensInfo } = useAPI()
@@ -326,7 +326,7 @@ export default () => {
             tokenInfos.set(tokenInfo.contract_addr, tokenInfo)
           })
         } catch (error) {
-          console.log(error)
+          console.error(error)
         }
 
         ;(networkName === "testnet" ? testnetTokens : mainnetTokens).forEach(
@@ -393,7 +393,7 @@ export default () => {
 
               return pair
             } catch (error) {
-              console.log(error)
+              console.error(error)
             }
             return undefined
           })
@@ -409,7 +409,7 @@ export default () => {
 
       fetchTokensInfo().then(() => fetchPairs())
     } catch (error) {
-      console.log(error)
+      console.error(error)
       setIsLoading(false)
     }
   }, [
@@ -423,6 +423,22 @@ export default () => {
   ])
 
   return { ...result, isLoading, getTokenInfo }
+}
+
+export default usePairs
+
+export const useTokenInfos = () => {
+  const { isLoading: isPairsLoading } = usePairs()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const res = useMemo(() => new Map(tokenInfos), [isPairsLoading])
+  return res
+}
+
+export const useLpTokenInfos = () => {
+  const { isLoading: isPairsLoading } = usePairs()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const res = useMemo(() => new Map(lpTokenInfos), [isPairsLoading])
+  return res
 }
 
 export function isAssetInfo(object: any): object is AssetInfo {

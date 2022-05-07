@@ -20,7 +20,7 @@ import {
 } from "./formHelpers"
 import useSwapSelectToken from "./useSwapSelectToken"
 import SwapFormGroup from "./SwapFormGroup"
-import usePairs, { tokenInfos, lpTokenInfos, InitLP } from "rest/usePairs"
+import usePairs, { InitLP, useLpTokenInfos, useTokenInfos } from "rest/usePairs"
 import useBalance from "rest/useBalance"
 import { minus, gte, times, ceil, div } from "libs/math"
 import { TooltipIcon } from "components/Tooltip"
@@ -88,6 +88,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const from = searchParams.get("from") || ""
   const to = searchParams.get("to") || ""
+
+  const tokenInfos = useTokenInfos()
+  const lpTokenInfos = useLpTokenInfos()
 
   const { getSymbol, isNativeToken } = useContractsAddress()
   const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI()
@@ -202,11 +205,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
   const tokenInfo1 = useMemo(() => {
     return tokenInfos.get(from)
-  }, [from])
+  }, [from, tokenInfos])
 
   const tokenInfo2 = useMemo(() => {
     return tokenInfos.get(to)
-  }, [to])
+  }, [to, tokenInfos])
 
   const pairSwitchable = useMemo(() => from !== "" && to !== "", [from, to])
 
@@ -218,7 +221,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     return setFeeAddress(
       tokenInfos.get(formData[Key.feeSymbol])?.contract_addr || ""
     )
-  }, [formData])
+  }, [formData, tokenInfos])
 
   useEffect(() => {
     if (!feeAddress) {
@@ -308,7 +311,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       poolContract1: lpTokenInfo?.[0]?.contract_addr,
       poolContract2: lpTokenInfo?.[1]?.contract_addr,
     }
-  }, [from, pairs, tokenInfo1, tokenInfo2, type, isPairsLoading])
+  }, [isPairsLoading, type, lpTokenInfos, from, tokenInfo1, tokenInfo2, pairs])
 
   const { isLoading: isAutoRouterLoading, profitableQuery } = useAutoRouter({
     from: from,
@@ -508,6 +511,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     poolResult,
     lpContract,
     spread,
+    tokenInfos,
   ])
 
   const getMsgs = useCallback(

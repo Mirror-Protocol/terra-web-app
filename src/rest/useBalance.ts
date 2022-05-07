@@ -10,6 +10,7 @@ export default (contractAddress: string, symbol: string) => {
   const { loadDenomBalance, loadContractBalance } = useAPI()
 
   const [balance, setBalance] = useState<string>()
+
   useEffect(() => {
     let isAborted = false
     try {
@@ -44,7 +45,7 @@ export default (contractAddress: string, symbol: string) => {
         })
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
       setBalance("")
     }
 

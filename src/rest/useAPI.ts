@@ -177,11 +177,7 @@ const useAPI = () => {
   const loadContractBalance = useCallback(
     async (localContractAddr: string) => {
       const url = getURL(localContractAddr, { balance: { address: address } })
-      console.log("url")
-      console.log(url)
       const res: ContractBalanceResponse = (await axios.get(url)).data
-      console.log("res")
-      console.log(res)
       return res.result
     },
     [address, getURL]
@@ -249,7 +245,7 @@ const useAPI = () => {
         return result
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
 
     while (true) {
@@ -385,7 +381,7 @@ const useAPI = () => {
         const res: TaxResponse = (await axios.get(url)).data
         taxCap = res.result
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
 
       return taxCap
