@@ -14,7 +14,6 @@ const cache = setupCache({
 
 const axios = Axios.create({
   adapter: cache.adapter,
-  headers: { "Cache-Control": "no-cache" },
 })
 
 export default axios
