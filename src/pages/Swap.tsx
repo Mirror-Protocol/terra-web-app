@@ -2,7 +2,7 @@ import React, { memo, useEffect } from "react"
 import SwapPage from "../components/SwapPage"
 import SwapForm from "../forms/SwapForm"
 import Container from "../components/Container"
-import useQueryString from "hooks/useQueryString"
+import { useSearchParams } from "react-router-dom"
 
 export enum Type {
   "SWAP" = "swap",
@@ -17,7 +17,8 @@ export enum Type {
 // ];
 
 const Swap = () => {
-  const [type, setType] = useQueryString<Type>("type", Type.SWAP)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const type = searchParams.get("type") as Type
   const tabs = {
     tabs: [
       { name: Type.SWAP, title: "Swap" },
@@ -28,24 +29,14 @@ const Swap = () => {
   }
 
   useEffect(() => {
-    console.log(
-      `Object.keys(Type).map((key) => Type[key as keyof typeof Type])`
-    )
-    console.log(Object.keys(Type).map((key) => Type[key as keyof typeof Type]))
-    console.log(type)
-    console.log(
-      type &&
-        Object.keys(Type)
-          .map((key) => Type[key as keyof typeof Type])
-          .includes(type)
-    )
     if (
       !type ||
       !Object.keys(Type)
         .map((key) => Type[key as keyof typeof Type])
         .includes(type)
     ) {
-      setType(Type.SWAP)
+      searchParams.set("type", Type.SWAP)
+      setSearchParams(searchParams)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type])

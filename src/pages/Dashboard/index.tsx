@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, ReactElement, useEffect } from "react"
 import styled from "styled-components"
 import { useQuery } from "react-query"
-import { Link, useHistory } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import useDashboardAPI from "rest/useDashboardAPI"
 import { formatMoney, lookup } from "libs/parse"
@@ -19,6 +19,7 @@ import container from "components/Container"
 import Summary from "./Summary"
 import LatestBlock from "components/LatestBlock"
 import Tooltip from "components/Tooltip"
+import Loading from "components/Loading"
 
 const Wrapper = styled(container)`
   width: 100%;
@@ -94,7 +95,7 @@ const LatestBlockWrapper = styled.div`
 `
 
 const Dashboard = () => {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { api } = useDashboardAPI()
   const { data: recent } = useQuery("recent", api.terraswap.getRecent)
   const { data: pairs, isLoading: isPairsLoading } = useQuery(
@@ -116,6 +117,17 @@ const Dashboard = () => {
   const [searchKeyword, setSearchKeyword] = useState("")
   const [selectedVolumeLength, setSelectedVolumeLength] = useState(30)
   const [selectedLiquidityLength, setSelectedLiquidityLength] = useState(30)
+
+  const [tableVisibleFlag, setTableVisibleFlag] = useState(false)
+
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setTableVisibleFlag(true)
+    }, 1000)
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [])
 
   const selectedVolumeChart = useMemo(() => {
     return (chart || []).slice(0, selectedVolumeLength)
@@ -481,129 +493,146 @@ const Dashboard = () => {
               </div>
             </Row>
             <Row>
-              <Table
-                isLoading={isPairsLoading}
-                columns={[
-                  {
-                    accessor: "pairAlias",
-                    Header: "Pairs",
-                    width: 220,
-                    Cell: (data: any) => {
-                      const { original } = data?.row
-                      if (!original) {
-                        return ""
-                      }
-                      const {
-                        token0,
-                        token0Symbol,
-                        token1,
-                        token1Symbol,
-                        pairAlias,
-                      } = original
-                      return (
-                        <>
-                          <AssetIcon address={token0} alt={token0Symbol} />
-                          <AssetIcon
-                            address={token1}
-                            alt={token1Symbol}
-                            style={{ left: -8 }}
-                          />
-                          <span
-                            style={{
-                              display: "inline-block",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            {pairAlias}
-                          </span>
-                        </>
-                      )
+              {!tableVisibleFlag && (
+                <div
+                  style={{
+                    height: 240,
+                    position: "relative",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                  }}
+                >
+                  <Loading size={36} color="#0222ba" />
+                </div>
+              )}
+              {tableVisibleFlag && (
+                <Table
+                  isLoading={isPairsLoading}
+                  columns={[
+                    {
+                      accessor: "pairAlias",
+                      Header: "Pairs",
+                      width: 220,
+                      Cell: (data: any): ReactElement<any, any> | null => {
+                        const { original } = data?.row
+                        if (!original) {
+                          return null
+                        }
+                        const {
+                          token0,
+                          token0Symbol,
+                          token1,
+                          token1Symbol,
+                          pairAlias,
+                        } = original
+                        return (
+                          <>
+                            <AssetIcon address={token0} alt={token0Symbol} />
+                            <AssetIcon
+                              address={token1}
+                              alt={token1Symbol}
+                              style={{ left: -8 }}
+                            />
+                            <span
+                              style={{
+                                display: "inline-block",
+                                verticalAlign: "middle",
+                              }}
+                            >
+                              {pairAlias}
+                            </span>
+                          </>
+                        )
+                      },
                     },
-                  },
-                  {
-                    accessor: "liquidityUst",
-                    Header: "Liquidity",
-                    sortDescFirst: true,
-                    sortType: (a, b) =>
-                      Number(a.original.liquidityUst) >
-                      Number(b.original.liquidityUst)
-                        ? 1
-                        : -1,
-                    width: 230,
-                    Cell: ({ cell: { value } }: any) => (
-                      <span>
-                        {formatMoney(Number(lookup(`${value}`, UST)))} UST
-                      </span>
-                    ),
-                  },
-                  {
-                    accessor: "volumeUst",
-                    Header: "Volume (24H)",
-                    sortDescFirst: true,
-                    sortType: (a, b) =>
-                      Number(a.original.volumeUst) >
-                      Number(b.original.volumeUst)
-                        ? 1
-                        : -1,
-                    width: 230,
-                    Cell: ({ cell: { value } }: any) => (
-                      <span>
-                        {formatMoney(Number(lookup(`${value}`, UST)))} UST
-                      </span>
-                    ),
-                  },
-                  {
-                    accessor: "token0Volume",
-                    Header: "Fees (24H)",
-                    sortDescFirst: true,
-                    sortType: (a, b) =>
-                      Number(a.original.volumeUst) >
-                      Number(b.original.volumeUst)
-                        ? 1
-                        : -1,
-                    width: 180,
-                    Cell: (data: any) => {
-                      const { original } = data?.row
-                      if (!original) {
-                        return ""
-                      }
-                      const { volumeUst } = original
-                      return (
+                    {
+                      accessor: "liquidityUst",
+                      Header: "Liquidity",
+                      sortDescFirst: true,
+                      sortType: (a, b) =>
+                        Number(a.original.liquidityUst) >
+                        Number(b.original.liquidityUst)
+                          ? 1
+                          : -1,
+                      width: 230,
+                      Cell: ({ cell: { value } }: any) => (
                         <span>
-                          {formatMoney(
-                            Number(lookup(`${volumeUst * 0.003}`, UST))
-                          )}{" "}
-                          UST
+                          {formatMoney(Number(lookup(`${value}`, UST)))} UST
                         </span>
-                      )
+                      ),
                     },
-                  },
-                  {
-                    accessor: "apr",
-                    Header: (
-                      <Tooltip
-                        content="Commission APR (7D avg)"
-                        style={{ display: "inline-flex" }}
-                      >
-                        APR (7D avg)
-                      </Tooltip>
-                    ),
-                    sortDescFirst: true,
-                    sortType: (a, b) =>
-                      Number(a.original.apr) > Number(b.original.apr) ? 1 : -1,
-                    width: 140,
-                    Cell: ({ cell: { value } }: any) => (
-                      <span>{(Number(value) * 100).toFixed(2)}%</span>
-                    ),
-                  },
-                ]}
-                data={pairs || []}
-                onRowClick={(row) =>
-                  history.push(`/pairs/${row.original.pairAddress}`)
-                }
-                wrapperStyle={{ tableLayout: "fixed" }}
-                searchKeyword={searchKeyword}
-              />
+                    {
+                      accessor: "volumeUst",
+                      Header: "Volume (24H)",
+                      sortDescFirst: true,
+                      sortType: (a, b) =>
+                        Number(a.original.volumeUst) >
+                        Number(b.original.volumeUst)
+                          ? 1
+                          : -1,
+                      width: 230,
+                      Cell: ({ cell: { value } }: any) => (
+                        <span>
+                          {formatMoney(Number(lookup(`${value}`, UST)))} UST
+                        </span>
+                      ),
+                    },
+                    {
+                      accessor: "token0Volume",
+                      Header: "Fees (24H)",
+                      sortDescFirst: true,
+                      sortType: (a, b) =>
+                        Number(a.original.volumeUst) >
+                        Number(b.original.volumeUst)
+                          ? 1
+                          : -1,
+                      width: 180,
+                      Cell: (data: any): ReactElement<any, any> | null => {
+                        const { original } = data?.row
+                        if (!original) {
+                          return null
+                        }
+                        const { volumeUst } = original
+                        return (
+                          <span>
+                            {formatMoney(
+                              Number(lookup(`${volumeUst * 0.003}`, UST))
+                            )}{" "}
+                            UST
+                          </span>
+                        )
+                      },
+                    },
+                    {
+                      accessor: "apr",
+                      Header: (
+                        <Tooltip
+                          content="Commission APR (7D avg)"
+                          style={{ display: "inline-flex" }}
+                        >
+                          APR (7D avg)
+                        </Tooltip>
+                      ),
+                      sortDescFirst: true,
+                      sortType: (a, b) =>
+                        Number(a.original.apr) > Number(b.original.apr)
+                          ? 1
+                          : -1,
+                      width: 140,
+                      Cell: ({ cell: { value } }: any) => (
+                        <span>{(Number(value) * 100).toFixed(2)}%</span>
+                      ),
+                    },
+                  ]}
+                  data={pairs || []}
+                  onRowClick={(row) =>
+                    navigate(`/pairs/${row.original.pairAddress}`)
+                  }
+                  wrapperStyle={{ tableLayout: "fixed" }}
+                  searchKeyword={searchKeyword}
+                />
+              )}
             </Row>
           </Card>
         </Row>

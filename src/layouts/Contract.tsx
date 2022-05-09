@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { PropsWithChildren } from "react"
 import {
   ContractsAddressProvider,
   useContractsAddressState,
@@ -6,7 +6,7 @@ import {
 import { useContractsAddressTokenState } from "../hooks/useContractsAddressToken"
 import { ContractsAddressTokenProvider } from "../hooks/useContractsAddressToken"
 
-const Contract: FC = ({ children }) => {
+const Contract: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const contractsAddress = useContractsAddressState()
   const contractsAddressToken = useContractsAddressTokenState()
 

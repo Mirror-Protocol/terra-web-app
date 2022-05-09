@@ -3,16 +3,14 @@ import { useContractsAddress } from "hooks/useContractsAddress"
 import { useAddress } from "../hooks"
 import useAPI from "./useAPI"
 
-export default (contract_addr: string, symbol: string) => {
+export default (contractAddress: string, symbol: string) => {
   const address = useAddress()
   const { getSymbol } = useContractsAddress()
 
   const { loadDenomBalance, loadContractBalance } = useAPI()
 
-  const localContractAddr = contract_addr
-  const localSymbol = symbol
-
   const [balance, setBalance] = useState<string>()
+
   useEffect(() => {
     let isAborted = false
     try {
@@ -20,16 +18,12 @@ export default (contract_addr: string, symbol: string) => {
         setBalance("")
         return
       }
-      if (
-        localContractAddr === "" ||
-        localContractAddr === undefined ||
-        !localContractAddr.startsWith("terra")
-      ) {
+      if (!contractAddress?.startsWith("terra")) {
         loadDenomBalance().then((denomInfos) => {
           let hasDenom: boolean = false
           if (denomInfos !== undefined) {
             denomInfos.forEach((denomInfo) => {
-              if (denomInfo.denom === localContractAddr) {
+              if (denomInfo.denom === contractAddress) {
                 if (!isAborted) {
                   setBalance(denomInfo.amount)
                 }
@@ -44,13 +38,14 @@ export default (contract_addr: string, symbol: string) => {
           }
         })
       } else {
-        loadContractBalance(localContractAddr).then((tokenBalance) => {
+        loadContractBalance(contractAddress).then((tokenBalance) => {
           if (!isAborted) {
-            tokenBalance ? setBalance(tokenBalance.balance) : setBalance("")
+            setBalance(tokenBalance?.balance || "")
           }
         })
       }
     } catch (error) {
+      console.error(error)
       setBalance("")
     }
 
@@ -59,12 +54,10 @@ export default (contract_addr: string, symbol: string) => {
     }
   }, [
     address,
-    contract_addr,
     getSymbol,
     loadContractBalance,
     loadDenomBalance,
-    localContractAddr,
-    localSymbol,
+    contractAddress,
     symbol,
   ])
 

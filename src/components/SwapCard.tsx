@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react"
+import { FC, PropsWithChildren, ReactNode } from "react"
 import { Link } from "react-router-dom"
 import classNames from "classnames/bind"
 import styles from "./SwapCard.module.scss"
@@ -32,7 +32,7 @@ export interface Props {
   logoTitle?: string
 }
 
-const SwapCard: FC<Props> = (props) => {
+const SwapCard: FC<PropsWithChildren<Props>> = (props) => {
   const { title, children, to, logoTitle, className, lg, full, shadow } = props
 
   const attrs = {

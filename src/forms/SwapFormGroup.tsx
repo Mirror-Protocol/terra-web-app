@@ -91,7 +91,7 @@ const SwapFormGroup = ({
         <section className={cx(type === 2 && border)}>
           <section className={styles.wrapper}>
             <section className={styles.field}>
-              {isLoading && <Loading />}
+              {isLoading && <Loading color="#a0a0a0" />}
               {input ? (
                 <input
                   {...input}
@@ -116,7 +116,7 @@ const SwapFormGroup = ({
 
             <section className={styles.unit}>{unit}</section>
           </section>
-          {assets && <section className={styles.assets}>{assets}</section>}
+          {assets && <section>{assets}</section>}
         </section>
       </div>
       <div className={styles.bottom}>

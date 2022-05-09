@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC, PropsWithChildren } from "react"
 import MESSAGE from "../lang/MESSAGE.json"
 import { lookupSymbol } from "../libs/parse"
 import Icon from "../components/Icon"
@@ -11,7 +11,12 @@ interface Props extends Config {
   onClick: () => void
 }
 
-const SelectAsset: FC<Props> = ({ isOpen, asset, onClick, ...props }) => {
+const SelectAsset: FC<PropsWithChildren<Props>> = ({
+  isOpen,
+  asset,
+  onClick,
+  ...props
+}) => {
   const { formatTokenName } = props
   return (
     <button type="button" className={styles.button} onClick={onClick}>

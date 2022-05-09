@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React, { FC, PropsWithChildren } from "react"
 import Tippy, { TippyProps } from "@tippyjs/react"
 import classNames from "classnames"
 import { isNil } from "ramda"
@@ -27,7 +27,7 @@ interface Props extends Omit<TippyProps, "children"> {
   style?: React.CSSProperties
 }
 
-const Tooltip: FC<Props> = ({
+const Tooltip: FC<PropsWithChildren<Props>> = ({
   className,
   onClick,
   children,
@@ -58,7 +58,10 @@ const Tooltip: FC<Props> = ({
   )
 }
 
-export const TooltipIcon: FC<Props> = ({ children, ...props }) => (
+export const TooltipIcon: FC<PropsWithChildren<Props>> = ({
+  children,
+  ...props
+}) => (
   <div className={styles.flex}>
     {children}
     <div className={styles.icon}>

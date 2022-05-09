@@ -1,5 +1,5 @@
-import React, { StrictMode } from "react"
-import { render } from "react-dom"
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
 import { BrowserRouter as Router } from "react-router-dom"
 import "./index.scss"
 import "hooks/useContractsAddress"
@@ -9,7 +9,9 @@ import Contract from "./layouts/Contract"
 import App from "./layouts/App"
 import WalletConnectProvider from "./layouts/WalletConnectProvider"
 
-render(
+const container = document.getElementById("terraswap")
+const root = createRoot(container!)
+root.render(
   <StrictMode>
     <WalletConnectProvider>
       <Network>
@@ -21,6 +23,5 @@ render(
         </Contract>
       </Network>
     </WalletConnectProvider>
-  </StrictMode>,
-  document.getElementById("terraswap")
+  </StrictMode>
 )

@@ -4,7 +4,7 @@ import { setupCache } from "axios-cache-adapter"
 const cache = setupCache({
   maxAge: 2500,
   clearOnStale: false,
-  clearOnError: false,
+  clearOnError: true,
   readHeaders: false,
   exclude: {
     query: false,

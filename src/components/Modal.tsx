@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react"
+import { FC, useState } from "react"
 import ReactModal from "react-modal"
 import styles from "./Modal.module.scss"
 import Icon from "./Icon"
@@ -12,25 +12,27 @@ const Modal: FC<Modal> = ({
   close,
   children,
   isCloseBtn = false,
-  url,
-  name,
-}) => (
-  <ReactModal
-    className={`${styles.modal} ${className || ""}`}
-    overlayClassName={`${styles.overlay} ${overlayClassName || ""}`}
-    isOpen={isOpen}
-    onRequestClose={close}
-  >
-    {isCloseBtn && (
-      <div className={styles.close}>
-        <span onClick={close}>
-          <Icon name="close" size={30} color={"#0222BA"} />
-        </span>
-      </div>
-    )}
-    {children}
-  </ReactModal>
-)
+  ...props
+}) => {
+  return (
+    <ReactModal
+      className={`${styles.modal} ${className || ""}`}
+      overlayClassName={`${styles.overlay} ${overlayClassName || ""}`}
+      isOpen={isOpen}
+      onRequestClose={close}
+      {...props}
+    >
+      {isCloseBtn && (
+        <div className={styles.close}>
+          <span onClick={close}>
+            <Icon name="close" size={30} color={"#0222BA"} />
+          </span>
+        </div>
+      )}
+      {children}
+    </ReactModal>
+  )
+}
 
 export default Modal
 

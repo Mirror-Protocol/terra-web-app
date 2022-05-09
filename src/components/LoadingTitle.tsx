@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import { FC, PropsWithChildren } from "react"
 import classNames from "classnames"
 import Loading from "./Loading"
 import styles from "./LoadingTitle.module.scss"
@@ -9,7 +9,12 @@ interface Props {
   className?: string
 }
 
-const LoadingTitle: FC<Props> = ({ loading, size, className, children }) => (
+const LoadingTitle: FC<PropsWithChildren<Props>> = ({
+  loading,
+  size,
+  className,
+  children,
+}) => (
   <div className={classNames(styles.wrapper, className)}>
     {children}
     {loading && <Loading className={styles.loading} size={size} />}

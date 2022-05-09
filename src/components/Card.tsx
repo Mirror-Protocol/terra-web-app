@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react"
+import React, { PropsWithChildren, ReactNode } from "react"
 import { Link } from "react-router-dom"
 import classNames from "classnames/bind"
 import CardHeader from "./CardHeader"
@@ -39,7 +39,7 @@ interface Badge {
   color: string
 }
 
-const Card: FC<Props> = (props) => {
+const Card: React.FC<PropsWithChildren<Props>> = (props) => {
   const { children, to, badges, className, lg, full, shadow } = props
 
   const attrs = {

@@ -245,7 +245,7 @@ const useAPI = () => {
         return result
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
 
     while (true) {
@@ -381,7 +381,7 @@ const useAPI = () => {
         const res: TaxResponse = (await axios.get(url)).data
         taxCap = res.result
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
 
       return taxCap

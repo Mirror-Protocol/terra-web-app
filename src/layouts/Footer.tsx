@@ -23,6 +23,7 @@ const Footer = () => {
       <SocialMediaAnchorList className="mobile-only">
         {socialMediaList.map((item) => (
           <SocialMediaAnchor
+            key={item.href}
             href={item.href}
             target="_blank"
             rel="noopener noreferrer"

@@ -3,7 +3,7 @@ import {
   WalletProvider,
   NetworkInfo,
 } from "@terra-money/wallet-provider"
-import React, { FC } from "react"
+import React, { PropsWithChildren } from "react"
 import networks from "constants/networks"
 import { useModal } from "components/Modal"
 import ConnectListModal from "./ConnectListModal"
@@ -16,7 +16,9 @@ const walletConnectChainIds: Record<number, NetworkInfo> = {
 }
 const defaultNetwork: NetworkInfo = networks.mainnet
 
-const WalletConnectProvider: FC = ({ children }) => {
+const WalletConnectProvider: React.FC<PropsWithChildren<{}>> = ({
+  children,
+}) => {
   const modal = useModal()
 
   return (

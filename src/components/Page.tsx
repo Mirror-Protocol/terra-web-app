@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react"
+import { FC, PropsWithChildren, ReactNode } from "react"
 import Container from "./Container"
 import styles from "./Page.module.scss"
 
@@ -10,7 +10,12 @@ interface Props {
   noBreak?: boolean
 }
 
-const Page: FC<Props> = ({ title, description, children, ...props }) => {
+const Page: FC<PropsWithChildren<Props>> = ({
+  title,
+  description,
+  children,
+  ...props
+}) => {
   const { action, sm, noBreak } = props
 
   return (

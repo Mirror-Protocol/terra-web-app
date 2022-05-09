@@ -1,13 +1,12 @@
-import React, { FC } from "react"
+import React, { FC, PropsWithChildren } from "react"
 import { Link, useLocation } from "react-router-dom"
 import classNames from "classnames"
 import Card from "./Card"
 import { TooltipIcon } from "./Tooltip"
 import styles from "./TabView.module.scss"
 import Modal from "./Modal"
-import qs from "querystring"
 
-const TabView: FC<TabViewProps> = ({
+const TabView: FC<PropsWithChildren<TabViewProps>> = ({
   tabs,
   selectedTabName,
   shadow,
@@ -23,9 +22,7 @@ const TabView: FC<TabViewProps> = ({
         <div className={styles.header}>
           <div className={styles.tabs}>
             {tabs.map((tab) => {
-              const parsed = qs.parse(location.search.replace("?", ""))
-              parsed.type = tab.name
-              const to = { ...location, search: qs.stringify(parsed) }
+              const to = { ...location, search: `type=${tab.name}` }
               const tooltip = tab.tooltip
               const label = tooltip ? (
                 <TooltipIcon content={tooltip}>

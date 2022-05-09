@@ -1,6 +1,6 @@
 import React from "react"
 import styled, { css } from "styled-components"
-import { NavLink as navLink } from "react-router-dom"
+import { NavLink as navLink, useLocation } from "react-router-dom"
 import { useModal } from "components/Modal"
 
 import iconMenu from "images/icon-menu.svg"
@@ -159,6 +159,7 @@ const SocialMediaList = styled.div<{ isOpen?: boolean }>`
 
 const Sidebar = () => {
   const { isOpen, open, close } = useModal()
+  const location = useLocation()
 
   return (
     <>
@@ -170,13 +171,7 @@ const Sidebar = () => {
         <div>
           <NavLink
             to="/"
-            exact
-            isActive={(match, location) => {
-              return location.pathname?.includes("/pairs") ||
-                location.pathname === "/"
-                ? true
-                : false
-            }}
+            className={location.pathname?.includes("/pairs") ? "active" : ""}
             onClick={() => close()}
           >
             Dashboard
@@ -188,7 +183,7 @@ const Sidebar = () => {
       </Wrapper>
       <SocialMediaList isOpen={isOpen}>
         {socialMediaList.map((item, index) => (
-          <>
+          <React.Fragment key={item.href}>
             <SocialMediaAnchor
               className="desktop-only"
               href={item.href}
@@ -207,7 +202,7 @@ const Sidebar = () => {
               style={{ transitionDelay: `${index * 0.06 + 0.125}s` }}
               iconSrc={item.iconLight}
             />
-          </>
+          </React.Fragment>
         ))}
       </SocialMediaList>
     </>

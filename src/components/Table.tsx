@@ -229,49 +229,53 @@ const Table = <T extends object>(props: TableProps<T>) => {
                             : "pointer",
                       }}
                     >
-                      {column.render("Header")}
-                      {!props?.manualPagination && !props.disableSortBy && (
-                        <>
-                          &nbsp;
-                          <SortIcon
-                            sortDirection={
-                              column.isSorted
-                                ? column.isSortedDesc
-                                  ? "desc"
-                                  : "asc"
-                                : false
-                            }
-                          />
-                        </>
-                      )}
+                      <>
+                        {column.render("Header")}
+                        {!props?.manualPagination && !props.disableSortBy && (
+                          <>
+                            &nbsp;
+                            <SortIcon
+                              sortDirection={
+                                column.isSorted
+                                  ? column.isSortedDesc
+                                    ? "desc"
+                                    : "asc"
+                                  : false
+                              }
+                            />
+                          </>
+                        )}
+                      </>
                     </HeaderCell>
                   )
                 })}
               </TableRow>
             ))}
           </thead>
-          <tbody {...getTableBodyProps()}>
-            {page.map((row) => {
-              prepareRow(row)
-              return (
-                <TableRow
-                  {...row.getRowProps()}
-                  hoverEffect={!!onRowClick}
-                  onClick={() => onRowClick && onRowClick(row)}
-                  style={{
-                    ...rowStyle,
-                    cursor: onRowClick ? "pointer" : "unset",
-                  }}
-                >
-                  {row.cells.map((cell) => (
-                    <Cell {...cell.getCellProps()} style={cellStyle}>
-                      {cell.render("Cell")}
-                    </Cell>
-                  ))}
-                </TableRow>
-              )
-            })}
-          </tbody>
+          {!isLoading && (
+            <tbody {...getTableBodyProps()}>
+              {page.map((row) => {
+                prepareRow(row)
+                return (
+                  <TableRow
+                    {...row.getRowProps()}
+                    hoverEffect={!!onRowClick}
+                    onClick={() => onRowClick && onRowClick(row)}
+                    style={{
+                      ...rowStyle,
+                      cursor: onRowClick ? "pointer" : "unset",
+                    }}
+                  >
+                    {row.cells.map((cell) => (
+                      <Cell {...cell.getCellProps()} style={cellStyle}>
+                        {cell.render("Cell")}
+                      </Cell>
+                    ))}
+                  </TableRow>
+                )
+              })}
+            </tbody>
+          )}
         </TableWrapper>
         {isLoading && (
           <div style={{ padding: "120px 0", textAlign: "center" }}>

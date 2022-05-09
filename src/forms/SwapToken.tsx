@@ -3,6 +3,7 @@ import { gt } from "../libs/math"
 import { format, lookupSymbol } from "../libs/parse"
 import styles from "./SwapToken.module.scss"
 import { GetTokenSvg } from "../helpers/token"
+import { useContractsAddress } from "hooks/useContractsAddress"
 
 interface Props extends AssetItem {
   contract_addr?: string
@@ -35,13 +36,14 @@ const highlightedText = (text: string, query: string) => {
 const SwapToken = ({
   symbol,
   balance,
-  contract_addr,
+  contract_addr = "",
   icon,
   verified,
   formatTokenName,
   highlightString = "",
 }: Props) => {
   const symbols = symbol.split("-")
+  const { isNativeToken } = useContractsAddress()
 
   return (
     <article className={styles.asset}>
@@ -99,9 +101,11 @@ const SwapToken = ({
           </div>
         </div>
         <div className={styles.token_address}>
-          <span className={styles.address}>
-            {highlightedText(contract_addr || "", highlightString)}
-          </span>
+          {!isNativeToken(contract_addr) && (
+            <span className={styles.address}>
+              {highlightedText(contract_addr, highlightString)}
+            </span>
+          )}
         </div>
       </div>
 

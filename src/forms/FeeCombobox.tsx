@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react"
+import { FC, PropsWithChildren, useEffect, useState } from "react"
 import classNames from "classnames/bind"
 import styles from "./FeeCombobox.module.scss"
 import { NATIVE_TOKENS } from "constants/constants"
@@ -12,7 +12,7 @@ interface Props {
   onSelect: (asset: string) => void
 }
 
-const FeeCombobox: FC<Props> = ({ selected, onSelect }) => {
+const FeeCombobox: FC<PropsWithChildren<Props>> = ({ selected, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedOption, setSelectedOption] = useState(selected)
 
