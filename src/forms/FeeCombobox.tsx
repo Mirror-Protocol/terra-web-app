@@ -34,7 +34,9 @@ const FeeCombobox: FC<PropsWithChildren<Props>> = ({ selected, onSelect }) => {
       setIsOpen(false)
     }
     if (isOpen) {
-      window.addEventListener("click", handleWindowClick)
+      setTimeout(() => {
+        window.addEventListener("click", handleWindowClick)
+      }, 10)
     }
     return () => {
       window.removeEventListener("click", handleWindowClick)
