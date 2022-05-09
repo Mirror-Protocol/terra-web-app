@@ -1,6 +1,7 @@
 @import "src/styles/mixins.module";
 
 .body {
+  user-select: none;
   @include flex;
   justify-content: flex-end;
   align-items: unset;
