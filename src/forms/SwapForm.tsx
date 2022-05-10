@@ -48,7 +48,6 @@ import useAutoRouter from "rest/useAutoRouter"
 import { useLCDClient } from "layouts/WalletConnectProvider"
 import { useContractsAddress } from "hooks/useContractsAddress"
 import WarningModal from "components/Warning"
-import { AxiosError } from "axios"
 
 enum Key {
   value1 = "value1",
@@ -920,8 +919,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           return
         }
       } catch (error) {
-        console.error((error as AxiosError).message)
-
+        console.error(error)
         setResult(error as any)
       }
     },

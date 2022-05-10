@@ -142,28 +142,33 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
   const content = {
     [STATUS.SUCCESS]: txInfo && (
       <>
-        {response?.msgs?.map((msg, index) => {
-          const msgInfo = matchedMsg?.[index]
+        <div style={{ textAlign: "center", marginTop: 16 }}>
+          <div>
+            {response?.msgs?.map((_, index) => {
+              const msgInfo = matchedMsg?.[index]
 
-          return (
-            <>
-              {msgInfo?.map((msg) =>
-                msg.transformed?.canonicalMsg.map((str) => (
-                  <>
-                    <TxDescription
-                      network={{ ...config, name: network?.name }}
-                      config={{ printCoins: 3 }}
-                    >
-                      {str}
-                    </TxDescription>
-                    <br />
-                  </>
-                ))
-              )}
-              <br />
-            </>
-          )
-        })}
+              return (
+                <>
+                  {msgInfo
+                    ?.filter((msg) => !!msg?.transformed?.canonicalMsg)
+                    .map((msg) =>
+                      msg?.transformed?.canonicalMsg?.map((str) => (
+                        <div style={{ color: "#5c5c5c", fontSize: 18 }}>
+                          <TxDescription
+                            network={{ ...config, name: network?.name }}
+                            config={{ printCoins: 3 }}
+                          >
+                            {str}
+                          </TxDescription>
+                        </div>
+                      ))
+                    )}
+                  <br />
+                </>
+              )
+            })}
+          </div>
+        </div>
         <SwapTxInfo txInfo={txInfo} parserKey={parserKey} />
       </>
     ),

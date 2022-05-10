@@ -54,9 +54,7 @@ const ConfirmDetails = ({ contents, result }: Props) =>
         <li className={styles.item} key={i}>
           {contentArray.map(({ title, content }, j) => (
             <article key={`${i}-${j}`} className={styles.article}>
-              <h2 className={j === 0 ? styles.title : styles.title2}>
-                {title}
-              </h2>
+              <b className={styles.title}>{title}</b>
               {displayStr(content, j)}
             </article>
           ))}

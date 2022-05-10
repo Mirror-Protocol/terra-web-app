@@ -116,14 +116,6 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
                   value: formatAsset(tax.value, symbol),
                 })
               }
-
-              // if (sender?.value === router) {
-              //   reconstructed = []
-              //   reconstructed.push({
-              //     key: "Info",
-              //     value: "Through terraswap router",
-              //   })
-              // }
             }
           } else if (parserKey === "Provide") {
             const action = fromContract.find(
@@ -175,20 +167,6 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
         } else {
           reconstructed.push({ key: "Info", value: "Not whitelisted pair" })
         }
-
-        // if (executeContract) {
-        //   const contract_address = executeContract.find(
-        //     ({ key }) => key === "contract_address"
-        //   )
-
-        //   if (contract_address && contract_address?.value === router) {
-        //     reconstructed = []
-        //     reconstructed.push({
-        //       key: "Info",
-        //       value: "Through terraswap router",
-        //     })
-        //   }
-        // }
 
         return (
           <SwapResultContents
