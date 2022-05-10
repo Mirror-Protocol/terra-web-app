@@ -48,6 +48,7 @@ import useAutoRouter from "rest/useAutoRouter"
 import { useLCDClient } from "layouts/WalletConnectProvider"
 import { useContractsAddress } from "hooks/useContractsAddress"
 import WarningModal from "components/Warning"
+import { AxiosError } from "axios"
 
 enum Key {
   value1 = "value1",
@@ -152,14 +153,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   } = form
   const [isReversed, setIsReversed] = useState(false)
   const formData = watch()
-
-  // useEffect(() => {
-  //   setValue(Key.token1, from || "");
-  // }, [setValue, from]);
-
-  // useEffect(() => {
-  //   setValue(Key.token2, to || "");
-  // }, [setValue, to]);
 
   useEffect(() => {
     if (!from && !to) {
@@ -408,18 +401,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           <Count symbol={formData[Key.symbol2]}>{minimumReceived}</Count>
         ),
       }),
-      // ...insertIf(type === Type.SWAP, {
-      //   title: (
-      //     <TooltipIcon content={Tooltip.Swap.TradingFee}>
-      //       Trading Fee
-      //     </TooltipIcon>
-      //   ),
-      //   content: (
-      //     <Count symbol={formData[Key.symbol2]}>
-      //       {find(infoKey, formData[Key.symbol2])}
-      //     </Count>
-      //   ),
-      // }),
       ...insertIf(type === Type.PROVIDE, {
         title: (
           <TooltipIcon content={Tooltip.Pool.LPfromTx}>LP from Tx</TooltipIcon>
@@ -519,20 +500,29 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       _msg: any,
       {
         amount,
-        symbol,
+        token,
         minimumReceived,
+        beliefPrice,
       }: {
         amount?: string | number
-        symbol?: string
+        token?: string
         minimumReceived?: string | number
+        beliefPrice?: string | number
       }
     ) => {
       const msg = Array.isArray(_msg) ? _msg[0] : _msg
+
+      if (msg?.execute_msg?.swap) {
+        msg.execute_msg.swap.belief_price = `${beliefPrice}`
+      }
+      if (msg?.execute_msg?.send?.msg?.swap) {
+        msg.execute_msg.send.msg.swap.belief_price = `${beliefPrice}`
+      }
       if (msg?.execute_msg?.send?.msg?.execute_swap_operations) {
         msg.execute_msg.send.msg.execute_swap_operations.minimum_receive =
           parseInt(`${minimumReceived}`, 10).toString()
-        if (isNativeToken(symbol || "")) {
-          msg.coins = Coins.fromString(toAmount(`${amount}`) + symbol)
+        if (isNativeToken(token || "")) {
+          msg.coins = Coins.fromString(toAmount(`${amount}`) + token)
         }
 
         msg.execute_msg.send.msg = btoa(
@@ -550,11 +540,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         ).toString()
         msg.execute_msg.execute_swap_operations.offer_amount = toAmount(
           `${amount}`,
-          symbol
+          token
         )
 
-        if (isNativeToken(symbol || "")) {
-          msg.coins = Coins.fromString(toAmount(`${amount}`) + symbol)
+        if (isNativeToken(token || "")) {
+          msg.coins = Coins.fromString(toAmount(`${amount}`) + token)
         }
       }
       return [msg]
@@ -704,28 +694,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     }
     return true
   }
-
-  // useEffect(() => {
-  //   if (type === Type.SWAP || type === Type.PROVIDE) {
-  //     if (!from || !tokenInfos.get(from)) {
-  //       setValue(Key.token1, ULUNA);
-  //       setValue(Key.value1, "");
-  //     }
-  //     if (!to || !tokenInfos.get(to)) {
-  //       setValue(Key.token2, "");
-  //       setValue(Key.value2, "");
-  //     }
-  //   }
-
-  //   if (type === Type.WITHDRAW) {
-  //     if (!from || !lpTokenInfos.get(from)) {
-  //       setValue(Key.token1, InitLP);
-  //       setValue(Key.value1, "");
-  //     }
-  //     setValue(Key.token2, "");
-  //     setValue(Key.value2, "");
-  //   }
-  // }, [type, setValue, from, to]);
 
   useEffect(() => {
     resetField(Key.value1)
@@ -881,28 +849,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       try {
         settingsModal.close()
 
+        if (!profitableQuery?.msg) {
+          return
+        }
         let msgs: any = {}
         if (type === Type.SWAP) {
-          const res = await generateContractMessages({
-            type: Type.SWAP,
-            sender: `${walletAddress}`,
-            amount: `${value1}`,
-            from,
-            to,
-            max_spread: slippageTolerance,
-            belief_price: `${decimal(
-              times(
-                div(value1, value2),
-                Math.pow(
-                  10,
-                  (tokenInfo1?.decimals || 0) - (tokenInfo2?.decimals || 0)
-                ) || 1
-              ),
-              18
-            )}`,
-          })
-
-          msgs = getMsgs(res[profitableQuery?.index || 0], {
+          msgs = getMsgs(profitableQuery?.msg, {
             amount: `${value1}`,
             minimumReceived: profitableQuery
               ? calc.minimumReceived({
@@ -912,7 +864,17 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                   decimals: tokenInfo1?.decimals,
                 })
               : "0",
-            symbol: from,
+            token: from,
+            beliefPrice: `${decimal(
+              times(
+                div(value1, value2),
+                Math.pow(
+                  10,
+                  (tokenInfo1?.decimals || 0) - (tokenInfo2?.decimals || 0)
+                ) || 1
+              ),
+              18
+            )}`,
           })
         } else {
           msgs = await generateContractMessages(
@@ -958,6 +920,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           return
         }
       } catch (error) {
+        console.error((error as AxiosError).message)
+
         setResult(error as any)
       }
     },

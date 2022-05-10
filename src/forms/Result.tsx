@@ -20,10 +20,17 @@ import {
   UserDenied,
 } from "@terra-dev/wallet-types"
 import axios from "rest/request"
+import { AxiosError } from "axios"
 
 export interface ResultProps {
   response?: TxResult
-  error?: UserDenied | CreateTxFailed | TxFailed | TxUnspecifiedError | Error
+  error?:
+    | UserDenied
+    | CreateTxFailed
+    | TxFailed
+    | TxUnspecifiedError
+    | AxiosError
+    | Error
   onFailure: () => void
   parserKey: string
 }
@@ -104,9 +111,11 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
   }[status]
 
   const message =
-    raw_log ??
-    error?.message ??
-    (error instanceof UserDenied && MESSAGE.Result.DENIED)
+    raw_log ||
+    (error as AxiosError)?.response?.data?.message ||
+    error?.message ||
+    (error instanceof UserDenied && MESSAGE.Result.DENIED) ||
+    JSON.stringify(error)
 
   const content = {
     [STATUS.SUCCESS]: txInfo && (
