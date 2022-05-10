@@ -3,9 +3,9 @@ import { setupCache } from "axios-cache-adapter"
 
 const cache = setupCache({
   maxAge: 2500,
-  clearOnStale: false,
+  clearOnStale: true,
   clearOnError: true,
-  readHeaders: false,
+  readHeaders: true,
   exclude: {
     query: false,
     methods: ["post", "patch", "put", "delete"],
