@@ -30,7 +30,7 @@ const Indicator = styled.div<{ status?: "success" | "error" }>`
 `
 
 const Label = styled.div`
-  font-family: OpenSans;
+  font-family: "Open Sans", arial, sans-serif;
   font-size: 14px;
   font-weight: normal;
   font-stretch: normal;

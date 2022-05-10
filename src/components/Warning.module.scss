@@ -4,16 +4,17 @@
 .component {
   @include flex;
   flex-direction: column;
-  width: 100%;
+  width: calc(100% - 32px);
   max-width: 490px;
   border-radius: 20px;
   font-family: $font-family-swap;
   background-color: white;
+  margin: 0 auto;
 }
 
 .title {
   margin-top: 30px;
-  font-family: OpenSans;
+  font-family: "Open Sans", arial, sans-serif;
   font-size: 20px;
   font-weight: bold;
   font-stretch: normal;
@@ -27,7 +28,7 @@
 .spread {
   margin-top: 30px;
   margin-bottom: 10px;
-  font-family: OpenSans;
+  font-family: "Open Sans", arial, sans-serif;
   font-size: 18px;
   font-weight: bold;
   font-stretch: normal;
@@ -40,7 +41,7 @@
 
 .message {
   margin-bottom: 30px;
-  font-family: OpenSans;
+  font-family: "Open Sans", arial, sans-serif;
   font-size: 18px;
   font-weight: normal;
   font-stretch: normal;
@@ -57,7 +58,7 @@
   margin-bottom: 30px;
   padding: 14px 65px;
   border-radius: 10px;
-  font-family: OpenSans;
+  font-family: "Open Sans", arial, sans-serif;
   font-size: 16px;
   font-weight: bold;
   font-stretch: normal;

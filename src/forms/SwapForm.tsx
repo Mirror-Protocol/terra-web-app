@@ -353,9 +353,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const simulationContents = useMemo(() => {
     if (
       !(
-        formData[Key.value1] &&
+        Number(formData[Key.value1]) &&
         formData[Key.symbol1] &&
-        formData[Key.value2] &&
+        Number(formData[Key.value2]) &&
         (type !== Type.WITHDRAW ? formData[Key.symbol2] : true)
       )
     ) {
@@ -1173,7 +1173,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               focused={selectToken2.isOpen}
               isLoading={
                 type === Type.SWAP &&
-                !!formData[Key.value1] &&
+                !!Number(formData[Key.value1]) &&
                 !!from &&
                 !!to &&
                 isAutoRouterLoading

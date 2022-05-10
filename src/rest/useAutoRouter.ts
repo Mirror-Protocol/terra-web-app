@@ -1,6 +1,4 @@
 import { MsgExecuteContract } from "@terra-money/terra.js"
-import { SettingValues } from "components/Settings"
-import { DEFAULT_MAX_SPREAD } from "constants/constants"
 import { useAddress } from "hooks"
 import { div, times } from "libs/math"
 import { toAmount } from "libs/parse"
@@ -23,8 +21,8 @@ function sleep(t: number) {
 
 const useAutoRouter = (params: Params) => {
   const walletAddress = useAddress()
-  const { from, to, type, amount, slippageTolerance } = params
-  // const amount = 1;
+  const { from, to, type, amount: _amount, slippageTolerance } = params
+  const amount = Number(_amount)
   const { generateContractMessages, querySimulate } = useAPI()
   const [isLoading, setIsLoading] = useState(false)
   const [msgs, setMsgs] = useState<
@@ -145,14 +143,18 @@ const useAutoRouter = (params: Params) => {
 
   useEffect(() => {
     const timerId = setInterval(() => {
-      if (window?.navigator?.onLine && window?.document?.hasFocus()) {
+      if (
+        window?.navigator?.onLine &&
+        window?.document?.hasFocus() &&
+        !isLoading
+      ) {
         setAutoRefreshTicker((current) => !current)
       }
     }, 30000)
     return () => {
       clearInterval(timerId)
     }
-  }, [amount, from, to, type])
+  }, [amount, from, to, type, isLoading])
 
   useEffect(() => {
     let isCanceled = false

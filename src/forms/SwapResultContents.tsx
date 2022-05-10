@@ -1,4 +1,5 @@
 import React from "react"
+import { SwapAttribute } from "types/swapTx"
 import useSwapResults from "../hooks/useSwapResults"
 import ConfirmDetails from "./ConfirmDetails"
 
