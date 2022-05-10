@@ -1,4 +1,7 @@
 import { MsgExecuteContract } from "@terra-money/terra.js"
+import { SettingValues } from "components/Settings"
+import { DEFAULT_MAX_SPREAD } from "constants/constants"
+import { useAddress } from "hooks"
 import { div, times } from "libs/math"
 import { toAmount } from "libs/parse"
 import { Type } from "pages/Swap"
@@ -11,6 +14,7 @@ type Params = {
   to: string
   amount: number | string
   type?: Type
+  slippageTolerance?: string | number
 }
 
 function sleep(t: number) {
@@ -18,7 +22,8 @@ function sleep(t: number) {
 }
 
 const useAutoRouter = (params: Params) => {
-  const { from, to, type, amount } = params
+  const walletAddress = useAddress()
+  const { from, to, type, amount, slippageTolerance } = params
   // const amount = 1;
   const { generateContractMessages, querySimulate } = useAPI()
   const [isLoading, setIsLoading] = useState(false)
@@ -102,13 +107,14 @@ const useAutoRouter = (params: Params) => {
       if (type === Type.PROVIDE || type === Type.WITHDRAW) {
         return
       }
+
       const res: MsgExecuteContract[] = await generateContractMessages({
         type: Type.SWAP,
         amount,
         from,
         to,
-        sender: "-",
-        max_spread: 0,
+        sender: walletAddress,
+        max_spread: `${slippageTolerance || 0.01}`,
         belief_price: 0,
       })
       if (Array.isArray(res) && !isCanceled) {
@@ -126,7 +132,16 @@ const useAutoRouter = (params: Params) => {
       clearTimeout(timerId)
       isCanceled = true
     }
-  }, [amount, from, generateContractMessages, to, type, autoRefreshTicker])
+  }, [
+    amount,
+    from,
+    generateContractMessages,
+    to,
+    type,
+    autoRefreshTicker,
+    walletAddress,
+    slippageTolerance,
+  ])
 
   useEffect(() => {
     const timerId = setInterval(() => {

@@ -23,3 +23,8 @@ export default <T>(key: string, initial?: T) => {
 
   return [stored, setValue] as const
 }
+
+export const getLocalStorageValue = (key: string) => {
+  const item = window.localStorage.getItem(key)
+  return item !== null ? JSON.parse(item) : undefined
+}
