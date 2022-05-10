@@ -849,11 +849,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       try {
         settingsModal.close()
 
-        if (!profitableQuery?.msg) {
-          return
-        }
         let msgs: any = {}
         if (type === Type.SWAP) {
+          if (!profitableQuery?.msg) {
+            return
+          }
           msgs = getMsgs(profitableQuery?.msg, {
             amount: `${value1}`,
             minimumReceived: profitableQuery
