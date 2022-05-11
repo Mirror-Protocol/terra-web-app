@@ -354,7 +354,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       !(
         Number(formData[Key.value1]) &&
         formData[Key.symbol1] &&
-        Number(formData[Key.value2]) &&
+        (type === Type.WITHDRAW
+          ? formData[Key.value2]
+          : Number(formData[Key.value2])) &&
         (type !== Type.WITHDRAW ? formData[Key.symbol2] : true)
       )
     ) {
