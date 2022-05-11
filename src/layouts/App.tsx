@@ -50,9 +50,24 @@ const ModalContent = styled.div`
   border-radius: 20px;
   box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.35);
   background-color: #fff;
-  padding: 30px;
+  padding: 30px 0px;
 
   color: #5c5c5c;
+  & > div {
+    position: relative;
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 0 30px;
+  }
+
+  @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
+    padding: 16px 0px;
+    & > div {
+      padding: 0 16px;
+    }
+  }
 `
 
 const ModalTitle = styled.div`
@@ -119,42 +134,44 @@ const App = () => {
             open={() => {}}
           >
             <ModalContent>
-              <ModalTitle>Before you enter Terraswap</ModalTitle>
               <div>
-                Terraswap is a decentralized exchange on Terra blockchain.
-                Trading and providing liquidity on Terraswap is at your own
-                risk, without warranties of any kind. Please read the
-                document(link) carefully and understand how Terraswap works
-                before using it.
-              </div>
-              <br />
-              <div>
-                I acknowledge and agree that I am responsible for various losses
-                of assets by making transactions on Terraswap, including swap,
-                liquidity provision/withdrawal, etc. The entities involved in
-                this site are not liable for any damages resulting from my use
-                of Terraswap.
-              </div>
-              <br />
-              <div style={{ textAlign: "center" }}>
-                <Checkbox
-                  onClick={() => setDisclaimerAgreed((current) => !current)}
-                  checked={disclaimerAgreed}
+                <ModalTitle>Before you enter Terraswap</ModalTitle>
+                <div>
+                  Terraswap is a decentralized exchange on Terra blockchain.
+                  Trading and providing liquidity on Terraswap is at your own
+                  risk, without warranties of any kind. Please read the
+                  document(link) carefully and understand how Terraswap works
+                  before using it.
+                </div>
+                <br />
+                <div>
+                  I acknowledge and agree that I am responsible for various
+                  losses of assets by making transactions on Terraswap,
+                  including swap, liquidity provision/withdrawal, etc. The
+                  entities involved in this site are not liable for any damages
+                  resulting from my use of Terraswap.
+                </div>
+                <br />
+                <div style={{ textAlign: "center" }}>
+                  <Checkbox
+                    onClick={() => setDisclaimerAgreed((current) => !current)}
+                    checked={disclaimerAgreed}
+                  >
+                    I understand the risks and would like to proceed
+                  </Checkbox>
+                </div>
+                <br />
+                <Button
+                  size="lg"
+                  disabled={!disclaimerAgreed}
+                  onClick={() => {
+                    window.localStorage.setItem("disclaimerAgreed", "yes")
+                    disclaimerModal.close()
+                  }}
                 >
-                  I understand the risks and would like to proceed
-                </Checkbox>
+                  Agree and Proceed
+                </Button>
               </div>
-              <br />
-              <Button
-                size="lg"
-                disabled={!disclaimerAgreed}
-                onClick={() => {
-                  window.localStorage.setItem("disclaimerAgreed", "yes")
-                  disclaimerModal.close()
-                }}
-              >
-                Agree and Proceed
-              </Button>
             </ModalContent>
           </Modal>
         </ContractProvider>
