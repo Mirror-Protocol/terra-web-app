@@ -50,14 +50,12 @@ const displayStr = (content: any, index: number) => {
 const ConfirmDetails = ({ contents, result }: Props) =>
   !contents ? null : (
     <ul className={styles.list}>
-      {contents.map((contentArray, index) => (
-        <li className={styles.item} key={index}>
-          {contentArray.map(({ title, content }, index) => (
-            <article className={styles.article}>
-              <h2 className={index === 0 ? styles.title : styles.title2}>
-                {title}
-              </h2>
-              {displayStr(content, index)}
+      {contents.map((contentArray, i) => (
+        <li className={styles.item} key={i}>
+          {contentArray.map(({ title, content }, j) => (
+            <article key={`${i}-${j}`} className={styles.article}>
+              <b className={styles.title}>{title}</b>
+              {displayStr(content, j)}
             </article>
           ))}
         </li>

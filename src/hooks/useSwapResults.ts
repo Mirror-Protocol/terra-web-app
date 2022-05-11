@@ -1,3 +1,5 @@
+import { SwapAttribute } from "types/swapTx"
+
 export default (parserKey: string, results: SwapAttribute[]) => {
   let res = []
 

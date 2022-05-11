@@ -1781,6 +1781,25 @@
   resolved "https://registry.yarnpkg.com/@terra-dev/wallet-types/-/wallet-types-3.7.0.tgz#8ec0faec3c3af6cec5f3e84deb5d1fca1281d6a4"
   integrity sha512-6yD050ipsU5BLn5lpiZioYjPKQMVyhXsrTFm8h5BCY7usQ/NVYmUeZBLyodIa0+wNE/EsU/EKSGD5pSbnXVMsA==
 
+"@terra-money/log-finder-ruleset@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@terra-money/log-finder-ruleset/-/log-finder-ruleset-3.0.0.tgz#3dfd7cef0dd232bcf6e77f0b3311b39e7bda39a0"
+  integrity sha512-+M6MrJMePQp2OWoliyYWyTBKF65lWCgHjY0Oq8Jka6apPBNCW/xCj17jd4o6bfN5mTa3ae8fnbc/0gK9ycdmgQ==
+  dependencies:
+    "@terra-money/log-finder" "^1.1.6"
+
+"@terra-money/log-finder@^1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@terra-money/log-finder/-/log-finder-1.1.6.tgz#501226bc92446dd2514b5d0e08cb24c795450501"
+  integrity sha512-QYmkhlCu14foyy2szZfDjQnncoXvIUHMUsrxdW7Fcq1UOM7ecmeQC35eX5JXeX3tRiPVjFaukbNoIwFYFGTJWg==
+
+"@terra-money/react-base-components@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@terra-money/react-base-components/-/react-base-components-2.0.0.tgz#073890e4ad795dc66ff48ef7c134db5c4410b6e1"
+  integrity sha512-WDUd9zgP6L6rMQ4AlLrt6RYp59MV9yctqjPZKeWb5S3URQkL06a5LIpwP4j79TrxJfotMhmCBKFXQ8zVU75YKA==
+  dependencies:
+    terra-utils "^1.1.2"
+
 "@terra-money/terra.js@^3.0.4":
   version "3.0.11"
   resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-3.0.11.tgz#55616723a2c8b0b53e321e9331db45a50ee9e068"
@@ -2175,6 +2194,11 @@
   resolved "https://registry.yarnpkg.com/@types/numeral/-/numeral-0.0.28.tgz#e43928f0bda10b169b6f7ecf99e3ddf836b8ebe4"
   integrity sha512-Sjsy10w6XFHDktJJdXzBJmoondAKW+LcGpRFH+9+zXEDj0cOH8BxJuZA9vUDSMAzU1YRJlsPKmZEEiTYDlICLw==
 
+"@types/numeral@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@types/numeral/-/numeral-2.0.2.tgz#8ea2c4f4e64c0cc948ad7da375f6f827778a7912"
+  integrity sha512-A8F30k2gYJ/6e07spSCPpkuZu79LCnkPTvqmIWQzNGcrzwFKpVOydG41lNt5wZXjSI149qjyzC2L1+F2PD/NUA==
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
@@ -2200,7 +2224,7 @@
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.7.tgz#63bb7d067db107cc1e457c303bc25d511febf6cb"
   integrity sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==
 
-"@types/ramda@^0.27.29":
+"@types/ramda@^0.27.29", "@types/ramda@^0.27.45":
   version "0.27.66"
   resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.27.66.tgz#f1a23d13b0087d806a62e3ff941e5e59b3318999"
   integrity sha512-i2YW+E2U6NfMt3dp0RxNcejox+bxJUNDjB7BpYuRuoHIzv5juPHkJkNgcUOu+YSQEmaWu8cnAo/8r63C0NnuVA==
@@ -10692,6 +10716,18 @@ terminal-link@^2.0.0:
     ansi-escapes "^4.2.1"
     supports-hyperlinks "^2.0.0"
 
+terra-utils@^1.1.2:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/terra-utils/-/terra-utils-1.3.3.tgz#2abc71b94f1bff48e7758fd58f3ed55cea305997"
+  integrity sha512-axFg9meb9iPnMGORqYnz3cMJa7oXkBLRY/E8DP43hW0itkL3KU6sflOs7XhFLxJs0mEDMERo9IrioHvA0FzXpA==
+  dependencies:
+    "@types/numeral" "^2.0.2"
+    "@types/ramda" "^0.27.45"
+    bignumber.js "^9.0.1"
+    numeral "^2.0.6"
+    ramda "^0.27.1"
+    tiny-warning "^1.0.3"
+
 terser-webpack-plugin@^5.1.3, terser-webpack-plugin@^5.2.5:
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/terser-webpack-plugin/-/terser-webpack-plugin-5.3.1.tgz#0320dcc270ad5372c1e8993fabbd927929773e54"
@@ -10759,6 +10795,11 @@ tiny-secp256k1@^1.1.3:
     create-hmac "^1.1.7"
     elliptic "^6.4.0"
     nan "^2.13.2"
+
+tiny-warning@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
+  integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
 
 tippy.js@^6.3.1:
   version "6.3.7"

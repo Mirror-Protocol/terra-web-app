@@ -48,7 +48,6 @@ import useAutoRouter from "rest/useAutoRouter"
 import { useLCDClient } from "layouts/WalletConnectProvider"
 import { useContractsAddress } from "hooks/useContractsAddress"
 import WarningModal from "components/Warning"
-import { AxiosError } from "axios"
 
 enum Key {
   value1 = "value1",
@@ -353,9 +352,9 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const simulationContents = useMemo(() => {
     if (
       !(
-        formData[Key.value1] &&
+        Number(formData[Key.value1]) &&
         formData[Key.symbol1] &&
-        formData[Key.value2] &&
+        Number(formData[Key.value2]) &&
         (type !== Type.WITHDRAW ? formData[Key.symbol2] : true)
       )
     ) {
@@ -920,8 +919,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           return
         }
       } catch (error) {
-        console.error((error as AxiosError).message)
-
+        console.error(error)
         setResult(error as any)
       }
     },
@@ -1173,7 +1171,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               focused={selectToken2.isOpen}
               isLoading={
                 type === Type.SWAP &&
-                !!formData[Key.value1] &&
+                !!Number(formData[Key.value1]) &&
                 !!from &&
                 !!to &&
                 isAutoRouterLoading

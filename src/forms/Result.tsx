@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import classNames from "classnames/bind"
 
 import { MAX_TX_POLLING_RETRY, TX_POLLING_INTERVAL } from "constants/constants"
@@ -22,6 +22,16 @@ import {
 import axios from "rest/request"
 import { AxiosError } from "axios"
 
+import { useMemo } from "react"
+import {
+  createActionRuleSet,
+  createLogMatcherForActions,
+  getTxCanonicalMsgs,
+} from "@terra-money/log-finder-ruleset"
+import { SwapTxInfo as ISwapTxInfo } from "types/swapTx"
+import { TxInfo } from "@terra-money/terra.js"
+import { TxDescription } from "@terra-money/react-base-components"
+import { useLCDClient } from "@terra-money/wallet-provider"
 export interface ResultProps {
   response?: TxResult
   error?:
@@ -44,10 +54,22 @@ enum STATUS {
 }
 
 const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
+  const network = useNetwork()
+  const { config } = useLCDClient()
+
   const txHash = response?.result?.txhash ?? ""
   const raw_log = response?.result?.raw_log ?? ""
   /* polling */
-  const [txInfo, setTxInfo] = useState<SwapTxInfo>()
+  const [txInfo, setTxInfo] = useState<ISwapTxInfo>()
+
+  const matchedMsg = useMemo(() => {
+    if (!txInfo || !network?.name) {
+      return undefined
+    }
+    const actionRules = createActionRuleSet(network?.name)
+    const logMatcher = createLogMatcherForActions(actionRules)
+    return getTxCanonicalMsgs(txInfo as unknown as TxInfo, logMatcher)
+  }, [network, txInfo])
 
   const [status, setStatus] = useState<STATUS>(STATUS.LOADING)
   const { fcd } = useNetwork()
@@ -119,7 +141,36 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
 
   const content = {
     [STATUS.SUCCESS]: txInfo && (
-      <SwapTxInfo txInfo={txInfo} parserKey={parserKey} />
+      <>
+        <div style={{ textAlign: "center", marginTop: 16 }}>
+          <div>
+            {response?.msgs?.map((_, index) => {
+              const msgInfo = matchedMsg?.[index]
+
+              return (
+                <>
+                  {msgInfo
+                    ?.filter((msg) => !!msg?.transformed?.canonicalMsg)
+                    .map((msg) =>
+                      msg?.transformed?.canonicalMsg?.map((str) => (
+                        <div style={{ color: "#5c5c5c", fontSize: 18 }}>
+                          <TxDescription
+                            network={{ ...config, name: network?.name }}
+                            config={{ printCoins: 3 }}
+                          >
+                            {str}
+                          </TxDescription>
+                        </div>
+                      ))
+                    )}
+                  <br />
+                </>
+              )
+            })}
+          </div>
+        </div>
+        <SwapTxInfo txInfo={txInfo} parserKey={parserKey} />
+      </>
     ),
     [STATUS.LOADING]: (
       <div>

@@ -1,39 +1,21 @@
-interface SwapTxInfos {
-  TxInfos: SwapTxInfo[]
-}
-
-interface SwapTxInfo {
-  txhash: string
-
-  tx: {
-    value: {
-      fee: { amount: FeeAmount[] }
-      memo: string
-    }
-  }
-
-  raw_log?: string
-
-  logs: SwapTxLog[]
-}
+import { Event, TxInfo, TxLog } from "@terra-money/terra.js"
 
 interface FeeAmount {
   amount: string
   denom: string
 }
 
-interface SwapTxLog {
-  events: SwapTxEvent[]
+interface SwapAttribute extends EventKV {
+  key: string
+  value: string
 }
-
-interface SwapTxEvent {
+interface SwapTxEvent extends Event {
   attributes: SwapAttribute[]
   type: string
 }
 
-interface SwapAttribute {
-  key: string
-  value: string
+interface SwapTxLog extends TxLog {
+  events: SwapTxEvent[]
 }
 
 /* Tax */
@@ -49,4 +31,17 @@ interface SwapTaxData {
 interface SwapTax {
   rate?: string
   cap?: string
+}
+
+interface SwapTxInfo extends TxInfo {
+  tx: {
+    value: {
+      fee: { amount: FeeAmount[] }
+      memo: string
+    }
+  }
+  logs: SwapTxLog[]
+}
+interface SwapTxInfos {
+  TxInfos: SwapTxInfo[]
 }

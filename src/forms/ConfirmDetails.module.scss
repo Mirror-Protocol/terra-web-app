@@ -2,32 +2,29 @@
 @import "src/styles/variables.module";
 
 .item {
-  border-top: 1px solid #b5b5b5;
-  padding-top: 10px;
-  padding-bottom: 13px;
+  display: block;
 }
 
-.item:last-child {
-  border-bottom: 1px solid #b5b5b5;
+.item:first-child {
+  border-top: 1px solid #b5b5b5;
+  margin-top: 36px;
+  padding-top: 4px;
 }
 
 .article {
   @include flex;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .title,
 .content {
   flex: 1;
   display: flex;
-  margin-top: 6px;
 }
 
 .title {
   color: #5c5c5c;
   font-size: 14px;
-  font-weight: 600;
-  padding-top: 5px;
 }
 
 .content {
@@ -44,7 +41,7 @@
   flex: 3;
   justify-content: flex-end;
   color: #4360e5;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 34px;
   text-align: right;
   white-space: pre-line;
@@ -56,19 +53,9 @@
   justify-content: flex-end;
 }
 
-.title1,
 .content1 {
-}
-
-.title1 {
   color: #5c5c5c;
   font-size: 14px;
-  font-weight: 600;
-}
-
-.content1 {
-  color: #5c5c5c;
-  font-size: 22px;
   font-weight: bold;
   text-align: right;
   white-space: pre-line;
@@ -76,18 +63,9 @@
   align-self: flex-end;
 }
 
-.title2 {
-  margin-top: 6px;
-  color: #5c5c5c;
-  font-size: 14px;
-  font-weight: normal;
-  align-self: flex-end;
-}
-
 .content2 {
   color: #5c5c5c;
   font-size: 14px;
-  line-height: 28px;
   font-weight: 600;
   text-align: right;
   white-space: pre-line;
