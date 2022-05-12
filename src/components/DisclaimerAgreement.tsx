@@ -75,15 +75,16 @@ const Disclaimer = () => {
           <div>
             Terraswap is a decentralized exchange on Terra blockchain. Trading
             and providing liquidity on Terraswap is at your own risk, without
-            warranties of any kind. Please read the document(
+            warranties of any kind. Please read the&nbsp;
             <a
               href="https://docs.terraswap.io/"
               target="_blank"
               rel="noopener noreferrer"
+              style={{ fontWeight: 700 }}
             >
-              link
+              document
             </a>
-            ) carefully and understand how Terraswap works before using it.
+            &nbsp;carefully and understand how Terraswap works before using it.
           </div>
           <br />
           <div style={{ marginBottom: 30 }}>
