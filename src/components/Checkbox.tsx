@@ -75,6 +75,10 @@ const Wrapper = styled.label<CheckboxProps>`
     background-image: url(${iconChecked});
   }
 
+  & > div {
+    line-height: 18px;
+  }
+
   & > input:checked + span::before {
     background-position: 50% 50%;
   }

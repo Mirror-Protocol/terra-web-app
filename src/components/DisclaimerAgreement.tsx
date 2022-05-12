@@ -21,10 +21,19 @@ const ModalContent = styled.div`
     max-height: 80vh;
     overflow-y: auto;
     padding: 0 30px;
+
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.71;
+    letter-spacing: normal;
+    text-align: left;
+    color: #5c5c5c;
   }
 
   @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
-    padding: 16px 0px;
+    padding: 30px 0px;
     & > div {
       padding: 0 16px;
     }
@@ -77,15 +86,16 @@ const Disclaimer = () => {
             ) carefully and understand how Terraswap works before using it.
           </div>
           <br />
-          <div>
+          <div style={{ marginBottom: 30 }}>
             I acknowledge and agree that I am responsible for various losses of
             assets by making transactions on Terraswap, including swap,
             liquidity provision/withdrawal, etc. The entities involved in this
             site are not liable for any damages resulting from my use of
             Terraswap.
           </div>
-          <br />
-          <div style={{ textAlign: "center", padding: "0 26px" }}>
+          <div
+            style={{ textAlign: "center", padding: "0 26px", marginBottom: 30 }}
+          >
             <Checkbox
               onClick={() => setDisclaimerAgreed((current) => !current)}
               checked={disclaimerAgreed}
@@ -93,7 +103,6 @@ const Disclaimer = () => {
               I understand the risks and would like to proceed
             </Checkbox>
           </div>
-          <br />
           <Button
             size="lg"
             disabled={!disclaimerAgreed}
