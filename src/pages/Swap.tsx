@@ -36,7 +36,7 @@ const Swap = () => {
         .includes(type)
     ) {
       searchParams.set("type", Type.SWAP)
-      setSearchParams(searchParams)
+      setSearchParams(searchParams, { replace: true })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type])

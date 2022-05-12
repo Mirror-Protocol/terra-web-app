@@ -158,7 +158,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     if (!from && !to) {
       setTimeout(() => {
         searchParams.set("from", type === Type.WITHDRAW ? InitLP : ULUNA)
-        setSearchParams(searchParams)
+        setSearchParams(searchParams, { replace: true })
       }, 100)
     }
   }, [from, searchParams, setSearchParams, to, type])
@@ -171,7 +171,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     if (isUnable) {
       searchParams.set("to", "")
     }
-    setSearchParams(searchParams)
+    setSearchParams(searchParams, { replace: true })
   }
   const handleToken2Select = (token: string, isUnable?: boolean) => {
     searchParams.set("to", token)
@@ -181,7 +181,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     if (isUnable) {
       searchParams.set("from", "")
     }
-    setSearchParams(searchParams)
+    setSearchParams(searchParams, { replace: true })
   }
   const handleSwitchToken = () => {
     if (!pairSwitchable) {
@@ -995,7 +995,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
               onClick: () => {
                 searchParams.set("to", "")
                 searchParams.set("from", "")
-                setSearchParams(searchParams)
+                setSearchParams(searchParams, { replace: true })
                 resetField(Key.value1)
                 resetField(Key.value2)
                 resetField(Key.feeSymbol)
