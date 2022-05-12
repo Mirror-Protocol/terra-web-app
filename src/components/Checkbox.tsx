@@ -61,12 +61,13 @@ const Wrapper = styled.label<CheckboxProps>`
     position: relative;
     display: inline-block;
     vertical-align: middle;
-    background-position: 50% 50%;
+    background-position: -100px -100px;
     background-size: 14px auto;
     background-repeat: no-repeat;
     border-radius: 4px;
     border: solid 2px #707070;
     background-color: #fff;
+    background-image: url(${iconChecked});
   }
 
   & > div {
@@ -74,7 +75,7 @@ const Wrapper = styled.label<CheckboxProps>`
   }
 
   & > input:checked + span::before {
-    background-image: url(${iconChecked});
+    background-position: 50% 50%;
   }
 `
 
