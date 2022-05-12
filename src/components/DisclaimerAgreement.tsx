@@ -5,7 +5,8 @@ import { useEffect, useState } from "react"
 import styled from "styled-components"
 
 const ModalContent = styled.div`
-  width: calc(100% - 32px);
+  width: 100%;
+  max-width: calc(100vw - 32px);
   margin: 0 auto;
   border-radius: 20px;
   box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.35);
@@ -61,7 +62,7 @@ const Disclaimer = () => {
     <Modal isOpen={disclaimerModal.isOpen} close={() => {}} open={() => {}}>
       <ModalContent>
         <div>
-          <ModalTitle>Before you enter Terraswap</ModalTitle>
+          <ModalTitle>Please read before using Terraswap</ModalTitle>
           <div>
             Terraswap is a decentralized exchange on Terra blockchain. Trading
             and providing liquidity on Terraswap is at your own risk, without
@@ -84,7 +85,7 @@ const Disclaimer = () => {
             Terraswap.
           </div>
           <br />
-          <div style={{ textAlign: "center" }}>
+          <div style={{ textAlign: "center", padding: "0 26px" }}>
             <Checkbox
               onClick={() => setDisclaimerAgreed((current) => !current)}
               checked={disclaimerAgreed}
@@ -100,6 +101,7 @@ const Disclaimer = () => {
               window.localStorage.setItem("disclaimerAgreed", "yes")
               disclaimerModal.close()
             }}
+            style={{ textTransform: "unset", maxWidth: 235, borderRadius: 10 }}
           >
             Agree and Proceed
           </Button>

@@ -13,8 +13,7 @@ const Wrapper = styled.label<CheckboxProps>`
   position: relative;
   user-select: none;
   cursor: pointer;
-  align-items: flex-start;
-  gap: 6px;
+  align-items: center;
 
   font-size: 14px;
   font-weight: normal;
@@ -24,6 +23,12 @@ const Wrapper = styled.label<CheckboxProps>`
   letter-spacing: normal;
   text-align: left;
   color: #5c5c5c;
+
+  gap: 6px;
+
+  @media screen and (max-width: ${({ theme }) => theme.breakpoint}) {
+    gap: 10px;
+  }
 
   ${({ block }) =>
     block
@@ -68,10 +73,6 @@ const Wrapper = styled.label<CheckboxProps>`
     border: solid 2px #707070;
     background-color: #fff;
     background-image: url(${iconChecked});
-  }
-
-  & > div {
-    margin-top: 3px;
   }
 
   & > input:checked + span::before {
