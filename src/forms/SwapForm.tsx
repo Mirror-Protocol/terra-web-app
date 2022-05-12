@@ -48,6 +48,7 @@ import useAutoRouter from "rest/useAutoRouter"
 import { useLCDClient } from "layouts/WalletConnectProvider"
 import { useContractsAddress } from "hooks/useContractsAddress"
 import WarningModal from "components/Warning"
+import Disclaimer from "components/DisclaimerAgreement"
 
 enum Key {
   value1 = "value1",
@@ -960,6 +961,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
   return (
     <Wrapper>
+      <Disclaimer />
       {formState.isSubmitted && result && (
         <Container sm>
           <Result

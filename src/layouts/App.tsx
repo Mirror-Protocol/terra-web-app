@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import routes from "routes"
 import { ContractProvider, useContractState } from "hooks/useContract"
 import { ThemeProvider } from "styled-components"
