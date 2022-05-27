@@ -4,6 +4,10 @@
 @import "src/styles/colors.module";
 @import "src/styles/utils.module";
 
+body {
+  padding-top: 40px;
+}
+
 html,
 body,
 #terraswap {

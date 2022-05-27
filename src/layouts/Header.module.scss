@@ -6,7 +6,7 @@
   height: auto;
   position: fixed;
   left: 0;
-  top: 0;
+  top: 40px;
   padding: 16px 0;
   background-color: $realblue;
   z-index: 5000;
@@ -44,7 +44,7 @@
 @include mobile {
   .header {
     position: fixed;
-    top: 0;
+    top: 40px;
     left: 0;
     padding: 16px 0;
     z-index: 4850;

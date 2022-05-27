@@ -21,6 +21,36 @@ const SidebarWrapper = styled.div`
   }
 `
 
+const Banner = styled.div`
+  width: 100%;
+  height: auto;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #0222ba;
+  color: #ffffff;
+  text-align: center;
+  padding: 11px;
+
+  font-size: 14px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  z-index: 9999999;
+
+  &::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: #ffffff7f;
+  }
+`
+
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   useEffect(() => {
@@ -57,6 +87,7 @@ const Header = () => {
 
   return (
     <>
+      <Banner>Terraswap Classic</Banner>
       <header className={styles.header}>
         <Container className={styles.container}>
           <section className={styles.wrapper}>

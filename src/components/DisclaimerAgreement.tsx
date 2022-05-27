@@ -71,7 +71,7 @@ const Disclaimer = () => {
     <Modal isOpen={disclaimerModal.isOpen} close={() => {}} open={() => {}}>
       <ModalContent>
         <div>
-          <ModalTitle>Please read before using Terraswap</ModalTitle>
+          <ModalTitle>Disclaimer</ModalTitle>
           <div>
             Terraswap is a decentralized exchange on Terra blockchain. Trading
             and providing liquidity on Terraswap is at your own risk, without

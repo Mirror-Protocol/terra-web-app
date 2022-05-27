@@ -4,6 +4,7 @@ import styles from "./Footer.module.scss"
 
 import SocialMediaAnchor from "components/SocialMediaAnchor"
 import { socialMediaList } from "constants/constants"
+import ChangeVersionButton from "components/ChangeVersionButton"
 
 const SocialMediaAnchorList = styled.div`
   width: 100%;
@@ -20,6 +21,14 @@ const SocialMediaAnchorList = styled.div`
 const Footer = () => {
   return (
     <footer className={styles.footer}>
+      <div
+        style={{ display: "flex", justifyContent: "center", marginTop: 25 }}
+        className="mobile-only"
+      >
+        <div style={{ display: "inline-block", maxWidth: 155, flex: 1 }}>
+          <ChangeVersionButton />
+        </div>
+      </div>
       <SocialMediaAnchorList className="mobile-only">
         {socialMediaList.map((item) => (
           <SocialMediaAnchor

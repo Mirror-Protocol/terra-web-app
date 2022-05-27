@@ -7,6 +7,7 @@ import iconMenu from "images/icon-menu.svg"
 import iconClose from "images/icon-close-primary.svg"
 import { socialMediaList } from "constants/constants"
 import SocialMediaAnchor from "components/SocialMediaAnchor"
+import ChangeVersionButton from "components/ChangeVersionButton"
 
 const Wrapper = styled.div<{ isOpen: boolean }>`
   width: 100%;
@@ -41,7 +42,7 @@ const Wrapper = styled.div<{ isOpen: boolean }>`
     ${({ isOpen }) =>
       isOpen &&
       css`
-        top: 0;
+        top: 40px;
         opacity: 1;
         transform: scale(1);
         transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out,
@@ -102,7 +103,7 @@ const MobileButton = styled.button<{ isOpen?: boolean }>`
   height: 32px;
   position: fixed;
   z-index: 5550;
-  top: 16px;
+  top: 56px;
   right: 16px;
   background-image: url("${({ isOpen }) => (isOpen ? iconClose : iconMenu)}");
   background-size: contain;
@@ -179,6 +180,8 @@ const Sidebar = () => {
           <NavLink to="/swap" onClick={() => close()}>
             Swap
           </NavLink>
+          <div style={{ height: 25 }} />
+          <ChangeVersionButton />
         </div>
       </Wrapper>
       <SocialMediaList isOpen={isOpen}>
