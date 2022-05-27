@@ -1,4 +1,5 @@
-import React, { PropsWithChildren } from "react"
+import UnsupportedNetworkModal from "components/UnsupportedNetworkModal"
+import React, { PropsWithChildren, useEffect, useState } from "react"
 import {
   ContractsAddressProvider,
   useContractsAddressState,
@@ -10,7 +11,20 @@ const Contract: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const contractsAddress = useContractsAddressState()
   const contractsAddressToken = useContractsAddressTokenState()
 
-  return !contractsAddress ? null : (
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setIsModalOpen(true)
+    }, 1000)
+
+    return () => {
+      clearTimeout(timerId)
+    }
+  }, [])
+
+  return !contractsAddress ? (
+    <UnsupportedNetworkModal isOpen={isModalOpen} />
+  ) : (
     <ContractsAddressProvider value={contractsAddress}>
       <ContractsAddressTokenProvider value={contractsAddressToken}>
         {children}
