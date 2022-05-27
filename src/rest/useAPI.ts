@@ -361,7 +361,8 @@ const useAPI = () => {
       const res = (await axios.get(url, { params })).data
       return res.map((data: Msg.Amino | Msg.Amino[]) => {
         return (Array.isArray(data) ? data : [data]).map((item: Msg.Amino) => {
-          return Msg.fromAmino(item)
+          const result = Msg.fromAmino(item, true)
+          return result
         })
       })
     },

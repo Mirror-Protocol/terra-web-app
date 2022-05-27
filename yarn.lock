@@ -1219,6 +1219,13 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
+"@improbable-eng/grpc-web@^0.14.1":
+  version "0.14.1"
+  resolved "https://registry.yarnpkg.com/@improbable-eng/grpc-web/-/grpc-web-0.14.1.tgz#f4662f64dc89c0f956a94bb8a3b576556c74589c"
+  integrity sha512-XaIYuunepPxoiGVLLHmlnVminUGzBTnXr8Wv7khzmLWbNw4TCwJKX09GSMJlKhu/TRk6gms0ySFxewaETSBqgw==
+  dependencies:
+    browser-headers "^0.4.1"
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz#fd3db1d59ecf7cf121e80650bb86712f9b55eced"
@@ -1552,7 +1559,7 @@
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/aspromise/-/aspromise-1.1.2.tgz#9b8b0cc663d669a7d8f6f5d0893a14d348f30fbf"
-  integrity sha1-m4sMxmPWaafY9vXQiToU00jzD78=
+  integrity sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==
 
 "@protobufjs/base64@^1.1.2":
   version "1.1.2"
@@ -1567,12 +1574,12 @@
 "@protobufjs/eventemitter@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/eventemitter/-/eventemitter-1.1.0.tgz#355cbc98bafad5978f9ed095f397621f1d066b70"
-  integrity sha1-NVy8mLr61ZePntCV85diHx0Ga3A=
+  integrity sha512-j9ednRT81vYJ9OfVuXG6ERSTdEL1xVsNgqpkxMsbIabzSo3goCjDIveeGv5d03om39ML71RdmrGNjG5SReBP/Q==
 
 "@protobufjs/fetch@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/fetch/-/fetch-1.1.0.tgz#ba99fb598614af65700c1619ff06d454b0d84c45"
-  integrity sha1-upn7WYYUr2VwDBYZ/wbUVLDYTEU=
+  integrity sha512-lljVXpqXebpsijW71PZaCYeIcE5on1w5DlQy5WH6GLbFryLUrBD4932W/E2BSpfRJWseIL4v/KPgBFxDOIdKpQ==
   dependencies:
     "@protobufjs/aspromise" "^1.1.1"
     "@protobufjs/inquire" "^1.1.0"
@@ -1580,27 +1587,27 @@
 "@protobufjs/float@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/float/-/float-1.0.2.tgz#5e9e1abdcb73fc0a7cb8b291df78c8cbd97b87d1"
-  integrity sha1-Xp4avctz/Ap8uLKR33jIy9l7h9E=
+  integrity sha512-Ddb+kVXlXst9d+R9PfTIxh1EdNkgoRe5tOX6t01f1lYWOvJnSPDBlG241QLzcyPdoNTsblLUdujGSE4RzrTZGQ==
 
 "@protobufjs/inquire@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/inquire/-/inquire-1.1.0.tgz#ff200e3e7cf2429e2dcafc1140828e8cc638f089"
-  integrity sha1-/yAOPnzyQp4tyvwRQIKOjMY48Ik=
+  integrity sha512-kdSefcPdruJiFMVSbn801t4vFK7KB/5gd2fYvrxhuJYg8ILrmn9SKSX2tZdV6V+ksulWqS7aXjBcRXl3wHoD9Q==
 
 "@protobufjs/path@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/path/-/path-1.1.2.tgz#6cc2b20c5c9ad6ad0dccfd21ca7673d8d7fbf68d"
-  integrity sha1-bMKyDFya1q0NzP0hynZz2Nf79o0=
+  integrity sha512-6JOcJ5Tm08dOHAbdR3GrvP+yUUfkjG5ePsHYczMFLq3ZmMkAD98cDgcT2iA1lJ9NVwFd4tH/iSSoe44YWkltEA==
 
 "@protobufjs/pool@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/pool/-/pool-1.1.0.tgz#09fd15f2d6d3abfa9b65bc366506d6ad7846ff54"
-  integrity sha1-Cf0V8tbTq/qbZbw2ZQbWrXhG/1Q=
+  integrity sha512-0kELaGSIDBKvcgS4zkjz1PeddatrjYcmMWOlAuAPwAeccUrPHdUqo/J6LiymHHEiJT5NrF1UVwxY14f+fy4WQw==
 
 "@protobufjs/utf8@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
-  integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
+  integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
 "@rollup/plugin-babel@^5.2.0":
   version "5.3.1"
@@ -1781,6 +1788,15 @@
   resolved "https://registry.yarnpkg.com/@terra-dev/wallet-types/-/wallet-types-3.7.0.tgz#8ec0faec3c3af6cec5f3e84deb5d1fca1281d6a4"
   integrity sha512-6yD050ipsU5BLn5lpiZioYjPKQMVyhXsrTFm8h5BCY7usQ/NVYmUeZBLyodIa0+wNE/EsU/EKSGD5pSbnXVMsA==
 
+"@terra-money/legacy.proto@npm:@terra-money/terra.proto@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@terra-money/terra.proto/-/terra.proto-0.1.7.tgz#59c18f30da10d43200bab3ba8feb5b17e43a365f"
+  integrity sha512-NXD7f6pQCulvo6+mv6MAPzhOkUzRjgYVuHZE/apih+lVnPG5hDBU0rRYnOGGofwvKT5/jQoOENnFn/gioWWnyQ==
+  dependencies:
+    google-protobuf "^3.17.3"
+    long "^4.0.0"
+    protobufjs "~6.11.2"
+
 "@terra-money/log-finder-ruleset@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@terra-money/log-finder-ruleset/-/log-finder-ruleset-3.0.0.tgz#3dfd7cef0dd232bcf6e77f0b3311b39e7bda39a0"
@@ -1800,12 +1816,13 @@
   dependencies:
     terra-utils "^1.1.2"
 
-"@terra-money/terra.js@^3.0.4":
-  version "3.0.11"
-  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-3.0.11.tgz#55616723a2c8b0b53e321e9331db45a50ee9e068"
-  integrity sha512-qabXxsycWF1tEcFE3dG7FFXuIcXPlSeYgha5IYU+x4QNKiZuxT9Asi84HrCUSajQkZZ3N7ORfr+aGGE84HD+uw==
+"@terra-money/terra.js@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-3.1.0.tgz#9fc79e991d9a03d464aa5cc871e4454f278028fe"
+  integrity sha512-5OvH4vx1zGvlgtV1ABbhvZ+l74DEXq+xV5KJLKUG7DK6Sj7+ellZNCJTlxaF0LGYaYU3gZp3Cfvl+73YsKLU+A==
   dependencies:
-    "@terra-money/terra.proto" "^0.1.7"
+    "@terra-money/legacy.proto" "npm:@terra-money/terra.proto@^0.1.7"
+    "@terra-money/terra.proto" "^0.2.0-beta.4"
     axios "^0.26.1"
     bech32 "^2.0.0"
     bip32 "^2.0.6"
@@ -1819,29 +1836,30 @@
     utf-8-validate "^5.0.5"
     ws "^7.5.5"
 
-"@terra-money/terra.proto@^0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@terra-money/terra.proto/-/terra.proto-0.1.7.tgz#59c18f30da10d43200bab3ba8feb5b17e43a365f"
-  integrity sha512-NXD7f6pQCulvo6+mv6MAPzhOkUzRjgYVuHZE/apih+lVnPG5hDBU0rRYnOGGofwvKT5/jQoOENnFn/gioWWnyQ==
+"@terra-money/terra.proto@^0.2.0-beta.4":
+  version "0.2.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@terra-money/terra.proto/-/terra.proto-0.2.0-beta.4.tgz#21f79edcd3d53130cd3661d01bb67dfbd8f5696b"
+  integrity sha512-ALwIOpiZgpELvUO27+Lgc4qQz6k5NB58YsUHX2Bf7gocspShRftps5kjj/bovZs/M6AO4J7Qj07QJRBekMinMA==
   dependencies:
+    "@improbable-eng/grpc-web" "^0.14.1"
     google-protobuf "^3.17.3"
     long "^4.0.0"
     protobufjs "~6.11.2"
 
-"@terra-money/use-wallet@^3.8.1":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@terra-money/use-wallet/-/use-wallet-3.8.1.tgz#e1779aec3e03591baa8e8252c740ef1a62aac52f"
-  integrity sha512-DhvZ2XLWTWXyFi4M7r7Dku04O5vlQ01XKI9DSFAD+bqXY29NZr5uchBmqcVxBJQVY5aBmlSXulDdsjT2pMVsPQ==
+"@terra-money/use-wallet@^3.9.2":
+  version "3.9.2"
+  resolved "https://registry.yarnpkg.com/@terra-money/use-wallet/-/use-wallet-3.9.2.tgz#926915b06668d43453b7ca2b57583d28a031d659"
+  integrity sha512-w8LAb1X30TT3ocX4D8hGq/93txROsQNQM8/SPNAuGFEfH47OVjw/2fqevAibGU8jnCNZYvmlJu72WRUa8su/dg==
   dependencies:
-    "@terra-money/wallet-types" "^3.8.1"
+    "@terra-money/wallet-types" "^3.9.2"
 
-"@terra-money/wallet-controller@^3.8.1":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@terra-money/wallet-controller/-/wallet-controller-3.8.1.tgz#6ab5b1134ab2337ae95acc6a356842d3da2562d4"
-  integrity sha512-AkELhiFIWNhEHQY8O1cUPmJJkNTLwUZ79UFd0eHWKW2rj/MrmTylyy+tikwD3BWMEBWH/RqnILXgbju3TgFs0g==
+"@terra-money/wallet-controller@^3.9.2":
+  version "3.9.2"
+  resolved "https://registry.yarnpkg.com/@terra-money/wallet-controller/-/wallet-controller-3.9.2.tgz#f7be7aa364aeee8fd48e57bc41549d98496bf9b6"
+  integrity sha512-35B/WGU+qpW7/njUl0ZcmOvkdo2iq0QwGz+1tXXD3nkd3HDo7XStWelEeIb22fwzcRy3yGe2hX5GHWLyNa3ODg==
   dependencies:
-    "@terra-money/wallet-types" "^3.8.1"
-    "@terra-money/web-extension-interface" "^3.8.1"
+    "@terra-money/wallet-types" "^3.9.2"
+    "@terra-money/web-extension-interface" "^3.9.2"
     "@walletconnect/core" "^1.6.6"
     "@walletconnect/iso-crypto" "^1.6.6"
     "@walletconnect/types" "^1.6.6"
@@ -1855,24 +1873,24 @@
     secp256k1 "^4.0.0"
     ws "^7.5.5"
 
-"@terra-money/wallet-provider@^3.7.1":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@terra-money/wallet-provider/-/wallet-provider-3.8.1.tgz#28e0f0e3dbb8de56240364c426ac6b8fdff21533"
-  integrity sha512-wkLBor9nPy93667rV1dxqjFHj6Y7/pala2pwAN0ANMObdq3GpU1SeBncMMgPvNA26rlNXVO3SDStx+LtQX8g4g==
+"@terra-money/wallet-provider@^3.9.2":
+  version "3.9.2"
+  resolved "https://registry.yarnpkg.com/@terra-money/wallet-provider/-/wallet-provider-3.9.2.tgz#0c1a987e1d5078aba6ff84247158e659278d997c"
+  integrity sha512-v25i0T4ADshWhWiaRNUIP1Ui0ZbJKoGnNcITRuPo4pG4iqWUqshhLMHXD7v3ySv/DzoFOzIWNnwRj5f67ZL2bw==
   dependencies:
-    "@terra-money/use-wallet" "^3.8.1"
-    "@terra-money/wallet-controller" "^3.8.1"
-    "@terra-money/web-extension-interface" "^3.8.1"
+    "@terra-money/use-wallet" "^3.9.2"
+    "@terra-money/wallet-controller" "^3.9.2"
+    "@terra-money/web-extension-interface" "^3.9.2"
 
-"@terra-money/wallet-types@^3.8.1":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@terra-money/wallet-types/-/wallet-types-3.8.1.tgz#e1b3fd36b017bf7520d37632db5088583482f34d"
-  integrity sha512-4dNYGkiPWgwltoA1YpZlw57lP+xl3bAdf1UxHGKwVwnYmzmvuJvWT9UPfgo8ie0Heh2pjDEvpRDFEWqtIFExlw==
+"@terra-money/wallet-types@^3.9.2":
+  version "3.9.2"
+  resolved "https://registry.yarnpkg.com/@terra-money/wallet-types/-/wallet-types-3.9.2.tgz#121a4e4cc7e40814a9c121ec46537112dbba03ff"
+  integrity sha512-KjLAYsEEXlfVIBJF3b/ilmvzEq7/TJB22CLtBgDsbwys4SmI4zXls7eM0KBcyAS+pUeuISMk4ERNZMqqup0bSw==
 
-"@terra-money/web-extension-interface@^3.8.1":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@terra-money/web-extension-interface/-/web-extension-interface-3.8.1.tgz#4424a5813720d1ced8d640c92160dcfec4dc6896"
-  integrity sha512-rUnG4GxLrbA3YmNqZSnciY1xfNh8ZloCCHkIibaBeGW5W5BkNCjHjFQmqB+iTBAE9hY1WlrR1q7UBmLqx/PP8Q==
+"@terra-money/web-extension-interface@^3.9.2":
+  version "3.9.2"
+  resolved "https://registry.yarnpkg.com/@terra-money/web-extension-interface/-/web-extension-interface-3.9.2.tgz#452aca9a0f1ad1fe2e1ebceece0f293d9678f9be"
+  integrity sha512-GfDPYw3ZPxQC6KW85EuHXLJjCYsT34eC/ZwlruILLPQ4vEgNP1WtCQpqc3ENwE6j4VtWovAYECs870ZzJHOAeQ==
   dependencies:
     rxjs "^7.0.0"
 
@@ -2164,7 +2182,7 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
-"@types/node@*", "@types/node@>=13.7.0":
+"@types/node@*":
   version "17.0.31"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.31.tgz#a5bb84ecfa27eec5e1c802c6bbf8139bdb163a5d"
   integrity sha512-AR0x5HbXGqkEx9CadRH3EBYx/VkiUgZIhP4wvPn/+5KIsgpNoyFaRlVe0Zlx9gRtg8fA06a9tskE2MSN7TcG4Q==
@@ -2178,6 +2196,11 @@
   version "11.11.6"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-11.11.6.tgz#df929d1bb2eee5afdda598a41930fe50b43eaa6a"
   integrity sha512-Exw4yUWMBXM3X+8oqzJNRqZSwUAaS4+7NdvHqQuFi/d+synz++xmX3QIf+BFqneW8N31R8Ky+sikfZUXq07ggQ==
+
+"@types/node@>=13.7.0":
+  version "17.0.35"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.35.tgz#635b7586086d51fb40de0a2ec9d1014a5283ba4a"
+  integrity sha512-vu1SrqBjbbZ3J6vwY17jBs8Sr/BKA+/a/WtjRG+whKg1iuLFOosq872EXS0eXWILdO36DHQQeku/ZcL6hz2fpg==
 
 "@types/node@^14.11.10":
   version "14.18.16"
@@ -3511,6 +3534,11 @@ brorand@^1.0.1, brorand@^1.1.0:
   resolved "https://registry.yarnpkg.com/brorand/-/brorand-1.1.0.tgz#12c25efe40a45e3c323eb8675a0a0ce57b22371f"
   integrity sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8=
 
+browser-headers@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/browser-headers/-/browser-headers-0.4.1.tgz#4308a7ad3b240f4203dbb45acedb38dc2d65dd02"
+  integrity sha512-CA9hsySZVo9371qEHjHZtYxV2cFtVj5Wj/ZHi8ooEsrtm4vOnl9Y9HmyYWk9q+05d7K3rdoAE0j3MVEFVvtQtg==
+
 browser-process-hrtime@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/browser-process-hrtime/-/browser-process-hrtime-1.0.0.tgz#3c9b4b7d782c8121e56f10106d84c0d0ffc94626"
@@ -3591,7 +3619,7 @@ browserslist@^4.0.0, browserslist@^4.14.5, browserslist@^4.16.6, browserslist@^4
 bs58@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/bs58/-/bs58-4.0.1.tgz#be161e76c354f6f788ae4071f63f34e8c4f0a42a"
-  integrity sha1-vhYedsNU9veIrkBx9j806MTwpCo=
+  integrity sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw==
   dependencies:
     base-x "^3.0.2"
 
@@ -5551,10 +5579,15 @@ flatted@^3.1.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.5.tgz#76c8584f4fc843db64702a6bd04ab7a8bd666da3"
   integrity sha512-WIWGi2L3DyTUvUrwRKgGi9TwxQMUEqPOPQBVi71R96jZXJdFskXEmf54BoZaS1kknGODoIGASGEzBUYdyMCBJg==
 
-follow-redirects@^1.0.0, follow-redirects@^1.14.0, follow-redirects@^1.14.8:
+follow-redirects@^1.0.0, follow-redirects@^1.14.0:
   version "1.15.0"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.0.tgz#06441868281c86d0dda4ad8bdaead2d02dca89d4"
   integrity sha512-aExlJShTV4qOUOL7yF1U5tvLCB0xQuudbf6toyYA0E/acBNw71mvjFTnLaRp50aQaYocMR0a/RMMBIHeZnGyjQ==
+
+follow-redirects@^1.14.8:
+  version "1.15.1"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.1.tgz#0ca6a452306c9b276e4d3127483e29575e207ad5"
+  integrity sha512-yLAMQs+k0b2m7cVxpS1VKJVvoz7SS9Td1zss3XRwXj+ZDH00RJgnuLx7E44wx02kQLrdM3aOOy+FpzS7+8OizA==
 
 foreach@^2.0.5:
   version "2.0.5"
@@ -9140,9 +9173,9 @@ prop-types@^15.7.2, prop-types@^15.8.1:
     react-is "^16.13.1"
 
 protobufjs@~6.11.2:
-  version "6.11.2"
-  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.11.2.tgz#de39fabd4ed32beaa08e9bb1e30d08544c1edf8b"
-  integrity sha512-4BQJoPooKJl2G9j3XftkIXjoC9C0Av2NOrWmbLWT1vH32GcSUHjM0Arra6UfTsVyfMAuFzaLucXn1sadxJydAw==
+  version "6.11.3"
+  resolved "https://registry.yarnpkg.com/protobufjs/-/protobufjs-6.11.3.tgz#637a527205a35caa4f3e2a9a4a13ddffe0e7af74"
+  integrity sha512-xL96WDdCZYdU7Slin569tFX712BxsxslWwAfAhCYjQKGTq7dAU91Lomy6nLLhh/dyGhk/YH4TwTSRxTzhuHyZg==
   dependencies:
     "@protobufjs/aspromise" "^1.1.2"
     "@protobufjs/base64" "^1.1.2"
