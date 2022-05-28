@@ -1,17 +1,17 @@
 import { NetworkInfo } from "@terra-dev/wallet-types"
 
 export enum NetworkKey {
-  MAINNET = "mainnet",
+  MAINNET = "classic",
   TESTNET = "testnet",
 }
 type MirrorNetworkInfo = NetworkInfo & NetworkConfig
 
 const networks: Record<string, MirrorNetworkInfo> = {
-  mainnet: {
-    name: "mainnet",
+  classic: {
+    name: "classic",
     chainID: "columbus-5",
-    lcd: "https://lcd.terra.dev",
-    fcd: "https://fcd.terra.dev",
+    lcd: "https://columbus-lcd.terra.dev",
+    fcd: "https://columbus-fcd.terra.dev",
     id: "columbus-5",
     contract: "/tequila.json",
     swap: "/swap.json",
@@ -20,7 +20,7 @@ const networks: Record<string, MirrorNetworkInfo> = {
     fee: { gasPrice: "0.00506", amount: "1518", gas: "2000000" }, // 0.000500 UST
     factory: "terra1ulgw0td86nvs4wtpsc80thv6xelk76ut7a7apj",
     service:
-      process.env.REACT_APP_MAINNET_SERVICE_URL || "https://api.terraswap.io/",
+      process.env.REACT_APP_MAINNET_SERVICE_URL || "https://api-classic.terraswap.io/",
     dashboard: process.env.REACT_APP_MAINNET_DASHBOARD_URL,
     router: "terra19qx5xe6q9ll4w0890ux7lv2p4mf3csd4qvt3ex",
   },
