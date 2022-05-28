@@ -111,7 +111,7 @@ export const socialMediaList = [
   {
     icon: iconDiscord,
     iconLight: iconDiscordLight,
-    href: "https://discord.gg/stsqZRdy6a",
+    href: "https://discord.gg/nfZgjyjtQq",
     title: "Discord",
   },
   {
