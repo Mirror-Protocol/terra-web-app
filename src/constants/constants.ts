@@ -82,10 +82,10 @@ export const MAX_MSG_LENGTH = 1024
 export const TX_POLLING_INTERVAL = 1000
 export const MAX_TX_POLLING_RETRY = 20
 export const DEFAULT_EXT_NETWORK: ExtNetworkConfig = {
-  name: "mainnet",
+  name: "classic",
   chainID: "columbus-5",
-  fcd: "https://fcd.terra.dev",
-  lcd: "https://lcd.terra.dev",
+  fcd: "https://columbus-fcd.terra.dev",
+  lcd: "https://columbus-lcd.terra.dev",
 }
 
 /* project */

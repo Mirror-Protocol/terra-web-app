@@ -12,9 +12,9 @@ import { LCDClient } from "@terra-money/terra.js"
 
 const walletConnectChainIds: Record<number, NetworkInfo> = {
   0: networks.testnet,
-  1: networks.mainnet,
+  1: networks.classic,
 }
-const defaultNetwork: NetworkInfo = networks.mainnet
+const defaultNetwork: NetworkInfo = networks.classic
 
 const WalletConnectProvider: React.FC<PropsWithChildren<{}>> = ({
   children,
