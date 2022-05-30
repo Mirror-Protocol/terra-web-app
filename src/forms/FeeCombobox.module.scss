@@ -35,7 +35,7 @@
       border-color: #b5b5b5;
       border-radius: 7px;
       border-width: 1px;
-
+      flex-wrap: nowrap;
       &--open {
         border-bottom-color: transparent;
         border-bottom-left-radius: 0;

@@ -98,7 +98,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const { fee } = useNetwork()
   const { find } = useContract()
   const walletAddress = useAddress()
-  const { post: terraExtensionPost } = useWallet()
+  const wallet = useWallet()
   const { terra } = useLCDClient()
   const settingsModal = useModal()
   const [slippageSettings, setSlippageSettings] =
@@ -915,7 +915,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         )
         txOptions.fee = signMsg.auth_info.fee
 
-        const extensionResult = await terraExtensionPost(txOptions)
+        const extensionResult = await wallet.post(
+          {
+            ...txOptions,
+          },
+          walletAddress
+        )
 
         if (extensionResult) {
           setResult(extensionResult)
@@ -930,19 +935,19 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       settingsModal,
       type,
       getSymbol,
-      terra,
+      terra.tx,
       walletAddress,
-      terraExtensionPost,
-      generateContractMessages,
-      from,
-      to,
-      slippageTolerance,
-      tokenInfo1,
-      tokenInfo2,
-      getMsgs,
+      wallet,
       profitableQuery,
+      getMsgs,
+      slippageTolerance,
       find,
       formData,
+      tokenInfo1,
+      from,
+      tokenInfo2,
+      generateContractMessages,
+      to,
       lpContract,
     ]
   )

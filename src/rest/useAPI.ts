@@ -22,7 +22,7 @@ import useURL from "graphql/useURL"
 import terraswapConfig from "constants/terraswap.json"
 import axios from "./request"
 import { Type } from "pages/Swap"
-import { Msg } from "@terra-money/terra.js"
+import { Coins, MsgExecuteContract } from "@terra-money/terra.js"
 import { AxiosError } from "axios"
 import { useContractsAddress } from "hooks/useContractsAddress"
 interface DenomBalanceResponse {
@@ -359,13 +359,23 @@ const useAPI = () => {
       const { type, ...params } = query
       const url = `${service}/tx/${type}`.toLowerCase()
       const res = (await axios.get(url, { params })).data
-      return res.map((data: Msg.Amino | Msg.Amino[]) => {
-        return (Array.isArray(data) ? data : [data]).map((item: Msg.Amino) => {
-          const result = Msg.fromAmino(item, true)
-          return result
-        })
-      })
+      return res.map(
+        (data: MsgExecuteContract.Amino | MsgExecuteContract.Amino[]) => {
+          return (Array.isArray(data) ? data : [data]).map(
+            (item: MsgExecuteContract.Amino) => {
+              const result = new MsgExecuteContract(
+                address,
+                item?.value?.contract,
+                item?.value?.execute_msg,
+                Coins.fromAmino(item?.value?.coins)
+              )
+              return result
+            }
+          )
+        }
+      )
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [service]
   )
 
