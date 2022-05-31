@@ -51,6 +51,7 @@ enum STATUS {
   SUCCESS = "success",
   LOADING = "loading",
   FAILURE = "failure",
+  TIMEOUT = "timeout",
 }
 
 const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
@@ -77,13 +78,26 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
   const retryCount = useRef(0)
 
   useEffect(() => {
+    let isDestroyed = false
     const load = async () => {
+      if (isDestroyed) {
+        return
+      }
+      if (retryCount.current >= MAX_TX_POLLING_RETRY) {
+        setStatus(STATUS.TIMEOUT)
+        return
+      }
       if (!txHash) {
         setStatus(STATUS.FAILURE)
         return
       }
       try {
-        const { data: res } = await axios.get(`${fcd}/txs/${txHash}`)
+        const { data: res } = await axios.get(`${fcd}/v1/tx/${txHash}`, {
+          cache: { ignoreCache: true },
+        })
+        if (isDestroyed) {
+          return
+        }
         if (res?.code) {
           setTxInfo(res)
           setStatus(STATUS.FAILURE)
@@ -92,13 +106,10 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
         if (res?.txhash) {
           setTxInfo(res)
           setStatus(STATUS.SUCCESS)
-        }
-      } catch (error) {
-        if (retryCount.current >= MAX_TX_POLLING_RETRY) {
-          setStatus(STATUS.FAILURE)
-          retryCount.current = 0
           return
         }
+        throw new Error("Unknown")
+      } catch (error) {
         retryCount.current += 1
         setTimeout(() => {
           load()
@@ -106,6 +117,10 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
       }
     }
     load()
+
+    return () => {
+      isDestroyed = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -114,6 +129,7 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
     [STATUS.SUCCESS]: "check_circle_outline",
     [STATUS.LOADING]: "",
     [STATUS.FAILURE]: "highlight_off",
+    [STATUS.TIMEOUT]: "highlight_off",
   }[status]
 
   const icon = name ? (
@@ -128,6 +144,9 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
     ),
     [STATUS.LOADING]: MESSAGE.Result.LOADING,
     [STATUS.FAILURE]: (
+      <span className={styles.failure}>{MESSAGE.Result.FAILURE}</span>
+    ),
+    [STATUS.TIMEOUT]: (
       <span className={styles.failure}>{MESSAGE.Result.FAILURE}</span>
     ),
   }[status]
@@ -188,6 +207,15 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
         <p className={styles.feedback}>{txInfo?.raw_log || message}</p>
       </>
     ),
+    [STATUS.TIMEOUT]: (
+      <>
+        {txInfo && <SwapTxInfo txInfo={txInfo} parserKey={parserKey} />}
+        <p className={styles.feedback}>{MESSAGE.Result.TIMEOUT}</p>
+        <p className={styles.hash}>
+          <SwapTxHash>{txHash}</SwapTxHash>
+        </p>
+      </>
+    ),
   }[status]
 
   const button = {
@@ -200,6 +228,11 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
     [STATUS.FAILURE]: (
       <Button onClick={onFailure} size="swap" submit>
         {MESSAGE.Result.Button.FAILURE}
+      </Button>
+    ),
+    [STATUS.TIMEOUT]: (
+      <Button onClick={() => window.location.reload()} size="swap" submit>
+        Done
       </Button>
     ),
   }[status]

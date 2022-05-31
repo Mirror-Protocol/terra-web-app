@@ -80,7 +80,7 @@ export const MAX_MSG_LENGTH = 1024
 
 /* network:settings */
 export const TX_POLLING_INTERVAL = 1000
-export const MAX_TX_POLLING_RETRY = 20
+export const MAX_TX_POLLING_RETRY = 35
 export const DEFAULT_EXT_NETWORK: ExtNetworkConfig = {
   name: "classic",
   chainID: "columbus-5",
