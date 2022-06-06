@@ -1830,10 +1830,10 @@
   dependencies:
     terra-utils "^1.1.2"
 
-"@terra-money/terra.js@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-3.0.0.tgz#016f4fba938ac12fbc323da543fe570a2c8e5c3a"
-  integrity sha512-FVj5gnzx+5YvXFTyoM+i7etpd08XKj9VRAEOwLxldI64tGSaGTyKLr03F0e0xCL3jFFbCPjQhtEBxju5rEEsXw==
+"@terra-money/terra.js@3.0.8":
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/@terra-money/terra.js/-/terra.js-3.0.8.tgz#056b88b0a14d17a28a91f61196687bbbd5feb9db"
+  integrity sha512-TSosUWw1OeZmgliHwgydDBgEEl+dGnAoFeaYmYYv+dzcYFnyUwY4NXpvg2cU0rjPBLGQHQdV/zRRfSyNQlGDBQ==
   dependencies:
     "@terra-money/terra.proto" "^0.1.7"
     axios "^0.24.0"
@@ -1858,20 +1858,20 @@
     long "^4.0.0"
     protobufjs "~6.11.2"
 
-"@terra-money/use-wallet@^3.8.1":
-  version "3.9.3"
-  resolved "https://registry.yarnpkg.com/@terra-money/use-wallet/-/use-wallet-3.9.3.tgz#a6f92d0b41543a4fd4f30e62be7600d965181bc0"
-  integrity sha512-pJsMAFJQJhohqQKp/I3FfMEYTs1yJbntgraDt8O+GqTfscWpC4ReWxNvUnJ82Kc9/RGMOeLE7jI4OYVLzieYIw==
+"@terra-money/use-wallet@^3.9.4":
+  version "3.9.4"
+  resolved "https://registry.yarnpkg.com/@terra-money/use-wallet/-/use-wallet-3.9.4.tgz#a32e8cac6169aa7c7b6e8124fab6bb70dbc59fcb"
+  integrity sha512-4j4nUEUut5jSxZVFpIbiorvo/5IpytERZhI6/AB0I2mQ5gh8uPWeLakgTMQxlHRUPrRB+NbABbQkCinqvSiSEA==
   dependencies:
-    "@terra-money/wallet-types" "^3.9.3"
+    "@terra-money/wallet-types" "^3.9.4"
 
-"@terra-money/wallet-controller@^3.8.1":
-  version "3.9.3"
-  resolved "https://registry.yarnpkg.com/@terra-money/wallet-controller/-/wallet-controller-3.9.3.tgz#ef57390254ba94a90bb98e12dec6b10c4a1cfde1"
-  integrity sha512-r0gr2p+Paxa2Cp/HiDA4TTXhQKtM2dR2PhDD3dPS+7mWL/UaCYZmRhT82ZKJMKNERZ9dQu2N2rV8v108qsaBQQ==
+"@terra-money/wallet-controller@^3.9.4":
+  version "3.9.4"
+  resolved "https://registry.yarnpkg.com/@terra-money/wallet-controller/-/wallet-controller-3.9.4.tgz#85e81857d5224fd104ebf17967d09788fbe7b921"
+  integrity sha512-mHoIQTXYla6uDivnMQzmQUeajpJt7jbXAyj1lWoAs94xSw10QlYWTgXkrHd23rY9NkDdpFfIf7IctdsCG1XZYQ==
   dependencies:
-    "@terra-money/wallet-types" "^3.9.3"
-    "@terra-money/web-extension-interface" "^3.9.3"
+    "@terra-money/wallet-types" "^3.9.4"
+    "@terra-money/web-extension-interface" "^3.9.4"
     "@walletconnect/core" "^1.6.6"
     "@walletconnect/iso-crypto" "^1.6.6"
     "@walletconnect/types" "^1.6.6"
@@ -1885,24 +1885,24 @@
     secp256k1 "^4.0.0"
     ws "^7.5.5"
 
-"@terra-money/wallet-provider@3.8.1":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@terra-money/wallet-provider/-/wallet-provider-3.8.1.tgz#28e0f0e3dbb8de56240364c426ac6b8fdff21533"
-  integrity sha512-wkLBor9nPy93667rV1dxqjFHj6Y7/pala2pwAN0ANMObdq3GpU1SeBncMMgPvNA26rlNXVO3SDStx+LtQX8g4g==
+"@terra-money/wallet-provider@^3.9.3":
+  version "3.9.4"
+  resolved "https://registry.yarnpkg.com/@terra-money/wallet-provider/-/wallet-provider-3.9.4.tgz#70bc3f9a34b305bbf2ef5c774e34009562a3778b"
+  integrity sha512-46dNmoXC/UE6rsUPeY7+4iAI5z84xIYaV32rixzvrHmeCXEqAyrKmlV/9/8zmaXPTxN44/A1FCY1ADCQfM9BLg==
   dependencies:
-    "@terra-money/use-wallet" "^3.8.1"
-    "@terra-money/wallet-controller" "^3.8.1"
-    "@terra-money/web-extension-interface" "^3.8.1"
+    "@terra-money/use-wallet" "^3.9.4"
+    "@terra-money/wallet-controller" "^3.9.4"
+    "@terra-money/web-extension-interface" "^3.9.4"
 
-"@terra-money/wallet-types@^3.9.3":
-  version "3.9.3"
-  resolved "https://registry.yarnpkg.com/@terra-money/wallet-types/-/wallet-types-3.9.3.tgz#c8adeffa97f3671b4727731e6cdc1b8a12cbe22d"
-  integrity sha512-RpEU+po2nvyJn97vIev2HG31alH2dnfNyI6SD/p6nXHyk8K3bLU7YIhJ0r5zAdJ32JwwrYY4eu8M/k+XMJWRTw==
+"@terra-money/wallet-types@^3.9.4":
+  version "3.9.4"
+  resolved "https://registry.yarnpkg.com/@terra-money/wallet-types/-/wallet-types-3.9.4.tgz#ce4100b86830eab1795b8c8eaa6e1c14426e57e4"
+  integrity sha512-8CYAMh+Lgj6y8rCTAsgmRnhL+hm6cXXkgvw0ijD/A/y4PiLwllflxvQrN//brxHBboF78E9OeihWDy3kPK72wg==
 
-"@terra-money/web-extension-interface@^3.8.1", "@terra-money/web-extension-interface@^3.9.3":
-  version "3.9.3"
-  resolved "https://registry.yarnpkg.com/@terra-money/web-extension-interface/-/web-extension-interface-3.9.3.tgz#dc7bba394daf7fcc37291911a3c58d027c79f1c4"
-  integrity sha512-bgEACK9hQwmA1jz/OT8IYEvrvVrYn2Jegv8vahjAe74VOm4ToGGQcYVsSTvZ6TYy2eU+4gT3rQoIq7nkpCIzgA==
+"@terra-money/web-extension-interface@^3.9.4":
+  version "3.9.4"
+  resolved "https://registry.yarnpkg.com/@terra-money/web-extension-interface/-/web-extension-interface-3.9.4.tgz#5ec26e35106fd5fb39b817431c6fd96bdd0cd183"
+  integrity sha512-a2XfYQ2y5UwbHSAHTJRryUrZzOtHimb1JESfUGuNMbZq8KEu6qP0wGfrbx2jte0Ql8qee9pt5Sah/85zvvAVtg==
   dependencies:
     rxjs "^7.0.0"
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "styled-components"
 import Container from "components/Container"
 import { SubmitHandler, useForm, WatchObserver } from "react-hook-form"
@@ -914,6 +914,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           txOptions
         )
         txOptions.fee = signMsg.auth_info.fee
+        setValue(
+          Key.feeValue,
+          txOptions.fee?.amount.get(feeAddress)?.amount.toString() || ""
+        )
 
         const extensionResult = await wallet.post(
           {
@@ -953,10 +957,14 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   )
 
   const [result, setResult] = useState<TxResult | undefined>()
-
+  // hotfix: prevent modal closing when virtual keyboard is opened
+  const lastWindowWidth = useRef(window.innerWidth)
   useEffect(() => {
     const handleResize = () => {
-      settingsModal.close()
+      if (lastWindowWidth.current !== window.innerWidth) {
+        settingsModal.close()
+      }
+      lastWindowWidth.current = window.innerWidth
     }
     window.addEventListener("resize", handleResize)
     return () => {
