@@ -311,6 +311,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     to: to,
     amount: formData[Key.value1],
     type: formState.isSubmitted ? undefined : type,
+    slippageTolerance,
   })
 
   const { result: poolResult, poolLoading } = usePool(
