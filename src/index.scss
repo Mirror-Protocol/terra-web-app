@@ -9,18 +9,13 @@ body {
 }
 
 html,
-body,
-#terraswap {
+body {
   width: 100%;
   height: 100%;
   font-size: $font-size;
   position: relative;
-  background-color: $realblue;
-  background-repeat: no-repeat;
-  background-position: 50% calc(100% + 180px);
   font-family: $font-family-swap;
   padding-bottom: $footer-height;
-  background-attachment: fixed;
 
   *::-webkit-scrollbar {
     width: 6px;
@@ -51,6 +46,13 @@ body,
       display: none !important;
     }
   }
+}
+
+.body {
+  background-color: $realblue;
+  background-repeat: no-repeat;
+  background-position: 50% calc(100% + 180px);
+  background-size: cover;
 }
 
 #basement {

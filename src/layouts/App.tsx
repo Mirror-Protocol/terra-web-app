@@ -10,6 +10,7 @@ import container from "components/Container"
 import { QueryClient, QueryClientProvider } from "react-query"
 import styled from "styled-components"
 import usePairs from "rest/usePairs"
+import useMigration from "hooks/useMigration"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,6 +43,7 @@ const Container = styled(container)`
 `
 
 const App = () => {
+  const { isMigrationPage } = useMigration()
   const address = useAddress()
   const contract = useContractState(address)
   const { isLoading: isPairsLoading } = usePairs()
@@ -55,6 +57,17 @@ const App = () => {
       }
     }, 100)
   }, [isPairsLoading])
+
+  useEffect(() => {
+    console.log("isMigrationPage")
+    console.log(isMigrationPage)
+    if (isMigrationPage) {
+      document.body.style.backgroundImage =
+        "linear-gradient(to right, #0222ba 0%, #01115d 100%)"
+    } else {
+      document.body.style.backgroundImage = ""
+    }
+  }, [isMigrationPage])
 
   return (
     <QueryClientProvider client={queryClient}>

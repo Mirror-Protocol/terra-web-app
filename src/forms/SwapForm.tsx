@@ -85,6 +85,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const connectModal = useConnectModal()
   const [isWarningModalConfirmed, setIsWarningModalConfirmed] = useState(false)
   const warningModal = useModal()
+  usePairs("v1")
 
   const [searchParams, setSearchParams] = useSearchParams()
   const from = searchParams.get("from") || ""
@@ -321,6 +322,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     type,
     balance1
   )
+
+  useEffect(() => {
+    console.log("poolResult")
+    console.log(poolResult)
+  }, [poolResult])
 
   const [tax, setTax] = useState<Coins>(new Coins())
 

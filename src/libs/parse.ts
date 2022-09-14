@@ -81,6 +81,8 @@ export const lookup: Formatter = (amount = "0", contract_addr, config) => {
   let decimals = 6
   if (contract_addr) {
     const tokenInfo = findTokenInfoBySymbolOrContractAddr(contract_addr)
+    console.log("tokenInfo")
+    console.log(tokenInfo)
     if (tokenInfo) {
       decimals = tokenInfo.decimals
     }

@@ -17,7 +17,7 @@ import {
   UTHB,
   UUSD,
 } from "constants/constants"
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 import useURL from "graphql/useURL"
 import terraswapConfig from "constants/terraswap.json"
 import axios from "./request"
@@ -161,11 +161,17 @@ export function isNativeInfo(object: any): object is NativeInfo {
   return "native_token" in object
 }
 
-const useAPI = () => {
-  const { fcd, factory, service } = useNetwork()
+export type ApiVersion = "v1" | "v2"
+
+const useAPI = (version: ApiVersion = "v2") => {
+  const { fcd, factory, service, serviceV1 } = useNetwork()
   const address = useAddress()
   const { getSymbol } = useContractsAddress()
   const getURL = useURL()
+  const apiHost = useMemo(
+    () => (version === "v1" ? serviceV1 : service),
+    [version, service, serviceV1]
+  )
 
   // useBalance
   const loadDenomBalance = useCallback(async () => {
@@ -228,9 +234,8 @@ const useAPI = () => {
     let lastPair: (NativeInfo | AssetInfo)[] | null = null
 
     try {
-      const url = `${service}/pairs`
+      const url = `${apiHost}/pairs`
       const res: PairsResult = (await axios.get(url)).data
-
       if (res.pairs.length !== 0) {
         res.pairs
           .filter(
@@ -241,7 +246,6 @@ const useAPI = () => {
           .forEach((pair) => {
             result.pairs.push(pair)
           })
-
         return result
       }
     } catch (error) {
@@ -253,7 +257,6 @@ const useAPI = () => {
         pairs: { limit: 30, start_after: lastPair },
       })
       const pairs: PairsResponse = (await axios.get(url)).data
-
       if (!Array.isArray(pairs?.result?.pairs)) {
         // node might be down
         break
@@ -275,22 +278,22 @@ const useAPI = () => {
       lastPair = pairs.result.pairs.slice(-1)[0]?.asset_infos
     }
     return result
-  }, [service, factory, getURL])
+  }, [apiHost, factory, getURL])
 
   const loadTokensInfo = useCallback(async (): Promise<TokenResult[]> => {
-    const url = `${service}/tokens`
+    const url = `${apiHost}/tokens`
     const res: TokenResult[] = (await axios.get(url)).data
     return res
-  }, [service])
+  }, [apiHost])
 
   const loadSwappableTokenAddresses = useCallback(
     async (from: string) => {
       const res: string[] = (
-        await axios.get(`${service}/tokens/swap`, { params: { from } })
+        await axios.get(`${apiHost}/tokens/swap`, { params: { from } })
       ).data
       return res
     },
-    [service]
+    [apiHost]
   )
 
   const loadTokenInfo = useCallback(
@@ -357,7 +360,7 @@ const useAPI = () => {
           }
     ) => {
       const { type, ...params } = query
-      const url = `${service}/tx/${type}`.toLowerCase()
+      const url = `${apiHost}/tx/${type}`.toLowerCase()
       const res = (await axios.get(url, { params })).data
       return res.map(
         (data: MsgExecuteContract.Amino | MsgExecuteContract.Amino[]) => {
@@ -376,7 +379,7 @@ const useAPI = () => {
       )
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [service]
+    [apiHost]
   )
 
   // useTax
@@ -400,11 +403,10 @@ const useAPI = () => {
     [fcd]
   )
 
+  /** Deprecated */
   const loadTaxRate = useCallback(async () => {
-    const url = `${fcd}/treasury/tax_rate`
-    const res: TaxResponse = (await axios.get(url)).data
-    return res.result
-  }, [fcd])
+    return "0.000000000000000000"
+  }, [])
 
   return {
     loadDenomBalance,

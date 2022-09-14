@@ -85,6 +85,9 @@ const SwapFormGroup = ({
               </section>
             )}
             {max && <Button {...maxProps} />}
+            {!max && !help && unit && (
+              <section className={styles.unit}>{unit}</section>
+            )}
           </header>
         )}
 
@@ -114,7 +117,7 @@ const SwapFormGroup = ({
               )}
             </section>
 
-            <section className={styles.unit}>{unit}</section>
+            {(help || max) && <section className={styles.unit}>{unit}</section>}
           </section>
           {assets && <section>{assets}</section>}
         </section>

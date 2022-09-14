@@ -52,10 +52,13 @@ const Button = styled.button`
   }
 `
 
-const ChangeVersionButton = () => {
+const ChangeVersionButton = ({
+  href = "https://app.terraswap.io",
+  buttonText = "Go to Terraswap",
+}) => {
   return (
-    <a href="https://app.terraswap.io">
-      <Button type="button">Go to Terraswap</Button>
+    <a href={href}>
+      <Button type="button">{buttonText}</Button>
     </a>
   )
 }
