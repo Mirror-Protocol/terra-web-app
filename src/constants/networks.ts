@@ -20,12 +20,12 @@ const networks: Record<string, MirrorNetworkInfo> = {
     mantle: "https://fcd.terra.dev/",
     stats: "https://fcd.terra.dev/",
     fee: { gasPrice: "0.00506", amount: "1518", gas: "2000000" }, // 0.000500 UST
-    factory: "terra1ulgw0td86nvs4wtpsc80thv6xelk76ut7a7apj",
+    factory: "terra1jkndu9w5attpz09ut02sgey5dd3e8sq5watzm0",
     service:
       process.env.REACT_APP_MAINNET_SERVICE_URL ||
       "https://api-classic.terraswap.io/",
     dashboard: process.env.REACT_APP_MAINNET_DASHBOARD_URL,
-    router: "terra19qx5xe6q9ll4w0890ux7lv2p4mf3csd4qvt3ex",
+    router: "terra1g3zc8lwwmkrm0cz9wkgl849pdqaw6cq8lh7872",
   },
   testnet: {
     name: "testnet",

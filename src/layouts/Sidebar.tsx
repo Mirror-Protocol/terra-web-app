@@ -173,7 +173,11 @@ const Sidebar = () => {
           <NavLink
             to="/"
             className={location.pathname?.includes("/pairs") ? "active" : ""}
-            onClick={() => close()}
+            onClick={(event) => {
+              event.preventDefault()
+              close()
+            }}
+            style={{ cursor: "not-allowed" }}
           >
             Dashboard
           </NavLink>

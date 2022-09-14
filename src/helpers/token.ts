@@ -76,7 +76,7 @@ export const getSymbol = (key: string) => {
 }
 
 export const hasTaxToken = (contract_addr: string) => {
-  if (contract_addr === ULUNA || contract_addr.startsWith("terra")) {
+  if (contract_addr.startsWith("terra")) {
     return false
   }
 
