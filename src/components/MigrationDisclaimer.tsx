@@ -145,7 +145,7 @@ const Disclaimer = () => {
             size="lg"
             disabled={!disclaimerAgreed}
             onClick={() => {
-              window.localStorage.setItem("disclaimerAgreed", "yes")
+              window.localStorage.setItem("migrationDisclaimerAgreed", "yes")
               disclaimerModal.close()
             }}
             style={{ textTransform: "unset", maxWidth: 235, borderRadius: 10 }}
