@@ -234,7 +234,9 @@ const useAPI = (version: ApiVersion = "v2") => {
     let lastPair: (NativeInfo | AssetInfo)[] | null = null
 
     try {
-      const url = `${apiHost}/pairs`
+      const url = `${apiHost}/pairs${
+        version === "v2" ? "?unverified=true" : ""
+      }`
       const res: PairsResult = (await axios.get(url)).data
       if (res.pairs.length !== 0) {
         res.pairs
@@ -278,7 +280,7 @@ const useAPI = (version: ApiVersion = "v2") => {
       lastPair = pairs.result.pairs.slice(-1)[0]?.asset_infos
     }
     return result
-  }, [apiHost, factory, getURL])
+  }, [apiHost, factory, getURL, version])
 
   const loadTokensInfo = useCallback(async (): Promise<TokenResult[]> => {
     const url = `${apiHost}/tokens`
@@ -349,7 +351,7 @@ const useAPI = (version: ApiVersion = "v2") => {
             to: string
             fromAmount: number | string
             toAmount: number | string
-            slippage: number | string
+            slippage?: number | string
             sender: string
           }
         | {
@@ -366,10 +368,17 @@ const useAPI = (version: ApiVersion = "v2") => {
         (data: MsgExecuteContract.Amino | MsgExecuteContract.Amino[]) => {
           return (Array.isArray(data) ? data : [data]).map(
             (item: MsgExecuteContract.Amino) => {
+              const execute_msg = item?.value?.execute_msg as any
+              if (
+                execute_msg?.provide_liquidity &&
+                !execute_msg?.provide_liquidity?.slippage_tolerance
+              ) {
+                delete execute_msg.provide_liquidity.slippage_tolerance
+              }
               const result = new MsgExecuteContract(
                 address,
                 item?.value?.contract,
-                item?.value?.execute_msg,
+                execute_msg,
                 Coins.fromAmino(item?.value?.coins)
               )
               return result
@@ -403,10 +412,18 @@ const useAPI = (version: ApiVersion = "v2") => {
     [fcd]
   )
 
-  /** Deprecated */
   const loadTaxRate = useCallback(async () => {
-    return "0.000000000000000000"
-  }, [])
+    let taxRate = "0"
+    try {
+      const url = `${fcd}/treasury/tax_rate`
+      const res: TaxResponse = (await axios.get(url)).data
+      taxRate = res.result
+    } catch (error) {
+      console.error(error)
+    }
+
+    return taxRate
+  }, [fcd])
 
   return {
     loadDenomBalance,

@@ -1,53 +1,34 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "styled-components"
 import Container from "components/Container"
-import { SubmitHandler, useForm, WatchObserver } from "react-hook-form"
+import { SubmitHandler, useForm } from "react-hook-form"
 import Result from "./Result"
 import TabView from "components/TabView"
 import { useSearchParams } from "react-router-dom"
-import { UST, DEFAULT_MAX_SPREAD, ULUNA, UUSD } from "constants/constants"
+import { UST, DEFAULT_MAX_SPREAD } from "constants/constants"
 import { useNetwork, useContract, useAddress, useConnectModal } from "hooks"
-import { lookup, decimal, toAmount } from "libs/parse"
-import calc from "helpers/calc"
+import { lookup } from "libs/parse"
 import { PriceKey, BalanceKey, AssetInfoKey } from "hooks/contractKeys"
-import Count from "components/Count"
-import {
-  validate as v,
-  placeholder,
-  step,
-  renderBalance,
-  calcTax,
-} from "./formHelpers"
+
 import useSwapSelectToken from "./useSwapSelectToken"
 import SwapFormGroup from "./SwapFormGroup"
-import usePairs, { InitLP, useLpTokenInfos, useTokenInfos } from "rest/usePairs"
+import usePairs, { useLpTokenInfos, useTokenInfos } from "rest/usePairs"
 import useBalance from "rest/useBalance"
-import { minus, gte, times, ceil, div } from "libs/math"
-import { TooltipIcon } from "components/Tooltip"
-import Tooltip from "lang/Tooltip.json"
+import { times, ceil, div, lt, lte } from "libs/math"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
 import { Coins, CreateTxOptions } from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
-import { insertIf } from "libs/utils"
-import { percent } from "libs/num"
 import SvgArrow from "images/arrow.svg"
-import SvgPlus from "images/plus.svg"
 import Button from "components/Button"
 import MESSAGE from "lang/MESSAGE.json"
-import SwapConfirm from "./SwapConfirm"
 import useAPI from "rest/useAPI"
 import { TxResult, useWallet } from "@terra-money/wallet-provider"
-import iconSettings from "images/icon-settings.svg"
 import iconReload from "images/icon-reload.svg"
-import { useModal } from "components/Modal"
-import Settings, { SettingValues } from "components/Settings"
-import useLocalStorage from "libs/useLocalStorage"
-import useAutoRouter from "rest/useAutoRouter"
 import { useLCDClient } from "layouts/WalletConnectProvider"
 import { useContractsAddress } from "hooks/useContractsAddress"
-import Disclaimer from "components/DisclaimerAgreement"
+import Disclaimer from "components/MigrationDisclaimer"
 
 enum Key {
   value1 = "value1",
@@ -74,6 +55,18 @@ const Warning = {
 }
 
 const balanceKey = BalanceKey.LPSTAKABLE
+
+function calculateProvideAssets(
+  withdrawn: [string, string],
+  pool: [string, string]
+) {
+  const target0 = times(div(pool[0], pool[1]), withdrawn[1])
+  const target1 = times(div(pool[1], pool[0]), withdrawn[0])
+  return [
+    lt(target0, withdrawn[0]) ? target0 : withdrawn[0],
+    lt(target1, withdrawn[1]) ? target1 : withdrawn[1],
+  ]
+}
 
 const MigrateForm = ({ type }: { type?: Type }) => {
   const connectModal = useConnectModal()
@@ -145,11 +138,6 @@ const MigrateForm = ({ type }: { type?: Type }) => {
   }, [from, tokenInfos])
 
   const { balance: balance1 } = useBalance(from, formData[Key.symbol1])
-
-  useEffect(() => {
-    console.log("balance1")
-    console.log(balance1)
-  }, [balance1])
 
   const [feeAddress, setFeeAddress] = useState("")
   const fetchFeeAddress = useCallback(() => {
@@ -231,7 +219,20 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     }
   }, [isV1PairsLoading, lpTokenInfos, from, v1Pairs])
 
-  const { result: poolResult, poolLoading } = usePool(
+  const selectedV2Pairs = useMemo(() => {
+    const [info1, info2] = lpTokenInfos.get(from) || []
+
+    const selected = v2Pairs.find((item) => {
+      return (
+        item.pair.find((s) => s.contract_addr === info1?.contract_addr) &&
+        item.pair.find((s) => s.contract_addr === info2?.contract_addr)
+      )
+    })
+
+    return selected
+  }, [from, lpTokenInfos, v2Pairs])
+
+  const { result: withdrawSimulation, poolLoading } = usePool(
     selectedPairAddress,
     formData[Key.symbol1],
     lookup(balance1, from),
@@ -239,10 +240,12 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     balance1
   )
 
-  useEffect(() => {
-    console.log("poolResult")
-    console.log(poolResult)
-  }, [poolResult])
+  const provideSimulation = usePool(
+    selectedV2Pairs?.contract,
+    selectedV2Pairs?.pair[1].symbol,
+    "1000000",
+    Type.PROVIDE
+  )
 
   const [tax, setTax] = useState<Coins>(new Coins())
 
@@ -300,12 +303,12 @@ const MigrateForm = ({ type }: { type?: Type }) => {
 
   useEffect(() => {
     if (
-      poolResult !== undefined &&
+      withdrawSimulation !== undefined &&
       !poolLoading &&
       poolSymbol1 &&
       poolSymbol2
     ) {
-      const amounts = poolResult.estimated.split("-")
+      const amounts = withdrawSimulation.estimated.split("-")
       setValue(
         Key.value1,
         lookup(amounts[0], poolContract1) +
@@ -314,23 +317,54 @@ const MigrateForm = ({ type }: { type?: Type }) => {
           lookup(amounts[1], poolContract2) +
           poolSymbol2
       )
+
+      const calculated = calculateProvideAssets(
+        [amounts[0], amounts[1]],
+        [
+          provideSimulation?.result?.poolAmount1 || "1",
+          provideSimulation?.result?.poolAmount2 || "1",
+        ]
+      )
+
       setValue(
         Key.value2,
-        lookup(amounts[0], poolContract1) +
+        lookup(calculated[0], poolContract1) +
           poolSymbol1 +
           " - " +
-          lookup(amounts[1], poolContract2) +
+          lookup(calculated[1], poolContract2) +
           poolSymbol2
       )
+      // if (Number.isNaN(Number(provideSimulation?.result?.LP))) {
+      //   setValue(
+      //     Key.value2,
+      //     lookup(amounts[0], poolContract1) +
+      //       poolSymbol1 +
+      //       " - " +
+      //       lookup(amounts[1], poolContract2) +
+      //       poolSymbol2
+      //   )
+      // } else {
+      //   setValue(
+      //     Key.value2,
+      //     calculateProvideAssets(
+      //       [amounts[0], amounts[1]],
+      //       [
+      //         provideSimulation?.result?.price1 || "1",
+      //         provideSimulation?.result?.price2 || "1",
+      //       ]
+      //     ).join(" - ")
+      //   )
+      // }
     }
   }, [
     poolContract1,
     poolContract2,
     poolLoading,
-    poolResult,
+    withdrawSimulation,
     poolSymbol1,
     poolSymbol2,
     setValue,
+    provideSimulation,
   ])
 
   const feeValue = useMemo(
@@ -364,48 +398,40 @@ const MigrateForm = ({ type }: { type?: Type }) => {
           return Array.isArray(msg) ? msg[0] : msg
         })
 
-        const [info1, info2] = lpTokenInfos.get(from) || []
-
-        const selectedV2Pairs = v2Pairs.find((item) => {
-          return (
-            item.pair.find((s) => s.contract_addr === info1?.contract_addr) &&
-            item.pair.find((s) => s.contract_addr === info2?.contract_addr)
-          )
-        })
-
         if (
           !selectedV2Pairs ||
-          !poolResult ||
+          !withdrawSimulation ||
           !poolContract1 ||
           !poolContract2
         ) {
           return
         }
 
-        const [fromAmount, toAmount] = poolResult.estimated.split("-")
+        const [fromAmount, toAmount] = withdrawSimulation.estimated.split("-")
 
-        console.log("fromAmount, toAmount")
-        console.log(fromAmount, toAmount)
+        const calculated = calculateProvideAssets(
+          [fromAmount, toAmount],
+          [
+            provideSimulation?.result?.poolAmount1 || "1",
+            provideSimulation?.result?.poolAmount2 || "1",
+          ]
+        )
 
         const provideMsgs = (
           await generateV2ContractMessages({
             type: Type.PROVIDE,
             from: poolContract1,
-            fromAmount: lookup(fromAmount, poolContract1),
+            fromAmount: lookup(calculated[0], poolSymbol1),
             to: poolContract2,
-            toAmount: lookup(toAmount, poolContract2),
+            toAmount: lookup(calculated[1], poolSymbol2),
             sender: `${walletAddress}`,
-            slippage: DEFAULT_MAX_SPREAD,
+            slippage: lte(provideSimulation.result?.totalShare || "", 0)
+              ? undefined
+              : DEFAULT_MAX_SPREAD / 100,
           })
         ).map((msg: any) => {
           return Array.isArray(msg) ? msg[0] : msg
         })
-
-        console.log("withdrawMsgs")
-        console.log(withdrawMsgs)
-
-        console.log("provideMsgs")
-        console.log(provideMsgs)
 
         let txOptions: CreateTxOptions = {
           msgs: [...withdrawMsgs, ...provideMsgs],
@@ -438,7 +464,16 @@ const MigrateForm = ({ type }: { type?: Type }) => {
       generateV1ContractMessages,
       walletAddress,
       balance1,
+      from,
       lpContract,
+      selectedV2Pairs,
+      withdrawSimulation,
+      poolContract1,
+      poolContract2,
+      provideSimulation,
+      generateV2ContractMessages,
+      poolSymbol1,
+      poolSymbol2,
       gasPrice,
       getSymbol,
       terra.tx,
@@ -529,7 +564,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
                 autoComplete: "off",
                 readOnly: true,
               }}
-              help={{ title: "*Residue", content: "?" }}
+              // help={{ title: "*Residue", content: "?" }}
               label="To"
             />
             <div>
@@ -539,7 +574,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
                 }}
               >
                 <p>
-                  *Residue assets out of the pair will be sent to your wallet.
+                  Residue assets out of the pair will be sent to your wallet.
                   <br />
                   The resulting price may be different from the expected price.
                   Trade at your own risk.

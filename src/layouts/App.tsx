@@ -46,21 +46,20 @@ const App = () => {
   const { isMigrationPage } = useMigration()
   const address = useAddress()
   const contract = useContractState(address)
-  const { isLoading: isPairsLoading } = usePairs()
+  const { isLoading: isV2PairsLoading } = usePairs("v2")
+  const { isLoading: isV1PairsLoading } = usePairs("v1")
 
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     setTimeout(() => {
-      if (!isPairsLoading) {
+      if (!isV2PairsLoading && !isV1PairsLoading) {
         setIsLoading(false)
       }
     }, 100)
-  }, [isPairsLoading])
+  }, [isV2PairsLoading, isV1PairsLoading])
 
   useEffect(() => {
-    console.log("isMigrationPage")
-    console.log(isMigrationPage)
     if (isMigrationPage) {
       document.body.style.backgroundImage =
         "linear-gradient(to right, #0222ba 0%, #01115d 100%)"

@@ -15,6 +15,9 @@ interface PoolResult {
   price2: string
   afterPool: string
   LP: string
+  poolAmount1: string
+  poolAmount2: string
+  totalShare: string
   // fromLP: Asset[]
   // text: string
 }
@@ -169,6 +172,9 @@ export default (
             estimated,
             LP,
             afterPool,
+            poolAmount1: res.assets[0].amount,
+            poolAmount2: res.assets[1].amount,
+            totalShare: res.total_share,
           })
         })
         .catch(() => {

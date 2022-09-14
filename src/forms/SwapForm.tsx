@@ -323,11 +323,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     balance1
   )
 
-  useEffect(() => {
-    console.log("poolResult")
-    console.log(poolResult)
-  }, [poolResult])
-
   const [tax, setTax] = useState<Coins>(new Coins())
 
   const spread = useMemo(() => {
