@@ -130,6 +130,12 @@ const Disclaimer = () => {
               4661. ANY WORKING BOT ON THE OLD CONTRACT CAN EXECUTE SWAP AND IT
               CAN BURN YOUR LIQUIDITY.{" "}
             </div>
+            <div>
+              NOTE THAT LIQUIDITY PROVIDERS OF PAIRS CONTAINING CTX ARE
+              RECOMMENDED NOT TO MIGRATE AND TO USE&nbsp;
+              <a href="https://defi.c2x.world">https://defi.c2x.world</a>{" "}
+              INSTEAD OF TerraSwap.{" "}
+            </div>
           </Content>
           <div
             style={{ textAlign: "center", padding: "0 26px", marginBottom: 30 }}
