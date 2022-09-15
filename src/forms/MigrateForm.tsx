@@ -29,6 +29,7 @@ import iconReload from "images/icon-reload.svg"
 import { useLCDClient } from "layouts/WalletConnectProvider"
 import { useContractsAddress } from "hooks/useContractsAddress"
 import Disclaimer from "components/MigrationDisclaimer"
+import styles from "./SwapFormGroup.module.scss"
 
 enum Key {
   value1 = "value1",
@@ -89,6 +90,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
   const walletAddress = useAddress()
   const wallet = useWallet()
   const { terra } = useLCDClient()
+  const [residue, setResidue] = useState("0")
 
   const form = useForm({
     defaultValues: {
@@ -193,6 +195,8 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     poolSymbol2,
     poolContract1,
     poolContract2,
+    poolDecimal1,
+    poolDecimal2,
   } = useMemo(() => {
     if (isV1PairsLoading) {
       return {}
@@ -217,6 +221,8 @@ const MigrateForm = ({ type }: { type?: Type }) => {
       poolSymbol2: lpTokenInfo?.[1]?.symbol,
       poolContract1: lpTokenInfo?.[0]?.contract_addr,
       poolContract2: lpTokenInfo?.[1]?.contract_addr,
+      poolDecimal1: lpTokenInfo?.[0]?.decimals,
+      poolDecimal2: lpTokenInfo?.[1]?.decimals,
     }
   }, [isV1PairsLoading, lpTokenInfos, from, v1Pairs])
 
@@ -310,13 +316,12 @@ const MigrateForm = ({ type }: { type?: Type }) => {
       poolSymbol2
     ) {
       const amounts = withdrawSimulation.estimated.split("-")
+      const srcAsset1 = lookup(amounts[0], poolContract1)
+      const srcAsset2 = lookup(amounts[1], poolContract2)
+
       setValue(
         Key.value1,
-        lookup(amounts[0], poolContract1) +
-          poolSymbol1 +
-          " - " +
-          lookup(amounts[1], poolContract2) +
-          poolSymbol2
+        srcAsset1 + poolSymbol1 + " - " + srcAsset2 + poolSymbol2
       )
 
       const calculated = calculateProvideAssets(
@@ -327,14 +332,33 @@ const MigrateForm = ({ type }: { type?: Type }) => {
         ]
       )
 
+      const destAsset1 = lookup(calculated[0], poolContract1)
+      const destAsset2 = lookup(calculated[1], poolContract2)
+
       setValue(
         Key.value2,
-        lookup(calculated[0], poolContract1) +
-          poolSymbol1 +
-          " - " +
-          lookup(calculated[1], poolContract2) +
-          poolSymbol2
+        destAsset1 + poolSymbol1 + " - " + destAsset2 + poolSymbol2
       )
+
+      if (Number(srcAsset1) - Number(destAsset1) > 0) {
+        setResidue(
+          parseFloat(String(Number(srcAsset1) - Number(destAsset1))).toFixed(
+            poolDecimal1
+          ) +
+            " " +
+            poolSymbol1
+        )
+      } else if (Number(srcAsset2) - Number(destAsset2) > 0) {
+        setResidue(
+          parseFloat(String(Number(srcAsset2) - Number(destAsset2))).toFixed(
+            poolDecimal2
+          ) +
+            " " +
+            poolSymbol2
+        )
+      } else {
+        setResidue("0")
+      }
     }
   }, [
     poolContract1,
@@ -545,7 +569,13 @@ const MigrateForm = ({ type }: { type?: Type }) => {
                 readOnly: true,
               }}
               // help={{ title: "*Residue", content: "?" }}
-              label="To"
+              label={
+                <>
+                  <label>To</label>
+                  <label className={styles.sublabel}> (Estimated value)</label>
+                </>
+              }
+              help={{ title: "*Residue", content: residue }}
             />
             <div>
               <div

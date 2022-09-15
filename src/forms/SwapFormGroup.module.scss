@@ -57,6 +57,10 @@ $padding: 10px 10px;
   @include flex(space-between);
 
   .label,
+  .sublabel {
+    font-size: 12px;
+    font-weight: normal;
+  }
   .field {
     flex: 1;
   }
