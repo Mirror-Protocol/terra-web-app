@@ -8,6 +8,7 @@ import iconClose from "images/icon-close-primary.svg"
 import { socialMediaList } from "constants/constants"
 import SocialMediaAnchor from "components/SocialMediaAnchor"
 import ChangeVersionButton from "components/ChangeVersionButton"
+import useMigration from "hooks/useMigration"
 
 const Wrapper = styled.div<{ isOpen: boolean }>`
   width: 100%;
@@ -159,6 +160,7 @@ const SocialMediaList = styled.div<{ isOpen?: boolean }>`
 `
 
 const Sidebar = () => {
+  const { isMigrationPage } = useMigration()
   const { isOpen, open, close } = useModal()
   const location = useLocation()
 
@@ -169,20 +171,43 @@ const Sidebar = () => {
         onClick={() => (!isOpen ? open() : close())}
       />
       <Wrapper isOpen={isOpen}>
-        <div>
-          <NavLink
-            to="/"
-            className={location.pathname?.includes("/pairs") ? "active" : ""}
-            onClick={() => close()}
-          >
-            Dashboard
-          </NavLink>
-          <NavLink to="/swap" onClick={() => close()}>
-            Swap
-          </NavLink>
-          <div style={{ height: 25 }} />
-          <ChangeVersionButton />
-        </div>
+        {isMigrationPage ? (
+          <div>
+            <NavLink
+              to="/migration"
+              className={
+                location.pathname?.includes("/migration") ? "active" : ""
+              }
+              onClick={(event) => {
+                event.preventDefault()
+                close()
+              }}
+            >
+              Migration
+            </NavLink>
+            <div style={{ height: 25 }} />
+            <ChangeVersionButton href="/" buttonText="Go to Classic" />
+          </div>
+        ) : (
+          <div>
+            <NavLink
+              to="/"
+              className={location.pathname?.includes("/pairs") ? "active" : ""}
+              onClick={(event) => {
+                event.preventDefault()
+                close()
+              }}
+              style={{ cursor: "not-allowed" }}
+            >
+              Dashboard
+            </NavLink>
+            <NavLink to="/swap" onClick={() => close()}>
+              Swap
+            </NavLink>
+            <div style={{ height: 25 }} />
+            <ChangeVersionButton />
+          </div>
+        )}
       </Wrapper>
       <SocialMediaList isOpen={isOpen}>
         {socialMediaList.map((item, index) => (

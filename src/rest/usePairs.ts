@@ -33,7 +33,7 @@ import {
   USGD,
   UTHB,
 } from "constants/constants"
-import useAPI from "./useAPI"
+import useAPI, { ApiVersion } from "./useAPI"
 import { useNetwork } from "hooks"
 import mainnetTokens from "constants/mainnet-tokens.json"
 import testnetTokens from "constants/testnet-tokens.json"
@@ -263,10 +263,10 @@ export let lpTokenInfos: Map<string, TokenInfo[]> = new Map<
 
 export let InitLP = ""
 
-const usePairs = () => {
+const usePairs = (apiVersion?: ApiVersion) => {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState<Pairs>({ pairs: [] })
-  const { loadPairs, loadTokenInfo, loadTokensInfo } = useAPI()
+  const { loadPairs, loadTokenInfo, loadTokensInfo } = useAPI(apiVersion)
   const { name: networkName } = useNetwork()
   const [currentNetworkName, setCurrentNetworkName] = useState("")
 

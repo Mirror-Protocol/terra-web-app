@@ -5,7 +5,8 @@ import Connect from "./Connect"
 import styles from "./Header.module.scss"
 import { Link } from "react-router-dom"
 import Sidebar from "./Sidebar"
-import styled from "styled-components"
+import styled, { css } from "styled-components"
+import useMigration from "hooks/useMigration"
 
 const SidebarWrapper = styled.div`
   position: relative;
@@ -27,7 +28,7 @@ const Banner = styled.div`
   position: fixed;
   left: 0;
   top: 0;
-  background-color: #0222ba;
+  background-color: #f15e7e;
   color: #ffffff;
   text-align: center;
   padding: 11px;
@@ -39,19 +40,10 @@ const Banner = styled.div`
   line-height: normal;
   letter-spacing: normal;
   z-index: 9999999;
-
-  &::before {
-    content: "";
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    background-color: #ffffff7f;
-  }
 `
 
 const Header = () => {
+  const { isMigrationPage } = useMigration()
   const [isScrolled, setIsScrolled] = useState(false)
   useEffect(() => {
     let timerId: any
@@ -87,7 +79,13 @@ const Header = () => {
 
   return (
     <>
-      <Banner>Terraswap Classic</Banner>
+      <Banner>
+        <Link to="/migration">
+          {isMigrationPage
+            ? "Terraswap Classic - Migration Center"
+            : "Terraswap Classic - Migration is now available, click here!"}
+        </Link>
+      </Banner>
       <header className={styles.header}>
         <Container className={styles.container}>
           <section className={styles.wrapper}>

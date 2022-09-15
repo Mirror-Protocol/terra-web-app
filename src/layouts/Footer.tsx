@@ -5,6 +5,7 @@ import styles from "./Footer.module.scss"
 import SocialMediaAnchor from "components/SocialMediaAnchor"
 import { socialMediaList } from "constants/constants"
 import ChangeVersionButton from "components/ChangeVersionButton"
+import useMigration from "hooks/useMigration"
 
 const SocialMediaAnchorList = styled.div`
   width: 100%;
@@ -19,6 +20,7 @@ const SocialMediaAnchorList = styled.div`
 `
 
 const Footer = () => {
+  const { isMigrationPage } = useMigration()
   return (
     <footer className={styles.footer}>
       <div
@@ -26,7 +28,11 @@ const Footer = () => {
         className="mobile-only"
       >
         <div style={{ display: "inline-block", maxWidth: 155, flex: 1 }}>
-          <ChangeVersionButton />
+          {isMigrationPage ? (
+            <ChangeVersionButton href="/" buttonText="Go to Classic" />
+          ) : (
+            <ChangeVersionButton />
+          )}
         </div>
       </div>
       <SocialMediaAnchorList className="mobile-only">

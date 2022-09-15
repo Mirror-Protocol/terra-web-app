@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { isAssetInfo, tokenInfos } from "./usePairs"
 import { div, gt, times, ceil, plus, minus } from "../libs/math"
 import { Type } from "../pages/Swap"
@@ -15,6 +15,9 @@ interface PoolResult {
   price2: string
   afterPool: string
   LP: string
+  poolAmount1: string
+  poolAmount2: string
+  totalShare: string
   // fromLP: Asset[]
   // text: string
 }
@@ -169,6 +172,9 @@ export default (
             estimated,
             LP,
             afterPool,
+            poolAmount1: res.assets[0].amount,
+            poolAmount2: res.assets[1].amount,
+            totalShare: res.total_share,
           })
         })
         .catch(() => {
@@ -180,5 +186,5 @@ export default (
     }
   }, [contract, amount, symbol, loadPool, type, balance])
 
-  return { result, poolLoading }
+  return useMemo(() => ({ result, poolLoading }), [poolLoading, result])
 }

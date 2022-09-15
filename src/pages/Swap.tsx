@@ -3,6 +3,8 @@ import SwapPage from "../components/SwapPage"
 import SwapForm from "../forms/SwapForm"
 import Container from "../components/Container"
 import { useSearchParams } from "react-router-dom"
+import useMigration from "hooks/useMigration"
+import MigrateForm from "forms/MigrateForm"
 
 export enum Type {
   "SWAP" = "swap",
@@ -17,33 +19,49 @@ export enum Type {
 // ];
 
 const Swap = () => {
+  const { isMigrationPage } = useMigration()
   const [searchParams, setSearchParams] = useSearchParams()
   const type = searchParams.get("type") as Type
   const tabs = {
-    tabs: [
-      { name: Type.SWAP, title: "Swap" },
-      { name: Type.PROVIDE, title: "Provide" },
-      { name: Type.WITHDRAW, title: "Withdraw" },
-    ],
-    selectedTabName: type,
+    tabs: isMigrationPage
+      ? [
+          {
+            name: "migration",
+            title: "Migration",
+          },
+        ]
+      : [
+          { name: Type.SWAP, title: "Swap" },
+          { name: Type.PROVIDE, title: "Provide" },
+          { name: Type.WITHDRAW, title: "Withdraw" },
+        ],
+    selectedTabName: isMigrationPage ? "migration" : type,
   }
 
   useEffect(() => {
-    if (
-      !type ||
-      !Object.keys(Type)
-        .map((key) => Type[key as keyof typeof Type])
-        .includes(type)
-    ) {
-      searchParams.set("type", Type.SWAP)
-      setSearchParams(searchParams, { replace: true })
+    if (!isMigrationPage) {
+      if (
+        !type ||
+        !Object.keys(Type)
+          .map((key) => Type[key as keyof typeof Type])
+          .includes(type)
+      ) {
+        searchParams.set("type", Type.SWAP)
+        setSearchParams(searchParams, { replace: true })
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type])
+  }, [type, isMigrationPage])
 
   return (
     <Container>
-      <SwapPage>{type && <SwapForm type={type} tabs={tabs} />}</SwapPage>
+      <SwapPage>
+        {isMigrationPage ? (
+          <MigrateForm />
+        ) : (
+          <>{type && <SwapForm type={type} tabs={tabs} />}</>
+        )}
+      </SwapPage>
     </Container>
   )
 }
