@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { isAssetInfo, tokenInfos } from "./usePairs"
 import { div, gt, times, ceil, plus, minus } from "../libs/math"
 import { Type } from "../pages/Swap"
@@ -186,5 +186,5 @@ export default (
     }
   }, [contract, amount, symbol, loadPool, type, balance])
 
-  return { result, poolLoading }
+  return useMemo(() => ({ result, poolLoading }), [poolLoading, result])
 }

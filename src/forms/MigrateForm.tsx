@@ -69,6 +69,9 @@ function calculateProvideAssets(
 }
 
 const MigrateForm = ({ type }: { type?: Type }) => {
+  const { pairs: v1Pairs, isLoading: isV1PairsLoading } = usePairs("v1")
+  const { pairs: v2Pairs, isLoading: isV2PairsLoading } = usePairs("v2")
+
   const connectModal = useConnectModal()
 
   const [searchParams, setSearchParams] = useSearchParams()
@@ -86,8 +89,6 @@ const MigrateForm = ({ type }: { type?: Type }) => {
   const walletAddress = useAddress()
   const wallet = useWallet()
   const { terra } = useLCDClient()
-  const { pairs: v1Pairs, isLoading: isV1PairsLoading } = usePairs("v1")
-  const { pairs: v2Pairs, isLoading: isV2PairsLoading } = usePairs("v2")
 
   const form = useForm({
     defaultValues: {
@@ -334,27 +335,6 @@ const MigrateForm = ({ type }: { type?: Type }) => {
           lookup(calculated[1], poolContract2) +
           poolSymbol2
       )
-      // if (Number.isNaN(Number(provideSimulation?.result?.LP))) {
-      //   setValue(
-      //     Key.value2,
-      //     lookup(amounts[0], poolContract1) +
-      //       poolSymbol1 +
-      //       " - " +
-      //       lookup(amounts[1], poolContract2) +
-      //       poolSymbol2
-      //   )
-      // } else {
-      //   setValue(
-      //     Key.value2,
-      //     calculateProvideAssets(
-      //       [amounts[0], amounts[1]],
-      //       [
-      //         provideSimulation?.result?.price1 || "1",
-      //         provideSimulation?.result?.price2 || "1",
-      //       ]
-      //     ).join(" - ")
-      //   )
-      // }
     }
   }, [
     poolContract1,
