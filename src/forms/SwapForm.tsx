@@ -869,16 +869,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                 })
               : "0",
             token: from,
-            beliefPrice: `${decimal(
-              times(
-                div(value1, value2),
-                Math.pow(
-                  10,
-                  (tokenInfo1?.decimals || 0) - (tokenInfo2?.decimals || 0)
-                ) || 1
-              ),
-              18
-            )}`,
+            beliefPrice: `${decimal(div(value1, value2), 18)}`,
           })
         } else {
           msgs = await generateContractMessages(
