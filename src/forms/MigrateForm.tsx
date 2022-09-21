@@ -17,7 +17,7 @@ import useBalance from "rest/useBalance"
 import { times, ceil, div, lt, lte } from "libs/math"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import { Coins, CreateTxOptions } from "@terra-money/terra.js"
+import { Coins, CreateTxOptions, Fee } from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import SvgArrow from "images/arrow.svg"
@@ -258,70 +258,27 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     Type.PROVIDE
   )
 
-  const [tax, setTax] = useState<Coins>(new Coins())
-
   const { gasPrice } = useGasPrice(formData[Key.feeSymbol])
   const getTax = useCallback(
-    async ({
-      value1,
-      value2,
-      token1,
-      token2,
-    }: {
-      value1?: string
-      value2?: string
-      token1?: string
-      token2?: string
-    }) => {
-      let newTax = tax
-
-      newTax.map((coin) => {
-        if (!(coin.denom === token1 || coin.denom === token2)) {
-          newTax.set(coin.denom, 0)
-        }
-
-        return true
-      })
+    async (data: { token: string; amount: string }[]) => {
+      const newTax = new Coins()
 
       const taxRate = await loadTaxRate()
-      if (token1 && hasTaxToken(token1) && taxRate && value1) {
-        const tax1 = "0"
-        newTax.set(token1, tax1)
-      }
-      if (token2 && hasTaxToken(token2) && taxRate && value2) {
-        const taxCap2 = await loadTaxInfo(token2)
-        if (taxCap2) {
-          const tax2 = calcTax(toAmount(value2), taxCap2, taxRate)
-          newTax.set(token2, tax2)
-        }
-      }
+      await Promise.all(
+        data.map(async ({ token, amount }) => {
+          if (token && hasTaxToken(token) && taxRate && amount) {
+            const taxCap = await loadTaxInfo(token)
+            if (taxCap) {
+              const calculatedTax = calcTax(amount, taxCap, taxRate)
+              newTax.set(token, calculatedTax)
+            }
+          }
+        })
+      )
       return newTax
     },
-    [loadTaxInfo, loadTaxRate, tax]
+    [loadTaxInfo, loadTaxRate]
   )
-
-  const isTaxCalculating = useRef<boolean>(false)
-  useEffect(() => {
-    if (isTaxCalculating?.current) {
-      return
-    }
-    isTaxCalculating.current = true
-    getTax({
-      value1: balance1,
-      value2: balance1,
-      token1: poolContract1,
-      token2: poolContract2,
-    })
-      .then((value) => {
-        setTax(value)
-      })
-      .catch(() => {
-        setTax(tax)
-      })
-      .finally(() => {
-        isTaxCalculating.current = false
-      })
-  }, [formData, tax, getTax, from, balance1])
 
   useEffect(() => {
     setValue(Key.symbol1, tokenInfo1?.symbol || "")
@@ -392,6 +349,8 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     poolSymbol2,
     setValue,
     provideSimulation,
+    poolDecimal1,
+    poolDecimal2,
   ])
 
   const feeValue = useMemo(
@@ -436,7 +395,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
 
         const [fromAmount, toAmount] = withdrawSimulation.estimated.split("-")
 
-        const calculated = calculateProvideAssets(
+        const calculatedAmounts = calculateProvideAssets(
           [fromAmount, toAmount],
           [
             provideSimulation?.result?.poolAmount1 || "1",
@@ -448,9 +407,9 @@ const MigrateForm = ({ type }: { type?: Type }) => {
           await generateV2ContractMessages({
             type: Type.PROVIDE,
             from: poolContract1,
-            fromAmount: lookup(calculated[0], poolSymbol1),
+            fromAmount: lookup(calculatedAmounts[0], poolSymbol1),
             to: poolContract2,
-            toAmount: lookup(calculated[1], poolSymbol2),
+            toAmount: lookup(calculatedAmounts[1], poolSymbol2),
             sender: `${walletAddress}`,
             slippage: lte(provideSimulation.result?.totalShare || "", 0)
               ? undefined
@@ -460,7 +419,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
           return Array.isArray(msg) ? msg[0] : msg
         })
 
-        let txOptions: CreateTxOptions = {
+        const txOptions: CreateTxOptions = {
           msgs: [...withdrawMsgs, ...provideMsgs],
           memo: undefined,
           gasPrices: `${gasPrice}${getSymbol(feeSymbol || "")}`,
@@ -470,10 +429,18 @@ const MigrateForm = ({ type }: { type?: Type }) => {
           [{ address: walletAddress }],
           txOptions
         )
-        txOptions.fee = signMsg.auth_info.fee
+
+        const taxes = await getTax([
+          { token: poolContract1, amount: calculatedAmounts[0] },
+          { token: poolContract2, amount: calculatedAmounts[1] },
+        ])
+
+        const feeCoins = signMsg.auth_info.fee.amount.add(taxes)
+
         const extensionResult = await wallet.post(
           {
             ...txOptions,
+            fee: new Fee(signMsg.auth_info.fee.gas_limit, feeCoins),
           },
           walletAddress
         )
@@ -504,6 +471,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
       gasPrice,
       getSymbol,
       terra.tx,
+      getTax,
       wallet,
     ]
   )
