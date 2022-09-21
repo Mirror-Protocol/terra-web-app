@@ -30,7 +30,8 @@ import { useLCDClient } from "layouts/WalletConnectProvider"
 import { useContractsAddress } from "hooks/useContractsAddress"
 import Disclaimer from "components/MigrationDisclaimer"
 import styles from "./SwapFormGroup.module.scss"
-
+import { calcTax } from "./formHelpers"
+import { toAmount } from "libs/parse"
 enum Key {
   value1 = "value1",
   value2 = "value2",
@@ -82,8 +83,11 @@ const MigrateForm = ({ type }: { type?: Type }) => {
   const lpTokenInfos = useLpTokenInfos()
 
   const { getSymbol, isNativeToken } = useContractsAddress()
-  const { loadTaxRate, generateContractMessages: generateV1ContractMessages } =
-    useAPI("v1")
+  const {
+    loadTaxInfo,
+    loadTaxRate,
+    generateContractMessages: generateV1ContractMessages,
+  } = useAPI("v1")
   const { generateContractMessages: generateV2ContractMessages } = useAPI("v2")
   const { fee } = useNetwork()
   const { find: findContract } = useContract()
@@ -258,11 +262,21 @@ const MigrateForm = ({ type }: { type?: Type }) => {
 
   const { gasPrice } = useGasPrice(formData[Key.feeSymbol])
   const getTax = useCallback(
-    async ({ value1, token1 }: { value1?: string; token1?: string }) => {
+    async ({
+      value1,
+      value2,
+      token1,
+      token2,
+    }: {
+      value1?: string
+      value2?: string
+      token1?: string
+      token2?: string
+    }) => {
       let newTax = tax
 
       newTax.map((coin) => {
-        if (coin.denom !== token1) {
+        if (!(coin.denom === token1 || coin.denom === token2)) {
           newTax.set(coin.denom, 0)
         }
 
@@ -274,9 +288,16 @@ const MigrateForm = ({ type }: { type?: Type }) => {
         const tax1 = "0"
         newTax.set(token1, tax1)
       }
+      if (token2 && hasTaxToken(token2) && taxRate && value2) {
+        const taxCap2 = await loadTaxInfo(token2)
+        if (taxCap2) {
+          const tax2 = calcTax(toAmount(value2), taxCap2, taxRate)
+          newTax.set(token2, tax2)
+        }
+      }
       return newTax
     },
-    [loadTaxRate, tax]
+    [loadTaxInfo, loadTaxRate, tax]
   )
 
   const isTaxCalculating = useRef<boolean>(false)
@@ -287,7 +308,9 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     isTaxCalculating.current = true
     getTax({
       value1: balance1,
-      token1: from,
+      value2: balance1,
+      token1: poolContract1,
+      token2: poolContract2,
     })
       .then((value) => {
         setTax(value)
