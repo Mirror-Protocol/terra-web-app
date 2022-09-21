@@ -27,7 +27,7 @@ import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import { Coins, CreateTxOptions } from "@terra-money/terra.js"
+import { Coins, CreateTxOptions, Fee, SignerInfo } from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import { insertIf } from "libs/utils"
@@ -906,7 +906,10 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           [{ address: walletAddress }],
           txOptions
         )
-        txOptions.fee = signMsg.auth_info.fee
+
+        let fee = signMsg.auth_info.fee.amount.add(tax)
+
+        txOptions.fee = new Fee(signMsg.auth_info.fee.gas_limit, fee)
         setValue(
           Key.feeValue,
           txOptions.fee?.amount.get(feeAddress)?.amount.toString() || ""
