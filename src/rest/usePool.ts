@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react"
-import { isAssetInfo, tokenInfos } from "./usePairs"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { isAssetInfo, isNativeInfo, tokenInfos } from "./usePairs"
 import { div, gt, times, ceil, plus, minus } from "../libs/math"
 import { Type } from "../pages/Swap"
 import useAPI from "./useAPI"
+import { calcTax } from "../forms/formHelpers"
 
 interface Pool {
   assets: Token[]
@@ -30,9 +31,31 @@ export default (
   balance?: string
 ) => {
   const [poolLoading, setLoading] = useState(true)
-  const { loadPool } = useAPI()
+  const { loadTaxInfo, loadTaxRate, loadPool } = useAPI()
 
   const [result, setResult] = useState<PoolResult>()
+  const [taxes, setTaxes] = useState<string[]>(["0", "0"])
+  const contractAmount = useRef<string>()
+
+  const fetchTaxes = useCallback(
+    async (assets: { info: AssetInfo | NativeInfo; amount: string }[]) => {
+      setTaxes(
+        await Promise.all(
+          assets.map((asset) =>
+            loadTaxRate().then((rate) =>
+              isNativeInfo(asset.info)
+                ? loadTaxInfo(asset.info.native_token.denom).then((cap) =>
+                    cap ? calcTax(asset.amount, cap, rate) : "0"
+                  )
+                : "0"
+            )
+          )
+        )
+      )
+    },
+    [loadTaxInfo, loadTaxRate]
+  )
+
   useEffect(() => {
     if (contract) {
       setResult(undefined)
@@ -120,12 +143,22 @@ export default (
           if (type === Type.WITHDRAW) {
             // withdraw
             LP = times(calculatedAmount, rateDiffDecimal)
-            estimated =
-              res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
-                ? ceil(times(times(rate1, LP), rateFromDecimal)) +
-                  "-" +
-                  ceil(times(times(rate2, LP), rateToDecimal))
-                : "0"
+            if (res && gt(res.total_share, 0) && gt(calculatedAmount, 0)) {
+              const asset0Amount = ceil(
+                times(times(rate1, LP), rateFromDecimal)
+              )
+              const asset1Amount = ceil(times(times(rate2, LP), rateToDecimal))
+              if (contractAmount.current != contract + amount) {
+                fetchTaxes([
+                  { info: res.assets[0].info, amount: asset0Amount },
+                  { info: res.assets[1].info, amount: asset1Amount },
+                ])
+              }
+              estimated =
+                minus(asset0Amount, taxes[0]) +
+                "-" +
+                minus(asset1Amount, taxes[1])
+            }
             price1 =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
                 ? div(times(rate1, LP), LP)
@@ -176,6 +209,7 @@ export default (
             poolAmount2: res.assets[1].amount,
             totalShare: res.total_share,
           })
+          contractAmount.current = contract + amount
         })
         .catch(() => {
           setResult(undefined)
@@ -184,7 +218,7 @@ export default (
           setLoading(false)
         })
     }
-  }, [contract, amount, symbol, loadPool, type, balance])
+  }, [contract, amount, symbol, loadPool, type, balance, taxes])
 
   return useMemo(() => ({ result, poolLoading }), [poolLoading, result])
 }
