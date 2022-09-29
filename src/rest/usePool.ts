@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { isAssetInfo, isNativeInfo, tokenInfos } from "./usePairs"
 import { div, gt, times, ceil, plus, minus } from "../libs/math"
 import { Type } from "../pages/Swap"
@@ -34,24 +34,21 @@ export default (
   const { loadTaxInfo, loadTaxRate, loadPool } = useAPI()
 
   const [result, setResult] = useState<PoolResult>()
-  const [taxes, setTaxes] = useState<string[]>(["0", "0"])
-  const contractAmount = useRef<string>()
 
-  const fetchTaxes = useCallback(
+  const getTaxes = useCallback(
     async (assets: { info: AssetInfo | NativeInfo; amount: string }[]) => {
-      setTaxes(
-        await Promise.all(
-          assets.map((asset) =>
-            loadTaxRate().then((rate) =>
-              isNativeInfo(asset.info)
-                ? loadTaxInfo(asset.info.native_token.denom).then((cap) =>
-                    cap ? calcTax(asset.amount, cap, rate) : "0"
-                  )
-                : "0"
-            )
+      const taxes = await Promise.all(
+        assets.map((asset) =>
+          loadTaxRate().then((rate) =>
+            isNativeInfo(asset.info)
+              ? loadTaxInfo(asset.info.native_token.denom).then((cap) =>
+                  cap ? calcTax(asset.amount, cap, rate) : "0"
+                )
+              : "0"
           )
         )
       )
+      return taxes
     },
     [loadTaxInfo, loadTaxRate]
   )
@@ -61,7 +58,7 @@ export default (
       setResult(undefined)
       setLoading(true)
       loadPool(contract)
-        .then((res: Pool) => {
+        .then(async (res: Pool) => {
           let fromValue = "0"
           let fromDecimal = 6
           let toValue = "0"
@@ -148,12 +145,10 @@ export default (
                 times(times(rate1, LP), rateFromDecimal)
               )
               const asset1Amount = ceil(times(times(rate2, LP), rateToDecimal))
-              if (contractAmount.current != contract + amount) {
-                fetchTaxes([
-                  { info: res.assets[0].info, amount: asset0Amount },
-                  { info: res.assets[1].info, amount: asset1Amount },
-                ])
-              }
+              const taxes = await getTaxes([
+                { info: res.assets[0].info, amount: asset0Amount },
+                { info: res.assets[1].info, amount: asset1Amount },
+              ])
               estimated =
                 minus(asset0Amount, taxes[0]) +
                 "-" +
@@ -209,7 +204,6 @@ export default (
             poolAmount2: res.assets[1].amount,
             totalShare: res.total_share,
           })
-          contractAmount.current = contract + amount
         })
         .catch(() => {
           setResult(undefined)
@@ -218,7 +212,7 @@ export default (
           setLoading(false)
         })
     }
-  }, [contract, amount, symbol, loadPool, type, balance, taxes])
+  }, [contract, amount, symbol, loadPool, type, balance, getTaxes])
 
   return useMemo(() => ({ result, poolLoading }), [poolLoading, result])
 }
