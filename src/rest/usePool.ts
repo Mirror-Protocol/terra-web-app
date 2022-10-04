@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { isAssetInfo, isNativeInfo, tokenInfos } from "./usePairs"
-import { div, gt, times, ceil, plus, minus } from "../libs/math"
+import { div, gt, times, plus, minus, floor } from "../libs/math"
 import { Type } from "../pages/Swap"
 import useAPI from "./useAPI"
 import { calcTax } from "../forms/formHelpers"
@@ -141,10 +141,10 @@ export default (
             // withdraw
             LP = times(calculatedAmount, rateDiffDecimal)
             if (res && gt(res.total_share, 0) && gt(calculatedAmount, 0)) {
-              const asset0Amount = ceil(
+              const asset0Amount = floor(
                 times(times(rate1, LP), rateFromDecimal)
               )
-              const asset1Amount = ceil(times(times(rate2, LP), rateToDecimal))
+              const asset1Amount = floor(times(times(rate2, LP), rateToDecimal))
               const taxes = await getTaxes([
                 { info: res.assets[0].info, amount: asset0Amount },
                 { info: res.assets[1].info, amount: asset1Amount },
@@ -178,7 +178,7 @@ export default (
                 : "0"
             estimated =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
-                ? ceil(times(times(LP, rate2), rateToDecimal))
+                ? floor(times(times(LP, rate2), rateToDecimal))
                 : "0"
             price1 =
               res && gt(res.total_share, 0) && gt(calculatedAmount, 0)
