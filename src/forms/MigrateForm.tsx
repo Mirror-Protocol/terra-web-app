@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import Result from "./Result"
 import TabView from "components/TabView"
 import { useSearchParams } from "react-router-dom"
-import { UST, DEFAULT_MAX_SPREAD } from "constants/constants"
+import { UST, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
 import { useNetwork, useContract, useAddress, useConnectModal } from "hooks"
 import { lookup } from "libs/parse"
 import { PriceKey, BalanceKey, AssetInfoKey } from "hooks/contractKeys"
@@ -14,7 +14,7 @@ import useSwapSelectToken from "./useSwapSelectToken"
 import SwapFormGroup from "./SwapFormGroup"
 import usePairs, { useLpTokenInfos, useTokenInfos } from "rest/usePairs"
 import useBalance from "rest/useBalance"
-import { times, ceil, div, lt, lte } from "libs/math"
+import { times, ceil, div, lt, lte, floor } from "libs/math"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
 import { Coins, CreateTxOptions, Fee } from "@terra-money/terra.js"
@@ -251,6 +251,16 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     balance1
   )
 
+  const balanceWithTax = floor(times(balance1, "0.988"))
+  const { result: withdrawSimulationWithTax, poolLoading: poolLoadingWithTax } =
+    usePool(
+      selectedPairAddress,
+      formData[Key.symbol1],
+      lookup(balanceWithTax, from),
+      Type.WITHDRAW,
+      balanceWithTax
+    )
+
   const provideSimulation = usePool(
     selectedV2Pairs?.contract,
     selectedV2Pairs?.pair[1].symbol,
@@ -291,11 +301,16 @@ const MigrateForm = ({ type }: { type?: Type }) => {
   useEffect(() => {
     if (
       withdrawSimulation !== undefined &&
+      withdrawSimulationWithTax !== undefined &&
       !poolLoading &&
+      !poolLoadingWithTax &&
       poolSymbol1 &&
       poolSymbol2
     ) {
-      const amounts = withdrawSimulation.estimated.split("-")
+      const amounts =
+        poolContract1 === ULUNA || poolContract2 === ULUNA
+          ? withdrawSimulationWithTax.estimated.split("-")
+          : withdrawSimulation.estimated.split("-")
       const srcAsset1 = lookup(amounts[0], poolContract1)
       const srcAsset2 = lookup(amounts[1], poolContract2)
 
@@ -345,6 +360,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     poolContract2,
     poolLoading,
     withdrawSimulation,
+    withdrawSimulationWithTax,
     poolSymbol1,
     poolSymbol2,
     setValue,
@@ -377,7 +393,11 @@ const MigrateForm = ({ type }: { type?: Type }) => {
           await generateV1ContractMessages({
             type: Type.WITHDRAW,
             sender: `${walletAddress}`,
-            amount: `${lookup(balance1, from)}`,
+            amount: `${
+              poolContract1 === ULUNA || poolContract2 === ULUNA
+                ? lookup(balanceWithTax, from)
+                : lookup(balance1, from)
+            }`,
             lpAddr: `${lpContract}`,
           })
         ).map((msg: any) => {
@@ -387,13 +407,17 @@ const MigrateForm = ({ type }: { type?: Type }) => {
         if (
           !selectedV2Pairs ||
           !withdrawSimulation ||
+          !withdrawSimulationWithTax ||
           !poolContract1 ||
           !poolContract2
         ) {
           return
         }
 
-        const [fromAmount, toAmount] = withdrawSimulation.estimated.split("-")
+        const [fromAmount, toAmount] =
+          poolContract1 === ULUNA || poolContract2 === ULUNA
+            ? withdrawSimulationWithTax.estimated.split("-")
+            : withdrawSimulation.estimated.split("-")
 
         const calculatedAmounts = calculateProvideAssets(
           [fromAmount, toAmount],
@@ -458,10 +482,12 @@ const MigrateForm = ({ type }: { type?: Type }) => {
       generateV1ContractMessages,
       walletAddress,
       balance1,
+      balanceWithTax,
       from,
       lpContract,
       selectedV2Pairs,
       withdrawSimulation,
+      withdrawSimulationWithTax,
       poolContract1,
       poolContract2,
       provideSimulation,
@@ -590,7 +616,9 @@ const MigrateForm = ({ type }: { type?: Type }) => {
                         !formState.isValid ||
                         formState.isValidating ||
                         !balance1 ||
-                        !Number(balance1),
+                        !Number(balance1) ||
+                        !balanceWithTax ||
+                        !Number(balanceWithTax),
                       type: "submit",
                     }
                   : {
