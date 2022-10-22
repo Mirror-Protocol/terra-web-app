@@ -145,6 +145,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
   }, [from, tokenInfos])
 
   const { balance: balance1 } = useBalance(from, formData[Key.symbol1])
+  const [balanceWithTax, setBalanceWithTax] = useState<string>()
 
   const [feeAddress, setFeeAddress] = useState("")
   const fetchFeeAddress = useCallback(() => {
@@ -251,7 +252,12 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     balance1
   )
 
-  const balanceWithTax = floor(times(balance1, "0.988"))
+  useEffect(() => {
+    loadTaxRate().then((rate) => {
+      setBalanceWithTax(floor(times(balance1, 1 - parseFloat(rate))))
+    })
+  }, [balance1, loadTaxRate])
+
   const { result: withdrawSimulationWithTax, poolLoading: poolLoadingWithTax } =
     usePool(
       selectedPairAddress,
