@@ -167,6 +167,11 @@ export const toAmount = (value: string, contract_addr?: string) => {
   return value ? new BigNumber(value).times(e).integerValue().toString() : "0"
 }
 
+export const formatNumber = (num: number | string) => {
+  const numberFormatter = Intl.NumberFormat("en-US")
+  return numberFormatter.format(Number(num))
+}
+
 export const formatMoney = (num: number, fix = 2) => {
   const units = ["M", "B", "T", "Q"]
   const unit = Math.floor((num / 1.0e1).toFixed(0).toString().length)
@@ -174,6 +179,6 @@ export const formatMoney = (num: number, fix = 2) => {
   const x =
     Math.abs(Number(num)) / Number(Number("1.0e+" + (unit - r)).toFixed(2))
   return units[Math.floor(unit / 3) - 2]
-    ? x.toFixed(fix) + units[Math.floor(unit / 3) - 2]
-    : num.toFixed(fix)
+    ? formatNumber(x.toFixed(fix)) + units[Math.floor(unit / 3) - 2]
+    : formatNumber(num.toFixed(fix))
 }
