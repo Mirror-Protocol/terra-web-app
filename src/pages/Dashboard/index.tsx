@@ -250,6 +250,7 @@ const Dashboard = () => {
               </div>
             </Row>
             <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 14 }}>
+              $
               {formatMoney(
                 Number(
                   lookup(
@@ -260,7 +261,6 @@ const Dashboard = () => {
                   )
                 )
               )}
-              &nbsp;UST
             </div>
             <Chart
               type="line"
@@ -340,8 +340,8 @@ const Dashboard = () => {
                           />
                         </div>
                         <div>
-                          {token0Symbol}-{token1Symbol} /&nbsp;
-                          {formatMoney(Number(lookup(volumeUst, UST)))} UST
+                          {token0Symbol}-{token1Symbol} /&nbsp; $
+                          {formatMoney(Number(lookup(volumeUst, UST)))}
                         </div>
                       </Link>
                     )
@@ -460,8 +460,8 @@ const Dashboard = () => {
                           />
                         </div>
                         <div>
-                          {token0Symbol}-{token1Symbol} /&nbsp;
-                          {formatMoney(Number(lookup(liquidityUst, UST)))} UST
+                          {token0Symbol}-{token1Symbol} /&nbsp; $
+                          {formatMoney(Number(lookup(liquidityUst, UST)))}
                         </div>
                       </Link>
                     )
@@ -558,7 +558,7 @@ const Dashboard = () => {
                       width: 230,
                       Cell: ({ cell: { value } }: any) => (
                         <span>
-                          {formatMoney(Number(lookup(`${value}`, UST)))} UST
+                          ${formatMoney(Number(lookup(`${value}`, UST)))}
                         </span>
                       ),
                     },
@@ -574,7 +574,7 @@ const Dashboard = () => {
                       width: 230,
                       Cell: ({ cell: { value } }: any) => (
                         <span>
-                          {formatMoney(Number(lookup(`${value}`, UST)))} UST
+                          ${formatMoney(Number(lookup(`${value}`, UST)))}
                         </span>
                       ),
                     },
@@ -596,10 +596,10 @@ const Dashboard = () => {
                         const { volumeUst } = original
                         return (
                           <span>
+                            $
                             {formatMoney(
                               Number(lookup(`${volumeUst * 0.003}`, UST))
-                            )}{" "}
-                            UST
+                            )}
                           </span>
                         )
                       },
