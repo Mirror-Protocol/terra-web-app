@@ -6,7 +6,7 @@ import Swap from "./pages/Swap"
 
 export default () => (
   <Routes>
-    <Route path="/dashboard" element={<Dashboard />} />
+    <Route index element={<Dashboard />} />
     <Route path="/swap" element={<Swap />} />
     <Route path="/pairs/:address" element={<PairPage />} />
     <Route element={<Navigate to="/" replace />} />

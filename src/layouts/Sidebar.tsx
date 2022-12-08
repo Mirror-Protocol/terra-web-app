@@ -191,7 +191,7 @@ const Sidebar = () => {
         ) : (
           <div>
             <NavLink
-              to="/dashboard"
+              to="/"
               className={location.pathname?.includes("/pairs") ? "active" : ""}
               onClick={() => close()}
             >
