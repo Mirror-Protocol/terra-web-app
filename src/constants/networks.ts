@@ -25,7 +25,7 @@ const networks: Record<string, MirrorNetworkInfo> = {
       "https://api-classic.terraswap.io/v2",
     serviceV1:
       process.env.REACT_APP_MAINNET_SERVICE_V1_URL ||
-      "https://api-classic.terraswap.io",
+      "https://api-classic.terraswap.io/v1",
     dashboard: process.env.REACT_APP_MAINNET_DASHBOARD_URL,
     router: "terra1g3zc8lwwmkrm0cz9wkgl849pdqaw6cq8lh7872",
   },
