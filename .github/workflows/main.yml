@@ -41,7 +41,7 @@ jobs:
             with:
               args: --acl public-read --follow-symlinks --delete
             env:
-              AWS_S3_BUCKET: app.terraswap.io
+              AWS_S3_BUCKET: app-classic.terraswap.io
               AWS_ACCESS_KEY_ID: ${{ secrets.AWS_IAM_MANAGER_KEY_ID }}
               AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_IAM_MANAGER_SECRET_ACCESS_KEY }}
               AWS_REGION: ap-northeast-2
@@ -54,4 +54,4 @@ jobs:
               AWS_REGION: ap-northeast-2
               AWS_ACCESS_KEY_ID: ${{ secrets.AWS_IAM_MANAGER_KEY_ID }}
               AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_IAM_MANAGER_SECRET_ACCESS_KEY }}
-              DISTRIBUTION_ID: ${{ secrets.DISTRIBUTION_ID_APP }}
+              DISTRIBUTION_ID: ${{ secrets.DISTRIBUTION_ID_APP_CLASSIC }}
