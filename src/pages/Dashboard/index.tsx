@@ -563,7 +563,7 @@ const Dashboard = () => {
                       ),
                     },
                     {
-                      accessor: "volumeUst",
+                      accessor: "dailyVolumeUst",
                       Header: "Volume (24H)",
                       sortDescFirst: true,
                       sortType: (a, b) =>
@@ -574,7 +574,7 @@ const Dashboard = () => {
                       width: 230,
                       Cell: ({ cell: { value } }: any) => (
                         <span>
-                          ${formatMoney(Number(lookup(`${value}`, UST)))}
+                          ${formatMoney(Number(lookup(`${value || 0}`, UST)))}
                         </span>
                       ),
                     },
