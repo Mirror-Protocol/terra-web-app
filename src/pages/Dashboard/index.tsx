@@ -563,18 +563,18 @@ const Dashboard = () => {
                       ),
                     },
                     {
-                      accessor: "volumeUst",
+                      accessor: "dailyVolumeUst",
                       Header: "Volume (24H)",
                       sortDescFirst: true,
                       sortType: (a, b) =>
-                        Number(a.original.volumeUst) >
-                        Number(b.original.volumeUst)
+                        Number(a.original.dailyVolumeUst || 0) >
+                        Number(b.original.dailyVolumeUst || 0)
                           ? 1
                           : -1,
                       width: 230,
                       Cell: ({ cell: { value } }: any) => (
                         <span>
-                          ${formatMoney(Number(lookup(`${value}`, UST)))}
+                          ${formatMoney(Number(lookup(`${value || 0}`, UST)))}
                         </span>
                       ),
                     },
@@ -583,8 +583,8 @@ const Dashboard = () => {
                       Header: "Fees (24H)",
                       sortDescFirst: true,
                       sortType: (a, b) =>
-                        Number(a.original.volumeUst) >
-                        Number(b.original.volumeUst)
+                        Number(a.original.dailyVolumeUst || 0) >
+                        Number(b.original.dailyVolumeUst || 0)
                           ? 1
                           : -1,
                       width: 180,
@@ -593,7 +593,7 @@ const Dashboard = () => {
                         if (!original) {
                           return null
                         }
-                        const { volumeUst } = original
+                        const volumeUst = original.dailyVolumeUst || 0
                         return (
                           <span>
                             $
