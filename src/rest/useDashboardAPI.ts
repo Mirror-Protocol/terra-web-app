@@ -40,6 +40,7 @@ export interface Pair {
   token0Decimals: number
   token1Symbol: string
   token1Decimals: number
+  dailyVolumeUst?: string
   apr: string
   pairAlias: string
 }

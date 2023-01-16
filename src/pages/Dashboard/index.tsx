@@ -567,8 +567,8 @@ const Dashboard = () => {
                       Header: "Volume (24H)",
                       sortDescFirst: true,
                       sortType: (a, b) =>
-                        Number(a.original.volumeUst) >
-                        Number(b.original.volumeUst)
+                        Number(a.original.dailyVolumeUst || 0) >
+                        Number(b.original.dailyVolumeUst || 0)
                           ? 1
                           : -1,
                       width: 230,
@@ -583,8 +583,8 @@ const Dashboard = () => {
                       Header: "Fees (24H)",
                       sortDescFirst: true,
                       sortType: (a, b) =>
-                        Number(a.original.volumeUst) >
-                        Number(b.original.volumeUst)
+                        Number(a.original.dailyVolumeUst || 0) >
+                        Number(b.original.dailyVolumeUst || 0)
                           ? 1
                           : -1,
                       width: 180,
@@ -593,7 +593,7 @@ const Dashboard = () => {
                         if (!original) {
                           return null
                         }
-                        const { volumeUst } = original
+                        const volumeUst = original.dailyVolumeUst || 0
                         return (
                           <span>
                             $
