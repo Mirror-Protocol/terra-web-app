@@ -50,7 +50,7 @@ const ModalTitle = styled.div`
   letter-spacing: normal;
   text-align: center;
   color: #0222ba;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `
 
 const Content = styled.div`
@@ -60,8 +60,18 @@ const Content = styled.div`
   padding: 12px;
   margin-bottom: 30px;
   max-height: 115px;
+  overflow-wrap: anywhere;
   overflow-y: auto;
+  &::-webkit-scrollbar-track {
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
 `
+
+const ContentTitle = styled.div`
+  text-align: center;
+`
+
 const Disclaimer = () => {
   const [disclaimerAgreed, setDisclaimerAgreed] = useState(false)
 
@@ -92,10 +102,11 @@ const Disclaimer = () => {
             Disclaimer
           </ModalTitle>
           <Content>
-            Terraswap Terms of Service
-            <br />
-            Last modified: March 10, 2023
-            <br />
+            <ContentTitle>
+              <b>Terraswap Terms of Service</b>
+              <br />
+              Last modified: March 10, 2023
+            </ContentTitle>
             <br />
             These Terms of Service (the “Agreement”) explain the terms and
             conditions by which you may access and use&nbsp;
