@@ -11,8 +11,8 @@ const networks: Record<string, MirrorNetworkInfo> = {
   classic: {
     name: "classic",
     chainID: "columbus-5",
-    lcd: "https://columbus-lcd.terra.dev",
-    fcd: "https://columbus-fcd.terra.dev",
+    lcd: "https://terra-classic-lcd.publicnode.com",
+    fcd: "https://terra-classic-fcd.publicnode.com",
     id: "columbus-5",
     contract: "/tequila.json",
     swap: "/swap.json",
