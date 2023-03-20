@@ -368,7 +368,7 @@ const useAPI = (version: ApiVersion = "v2") => {
         (data: MsgExecuteContract.Amino | MsgExecuteContract.Amino[]) => {
           return (Array.isArray(data) ? data : [data]).map(
             (item: MsgExecuteContract.Amino) => {
-              const execute_msg = item?.value?.execute_msg as any
+              const execute_msg = (item?.value as any)?.execute_msg
               if (
                 execute_msg?.provide_liquidity &&
                 !execute_msg?.provide_liquidity?.slippage_tolerance
@@ -379,7 +379,7 @@ const useAPI = (version: ApiVersion = "v2") => {
                 address,
                 item?.value?.contract,
                 execute_msg,
-                Coins.fromAmino(item?.value?.coins)
+                Coins.fromAmino((item?.value as any)?.coins)
               )
               return result
             }
