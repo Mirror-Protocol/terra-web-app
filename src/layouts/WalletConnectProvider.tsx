@@ -52,7 +52,7 @@ export const useLCDClient = () => {
   const terra = new LCDClient({
     URL: networkInfo?.lcd,
     chainID: network.chainID,
-    gasAdjustment: 1.5,
+    gasAdjustment: 1.9,
   })
 
   return { terra }
