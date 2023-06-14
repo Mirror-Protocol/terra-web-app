@@ -587,10 +587,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       const taxRate = await loadTaxRate()
       if (token1 && hasTaxToken(token1) && taxRate && value1) {
         const taxCap1 = await loadTaxInfo(token1)
-        if (taxCap1) {
-          const tax1 = calcTax(toAmount(value1), taxCap1, taxRate)
-          newTax.set(token1, tax1)
-        }
+        const tax1 = calcTax(toAmount(value1), taxCap1, taxRate)
+        newTax.set(token1, tax1)
       }
       if (
         type === Type.PROVIDE &&
@@ -600,10 +598,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
         value2
       ) {
         const taxCap2 = await loadTaxInfo(token2)
-        if (taxCap2) {
-          const tax2 = calcTax(toAmount(value2), taxCap2, taxRate)
-          newTax.set(token2, tax2)
-        }
+        const tax2 = calcTax(toAmount(value2), taxCap2, taxRate)
+        newTax.set(token2, tax2)
       }
       return newTax
     },

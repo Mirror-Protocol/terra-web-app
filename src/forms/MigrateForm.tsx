@@ -284,10 +284,9 @@ const MigrateForm = ({ type }: { type?: Type }) => {
         data.map(async ({ token, amount }) => {
           if (token && hasTaxToken(token) && taxRate && amount) {
             const taxCap = await loadTaxInfo(token)
-            if (taxCap) {
-              const calculatedTax = calcTax(amount, taxCap, taxRate)
-              newTax.set(token, calculatedTax)
-            }
+            const calculatedTax = calcTax(amount, taxCap, taxRate)
+            newTax.set(token, calculatedTax)
+            
           }
         })
       )
