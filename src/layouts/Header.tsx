@@ -39,7 +39,7 @@ const Banner = styled.div`
   font-style: normal;
   line-height: normal;
   letter-spacing: normal;
-  z-index: 9999999;
+  z-index: 1;
 
   :hover {
     background-color: rgba(241, 94, 126, 0.8);
@@ -84,11 +84,11 @@ const Header = () => {
   return (
     <>
       <Link to="/migration">
-          <Banner>
-            {isMigrationPage
-              ? "Terraswap Classic - Migration Center"
-              : "Terraswap Classic - Migration is now available, click here!"}
-          </Banner>
+        <Banner>
+          {isMigrationPage
+            ? "Terraswap Classic - Migration Center"
+            : "Terraswap Classic - Migration is now available, click here!"}
+        </Banner>
       </Link>
       <header className={styles.header}>
         <Container className={styles.container}>
