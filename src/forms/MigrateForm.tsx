@@ -5,7 +5,12 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import Result from "./Result"
 import TabView from "components/TabView"
 import { useSearchParams } from "react-router-dom"
-import { UST, DEFAULT_MAX_SPREAD, ULUNA } from "constants/constants"
+import {
+  UST,
+  DEFAULT_MAX_SPREAD,
+  ULUNA,
+  DEFAULT_TX_DEADLINE,
+} from "constants/constants"
 import { useNetwork, useContract, useAddress, useConnectModal } from "hooks"
 import { lookup } from "libs/parse"
 import { PriceKey, BalanceKey, AssetInfoKey } from "hooks/contractKeys"
@@ -31,7 +36,9 @@ import { useContractsAddress } from "hooks/useContractsAddress"
 import Disclaimer from "components/MigrationDisclaimer"
 import styles from "./SwapFormGroup.module.scss"
 import { calcTax } from "./formHelpers"
-import { toAmount } from "libs/parse"
+import { SettingValues } from "../components/Settings"
+import useLocalStorage from "libs/useLocalStorage"
+
 enum Key {
   value1 = "value1",
   value2 = "value2",
@@ -95,6 +102,19 @@ const MigrateForm = ({ type }: { type?: Type }) => {
   const wallet = useWallet()
   const { terra } = useLCDClient()
   const [residue, setResidue] = useState("0")
+  const [txSettings, setTxSettings] = useLocalStorage<SettingValues>(
+    "settings",
+    {
+      slippage: `${DEFAULT_MAX_SPREAD}`,
+      custom: "",
+      txDeadline: `${DEFAULT_TX_DEADLINE}`,
+    }
+  )
+  const txDeadlineMinute = useMemo(() => {
+    return Number(
+      txSettings.txDeadline ? txSettings.txDeadline : DEFAULT_TX_DEADLINE
+    )
+  }, [txSettings])
 
   const form = useForm({
     defaultValues: {
@@ -286,7 +306,6 @@ const MigrateForm = ({ type }: { type?: Type }) => {
             const taxCap = await loadTaxInfo(token)
             const calculatedTax = calcTax(amount, taxCap, taxRate)
             newTax.set(token, calculatedTax)
-            
           }
         })
       )
@@ -443,6 +462,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
             slippage: lte(provideSimulation.result?.totalShare || "", 0)
               ? undefined
               : DEFAULT_MAX_SPREAD / 100,
+            deadline: Number(txDeadlineMinute),
           })
         ).map((msg: any) => {
           return Array.isArray(msg) ? msg[0] : msg

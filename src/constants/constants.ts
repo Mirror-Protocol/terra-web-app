@@ -91,9 +91,9 @@ export const DEFAULT_EXT_NETWORK: ExtNetworkConfig = {
 /* project */
 export const MEDIUM = ""
 export const DISCORD = ""
-export const TELEGRAM = ""
-export const WECHAT = ""
 export const GITHUB = "https://github.com/DELIGHT-LABS/terraswap-web-app"
+
+export const DEFAULT_TX_DEADLINE = 20
 
 export const socialMediaList = [
   {

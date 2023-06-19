@@ -103,7 +103,9 @@ const TabView: FC<PropsWithChildren<TabViewProps>> = ({
                   url={""}
                   name={""}
                 >
-                  <Card shadow={shadow}>{item.visible && item.component}</Card>
+                  <Card shadow={shadow} className={"settings-on-mobile"}>
+                    {item.visible && item.component}
+                  </Card>
                 </Modal>
               )}
             </React.Fragment>
