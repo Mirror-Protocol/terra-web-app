@@ -228,11 +228,11 @@ const useAutoRouter = (params: Params) => {
           setSimulatedAmounts(
             result
               .map((item) => {
-                if (item?.result?.return_amount) {
-                  return parseInt(item?.result?.return_amount, 10)
+                if (item?.return_amount) {
+                  return parseInt(item?.return_amount, 10)
                 }
-                if (item?.result?.amount) {
-                  return parseInt(item?.result?.amount, 10)
+                if (item?.amount) {
+                  return parseInt(item?.amount, 10)
                 }
                 return -1
               })

@@ -63,10 +63,10 @@ const useSwapSimulate = ({ amount, token, pair, reverse }: Params) => {
     try {
       if (isValidToSimulate) {
         const res = await querySimulate(variables)
-        if (!res?.height) {
+        if (!res?.data) {
           setResult(defaultValues)
         } else {
-          setResult(res.result)
+          setResult(res.data)
         }
       } else {
         setResult(defaultValues)
