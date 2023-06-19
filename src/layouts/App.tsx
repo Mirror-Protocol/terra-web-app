@@ -133,31 +133,6 @@ const App = () => {
             </div>
           )}
           <Footer />
-
-          <Modal isOpen close={() => {}} open={() => {}}>
-            <ModalContent>
-              <div>
-                <ModalTitle>Under maintenance</ModalTitle>
-                <div style={{ marginBottom: 20 }}>
-                  Terraswap classic is under maintenance in preparation for
-                  migration for Cosmwasm version upgrade. Apologies for any
-                  inconvenience.
-                  <div
-                    style={{
-                      border: "1px solid #eeeeee",
-                      borderRadius: 8,
-                      padding: 10,
-                      marginTop: 10,
-                      fontWeight: 400,
-                      textAlign: "left",
-                    }}
-                  >
-                    <b>Target version:</b> v1.1.0
-                  </div>
-                </div>
-              </div>
-            </ModalContent>
-          </Modal>
         </ContractProvider>
       </ThemeProvider>
     </QueryClientProvider>
