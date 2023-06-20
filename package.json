@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "homepage": "https://app.terraswap.com",
   "repository": "github:terraswap/terraswap-web-app",
-  "author": "DELIGHT <member@delightlabs.io>",
+  "author": "DELIGHT LABS <member@delightlabs.io>",
   "license": "Apache-2.0",
   "dependencies": {
     "@apollo/client": "^3.2.4",

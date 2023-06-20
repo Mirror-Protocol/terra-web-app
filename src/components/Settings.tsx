@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import styles from "./Settings.module.scss"
+import classNames from "classnames/bind"
 
-type SettingKey = "slippage" | "custom"
+type SettingKey = "slippage" | "custom" | "txDeadline"
 
 export type SettingValues = {
   [K in SettingKey]: string
@@ -41,6 +42,7 @@ const Settings = ({ values, onChange }: SettingsProps) => {
       return current
     })
   })
+  const [inputFocused, setInputFocused] = useState(false)
 
   useEffect(() => {
     formData && onChange && onChange(formData)
@@ -72,13 +74,30 @@ const Settings = ({ values, onChange }: SettingsProps) => {
           </label>
         ))}
       </div>
+      {isDangerous && (
+        <div className={styles.caption}>Your transaction may fail.</div>
+      )}
+      <div className={styles.title}>Transaction Deadline</div>
       <div
-        className={[
-          styles.caption,
-          !isDangerous && styles["caption--invisible"],
-        ].join(" ")}
+        className={
+          inputFocused
+            ? classNames(styles["text-input"], styles["focused"])
+            : styles["text-input"]
+        }
       >
-        Your transaction may fail.
+        <input
+          type="number"
+          min={0}
+          placeholder="20"
+          {...form.register("txDeadline")}
+          onFocus={() => {
+            setInputFocused(true)
+          }}
+          onBlur={() => {
+            setInputFocused(false)
+          }}
+        />{" "}
+        min
       </div>
     </div>
   )
