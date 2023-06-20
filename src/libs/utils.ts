@@ -1,4 +1,5 @@
 import { is } from "ramda"
+import { DEFAULT_TX_DEADLINE } from "constants/constants"
 
 /* object */
 export const record = <T, V>(
@@ -28,3 +29,9 @@ export const insertIf = <T>(condition?: any, ...elements: T[]) =>
 export const getLength = (text: string) => new Blob([text]).size
 export const capitalize = (text: string) =>
   text[0].toUpperCase() + text.slice(1)
+
+export const getDeadlineSeconds = (
+  interval: number | undefined = DEFAULT_TX_DEADLINE
+) => {
+  return Number(Number((Date.now() / 1000).toFixed(0)) + interval * 60)
+}

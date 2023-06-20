@@ -13,6 +13,7 @@ type Params = {
   amount: number | string
   type?: Type
   slippageTolerance?: string | number
+  deadline: number | undefined
 }
 
 function sleep(t: number) {
@@ -21,7 +22,14 @@ function sleep(t: number) {
 
 const useAutoRouter = (params: Params) => {
   const walletAddress = useAddress()
-  const { from, to, type, amount: _amount, slippageTolerance } = params
+  const {
+    from,
+    to,
+    type,
+    amount: _amount,
+    slippageTolerance,
+    deadline,
+  } = params
   const amount = Number(_amount)
   const { generateContractMessages, querySimulate } = useAPI()
   const [isLoading, setIsLoading] = useState(false)
@@ -108,12 +116,13 @@ const useAutoRouter = (params: Params) => {
 
       const res: MsgExecuteContract[] = await generateContractMessages({
         type: Type.SWAP,
-        amount,
         from,
         to,
-        sender: walletAddress,
+        amount,
         max_spread: `${slippageTolerance || 0.01}`,
         belief_price: 0,
+        sender: walletAddress,
+        deadline,
       })
       if (Array.isArray(res) && !isCanceled) {
         setMsgs(res)
@@ -228,11 +237,11 @@ const useAutoRouter = (params: Params) => {
           setSimulatedAmounts(
             result
               .map((item) => {
-                if (item?.result?.return_amount) {
-                  return parseInt(item?.result?.return_amount, 10)
+                if (item?.return_amount) {
+                  return parseInt(item?.return_amount, 10)
                 }
-                if (item?.result?.amount) {
-                  return parseInt(item?.result?.amount, 10)
+                if (item?.amount) {
+                  return parseInt(item?.amount, 10)
                 }
                 return -1
               })

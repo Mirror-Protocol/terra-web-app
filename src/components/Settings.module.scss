@@ -21,7 +21,7 @@
   letter-spacing: normal;
   text-align: left;
   color: $deepgray;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .caption {
@@ -39,6 +39,7 @@
   color: $deepgray;
   max-height: 9999px;
   transition: all 0.2s ease-in-out;
+  padding-bottom: 16px;
 
   &--invisible {
     max-height: 0;
@@ -50,7 +51,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 
   &__item {
     margin-right: 4px;
@@ -122,4 +123,58 @@
       opacity: 1;
     }
   }
+}
+
+.text-input {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  width: 100%;
+  min-height: 26px;
+  border: none;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: $blue;
+  border: 1px solid $blue;
+  font-size: 12px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: right;
+  padding: 4px 8px;
+
+  @include mobile {
+    min-height: 36px;
+  }
+
+  & input {
+    background-color: #ffffff;
+    color: $blue;
+    font-size: 12px;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: right;
+    padding-right: 6px;
+  }
+
+  &:hover,
+  :focus {
+    background-color: $blue;
+    color: #ffffff;
+    & * {
+      background-color: $blue;
+      color: #ffffff;
+    }
+  }
+}
+
+.focused {
+  background-color: $blue;
+  color: #ffffff;
 }

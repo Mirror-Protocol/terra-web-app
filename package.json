@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "homepage": "https://app.terraswap.com",
   "repository": "github:terraswap/terraswap-web-app",
-  "author": "DELIGHT <member@delightlabs.io>",
+  "author": "DELIGHT LABS <member@delightlabs.io>",
   "license": "Apache-2.0",
   "dependencies": {
     "@apollo/client": "^3.2.4",
@@ -11,7 +11,7 @@
     "@terra-money/log-finder": "^1.1.6",
     "@terra-money/log-finder-ruleset": "^3.0.0",
     "@terra-money/react-base-components": "^2.0.0",
-    "@terra-money/terra.js": "3.0.8",
+    "@terra-money/terra.js": "3.1.9",
     "@terra-money/wallet-provider": "^3.9.3",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",

@@ -24,7 +24,9 @@ import axios from "./request"
 import { Type } from "pages/Swap"
 import { Coins, MsgExecuteContract } from "@terra-money/terra.js"
 import { AxiosError } from "axios"
+import { getDeadlineSeconds } from "libs/utils"
 import { useContractsAddress } from "hooks/useContractsAddress"
+
 interface DenomBalanceResponse {
   height: string
   result: DenomInfo[]
@@ -37,7 +39,7 @@ interface DenomInfo {
 
 interface ContractBalanceResponse {
   height: string
-  result: ContractBalance
+  data: ContractBalance
 }
 
 interface ContractBalance {
@@ -82,7 +84,7 @@ interface TokenInfo {
 
 interface PairsResponse {
   height: string
-  result: PairsResult
+  data: PairsResult
 }
 
 interface PairsResult {
@@ -107,7 +109,7 @@ interface TokenResult {
 
 interface PoolResponse {
   height: string
-  result: Pool
+  data: Pool
 }
 
 interface Pool {
@@ -127,8 +129,7 @@ interface PoolResult {
 }
 
 interface SimulatedResponse {
-  height: string
-  result: SimulatedData
+  data: SimulatedData
 }
 interface SimulatedData {
   return_amount: string
@@ -184,7 +185,7 @@ const useAPI = (version: ApiVersion = "v2") => {
     async (localContractAddr: string) => {
       const url = getURL(localContractAddr, { balance: { address: address } })
       const res: ContractBalanceResponse = (await axios.get(url)).data
-      return res.result
+      return res.data
     },
     [address, getURL]
   )
@@ -259,16 +260,16 @@ const useAPI = (version: ApiVersion = "v2") => {
         pairs: { limit: 30, start_after: lastPair },
       })
       const pairs: PairsResponse = (await axios.get(url)).data
-      if (!Array.isArray(pairs?.result?.pairs)) {
+      if (!Array.isArray(pairs?.data?.pairs)) {
         // node might be down
         break
       }
 
-      if (pairs.result.pairs.length <= 0) {
+      if (pairs.data.pairs.length <= 0) {
         break
       }
 
-      pairs.result.pairs
+      pairs.data.pairs
         .filter(
           (pair) =>
             !isBlacklisted(pair?.asset_infos?.[0]) &&
@@ -277,7 +278,7 @@ const useAPI = (version: ApiVersion = "v2") => {
         .forEach((pair) => {
           result.pairs.push(pair)
         })
-      lastPair = pairs.result.pairs.slice(-1)[0]?.asset_infos
+      lastPair = pairs.data.pairs.slice(-1)[0]?.asset_infos
     }
     return result
   }, [apiHost, factory, getURL, version])
@@ -302,7 +303,7 @@ const useAPI = (version: ApiVersion = "v2") => {
     async (contract: string): Promise<TokenResult> => {
       const url = getURL(contract, { token_info: {} })
       const res = (await axios.get(url)).data
-      return res.result
+      return res.data
     },
     [getURL]
   )
@@ -312,7 +313,7 @@ const useAPI = (version: ApiVersion = "v2") => {
     async (contract: string) => {
       const url = getURL(contract, { pool: {} })
       const res: PoolResponse = (await axios.get(url)).data
-      return res.result
+      return res.data
     },
     [getURL]
   )
@@ -324,7 +325,7 @@ const useAPI = (version: ApiVersion = "v2") => {
         const { contract, msg } = variables
         const url = getURL(contract, msg)
         const res: SimulatedResponse = (await axios.get(url)).data
-        return res
+        return res.data
       } catch (error) {
         const { response }: AxiosError = error as any
         return response?.data
@@ -344,6 +345,7 @@ const useAPI = (version: ApiVersion = "v2") => {
             max_spread: number | string
             belief_price: number | string
             sender: string
+            deadline?: number
           }
         | {
             type: Type.PROVIDE
@@ -353,17 +355,25 @@ const useAPI = (version: ApiVersion = "v2") => {
             toAmount: number | string
             slippage?: number | string
             sender: string
+            deadline?: number
           }
         | {
             type: Type.WITHDRAW
             lpAddr: string
             amount: number | string
             sender: string
+            minAssets?: string
+            deadline?: number
           }
     ) => {
+      if (query.deadline !== undefined) {
+        query.deadline = getDeadlineSeconds(query.deadline)
+      }
+
       const { type, ...params } = query
       const url = `${apiHost}/tx/${type}`.toLowerCase()
       const res = (await axios.get(url, { params })).data
+
       return res.map(
         (data: MsgExecuteContract.Amino | MsgExecuteContract.Amino[]) => {
           return (Array.isArray(data) ? data : [data]).map(
