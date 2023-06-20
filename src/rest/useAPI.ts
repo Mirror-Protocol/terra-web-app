@@ -362,6 +362,7 @@ const useAPI = (version: ApiVersion = "v2") => {
             lpAddr: string
             amount: number | string
             sender: string
+            minAssets?: string
             deadline?: number
           }
     ) => {
