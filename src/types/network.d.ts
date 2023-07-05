@@ -6,9 +6,7 @@ interface Network extends NetworkConfig {
   refresh: () => void
 }
 
-type NetworkConfig = ExtNetworkConfig & LocalNetworkConfig
-
-interface NetworkConfig {
+interface LocalNetworkConfig {
   /** Chain ID */
   id: string
   /** Contract Addresses JSON URL */
@@ -24,7 +22,9 @@ interface NetworkConfig {
   fee: { gasPrice: string; amount: string; gas: string }
   factory: string
   service: string
+  serviceV1: string
   dashboard: string
+  router: string
 }
 
 interface ExtNetworkConfig {
@@ -33,3 +33,5 @@ interface ExtNetworkConfig {
   lcd: string
   fcd: string
 }
+
+type NetworkConfig = ExtNetworkConfig & LocalNetworkConfig

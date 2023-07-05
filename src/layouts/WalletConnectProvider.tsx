@@ -42,13 +42,13 @@ export default WalletConnectProvider
 /* hooks */
 export const useLCD = () => {
   const { network } = useWallet()
-  const networkInfo = networks[network.name]
+  const networkInfo = networks[network.chainID]
   return networkInfo?.lcd
 }
 
 export const useLCDClient = () => {
   const { network } = useWallet()
-  const networkInfo = networks[network.name]
+  const networkInfo = networks[network.chainID]
   const terra = new LCDClient({
     URL: networkInfo?.lcd,
     chainID: network.chainID,
