@@ -1,14 +1,10 @@
-import { NetworkInfo } from "@terra-dev/wallet-types"
-
-export enum NetworkKey {
-  MAINNET = "classic",
-}
-type MirrorNetworkInfo = NetworkInfo & NetworkConfig
+import { NetworkInfo as OrgNetworkInfo } from "@terra-dev/wallet-types"
 
 export const AVAILABLE_CHAIN_ID = ["columbus-5"]
+type NetworkInfo = OrgNetworkInfo & NetworkConfig
 
-const networks: Record<string, MirrorNetworkInfo> = {
-  classic: {
+const networks: Record<string, NetworkInfo> = {
+  "columbus-5": {
     name: "classic",
     chainID: "columbus-5",
     lcd: "https://terra-classic-lcd.publicnode.com",
@@ -26,7 +22,9 @@ const networks: Record<string, MirrorNetworkInfo> = {
     serviceV1:
       process.env.REACT_APP_MAINNET_SERVICE_V1_URL ||
       "https://api-classic.terraswap.io/v1",
-    dashboard: process.env.REACT_APP_MAINNET_DASHBOARD_URL,
+    dashboard:
+      process.env.REACT_APP_MAINNET_DASHBOARD_URL ||
+      "https://api-classic.terraswap.io/v2/dashboard",
     router: "terra1g3zc8lwwmkrm0cz9wkgl849pdqaw6cq8lh7872",
   },
 }
