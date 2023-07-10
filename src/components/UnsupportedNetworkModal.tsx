@@ -1,4 +1,4 @@
-import { useChainOptions } from "@terra-money/wallet-provider"
+import { useChainOptions, useWallet } from "@terra-money/wallet-provider"
 import { AVAILABLE_CHAIN_ID } from "constants/networks"
 import { useNetwork } from "hooks"
 import { useMemo } from "react"
@@ -58,6 +58,7 @@ const UnsupportedNetworkModal: React.FC<{ isOpen?: boolean }> = ({
   isOpen = false,
 }) => {
   const network = useNetwork()
+  const { disconnect } = useWallet()
   const chainOptions = useChainOptions()
   const availableNetworks = useMemo(() => {
     if (chainOptions?.walletConnectChainIds) {
@@ -115,6 +116,22 @@ const UnsupportedNetworkModal: React.FC<{ isOpen?: boolean }> = ({
             }}
           >
             Reload
+          </Button>
+          <Button
+            outline
+            size="lg"
+            onClick={() => {
+              disconnect()
+              window.location.reload()
+            }}
+            style={{
+              textTransform: "unset",
+              maxWidth: 235,
+              fontWeight: "bold",
+              borderRadius: 10,
+            }}
+          >
+            Disconnect
           </Button>
           {network?.name !== "classic" && (
             <div style={{ color: "#aaaaaa", fontSize: 12 }}>
