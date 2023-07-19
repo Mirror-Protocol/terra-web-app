@@ -41,7 +41,7 @@ const Banner = styled.div`
   letter-spacing: normal;
   z-index: 10;
   :hover {
-    background-color: rgba(241, 94, 126, 0.8);
+    background-color: rgb(192, 84, 139);
   }
 `
 
