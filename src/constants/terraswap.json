@@ -83,6 +83,10 @@
     {
       "contract_addr": "terra14f7u8z4eqpxcrp4xr6knhgfp5n4h68nwy3yzg5",
       "comment": "delisted DKWON"
+    },
+    {
+      "contract_addr": "terra1x62dfgzrsksyemwuljhw9x0qcxefd3tpp4ued8",
+      "comment": "delisted DKW"
     }
   ]
 }
