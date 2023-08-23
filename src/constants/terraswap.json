@@ -87,6 +87,10 @@
     {
       "contract_addr": "terra1x62dfgzrsksyemwuljhw9x0qcxefd3tpp4ued8",
       "comment": "delisted DKW"
+    },
+    {
+      "contract_addr": "terra132xampf3efc4ct8952jy9u93cqvrhmfr46r3j62zvl9486d27mgs55kfhf",
+      "comment": "delisted KLT"
     }
   ]
 }
