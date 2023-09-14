@@ -3,10 +3,11 @@ import ConfirmDetails from "./ConfirmDetails"
 import TxHash from "./SwapTxHash"
 import { tokenInfos } from "../rest/usePairs"
 import { formatAsset } from "../libs/parse"
-import { SwapAttribute, SwapTxInfo } from "types/swapTx"
+import { SwapAttribute } from "types/swapTx"
+import { TxInfo as ITxInfo } from "@terra-money/terra.js"
 
 interface Props {
-  txInfo: SwapTxInfo
+  txInfo: ITxInfo
   parserKey: string
 }
 
@@ -20,8 +21,11 @@ const TxInfo = ({ txInfo, parserKey }: Props) => {
     contents.push([
       {
         title: "Fee",
-        content: tx.value.fee.amount.map((value) => {
-          return formatAsset(value.amount, tokenInfos.get(value.denom)?.symbol)
+        content: tx.auth_info.fee.amount.map((value) => {
+          return formatAsset(
+            value.amount.toString(),
+            tokenInfos.get(value.denom)?.symbol
+          )
         }),
       },
     ])

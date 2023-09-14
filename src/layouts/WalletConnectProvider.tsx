@@ -3,7 +3,7 @@ import {
   WalletProvider,
   WalletControllerChainOptions,
 } from "@terra-money/wallet-provider"
-import React, { PropsWithChildren, useEffect, useState } from "react"
+import React, { PropsWithChildren, useEffect, useMemo, useState } from "react"
 import networks from "constants/networks"
 import { useModal } from "components/Modal"
 import ConnectListModal from "./ConnectListModal"
@@ -48,12 +48,17 @@ export const useLCD = () => {
 
 export const useLCDClient = () => {
   const { network } = useWallet()
-  const networkInfo = networks[network.chainID]
-  const terra = new LCDClient({
-    URL: networkInfo?.lcd,
-    chainID: network.chainID,
-    gasAdjustment: 2,
-  })
+  const networkInfo = useMemo(() => networks[network.chainID], [network])
+  const terra = useMemo(
+    () =>
+      new LCDClient({
+        URL: networkInfo?.lcd,
+        chainID: network.chainID,
+        gasAdjustment: 2,
+        isClassic: true,
+      }),
+    [network, networkInfo]
+  )
 
-  return { terra }
+  return useMemo(() => ({ terra }), [terra])
 }

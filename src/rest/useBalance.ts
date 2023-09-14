@@ -1,15 +1,31 @@
 import { useEffect, useState } from "react"
-import { useContractsAddress } from "hooks/useContractsAddress"
-import { useAddress } from "../hooks"
+import { useAddress, useNetwork } from "../hooks"
 import useAPI from "./useAPI"
+import { useQuery } from "react-query"
 
-export default (contractAddress: string, symbol: string) => {
+export default (contractAddress: string) => {
+  const { name: networkName } = useNetwork()
   const address = useAddress()
-  const { getSymbol } = useContractsAddress()
 
   const { loadDenomBalance, loadContractBalance } = useAPI()
 
   const [balance, setBalance] = useState<string>()
+
+  const { data: denomBalances } = useQuery({
+    queryKey: ["denomBalances", networkName, address],
+    queryFn: loadDenomBalance,
+    refetchInterval: 5000,
+    refetchOnWindowFocus: true,
+  })
+
+  const { data: contractBalance, isLoading: isContractBalanceLoading } =
+    useQuery({
+      queryKey: ["contractBalance", networkName, address, contractAddress],
+      queryFn: async () => {
+        const res = loadContractBalance(contractAddress)
+        return res
+      },
+    })
 
   useEffect(() => {
     let isAborted = false
@@ -19,30 +35,18 @@ export default (contractAddress: string, symbol: string) => {
         return
       }
       if (!contractAddress?.startsWith("terra")) {
-        loadDenomBalance().then((denomInfos) => {
-          let hasDenom: boolean = false
-          if (denomInfos !== undefined) {
-            denomInfos.forEach((denomInfo) => {
-              if (denomInfo.denom === contractAddress) {
-                if (!isAborted) {
-                  setBalance(denomInfo.amount)
-                }
-                hasDenom = true
-              }
-            })
+        if (denomBalances?.[0]) {
+          const coin = denomBalances[0].get(contractAddress)
+          if (coin && !isAborted) {
+            setBalance(coin.amount.toString())
+            return
           }
-          if (hasDenom === false) {
-            if (!isAborted) {
-              setBalance("")
-            }
-          }
-        })
+        }
+        setBalance("")
       } else {
-        loadContractBalance(contractAddress).then((tokenBalance) => {
-          if (!isAborted) {
-            setBalance(tokenBalance?.balance || "")
-          }
-        })
+        if (!isAborted && !isContractBalanceLoading) {
+          setBalance(contractBalance?.balance || "")
+        }
       }
     } catch (error) {
       console.error(error)
@@ -54,11 +58,10 @@ export default (contractAddress: string, symbol: string) => {
     }
   }, [
     address,
-    getSymbol,
-    loadContractBalance,
-    loadDenomBalance,
     contractAddress,
-    symbol,
+    contractBalance,
+    denomBalances,
+    isContractBalanceLoading,
   ])
 
   return { balance }

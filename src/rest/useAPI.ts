@@ -26,16 +26,8 @@ import { Coins, MsgExecuteContract } from "@terra-money/terra.js"
 import { AxiosError } from "axios"
 import { getDeadlineSeconds } from "libs/utils"
 import { useContractsAddress } from "hooks/useContractsAddress"
-
-interface DenomBalanceResponse {
-  height: string
-  result: DenomInfo[]
-}
-
-interface DenomInfo {
-  denom: string
-  amount: string
-}
+import { useLCDClient } from "layouts/WalletConnectProvider"
+import { useQuery } from "react-query"
 
 interface ContractBalanceResponse {
   height: string
@@ -137,10 +129,6 @@ interface SimulatedData {
   commission_amount: string
   spread_amount: string
 }
-interface TaxResponse {
-  height: string
-  result: string
-}
 
 const blacklist = terraswapConfig.blacklist.map(
   (blacklist) => blacklist.contract_addr
@@ -165,7 +153,8 @@ export function isNativeInfo(object: any): object is NativeInfo {
 export type ApiVersion = "v1" | "v2"
 
 const useAPI = (version: ApiVersion = "v2") => {
-  const { fcd, factory, service, serviceV1 } = useNetwork()
+  const lcd = useLCDClient()
+  const { fcd, factory, service, serviceV1, name: networkName } = useNetwork()
   const address = useAddress()
   const { getSymbol } = useContractsAddress()
   const getURL = useURL()
@@ -176,10 +165,17 @@ const useAPI = (version: ApiVersion = "v2") => {
 
   // useBalance
   const loadDenomBalance = useCallback(async () => {
-    const url = `${fcd}/bank/balances/${address}`
-    const res: DenomBalanceResponse = (await axios.get(url)).data
-    return res.result
-  }, [address, fcd])
+    try {
+      const res = await lcd.terra.bank.balance(address, {
+        "pagination.limit": "9999",
+      })
+      return res
+    } catch (error) {
+      console.error(error)
+    }
+
+    return null
+  }, [address, lcd])
 
   const loadContractBalance = useCallback(
     async (localContractAddr: string) => {
@@ -408,32 +404,35 @@ const useAPI = (version: ApiVersion = "v2") => {
         return ""
       }
 
-      let taxCap = ""
       try {
-        const url = `${fcd}/treasury/tax_cap/${contract_addr}`
-        const res: TaxResponse = (await axios.get(url)).data
-        taxCap = res.result
+        const res = await lcd.terra.treasury.taxCap(contract_addr)
+        return res.amount.toString()
       } catch (error) {
         console.error(error)
       }
 
-      return taxCap
+      return ""
     },
-    [fcd]
+    [lcd]
   )
 
-  const loadTaxRate = useCallback(async () => {
-    let taxRate = "0"
-    try {
-      const url = `${fcd}/treasury/tax_rate`
-      const res: TaxResponse = (await axios.get(url)).data
-      taxRate = res.result
-    } catch (error) {
-      console.error(error)
-    }
+  const { data: taxRate } = useQuery({
+    queryKey: ["taxRate", networkName],
+    queryFn: async () => {
+      try {
+        const res = await lcd.terra.treasury.taxRate()
+        return res.toString()
+      } catch (error) {
+        console.error(error)
+      }
 
-    return taxRate
-  }, [fcd])
+      return "0"
+    },
+  })
+
+  const loadTaxRate = useCallback(async () => {
+    return taxRate || "0"
+  }, [taxRate])
 
   return {
     loadDenomBalance,

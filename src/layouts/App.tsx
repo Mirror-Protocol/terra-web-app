@@ -7,7 +7,6 @@ import { useAddress } from "hooks"
 import Header from "./Header"
 import Footer from "./Footer"
 import container from "components/Container"
-import { QueryClient, QueryClientProvider } from "react-query"
 import styled from "styled-components"
 import usePairs from "rest/usePairs"
 import useMigration from "hooks/useMigration"
@@ -61,15 +60,6 @@ const ModalTitle = styled.div`
   margin-bottom: 30px;
 `
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    },
-  },
-})
-
 const Wrapper = styled.div`
   display: flex;
   width: 100%;
@@ -118,24 +108,22 @@ const App = () => {
   }, [isMigrationPage])
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={variables}>
-        <ContractProvider value={contract}>
-          <Header />
-          {!isLoading && (
-            <div>
-              <Container>
-                <Wrapper>
-                  <div style={{ flex: 1, maxWidth: 150 }}>&nbsp;</div>
-                  <div style={{ flex: 1 }}>{routes()}</div>
-                </Wrapper>
-              </Container>
-            </div>
-          )}
-          <Footer />
-        </ContractProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider theme={variables}>
+      <ContractProvider value={contract}>
+        <Header />
+        {!isLoading && (
+          <div>
+            <Container>
+              <Wrapper>
+                <div style={{ flex: 1, maxWidth: 150 }}>&nbsp;</div>
+                <div style={{ flex: 1 }}>{routes()}</div>
+              </Wrapper>
+            </Container>
+          </div>
+        )}
+        <Footer />
+      </ContractProvider>
+    </ThemeProvider>
   )
 }
 

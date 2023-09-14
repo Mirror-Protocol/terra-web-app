@@ -164,7 +164,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     return tokenInfos.get(from)
   }, [from, tokenInfos])
 
-  const { balance: balance1 } = useBalance(from, formData[Key.symbol1])
+  const { balance: balance1 } = useBalance(from)
   const [balanceWithTax, setBalanceWithTax] = useState<string>()
 
   const [feeAddress, setFeeAddress] = useState("")
@@ -193,10 +193,7 @@ const MigrateForm = ({ type }: { type?: Type }) => {
     }
   }, [formData, fetchFeeAddress])
 
-  const { balance: maxFeeBalance } = useBalance(
-    feeAddress,
-    formData[Key.feeSymbol]
-  )
+  const { balance: maxFeeBalance } = useBalance(feeAddress)
 
   const selectToken = useSwapSelectToken(
     {

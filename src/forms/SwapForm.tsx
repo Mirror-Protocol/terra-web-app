@@ -32,13 +32,7 @@ import { TooltipIcon } from "components/Tooltip"
 import Tooltip from "lang/Tooltip.json"
 import useGasPrice from "rest/useGasPrice"
 import { hasTaxToken } from "helpers/token"
-import {
-  Coins,
-  CreateTxOptions,
-  Fee,
-  Numeric,
-  SignerInfo,
-} from "@terra-money/terra.js"
+import { Coins, CreateTxOptions, Fee, Numeric } from "@terra-money/terra.js"
 import { Type } from "pages/Swap"
 import usePool from "rest/usePool"
 import { insertIf } from "libs/utils"
@@ -226,8 +220,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
 
   const pairSwitchable = useMemo(() => from !== "" && to !== "", [from, to])
 
-  const { balance: balance1 } = useBalance(from, formData[Key.symbol1])
-  const { balance: balance2 } = useBalance(to, formData[Key.symbol2])
+  const { balance: balance1 } = useBalance(from)
+  const { balance: balance2 } = useBalance(to)
 
   const [feeAddress, setFeeAddress] = useState("")
   const fetchFeeAddress = useCallback(() => {
@@ -255,10 +249,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     }
   }, [formData, fetchFeeAddress])
 
-  const { balance: maxFeeBalance } = useBalance(
-    feeAddress,
-    formData[Key.feeSymbol]
-  )
+  const { balance: maxFeeBalance } = useBalance(feeAddress)
 
   const selectToken1 = useSwapSelectToken(
     {

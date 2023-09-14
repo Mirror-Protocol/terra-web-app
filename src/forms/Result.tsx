@@ -19,7 +19,6 @@ import {
   TxUnspecifiedError,
   UserDenied,
 } from "@terra-dev/wallet-types"
-import axios from "rest/request"
 import { AxiosError } from "axios"
 
 import { useMemo } from "react"
@@ -28,10 +27,9 @@ import {
   createLogMatcherForActions,
   getTxCanonicalMsgs,
 } from "@terra-money/log-finder-ruleset"
-import { SwapTxInfo as ISwapTxInfo } from "types/swapTx"
 import { TxInfo } from "@terra-money/terra.js"
 import { TxDescription } from "@terra-money/react-base-components"
-import { useLCDClient } from "@terra-money/wallet-provider"
+import { useLCDClient } from "layouts/WalletConnectProvider"
 export interface ResultProps {
   response?: TxResult
   error?:
@@ -56,12 +54,13 @@ enum STATUS {
 
 const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
   const network = useNetwork()
-  const { config } = useLCDClient()
+  const { terra } = useLCDClient()
+  const { config } = terra
 
   const txHash = response?.result?.txhash ?? ""
   const raw_log = response?.result?.raw_log ?? ""
   /* polling */
-  const [txInfo, setTxInfo] = useState<ISwapTxInfo>()
+  const [txInfo, setTxInfo] = useState<TxInfo>()
 
   const matchedMsg = useMemo(() => {
     if (!txInfo || !network?.name) {
@@ -69,11 +68,10 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
     }
     const actionRules = createActionRuleSet(network?.name)
     const logMatcher = createLogMatcherForActions(actionRules)
-    return getTxCanonicalMsgs(txInfo as unknown as TxInfo, logMatcher)
+    return getTxCanonicalMsgs(txInfo, logMatcher)
   }, [network, txInfo])
 
   const [status, setStatus] = useState<STATUS>(STATUS.LOADING)
-  const { fcd } = useNetwork()
 
   const retryCount = useRef(0)
 
@@ -92,9 +90,8 @@ const Result = ({ response, error, onFailure, parserKey }: ResultProps) => {
         return
       }
       try {
-        const { data: res } = await axios.get(`${fcd}/v1/tx/${txHash}`, {
-          cache: { ignoreCache: true },
-        })
+        const res = await terra.tx.txInfo(txHash)
+
         if (isDestroyed) {
           return
         }
