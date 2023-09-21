@@ -1,11 +1,15 @@
-import { MsgExecuteContract } from "@terra-money/terra.js"
-import { useAddress } from "hooks"
+import { Coins, MsgExecuteContract } from "@terra-money/terra.js"
+import { useAddress, useContract } from "hooks"
 import { div, times } from "libs/math"
-import { toAmount } from "libs/parse"
+import { decimal, toAmount } from "libs/parse"
 import { Type } from "pages/Swap"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import useAPI from "./useAPI"
-import { tokenInfos } from "./usePairs"
+import { useTokenInfos } from "./usePairs"
+import { useLCDClient } from "layouts/WalletConnectProvider"
+import { useContractsAddress } from "hooks/useContractsAddress"
+import calc from "helpers/calc"
+import { AssetInfoKey } from "hooks/contractKeys"
 
 type Params = {
   from: string
@@ -21,7 +25,6 @@ function sleep(t: number) {
 }
 
 const useAutoRouter = (params: Params) => {
-  const walletAddress = useAddress()
   const {
     from,
     to,
@@ -30,25 +33,95 @@ const useAutoRouter = (params: Params) => {
     slippageTolerance,
     deadline,
   } = params
+  const walletAddress = useAddress()
+  const { terra } = useLCDClient()
   const amount = Number(_amount)
   const { generateContractMessages, querySimulate } = useAPI()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isSimulationLoading, setIsSimulationLoading] = useState(false)
+  const [isQueryValidationLoading, setIsQueryValidationLoading] =
+    useState(false)
+  const isLoading = isSimulationLoading || isQueryValidationLoading
+
   const [msgs, setMsgs] = useState<
     (MsgExecuteContract[] | MsgExecuteContract)[]
   >([])
   const [simulatedAmounts, setSimulatedAmounts] = useState<number[]>([])
   const [autoRefreshTicker, setAutoRefreshTicker] = useState(false)
-  const profitableQuery = useMemo(() => {
-    if (!to || !amount) {
-      return undefined
+  const { isNativeToken } = useContractsAddress()
+  const { find } = useContract()
+  const tokenInfos = useTokenInfos()
+
+  const getMsgs = useCallback(
+    (
+      _msg: any,
+      {
+        amount,
+        token,
+        minimumReceived,
+        beliefPrice,
+      }: {
+        amount?: string | number
+        token?: string
+        minimumReceived?: string | number
+        beliefPrice?: string | number
+      }
+    ) => {
+      const msg = Array.isArray(_msg) ? _msg[0] : _msg
+
+      if (msg?.execute_msg?.swap) {
+        msg.execute_msg.swap.belief_price = `${beliefPrice}`
+      }
+      if (msg?.execute_msg?.send?.msg?.swap) {
+        msg.execute_msg.send.msg.swap.belief_price = `${beliefPrice}`
+      }
+      if (msg?.execute_msg?.send?.msg?.execute_swap_operations) {
+        msg.execute_msg.send.msg.execute_swap_operations.minimum_receive =
+          parseInt(`${minimumReceived}`, 10).toString()
+        if (isNativeToken(token || "")) {
+          msg.coins = Coins.fromString(toAmount(`${amount}`, token) + token)
+        }
+
+        msg.execute_msg.send.msg = btoa(
+          JSON.stringify(msg.execute_msg.send.msg)
+        )
+      } else if (msg?.execute_msg?.send?.msg) {
+        msg.execute_msg.send.msg = btoa(
+          JSON.stringify(msg.execute_msg.send.msg)
+        )
+      }
+      if (msg?.execute_msg?.execute_swap_operations) {
+        msg.execute_msg.execute_swap_operations.minimum_receive = parseInt(
+          `${minimumReceived}`,
+          10
+        ).toString()
+        msg.execute_msg.execute_swap_operations.offer_amount = toAmount(
+          `${amount}`,
+          token
+        )
+
+        if (isNativeToken(token || "")) {
+          msg.coins = Coins.fromString(toAmount(`${amount}`, token) + token)
+        }
+      }
+      return [msg]
+    },
+    [isNativeToken]
+  )
+
+  const queries = useMemo(() => {
+    if (!to || !amount || !simulatedAmounts?.length) {
+      return []
     }
-    if (simulatedAmounts?.length > 0) {
-      const index = simulatedAmounts.indexOf(
-        Math.max(...simulatedAmounts.map((item) => (!item ? -1 : item)))
-      )
+
+    const indexes = simulatedAmounts
+      .map((value, index) => ({ value, index }))
+      .sort((a, b) => b.value - a.value)
+      .map((item) => item.index)
+
+    return indexes.map((index) => {
       const simulatedAmount = simulatedAmounts[index]
       if (simulatedAmount < 0) {
-        return undefined
+        return null
       }
       const msg = msgs[index]
       const execute_msg = (Array.isArray(msg) ? msg[0] : msg)
@@ -91,18 +164,44 @@ const useAutoRouter = (params: Params) => {
         })
       }
 
-      const tokenInfo = tokenInfos.get(to)
-      const e = Math.pow(10, tokenInfo?.decimals || 6)
+      const tokenInfo1 = tokenInfos.get(from)
+      const tokenInfo2 = tokenInfos.get(to)
+
+      const minimumReceived = calc.minimumReceived({
+        expectedAmount: `${simulatedAmount}`,
+        max_spread: String(slippageTolerance),
+        commission: find(AssetInfoKey.COMMISSION, to),
+        decimals: tokenInfo1?.decimals,
+      })
+
+      const e = Math.pow(10, tokenInfo2?.decimals || 6)
+
+      const formattedMsg = getMsgs(msg, {
+        amount,
+        minimumReceived,
+        token: from,
+        beliefPrice: `${decimal(div(times(amount, e), simulatedAmount), 18)}`,
+      })
+
       return {
-        msg,
+        msg: formattedMsg,
         index,
         simulatedAmount,
         tokenRoutes,
         price: div(times(amount, e), simulatedAmount),
       }
-    }
-    return undefined
-  }, [to, amount, msgs, simulatedAmounts])
+    })
+  }, [
+    to,
+    amount,
+    simulatedAmounts,
+    msgs,
+    slippageTolerance,
+    find,
+    getMsgs,
+    from,
+    tokenInfos,
+  ])
 
   useEffect(() => {
     let isCanceled = false
@@ -128,7 +227,8 @@ const useAutoRouter = (params: Params) => {
         setMsgs(res)
       }
     }
-    setIsLoading(true)
+    setIsSimulationLoading(true)
+    setIsQueryValidationLoading(true)
     setMsgs([])
     setSimulatedAmounts([])
     const timerId = setTimeout(() => {
@@ -148,6 +248,7 @@ const useAutoRouter = (params: Params) => {
     autoRefreshTicker,
     walletAddress,
     slippageTolerance,
+    deadline,
   ])
 
   useEffect(() => {
@@ -155,15 +256,15 @@ const useAutoRouter = (params: Params) => {
       if (
         window?.navigator?.onLine &&
         window?.document?.hasFocus() &&
-        !isLoading
+        !isSimulationLoading
       ) {
         setAutoRefreshTicker((current) => !current)
       }
-    }, 30000)
+    }, 60000)
     return () => {
       clearInterval(timerId)
     }
-  }, [amount, from, to, type, isLoading])
+  }, [amount, from, to, type, isSimulationLoading])
 
   useEffect(() => {
     let isCanceled = false
@@ -209,47 +310,51 @@ const useAutoRouter = (params: Params) => {
         return undefined
       })
 
-      const result: any[] = []
-      simulateQueries.forEach(async (query, index) => {
-        if (isCanceled) {
-          return
-        }
-        await sleep(100 * index)
-        const res = await querySimulate({
-          contract: `${query?.contract}`,
-          msg: query?.msg,
-        })
-        if (res) {
-          result[index] = res
-        }
-        if (isCanceled) {
-          return
-        }
-
-        if (index >= simulateQueries.length - 1) {
-          // wait for all query done
-          for (let i = 0; i < 30; i++) {
-            if (JSON.parse(JSON.stringify(result)).includes(null)) {
-              await sleep(100)
-            }
+      const promises = simulateQueries.map(async (query, index) => {
+        try {
+          if (isCanceled) {
+            return undefined
+          }
+          await sleep(80 * index)
+          if (isCanceled) {
+            return undefined
+          }
+          const res = await querySimulate({
+            contract: `${query?.contract}`,
+            msg: query?.msg,
+            timeout: 5000,
+          })
+          if (isCanceled) {
+            return undefined
           }
 
-          setSimulatedAmounts(
-            result
-              .map((item) => {
-                if (item?.return_amount) {
-                  return parseInt(item?.return_amount, 10)
-                }
-                if (item?.amount) {
-                  return parseInt(item?.amount, 10)
-                }
-                return -1
-              })
-              .map((item) => (Number.isNaN(Number(item)) ? -1 : item))
-          )
-          setIsLoading(false)
+          return res
+        } catch (error) {
+          console.log(error)
         }
+        return undefined
       })
+
+      const results = await Promise.allSettled(promises)
+      if (isCanceled) {
+        return
+      }
+      setSimulatedAmounts(
+        results
+          .map((item) => {
+            if (item.status === "fulfilled") {
+              if (item?.value?.return_amount) {
+                return parseInt(item?.value?.return_amount, 10)
+              }
+              if (item?.value?.amount) {
+                return parseInt(item?.value?.amount, 10)
+              }
+            }
+            return -1
+          })
+          .map((item) => (Number.isNaN(Number(item)) ? -1 : item))
+      )
+      setIsSimulationLoading(false)
     }
 
     setSimulatedAmounts([])
@@ -260,9 +365,64 @@ const useAutoRouter = (params: Params) => {
     }
   }, [amount, from, msgs, querySimulate])
 
+  const [profitableQuery, setProfitableQuery] = useState(queries[0])
+
+  useEffect(() => {
+    let isCanceled = false
+    const validateQueries = async () => {
+      if (!queries?.length) {
+        return
+      }
+      setIsQueryValidationLoading(true)
+      const account = walletAddress
+        ? await terra.auth.accountInfo(walletAddress)
+        : undefined
+      if (isCanceled) {
+        return
+      }
+      for await (const query of queries) {
+        try {
+          if (!account) {
+            setProfitableQuery(query)
+            break
+          }
+          if (query?.msg) {
+            await terra.tx.estimateFee(
+              [
+                {
+                  sequenceNumber: account.getSequenceNumber(),
+                  publicKey: account.getPublicKey(),
+                },
+              ],
+              {
+                msgs: query?.msg,
+                memo: undefined,
+              }
+            )
+            if (isCanceled) {
+              return
+            }
+            setProfitableQuery(query)
+            break
+          }
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      setIsQueryValidationLoading(false)
+    }
+    const timerId = setTimeout(() => {
+      validateQueries()
+    }, 300)
+    return () => {
+      isCanceled = true
+      clearTimeout(timerId)
+    }
+  }, [queries, terra, walletAddress])
+
   const result = useMemo(() => {
     if (!from || !to || !type || !amount) {
-      return { profitableQuery: undefined, isLoading: false }
+      return { profitableQuery: undefined, isLoading }
     }
     return {
       isLoading,
