@@ -316,11 +316,11 @@ const useAPI = (version: ApiVersion = "v2") => {
 
   // useSwapSimulate
   const querySimulate = useCallback(
-    async (variables: { contract: string; msg: any }) => {
+    async (variables: { contract: string; msg: any; timeout?: number }) => {
       try {
-        const { contract, msg } = variables
+        const { contract, msg, timeout } = variables
         const url = getURL(contract, msg)
-        const res: SimulatedResponse = (await axios.get(url)).data
+        const res: SimulatedResponse = (await axios.get(url, { timeout })).data
         return res.data
       } catch (error) {
         const { response }: AxiosError = error as any

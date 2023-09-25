@@ -99,7 +99,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const tokenInfos = useTokenInfos()
   const lpTokenInfos = useLpTokenInfos()
 
-  const { getSymbol, isNativeToken } = useContractsAddress()
+  const { getSymbol } = useContractsAddress()
   const { loadTaxInfo, loadTaxRate, generateContractMessages } = useAPI()
   const { fee } = useNetwork()
   const { find } = useContract()
@@ -350,7 +350,8 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       if (
         gte(spread, "0.01") &&
         !warningModal.isOpen &&
-        !isWarningModalConfirmed
+        !isWarningModalConfirmed &&
+        !isAutoRouterLoading
       ) {
         warningModal.setInfo("", percent(spread))
         warningModal.open()
@@ -361,7 +362,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     return () => {
       clearTimeout(timerId)
     }
-  }, [isWarningModalConfirmed, spread, warningModal])
+  }, [isAutoRouterLoading, isWarningModalConfirmed, spread, warningModal])
 
   const simulationContents = useMemo(() => {
     if (
@@ -509,63 +510,6 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
     spread,
     tokenInfos,
   ])
-
-  const getMsgs = useCallback(
-    (
-      _msg: any,
-      {
-        amount,
-        token,
-        minimumReceived,
-        beliefPrice,
-      }: {
-        amount?: string | number
-        token?: string
-        minimumReceived?: string | number
-        beliefPrice?: string | number
-      }
-    ) => {
-      const msg = Array.isArray(_msg) ? _msg[0] : _msg
-
-      if (msg?.execute_msg?.swap) {
-        msg.execute_msg.swap.belief_price = `${beliefPrice}`
-      }
-      if (msg?.execute_msg?.send?.msg?.swap) {
-        msg.execute_msg.send.msg.swap.belief_price = `${beliefPrice}`
-      }
-      if (msg?.execute_msg?.send?.msg?.execute_swap_operations) {
-        msg.execute_msg.send.msg.execute_swap_operations.minimum_receive =
-          parseInt(`${minimumReceived}`, 10).toString()
-        if (isNativeToken(token || "")) {
-          msg.coins = Coins.fromString(toAmount(`${amount}`) + token)
-        }
-
-        msg.execute_msg.send.msg = btoa(
-          JSON.stringify(msg.execute_msg.send.msg)
-        )
-      } else if (msg?.execute_msg?.send?.msg) {
-        msg.execute_msg.send.msg = btoa(
-          JSON.stringify(msg.execute_msg.send.msg)
-        )
-      }
-      if (msg?.execute_msg?.execute_swap_operations) {
-        msg.execute_msg.execute_swap_operations.minimum_receive = parseInt(
-          `${minimumReceived}`,
-          10
-        ).toString()
-        msg.execute_msg.execute_swap_operations.offer_amount = toAmount(
-          `${amount}`,
-          token
-        )
-
-        if (isNativeToken(token || "")) {
-          msg.coins = Coins.fromString(toAmount(`${amount}`) + token)
-        }
-      }
-      return [msg]
-    },
-    [isNativeToken]
-  )
 
   const { gasPrice } = useGasPrice(formData[Key.feeSymbol])
   const getTax = useCallback(
@@ -865,19 +809,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           if (!profitableQuery?.msg) {
             return
           }
-          msgs = getMsgs(profitableQuery?.msg, {
-            amount: `${value1}`,
-            minimumReceived: profitableQuery
-              ? calc.minimumReceived({
-                  expectedAmount: `${profitableQuery?.simulatedAmount}`,
-                  max_spread: String(slippageTolerance),
-                  commission: find(infoKey, formData[Key.symbol2]),
-                  decimals: tokenInfo1?.decimals,
-                })
-              : "0",
-            token: from,
-            beliefPrice: `${decimal(div(value1, value2), 18)}`,
-          })
+          msgs = profitableQuery?.msg
         } else {
           msgs = await generateContractMessages(
             {
@@ -929,17 +861,12 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
           txOptions
         )
 
-        let fee = signMsg.auth_info.fee.amount.add(tax)
-
-        txOptions.fee = new Fee(signMsg.auth_info.fee.gas_limit, fee)
-        setValue(
-          Key.feeValue,
-          txOptions.fee?.amount.get(feeAddress)?.amount.toString() || ""
-        )
+        const fee = signMsg.auth_info.fee.amount.add(tax)
 
         const extensionResult = await wallet.post(
           {
             ...txOptions,
+            fee: new Fee(signMsg.auth_info.fee.gas_limit, fee),
           },
           walletAddress
         )
@@ -959,19 +886,18 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
       getSymbol,
       terra.tx,
       walletAddress,
+      tax,
       wallet,
       profitableQuery,
-      getMsgs,
-      slippageTolerance,
-      find,
-      formData,
-      tokenInfo1,
-      from,
-      tokenInfo2,
       generateContractMessages,
+      from,
       to,
+      slippageTolerance,
+      txDeadlineMinute,
       lpContract,
       poolResult?.estimated,
+      poolContract2,
+      poolContract1,
     ]
   )
 
