@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useAddress, useNetwork } from "../hooks"
 import useAPI from "./useAPI"
 import { useQuery } from "react-query"
+import { AccAddress } from "@terra-money/terra.js"
 
 export default (contractAddress: string) => {
   const { name: networkName } = useNetwork()
@@ -22,6 +23,9 @@ export default (contractAddress: string) => {
     useQuery({
       queryKey: ["contractBalance", networkName, address, contractAddress],
       queryFn: async () => {
+        if (!AccAddress.validate(contractAddress)) {
+          return null
+        }
         const res = loadContractBalance(contractAddress)
         return res
       },
