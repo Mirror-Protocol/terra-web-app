@@ -320,7 +320,7 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
   const { isLoading: isAutoRouterLoading, profitableQuery } = useAutoRouter({
     from: from,
     to: to,
-    amount: formData[Key.value1],
+    value: formData[Key.value1],
     type: formState.isSubmitted ? undefined : type,
     slippageTolerance,
     deadline: Number(txDeadlineMinute),

@@ -1,4 +1,4 @@
-import { Coins, MsgExecuteContract } from "@terra-money/terra.js"
+import { Coins, MsgExecuteContract, Numeric } from "@terra-money/terra.js"
 import { useAddress, useContract } from "hooks"
 import { div, times } from "libs/math"
 import { decimal, toAmount } from "libs/parse"
@@ -10,11 +10,12 @@ import { useLCDClient } from "layouts/WalletConnectProvider"
 import { useContractsAddress } from "hooks/useContractsAddress"
 import calc from "helpers/calc"
 import { AssetInfoKey } from "hooks/contractKeys"
+import useBalance from "./useBalance"
 
 type Params = {
   from: string
   to: string
-  amount: number | string
+  value: number | string
   type?: Type
   slippageTolerance?: string | number
   deadline: number | undefined
@@ -25,17 +26,11 @@ function sleep(t: number) {
 }
 
 const useAutoRouter = (params: Params) => {
-  const {
-    from,
-    to,
-    type,
-    amount: _amount,
-    slippageTolerance,
-    deadline,
-  } = params
+  const { from, to, type, value: _value, slippageTolerance, deadline } = params
   const walletAddress = useAddress()
   const { terra } = useLCDClient()
-  const amount = Number(_amount)
+  const value = Number(_value)
+  const { balance } = useBalance(from)
   const { generateContractMessages, querySimulate } = useAPI()
   const [isSimulationLoading, setIsSimulationLoading] = useState(false)
   const [isQueryValidationLoading, setIsQueryValidationLoading] =
@@ -109,7 +104,7 @@ const useAutoRouter = (params: Params) => {
   )
 
   const queries = useMemo(() => {
-    if (!to || !amount || !simulatedAmounts?.length) {
+    if (!to || !value || !simulatedAmounts?.length) {
       return []
     }
 
@@ -177,10 +172,10 @@ const useAutoRouter = (params: Params) => {
       const e = Math.pow(10, tokenInfo2?.decimals || 6)
 
       const formattedMsg = getMsgs(msg, {
-        amount,
+        amount: value,
         minimumReceived,
         token: from,
-        beliefPrice: `${decimal(div(times(amount, e), simulatedAmount), 18)}`,
+        beliefPrice: `${decimal(div(times(value, e), simulatedAmount), 18)}`,
       })
 
       return {
@@ -188,12 +183,12 @@ const useAutoRouter = (params: Params) => {
         index,
         simulatedAmount,
         tokenRoutes,
-        price: div(times(amount, e), simulatedAmount),
+        price: div(times(value, e), simulatedAmount),
       }
     })
   }, [
     to,
-    amount,
+    value,
     simulatedAmounts,
     msgs,
     slippageTolerance,
@@ -206,7 +201,7 @@ const useAutoRouter = (params: Params) => {
   useEffect(() => {
     let isCanceled = false
     const fetchMessages = async () => {
-      if (!from || !to || !amount || !type) {
+      if (!from || !to || !value || !type) {
         return
       }
       if (type === Type.PROVIDE || type === Type.WITHDRAW) {
@@ -217,7 +212,7 @@ const useAutoRouter = (params: Params) => {
         type: Type.SWAP,
         from,
         to,
-        amount,
+        amount: value,
         max_spread: `${slippageTolerance || 0.01}`,
         belief_price: 0,
         sender: walletAddress,
@@ -240,7 +235,7 @@ const useAutoRouter = (params: Params) => {
       isCanceled = true
     }
   }, [
-    amount,
+    value,
     from,
     generateContractMessages,
     to,
@@ -264,7 +259,7 @@ const useAutoRouter = (params: Params) => {
     return () => {
       clearInterval(timerId)
     }
-  }, [amount, from, to, type, isSimulationLoading])
+  }, [value, from, to, type, isSimulationLoading])
 
   useEffect(() => {
     let isCanceled = false
@@ -284,7 +279,7 @@ const useAutoRouter = (params: Params) => {
             contract,
             msg: {
               simulate_swap_operations: {
-                offer_amount: toAmount(`${amount}`, from),
+                offer_amount: toAmount(`${value}`, from),
                 operations,
               },
             },
@@ -292,7 +287,7 @@ const useAutoRouter = (params: Params) => {
         }
         if (execute_msg?.swap) {
           const offer_asset = execute_msg?.swap?.offer_asset || {
-            amount: toAmount(`${amount}`, from),
+            amount: toAmount(`${value}`, from),
             info: {
               token: {
                 contract_addr: from,
@@ -363,7 +358,7 @@ const useAutoRouter = (params: Params) => {
     return () => {
       isCanceled = true
     }
-  }, [amount, from, msgs, querySimulate])
+  }, [value, from, msgs, querySimulate])
 
   const [profitableQuery, setProfitableQuery] = useState(queries[0])
 
@@ -380,33 +375,37 @@ const useAutoRouter = (params: Params) => {
       if (isCanceled) {
         return
       }
-      for await (const query of queries) {
-        try {
-          if (!account) {
-            setProfitableQuery(query)
-            break
-          }
-          if (query?.msg) {
-            await terra.tx.estimateFee(
-              [
+
+      if (
+        !account ||
+        Numeric.parse(balance || "0").lt(toAmount(`${value}`, from))
+      ) {
+        setProfitableQuery(queries[0])
+      } else {
+        for await (const query of queries) {
+          try {
+            if (query?.msg) {
+              await terra.tx.estimateFee(
+                [
+                  {
+                    sequenceNumber: account.getSequenceNumber(),
+                    publicKey: account.getPublicKey(),
+                  },
+                ],
                 {
-                  sequenceNumber: account.getSequenceNumber(),
-                  publicKey: account.getPublicKey(),
-                },
-              ],
-              {
-                msgs: query?.msg,
-                memo: undefined,
+                  msgs: query?.msg,
+                  memo: undefined,
+                }
+              )
+              if (isCanceled) {
+                return
               }
-            )
-            if (isCanceled) {
-              return
+              setProfitableQuery(query)
+              break
             }
-            setProfitableQuery(query)
-            break
+          } catch (error) {
+            console.log(error)
           }
-        } catch (error) {
-          console.log(error)
         }
       }
       setIsQueryValidationLoading(false)
@@ -418,17 +417,17 @@ const useAutoRouter = (params: Params) => {
       isCanceled = true
       clearTimeout(timerId)
     }
-  }, [queries, terra, walletAddress])
+  }, [value, balance, queries, terra, walletAddress, from])
 
   const result = useMemo(() => {
-    if (!from || !to || !type || !amount) {
+    if (!from || !to || !type || !value) {
       return { profitableQuery: undefined, isLoading }
     }
     return {
       isLoading,
       profitableQuery,
     }
-  }, [amount, from, isLoading, profitableQuery, to, type])
+  }, [value, from, isLoading, profitableQuery, to, type])
 
   return result
 }
