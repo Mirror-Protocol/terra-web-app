@@ -1027,8 +1027,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                 formData[Key.symbol1]
                   ? async () => {
                       if (type === Type.WITHDRAW) {
-                        setValue(Key.value1, lookup(formData[Key.max1], from))
-                        trigger(Key.value1)
+                        setValue(Key.value1, lookup(formData[Key.max1], from), {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                          shouldTouch: true,
+                        })
                         return
                       }
                       let taxVal = "0"
@@ -1055,8 +1058,11 @@ const SwapForm = ({ type, tabs }: { type: Type; tabs: TabViewProps }) => {
                       }
 
                       maxBalance = lookup(maxBalance, from)
-                      setValue(Key.value1, maxBalance)
-                      trigger(Key.value1)
+                      setValue(Key.value1, maxBalance, {
+                        shouldDirty: true,
+                        shouldValidate: true,
+                        shouldTouch: true,
+                      })
                     }
                   : undefined
               }
