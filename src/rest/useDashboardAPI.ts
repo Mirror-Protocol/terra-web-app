@@ -34,7 +34,7 @@ export interface Pair {
   token1Volume: string
   token1Reserve: string
   totalLpTokenShare: string
-  volumeUst: string
+  volumeUst: string // Deprecated
   liquidityUst: string
   token0Symbol: string
   token0Decimals: number
