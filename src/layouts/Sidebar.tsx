@@ -9,7 +9,6 @@ import { socialMediaList } from "constants/constants"
 import SocialMediaAnchor from "components/SocialMediaAnchor"
 import ChangeVersionButton from "components/ChangeVersionButton"
 import useMigration from "hooks/useMigration"
-import Tooltip from "components/Tooltip"
 
 const Wrapper = styled.div<{ isOpen: boolean }>`
   width: 100%;
@@ -191,19 +190,13 @@ const Sidebar = () => {
           </div>
         ) : (
           <div>
-            <Tooltip content="Coming soon">
-              <NavLink
-                to="/"
-                className={
-                  location.pathname?.includes("/pairs") ? "active" : ""
-                }
-                onClick={() => close()}
-                aria-disabled
-                style={{ pointerEvents: "none", opacity: 0.5 }}
-              >
-                Dashboard
-              </NavLink>
-            </Tooltip>
+            <NavLink
+              to="/"
+              className={location.pathname?.includes("/pairs") ? "active" : ""}
+              onClick={() => close()}
+            >
+              Dashboard
+            </NavLink>
             <NavLink to="/swap" onClick={() => close()}>
               Swap
             </NavLink>
